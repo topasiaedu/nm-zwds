@@ -94,7 +94,7 @@ var ziweiUI = {
       "生肖：【" +
       ziwei.getShengXiao() +
       "】【" +
-      year_to_stem_branch[document.getElementById("sel_Year").value] +
+      (year_to_stem_branch[document.getElementById("sel_Year").value] || "") +
       "】" +
       "<br>" +
       "<div>" +
