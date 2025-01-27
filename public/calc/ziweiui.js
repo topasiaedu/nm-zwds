@@ -222,7 +222,7 @@ var ziweiUI = {
     let tagPalaceIndex = (startPalaceIndex + yearOffset) % 12; // Calculate palace for 流年
 
     // Apply 流年 tag to the calculated palace
-    let palaceDiv = document.getElementById(`zw${tagPalaceIndex + 1}`);
+    let palaceDiv = document.getElementById(`zw${tagPalaceIndex}`);
     if (palaceDiv) {
       let liunianDiv = document.createElement("div");
       liunianDiv.className = "liunianTag";
