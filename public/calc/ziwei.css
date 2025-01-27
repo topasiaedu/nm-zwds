@@ -34,7 +34,7 @@ body {
   border: 1px solid #b7b7b7;
   margin: 1px;
   position: relative;
-  font-size: 2vh;
+  font-size: 1em;
 }
 .zwDivHeader,
 .zwDivHeader h2 {
@@ -68,9 +68,18 @@ input[type="radio"]:first-of-type {
 .zwDivCenter .zwcopy {
   bottom: 0;
   right: 0;
-  font-size: 2vh;
+  font-size: 2vw;
   font-weight: normal;
 }
+
+.MangY1 {
+  word-wrap: break-word; /* Ensure content wraps when necessary */
+  white-space: normal; /* Allow text to wrap */
+  overflow-wrap: break-word; /* Handle long words gracefully */
+  text-align: center; /* Center the text within the element */
+}
+
+
 .StarA,
 .StarB,
 .StarC,
@@ -138,8 +147,8 @@ input[type="radio"]:first-of-type {
 .MangY10,
 .MangY1 {
   width: 100%;
-  height: 1.5em;
-  font-size: 1.6vh;
+  height: 2.5em;
+  font-size: 0.8em;
 }
 .MangY10,
 .MangY1,
@@ -171,7 +180,7 @@ input[type="radio"]:first-of-type {
 	transform: translateY(-50%);
 	background-color: #ffcccb; /* Highlight color */
 	padding: 2px 4px;
-	font-size: 1.8vh;
+	font-size: 0.9em;
 	font-weight: bold;
 	color: #000;
 	border: 1px solid #000;
@@ -186,7 +195,7 @@ input[type="radio"]:first-of-type {
 	transform: translateY(-50%);
 	background-color: #d3f9d8; /* Highlight color */
 	padding: 2px 4px;
-	font-size: 1.8vh;
+	font-size: 0.9em;
 	font-weight: bold;
 	color: #000;
 	border: 1px solid #000;
