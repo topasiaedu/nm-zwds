@@ -9,7 +9,7 @@ const FlowbiteWrapper: FC = function () {
   // const dark = localStorage.getItem("theme") === "dark";
 
   return (
-    <Flowbite theme={{ mode: 'dark', theme }}>
+    <Flowbite theme={{ mode: 'light', theme }}>
       <PersistFlowbiteThemeToLocalStorage />
       <Outlet />
     </Flowbite>
