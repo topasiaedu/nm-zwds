@@ -1,6 +1,7 @@
 /* eslint-disable no-undef */
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  darkMode: false, // Ensure dark mode is disabled or not applied by default
   content: [
     "./index.html",
     "./node_modules/flowbite-react/lib/**/*.{js,ts}",
