@@ -18,49 +18,82 @@ import NotFoundPage from "./pages/pages/404";
 import ServerErrorPage from "./pages/pages/500";
 import LoadingPage from "./pages/pages/loading";
 import MaintenancePage from "./pages/pages/maintenance";
-
+import OtherProfileListPage from "./pages/calc/OtherProfileListPage";
+import ProfileFormPage from "./pages/calc/ProfileFormPage";
+import CalcResultPage from "./pages/calc/CalcResultPage";
+import { LanguageProvider } from "./context/LanguageContext";
+import { ProfileProvider } from "./context/ProfileContext";
+import { ZiWeiProvider } from "./context/ZiWeiContext";
 const App = () => (
-  <AlertProvider>
-    <AuthProvider>
-      <AlertComponent />
-      <BrowserRouter>
-        <Routes>
-          <Route element={<FlowbiteWrapper />}>
-            {/* Protected Routes */}
-            <Route element={<ProtectedRoute />}>
-              <Route path="/" element={<DashboardPage />} index />
-            </Route>
+  <LanguageProvider>
+    <AlertProvider>
+      <AuthProvider>
+        <ProfileProvider>
+          <ZiWeiProvider>
+            <AlertComponent />
+            <BrowserRouter>
+              <Routes>
+                <Route element={<FlowbiteWrapper />}>
+                  {/* Protected Routes */}
+                  <Route element={<ProtectedRoute />}>
+                    <Route path="/" element={<DashboardPage />} index />
+                    <Route
+                      path="/calc/profiles"
+                      element={<OtherProfileListPage />}
+                    />
+                    <Route
+                      path="/calc/profile/:isSelf"
+                      element={<ProfileFormPage />}
+                    />
 
-            <Route path="/pages/maintenance" element={<MaintenancePage />} />
-            <Route path="/authentication/sign-in" element={<SignInPage />} />
-            <Route path="/authentication/sign-up" element={<SignUpPage />} />
-            <Route
-              path="/authentication/forgot-password"
-              element={<ForgotPasswordPage />}
-            />
-            <Route
-              path="/authentication/reset-password"
-              element={<ResetPasswordPage />}
-            />
-            <Route
-              path="/authentication/profile-lock"
-              element={<ProfileLockPage />}
-            />
+                    <Route
+                      path="/calc/results/:profileId"
+                      element={<CalcResultPage />}
+                    />
+                  </Route>
 
-            {/* Legal Pages */}
-            <Route path="/legal/privacy" element={<PrivacyPage />} />
+                  <Route
+                    path="/pages/maintenance"
+                    element={<MaintenancePage />}
+                  />
+                  <Route
+                    path="/authentication/sign-in"
+                    element={<SignInPage />}
+                  />
+                  <Route
+                    path="/authentication/sign-up"
+                    element={<SignUpPage />}
+                  />
+                  <Route
+                    path="/authentication/forgot-password"
+                    element={<ForgotPasswordPage />}
+                  />
+                  <Route
+                    path="/authentication/reset-password"
+                    element={<ResetPasswordPage />}
+                  />
+                  <Route
+                    path="/authentication/profile-lock"
+                    element={<ProfileLockPage />}
+                  />
 
-            {/* Testing */}
-            <Route path="/loading" element={<LoadingPage />} />
+                  {/* Legal Pages */}
+                  <Route path="/legal/privacy" element={<PrivacyPage />} />
 
-            {/* Error Handling Routes */}
-            <Route path="/500" element={<ServerErrorPage />} />
-            <Route path="*" element={<NotFoundPage />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
-    </AuthProvider>
-  </AlertProvider>
+                  {/* Testing */}
+                  <Route path="/loading" element={<LoadingPage />} />
+
+                  {/* Error Handling Routes */}
+                  <Route path="/500" element={<ServerErrorPage />} />
+                  <Route path="*" element={<NotFoundPage />} />
+                </Route>
+              </Routes>
+            </BrowserRouter>
+          </ZiWeiProvider>
+        </ProfileProvider>
+      </AuthProvider>
+    </AlertProvider>
+  </LanguageProvider>
 );
 
 export default App;

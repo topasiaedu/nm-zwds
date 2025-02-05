@@ -51,7 +51,7 @@ const MainContentFooter: React.FC = function () {
   return (
     <>
       <p className="my-2 text-center text-sm text-gray-500 dark:text-gray-300">
-        &copy; 2024 All rights reserved by NM Media | NM Media Sdn Bhd
+        &copy; 2025 All rights reserved by NM Media | NM Media Sdn Bhd
         (1452711-W) |{" "}
         <Link to="/legal/privacy" className="mr-3 mb-3 lg:mb-0" target="_blank">
           Privacy Policy

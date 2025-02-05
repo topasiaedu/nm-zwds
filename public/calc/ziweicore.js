@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /*紫微斗數 Chinese Astrology Zi Wei Dou Shu*/
 var ziwei = {
 	y:null, m:null, d:null, h:null, g:null, l:null, b:null, f:null, s4:null, z:null,

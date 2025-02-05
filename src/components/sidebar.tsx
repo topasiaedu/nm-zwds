@@ -2,18 +2,21 @@
 import classNames from "classnames";
 import { DarkThemeToggle, Sidebar } from "flowbite-react";
 import React, { useEffect, useState } from "react";
-import { HiChartPie, HiInformationCircle } from "react-icons/hi";
 import { BsGrid3X3 } from "react-icons/bs";
+import { HiInformationCircle } from "react-icons/hi";
 import { MdLogout } from "react-icons/md";
 import { useAuthContext } from "../context/AuthContext";
 import { useSidebarContext } from "../context/SidebarContext";
 import isSmallScreen from "../helpers/is-small-screen";
+import { useLanguage } from "../context/LanguageContext";
+import LanguageToggle from "./LanguageToggle";
 
 const ExampleSidebar: React.FC = function () {
   const { isOpenOnSmallScreens: isSidebarOpenOnSmallScreens } =
     useSidebarContext();
   const [currentPage, setCurrentPage] = useState("");
-  const { user, signOut } = useAuthContext();
+  const { signOut } = useAuthContext();
+  const { t } = useLanguage();
 
   useEffect(() => {
     const newPage = window.location.pathname;
@@ -29,20 +32,9 @@ const ExampleSidebar: React.FC = function () {
       <Sidebar
         aria-label="Sidebar with multi-level dropdown example"
         className="pt-2"
-        collapsed={isSidebarOpenOnSmallScreens && !isSmallScreen()}
-        // collapsed={true}
-      >
-        {/* <Sidebar.Logo href="/" img="/images/logo.svg" imgAlt="紫微斗數命盤 logo">
-          <div className="flex items-center justify-between gap-2">
-            <span className="bg-gradient-to-r from-[#CBB26B] to-[#CBB26B] bg-clip-text text-transparent font-bold text-xl">
-              紫微斗數命盤
-            </span>
-          </div>
-        </Sidebar.Logo> */}
-
+        collapsed={isSidebarOpenOnSmallScreens && !isSmallScreen()}>
         <img
           className="hidden lg:block mx-auto"
-          // src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/authentication/illustration.svg"
           src="/images/logo.svg"
           alt="Sign-in Illustration"
         />
@@ -55,7 +47,7 @@ const ExampleSidebar: React.FC = function () {
                 className={
                   "/" === currentPage ? "bg-gray-100 dark:bg-gray-700" : ""
                 }>
-                紫微斗數命盤
+                {t("dashboard")}
               </Sidebar.Item>
 
               {/* Logout */}
@@ -67,7 +59,7 @@ const ExampleSidebar: React.FC = function () {
                     ? "bg-gray-100 dark:bg-gray-700"
                     : ""
                 }>
-                退出登录
+                {t("logout")}
               </Sidebar.Item>
             </Sidebar.ItemGroup>
             <Sidebar.ItemGroup>
@@ -75,7 +67,7 @@ const ExampleSidebar: React.FC = function () {
                 href="https://api.whatsapp.com/send/?phone=60139968817&text&type=phone_number&app_absent=0"
                 target="_blank"
                 icon={HiInformationCircle}>
-                联系我们
+                {t("contact_us")}
               </Sidebar.Item>
             </Sidebar.ItemGroup>
           </Sidebar.Items>
@@ -90,7 +82,8 @@ const ExampleSidebar: React.FC = function () {
 const BottomMenu: React.FC = function () {
   return (
     <div className="flex items-center justify-center gap-x-5">
-      <DarkThemeToggle />
+      <LanguageToggle />
+      {/* <DarkThemeToggle /> */}
     </div>
   );
 };

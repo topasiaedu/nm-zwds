@@ -1,58 +1,44 @@
+/* eslint-disable no-undef */
 /*紫微斗數 Chinese Astrology Zi Wei Dou Shu*/
 var ziweiUI = {
-  //主星列印方向 true:由右向左,false:由左向右
-  right2left: false,
-  //UI resize
-  resize: function () {
-    //var wdth=$(window).width();
-    //$("#divZiWei").css("left",wdth>640?(wdth-640)/2:0);
+  language: localStorage.getItem("language") || "zh", // Get language from localStorage
+
+  translations: {
+    zh: {
+      solarCalendar: "國曆",
+      lunarCalendar: "農曆",
+      zodiac: "生肖",
+      fiveElement: "五行",
+      yinYangGender: "陰陽性別",
+      annualFortune: "流<br>年",
+      grandCycle: "大<br>限",
+    },
+    en: {
+      solarCalendar: "Solar Calendar",
+      lunarCalendar: "Lunar Calendar",
+      zodiac: "Zodiac",
+      fiveElement: "Five Elements",
+      yinYangGender: "Yin-Yang Gender",
+      annualFortune: "Annual<br>Fortune",
+      grandCycle: "Grand<br>Cycle",
+    },
   },
+
+  getTranslation: function (key) {
+    return this.translations[this.language][key];
+  },
+
   genNowDateZiwei: function () {
     this.getNowDate();
     this.genZiwei();
   },
-  getNowDate: function () {
-    var Today = new Date();
-    var h = Today.getHours();
-    Today.setDate(Today.getDate() + (h >= 23 ? 1 : 0));
-    document.getElementById("sel_Year").value = Today.getFullYear();
-    document.getElementById("sel_Month").value = Today.getMonth() + 1;
-    document.getElementById("sel_Day").value = Today.getDate();
-    document.getElementById("sel_Hour").value =
-      EarthlyBranches[((h + (h % 2 ? 1 : 0)) % 24) / 2];
-  },
+  getNowDate: function () {},
   //initial
   initial: function () {
-    //畫紫微斗數空表格
-    //document.getElementById("container").innerHTML="<div id='queryDiv'><h2>紫微斗數命盤</h2><div>西元<select id='sel_Year'></select> 年<select id='sel_Month'></select> 月<select id='sel_Day'></select> 日<select id='sel_Hour'></select> 時<input type='radio' id='gender' name='gender' value='M' checked>男<input type='radio' name='gender' value='F'>女<input type='button' value='現在時間*' id='btnNowDate'></div></div><div class='ziwei'><div><div id='zw6'></div><div id='zw7'></div><div id='zw8'></div><div id='zw9'></div></div><div><div id='zw5'></div><div id='zw4'></div><div id='zwHome' class='zwDivCenter'></div><div id='zw10'></div><div id='zw11'></div></div><div><div id='zw3'></div><div id='zw2'></div><div id='zw1'></div><div id='zw12'></div></div></div>";
     document.getElementById("container").innerHTML =
-      "<div class='zwDivHeader'><h2>紫微斗數命盤 </h2><div>西元<select id='sel_Year'></select> 年<select id='sel_Month'></select> 月<select id='sel_Day'></select> 日<select id='sel_Hour'></select> 時<input type='radio' id='gender' name='gender' value='M' checked>男<input type='radio' name='gender' value='F'>女<input type='button' value='現在時間*' id='btnNowDate'></div></div><div class='ziwei'><div id='zw6'></div><div id='zw7'></div><div id='zw8'></div><div id='zw9'></div><div id='zw5'></div><div id='zwHome' class='zwDivCenter'></div><div id='zw10'></div><div id='zw4'></div><div id='zw11'></div><div id='zw3'></div><div id='zw2'></div><div id='zw1'></div><div id='zw12'></div></div>";
-    function addOption(id, a, b) {
-      for (i = a; i <= b; i++) {
-        let op = document.createElement("option");
-        op.value = i;
-        op.innerHTML = i;
-        document.getElementById(id).appendChild(op);
-      }
-    }
-    addOption("sel_Year", 1900, 2049);
-    addOption("sel_Month", 1, 12);
-    addOption("sel_Day", 1, 31);
-    for (i = 0; i < EarthlyBranches.length; i++) {
-      let op = document.createElement("option");
-      op.value = EarthlyBranches[i];
-      op.innerHTML =
-        EarthlyBranches[i] +
-        "【" +
-        ((24 + (i * 2 - 1)) % 24).toString() +
-        "~" +
-        (i * 2 + 1).toString() +
-        "】";
-      document.getElementById("sel_Hour").appendChild(op);
-    }
-    //初始日期
+      "<div class='ziwei'><div id='zw6'></div><div id='zw7'></div><div id='zw8'></div><div id='zw9'></div><div id='zw5'></div><div id='zwHome' class='zwDivCenter'></div><div id='zw10'></div><div id='zw4'></div><div id='zw11'></div><div id='zw3'></div><div id='zw2'></div><div id='zw1'></div><div id='zw12'></div></div>";
+
     this.genNowDateZiwei();
-    this.resize();
   },
   clearPalce: function () {
     for (i = 0; i < 12; i++) {
@@ -61,48 +47,53 @@ var ziweiUI = {
     }
   },
   cleanZiwei: function () {
-    //$("#zwHome").html("");
     document.getElementById("zwHome").innerHTML = "";
     this.clearPalce();
   },
   genZiwei: function () {
-    let gender = document.querySelectorAll("input[type=radio]");
-    let genderValue = "M";
-    for (i = 0; i < gender.length; i++) {
-      if (gender[i].checked) {
-        genderValue = gender[i].value;
-        break;
-      }
+    // Function to get query parameters from the URL
+    function getQueryParam(param) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(param);
     }
-    var zw = ziwei.computeZiWei(
-      document.getElementById("sel_Year").value,
-      document.getElementById("sel_Month").value,
-      document.getElementById("sel_Day").value,
-      document.getElementById("sel_Hour").value,
-      genderValue
-    );
 
-  
+    // Retrieve values from the URL instead of the DOM
+    var year = getQueryParam("year");
+    var month = getQueryParam("month");
+    var day = getQueryParam("day");
+    var hour = getQueryParam("hour");
+    var genderValue = getQueryParam("gender"); // Assuming gender is also passed as a query parameter
+
+    // Compute Zi Wei using values from query parameters
+    var zw = ziwei.computeZiWei(year, month, day, hour, genderValue);
 
     document.getElementById("zwHome").innerHTML =
-      "國曆：" +
+      this.getTranslation("solarCalendar") +
+      ": " +
       ziwei.getSolarDay() +
       "<br>" +
-      "農曆：" +
+      this.getTranslation("lunarCalendar") +
+      ": " +
       ziwei.getLunarDay() +
       "<br>" +
-      "生肖：【" +
+      this.getTranslation("zodiac") +
+      ": 【" +
       ziwei.getShengXiao() +
       "】【" +
-      (year_to_stem_branch[document.getElementById("sel_Year").value] || "") +
+      year_to_stem_branch[year] +
       "】" +
       "<br>" +
       "<div>" +
+      this.getTranslation("fiveElement") +
+      ": " +
       ziwei.getFiveElement() +
       "</div>" +
       "<div>" +
+      this.getTranslation("yinYangGender") +
+      ": " +
       ziwei.getYinYangGender() +
       "</div>";
+      
     //render Direction
     var styleLR = [" zwStarLeft", " zwStarRight"];
     if (this.right2left) {
@@ -222,7 +213,7 @@ var ziweiUI = {
     let tagPalaceIndex = (startPalaceIndex + yearOffset) % 12; // Calculate palace for 流年
 
     // Apply 流年 tag to the calculated palace
-    let palaceDiv = document.getElementById(`zw${tagPalaceIndex}`);
+    let palaceDiv = document.getElementById(`zw${tagPalaceIndex + 1}`);
     if (palaceDiv) {
       let liunianDiv = document.createElement("div");
       liunianDiv.className = "liunianTag";
@@ -231,7 +222,7 @@ var ziweiUI = {
     }
 
     // calculate da yun ( today year - birth year + 1 )
-    let birthYear = parseInt(document.getElementById("sel_Year").value);
+    let birthYear = parseInt(year);
     let daYunIndex = currentYear - birthYear + 1;
     // Check the innerHTML of the palace div mangy10 ( which is in the format of age - age ), if daYunIndex is in the range, add the tag
     for (i = 0; i < 12; i++) {
@@ -436,23 +427,4 @@ var ziweiUI = {
 window.addEventListener("load", function () {
   //開始使用
   ziweiUI.initial();
-  document.getElementById("btnNowDate").addEventListener("click", function () {
-    ziweiUI.genNowDateZiwei();
-  });
-  let s = document.querySelectorAll("select");
-  for (i = 0; i < s.length; i++) {
-    s[i].addEventListener("change", function () {
-      ziweiUI.genZiwei();
-    });
-  }
-  let r = document.querySelectorAll("input[type=radio]");
-  for (i = 0; i < r.length; i++) {
-    r[i].addEventListener("change", function () {
-      ziweiUI.genZiwei();
-    });
-  }
-  window.addEventListener("resize", function () {
-    ziweiUI.resize();
-  });
-  //$(window).resize(function() { ziweiUI.resize();});
 });

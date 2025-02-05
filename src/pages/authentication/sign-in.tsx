@@ -4,9 +4,12 @@ import React, { useState, FC } from "react";
 import { useNavigate } from "react-router-dom";
 import LoadingPage from "../pages/loading";
 import { useAuthContext } from "../../context/AuthContext";
+import { useLanguage } from "../../context/LanguageContext";
+import LanguageToggle from "../../components/LanguageToggle";
 
 const SignInPage: FC = () => {
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const { signIn, user, loading } = useAuthContext();
 
   const [username, setUsername] = useState("");
@@ -40,7 +43,6 @@ const SignInPage: FC = () => {
         <div className="lg:col-span-6 place-self-center">
           <img
             className="hidden lg:block mx-auto"
-            // src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/authentication/illustration.svg"
             src="/images/logo.svg"
             alt="Sign-in Illustration"
           />
@@ -48,29 +50,17 @@ const SignInPage: FC = () => {
         {/* Form Section */}
         <div className="lg:col-span-6 w-full mx-auto">
           <Card className="p-6 bg-white rounded-lg shadow dark:bg-gray-800 sm:max-w-xl sm:p-8">
-            <a
-              href="#"
-              className="inline-flex items-center mb-4 text-4xl font-bold text-gray-900 dark:text-white">
-              {/* <img
-                className="w-8 h-8 mr-2"
-                src="/images/logo.svg"
-                alt="紫微斗數命盤 Logo"
-              /> */}
-              紫微斗數命盤
-            </a>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-              欢迎回来！
-            </h1>
-            {/* <p className="text-sm text-gray-500 dark:text-gray-300">
-              Start your website in seconds. Don’t have an account?{" "}
+            <div className="flex items-center justify-between mb-8">
               <a
-                href="/authentication/sign-up"
-                className="text-primary-600 hover:underline dark:text-primary-500"
-              >
-                Sign up
+                href="#"
+                className="inline-flex items-center text-4xl font-bold text-gray-900 dark:text-white">
+                {t("app_name")}
               </a>
-              .
-            </p> */}
+              <LanguageToggle />
+            </div>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+              {t("welcome_back")}
+            </h1>
             {error && (
               <Alert color="failure" className="my-4">
                 {error}
@@ -79,7 +69,7 @@ const SignInPage: FC = () => {
             <form className="space-y-6" onSubmit={handleLogin}>
               <div>
                 <Label htmlFor="username" className="mb-2">
-                  电子邮件
+                  {t("email")}
                 </Label>
                 <TextInput
                   id="username"
@@ -91,7 +81,7 @@ const SignInPage: FC = () => {
               </div>
               <div>
                 <Label htmlFor="password" className="mb-2">
-                  密码
+                  {t("password")}
                 </Label>
                 <TextInput
                   id="password"
@@ -103,20 +93,11 @@ const SignInPage: FC = () => {
                 />
               </div>
               <Button type="submit" className="w-full">
-                登录
+                {t("login")}
               </Button>
             </form>
           </Card>
         </div>
-
-        {/* Illustration Section */}
-        {/* <div className="lg:col-span-6 place-self-center">
-          <img
-            className="hidden lg:block mx-auto"
-            src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/authentication/illustration.svg"
-            alt="Sign-in Illustration"
-          />
-        </div> */}
       </div>
     </div>
   );
