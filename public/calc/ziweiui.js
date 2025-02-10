@@ -12,6 +12,12 @@ var ziweiUI = {
       yinYangGender: "陰陽性別",
       annualFortune: "流<br>年",
       grandCycle: "大<br>限",
+      name: "姓名",
+      age: "年齡","甲": "甲", "乙": "乙", "丙": "丙", "丁": "丁", "戊": "戊",
+      "己": "己", "庚": "庚", "辛": "辛", "壬": "壬", "癸": "癸",
+      "子": "子", "丑": "丑", "寅": "寅", "卯": "卯", "辰": "辰",
+      "巳": "巳", "午": "午", "未": "未", "申": "申", "酉": "酉",
+      "戌": "戌", "亥": "亥"
     },
     en: {
       solarCalendar: "Solar Calendar",
@@ -21,6 +27,12 @@ var ziweiUI = {
       yinYangGender: "Yin-Yang Gender",
       annualFortune: "Annual<br>Fortune",
       grandCycle: "Grand<br>Cycle",
+      name: "Name",
+      age: "Age","甲": "Jia", "乙": "Yi", "丙": "Bing", "丁": "Ding", "戊": "Wu",
+      "己": "Ji", "庚": "Geng", "辛": "Xin", "壬": "Ren", "癸": "Gui",
+      "子": "Rat", "丑": "Ox", "寅": "Tiger", "卯": "Rabbit", "辰": "Dragon",
+      "巳": "Snake", "午": "Horse", "未": "Goat", "申": "Monkey", "酉": "Rooster",
+      "戌": "Dog", "亥": "Pig",
     },
   },
 
@@ -43,7 +55,7 @@ var ziweiUI = {
   clearPalce: function () {
     for (i = 0; i < 12; i++) {
       document.getElementById("zw" + (i + 1).toString()).innerHTML =
-        "<div class='MangA'>" + EarthlyBranches[i] + "</div>";
+        "<div class='MangA'>" + EarthlyBranches[i]+ "</div>";
     }
   },
   cleanZiwei: function () {
@@ -63,26 +75,43 @@ var ziweiUI = {
     var day = getQueryParam("day");
     var hour = getQueryParam("hour");
     var genderValue = getQueryParam("gender"); // Assuming gender is also passed as a query parameter
+    var name = getQueryParam("name");
+
+    // Calculate Age
+    var dob = new Date(year, month - 1, day);
+    var ageDifMs = Date.now() - dob.getTime();
+    var ageDate = new Date(ageDifMs);
 
     // Compute Zi Wei using values from query parameters
     var zw = ziwei.computeZiWei(year, month, day, hour, genderValue);
 
     document.getElementById("zwHome").innerHTML =
+      "<div>" +
+      this.getTranslation("name") +
+      ": " +
+      name +
+      "</div>" +
+      "<div>" +
+      this.getTranslation("age") +
+      ": " +
+      Math.abs(ageDate.getUTCFullYear() - 1970) +
+      "</div>" +
+      "<div>" +
       this.getTranslation("solarCalendar") +
       ": " +
       ziwei.getSolarDay() +
-      "<br>" +
+      "</div><div>" +
       this.getTranslation("lunarCalendar") +
       ": " +
       ziwei.getLunarDay() +
-      "<br>" +
+      "</div><div>" +
       this.getTranslation("zodiac") +
       ": 【" +
       ziwei.getShengXiao() +
       "】【" +
       year_to_stem_branch[year] +
       "】" +
-      "<br>" +
+      "</div>" +
       "<div>" +
       this.getTranslation("fiveElement") +
       ": " +
@@ -93,7 +122,7 @@ var ziweiUI = {
       ": " +
       ziwei.getYinYangGender() +
       "</div>";
-      
+
     //render Direction
     var styleLR = [" zwStarLeft", " zwStarRight"];
     if (this.right2left) {

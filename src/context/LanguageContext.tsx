@@ -43,6 +43,7 @@ const translations: Record<Language, Record<string, string>> = {
     email: "Email",
     password: "Password",
     login: "Login",
+    loading: "Loading...",
   },
   zh: {
     welcome: "欢迎",
@@ -71,6 +72,7 @@ const translations: Record<Language, Record<string, string>> = {
     email: "电子邮件",
     password: "密码",
     login: "登录",
+    loading: "加载中...",
   },
 };
 

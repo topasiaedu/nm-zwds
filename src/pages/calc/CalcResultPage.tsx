@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "../../context/LanguageContext";
 import { useProfileContext } from "../../context/ProfileContext";
@@ -7,8 +7,16 @@ import LoadingPage from "../pages/loading";
 
 const CalcResultPage: React.FC = () => {
   const navigate = useNavigate();
-  const { t } = useLanguage();
+  const { language } = useLanguage(); // Language context
   const { loading, currentProfile } = useProfileContext();
+
+  // 🔥 State to force iframe reload
+  const [iframeKey, setIframeKey] = useState(0);
+
+  // 🔄 Reload iframe when language changes
+  useEffect(() => {
+    setIframeKey((prevKey) => prevKey + 1);
+  }, [language]);
 
   if (!currentProfile) {
     navigate("/");
@@ -35,16 +43,29 @@ const CalcResultPage: React.FC = () => {
   const day = date.getDate().toString().padStart(2, "0");
 
   // Ensure hour and gender exist
-  const hour = currentProfile?.birth_time ? currentProfile.birth_time.toString().padStart(2, "0") : "00";
+  const hour = currentProfile?.birth_time
+    ? currentProfile.birth_time.toString().padStart(2, "0")
+    : "00";
   const gender = currentProfile?.gender || "unknown";
 
+  const name = currentProfile?.name || "Unknown";
+
   // Construct query parameters
-  const queryParams = new URLSearchParams({ year, month, day, hour, gender }).toString();
+  const queryParams = new URLSearchParams({
+    year,
+    month,
+    day,
+    hour,
+    gender,
+    name,
+    lang: language, // 🔥 Pass language as a query parameter
+  }).toString();
 
   return (
     <NavbarSidebarLayout isFooter={false}>
       <div className="flex items-center justify-center h-[100vh] gap-8">
         <iframe
+          key={iframeKey} // 🔥 Changing key forces iframe reload
           src={`/calc/index.html?${queryParams}`}
           style={{ width: "100%", height: "100vh", border: "none" }}
           title="Calculation Page"
