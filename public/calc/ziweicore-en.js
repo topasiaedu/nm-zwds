@@ -131,9 +131,9 @@ var ziwei = {
     //   " 時"
     // );
     return (
-      GanGB[gan.y] +
+      this.getTranslation(GanGB[gan.y]) +
       " " +
-      ZhiGB[zhi.y] +
+      this.getTranslation(ZhiGB[zhi.y]) +
       " " +
       this.getTranslation("year") +
       " " +
