@@ -23,13 +23,12 @@ import ProfileFormPage from "./pages/calc/ProfileFormPage";
 import CalcResultPage from "./pages/calc/CalcResultPage";
 import { LanguageProvider } from "./context/LanguageContext";
 import { ProfileProvider } from "./context/ProfileContext";
-import { ZiWeiProvider } from "./context/ZiWeiContext";
+
 const App = () => (
   <LanguageProvider>
     <AlertProvider>
       <AuthProvider>
         <ProfileProvider>
-          <ZiWeiProvider>
             <AlertComponent />
             <BrowserRouter>
               <Routes>
@@ -89,7 +88,6 @@ const App = () => (
                 </Route>
               </Routes>
             </BrowserRouter>
-          </ZiWeiProvider>
         </ProfileProvider>
       </AuthProvider>
     </AlertProvider>

@@ -64,12 +64,21 @@ const CalcResultPage: React.FC = () => {
   return (
     <NavbarSidebarLayout isFooter={false}>
       <div className="flex items-center justify-center h-[100vh] gap-8">
-        <iframe
-          key={iframeKey} // 🔥 Changing key forces iframe reload
-          src={`/calc/index.html?${queryParams}`}
-          style={{ width: "100%", height: "100vh", border: "none" }}
-          title="Calculation Page"
-        />
+        {language === "en" ? (
+          <iframe
+            key={iframeKey} // 🔥 Changing key forces iframe reload
+            src={`/calc/index-en.html?${queryParams}`}
+            style={{ width: "100%", height: "100vh", border: "none" }}
+            title="Calculation Page"
+          />
+        ) : (
+          <iframe
+            key={iframeKey} // 🔥 Changing key forces iframe reload
+            src={`/calc/index.html?${queryParams}`}
+            style={{ width: "100%", height: "100vh", border: "none" }}
+            title="Calculation Page"
+          />
+        )}
       </div>
     </NavbarSidebarLayout>
   );

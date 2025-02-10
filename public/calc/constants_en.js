@@ -14,19 +14,20 @@ var HeavenlyStems = [
   "癸",
 ];
 var ShengXiaoGB = [
-  "Shu",
-  "Niu",
-  "Hu",
-  "Tu",
-  "Long",
-  "She",
-  "Ma",
-  "Yang",
-  "Hou",
-  "Ji",
-  "Gou",
-  "Zhu",
+  "Rat",
+  "Ox",
+  "Tiger",
+  "Rabbit",
+  "Dragon",
+  "Snake",
+  "Horse",
+  "Goat",
+  "Monkey",
+  "Rooster",
+  "Dog",
+  "Pig"
 ];
+
 var EarthlyBranches = [
   "子",
   "丑",
@@ -42,43 +43,76 @@ var EarthlyBranches = [
   "亥",
 ];
 var Palace = [
-  "【Ming Gong】",
-  "【Fu Mu Gong】",
-  "【Fu De Gong】",
-  "【Tian Zhai Gong】",
-  "【Guan Lu Gong】",
-  "【Jiao You Gong】",
-  "【Qian Yi Gong】",
-  "【Ji E Gong】",
-  "【Cai Bo Gong】",
-  "【Zi Nv Gong】",
-  "【Fu Qi Gong】",
-  "【Xiong Di Gong】",
-  "【Shen】",
+  "【Life Palace】",       // 【命宮】
+  "【Parents Palace】",    // 【父母宮】
+  "【Happy Palace】",      // 【福德宮】 (Fortune Palace)
+  "【Property Palace】",   // 【田宅宮】
+  "【Career Palace】",     // 【官祿宮】
+  "【Friends Palace】",    // 【交友宮】
+  "【Travel Palace】",     // 【遷移宮】
+  "【Health Palace】",     // 【疾厄宮】
+  "【Wealth Palace】",     // 【財帛宮】
+  "【Child Palace】",      // 【子女宮】
+  "【Marriage Palace】",   // 【夫妻宮】
+  "【Siblings Palace】",   // 【兄弟宮】
+  "【Body】"              // 【身】
 ];
+
+
 var FiveElements = ["Shui Er Ju", "Huo Liu Ju", "Tu Wu Ju", "Mu San Ju", "Jin Si Ju"];
 var DaShian = [2, 6, 5, 3, 4]; //搭配五行局
 /*Stars*/
 var StarM_A14 = [
-  "Zi Wei",
-  "Tian Ji",
-  "Tai Yang",
-  "Wu Qu",
-  "Tian Tong",
-  "Lian Zhen",
-  "Tian Fu",
-  "Tai Yin",
-  "Tan Lang",
-  "Ju Men",
-  "Tian Xiang",
-  "Tian Liang",
-  "Qi Sha",
-  "Po Jun",
+  "Zi Wei<br>",
+  "Tian Ji<br>",
+  "Tai Yang<br>",
+  "Wu Qu<br>",
+  "Tian Tong<br>",
+  "Lian Zhen<br>",
+  "Tian Fu<br>",
+  "Tai Yin<br>",
+  "Tan Lang<br>",
+  "Ju Men<br>",
+  "Tian Xiang<br>",
+  "Tian Liang<br>",
+  "Qi Sha<br>",
+  "Po Jun<br>"
 ];
-var StarM_A07 = ["Wen Chang", "Wen Qu", "Zuo Fu", "You Bi", "Tian Kui", "Tian Yue", "Lu Cun"];
-var StarM_S04 = ["Hua Lu", "Hua Quan", "Hua Ke", "Hua Ji"];
-var StarM_B06 = ["Qing Yang", "Tuo Luo", "Huo Xing", "Ling Xing", "Tian Kong", "Di Jie"];
-var StarO_S05 = ["Tian Ma", "Long Chi", "Feng Ge", "Hong Luan", "Tian Xi"];
+
+var StarM_A07 = [
+  "Wen Chang<br>",
+  "Wen Qu<br>",
+  "Zuo Fu<br>",
+  "You Bi<br>",
+  "Tian Kui<br>",
+  "Tian Yue<br>",
+  "Lu Cun<br>"
+];
+
+var StarM_S04 = [
+  "Hua Lu<br>",
+  "Hua Quan<br>",
+  "Hua Ke<br>",
+  "Hua Ji<br>"
+];
+
+var StarM_B06 = [
+  "Qing Yang<br>",
+  "Tuo Luo<br>",
+  "Huo Xing<br>",
+  "Ling Xing<br>",
+  "Tian Kong<br>",
+  "Di Jie<br>"
+];
+
+var StarO_S05 = [
+  "Tian Ma<br>",
+  "Long Chi<br>",
+  "Feng Ge<br>",
+  "Hong Luan<br>",
+  "Tian Xi<br>"
+];
+
 /*0:水二局:[1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11,0,0,1,1,2,2,3,3,4]
   3:木三局:[4,1,2,5,2,3,6,3,4,7,4,5,8,5,6,9,6,7,10,7,8,11,8,9,0,9,10,1,10,11]
   4:金四局:[11,4,1,2,0,5,2,3,1,6,3,4,2,7,4,5,3,8,5,6,4,9,6,7,5,10,7,8,6,11]

@@ -83,7 +83,7 @@ const BottomMenu: React.FC = function () {
   return (
     <div className="flex items-center justify-center gap-x-5">
       <LanguageToggle />
-      {/* <DarkThemeToggle /> */}
+      <DarkThemeToggle />
     </div>
   );
 };

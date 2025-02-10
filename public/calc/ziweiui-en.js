@@ -53,10 +53,10 @@ var ziweiUI = {
     this.genNowDateZiwei();
   },
   clearPalce: function () {
-    for (i = 0; i < 12; i++) {
-      document.getElementById("zw" + (i + 1).toString()).innerHTML =
-        "<div class='MangA'>" + EarthlyBranches[i]+ "</div>";
-    }
+    // for (i = 0; i < 12; i++) {
+    //   document.getElementById("zw" + (i + 1).toString()).innerHTML =
+    //     "<div class='MangA'>" + EarthlyBranches[i]+ "</div>";
+    // }
   },
   cleanZiwei: function () {
     document.getElementById("zwHome").innerHTML = "";
@@ -131,8 +131,12 @@ var ziweiUI = {
     //render Star
     for (i = 0; i < 12; i++) {
       document.getElementById("zw" + (i + 1).toString()).innerHTML +=
-        "<div class='MangA'>" +
+        "<div class='MangA' style='display:none'>" +
         zw[i].MangA +
+        "</div>" +
+        "<div class='MangA-new'>" +
+        zw[i].MangA.replace(/<br\/>/g, ' ') 
+        .replace(/[\u4e00-\u9fff]/g, match => this.getTranslation(`${match}`)) +
         "</div>" +
         "<div class='MangB'>" +
         zw[i].MangB +
@@ -151,53 +155,41 @@ var ziweiUI = {
       StarB2 = "";
       StarC1 = "";
       StarC2 = "";
-      var tmpSatrA = [[], [], []];
+      var tempStarA = [[], [], []];
       var k = 0;
       for (j = 0; j < zw[i].StarA.length; j++) {
         // tmpSatrA[0][k] = zw[i].StarA[j].substring(0, 1);
         // tmpSatrA[1][k] = zw[i].StarA[j].substring(1, 2);
-        tmpSatrA[0][k] =
+        tempStarA[0][k] = 
           `<span class="blue-star">` +
-          zw[i].StarA[j].substring(0, 1) +
+          zw[i].StarA[j] +
           "</span>";
-        tmpSatrA[1][k] =
-          `<span class="blue-star">` +
-          zw[i].StarA[j].substring(1, 2) +
-          "</span>";
-        tmpSatrA[2][k] =
-          zw[i].StarA[j].length > 2
-            ? "<span>" + zw[i].StarA[j].substring(3, 4) + "</span>"
-            : "　";
         k += 1;
       }
       for (j = 0; j < zw[i].Star6.length; j++) {
-        tmpSatrA[0][k] = "<span>" + zw[i].Star6[j].substring(0, 1) + "</span>";
-        tmpSatrA[1][k] = "<span>" + zw[i].Star6[j].substring(1, 2) + "</span>";
-        tmpSatrA[2][k] =
+        tempStarA[0][k] = "<span>" + zw[i].Star6[j] + "</span>";
+        tempStarA[1][k] = "<span>" + zw[i].Star6[j] + "</span>";
+        tempStarA[2][k] =
           zw[i].Star6[j].length > 2
-            ? "<span>" + zw[i].Star6[j].substring(3, 4) + "</span>"
+            ? "<span>" + zw[i].Star6[j]+ "</span>"
             : "　";
         k += 1;
       }
       //style Left or Right
       if (this.right2left) {
         for (j = 0; j < 3; j++) {
-          tmpSatrA[j].reverse();
+          tempStarA[j].reverse();
         }
       }
       //render StarA & B & C
-      for (j = 0; j < tmpSatrA[0].length; j++) {
-        StarA1 += tmpSatrA[0][j];
-        StarA2 += tmpSatrA[1][j];
-        StarA3 += tmpSatrA[2][j];
+      for (j = 0; j < tempStarA[0].length; j++) {
+        StarA1 += tempStarA[0][j];
       }
       for (j = 0; j < zw[i].StarB.length; j++) {
-        StarB1 += zw[i].StarB[j].substring(0, 1);
-        StarB2 += zw[i].StarB[j].substring(1, 2);
+        StarB1 += zw[i].StarB[j];
       }
       for (j = 0; j < zw[i].StarC.length; j++) {
-        StarC1 += zw[i].StarC[j].substring(0, 1);
-        StarC2 += zw[i].StarC[j].substring(1, 2);
+        StarC1 += zw[i].StarC[j];
       }
       document.getElementById("zw" + (i + 1).toString()).innerHTML +=
         "<div class='StarA" +
@@ -246,7 +238,7 @@ var ziweiUI = {
     if (palaceDiv) {
       let liunianDiv = document.createElement("div");
       liunianDiv.className = "liunianTag";
-      liunianDiv.innerHTML = "流<br>年"; // Use innerHTML for HTML content
+      liunianDiv.innerHTML = "Liu<br>Year"; // Use innerHTML for HTML content
       palaceDiv.appendChild(liunianDiv);
     }
 
@@ -267,7 +259,7 @@ var ziweiUI = {
         ) {
           let daYunDiv = document.createElement("div");
           daYunDiv.className = "daYunTag";
-          daYunDiv.innerHTML = "大<br>限";
+          daYunDiv.innerHTML = "Da<br>Shian";
           palaceDiv.appendChild(daYunDiv);
         }
       }
@@ -280,17 +272,18 @@ var ziweiUI = {
     }
 
     var lines = {
-      甲: ["廉貞", "破軍", "武曲", "太陽"],
-      乙: ["天機", "天梁", "紫微", "太陰"],
-      丙: ["天同", "天機", "文昌", "廉貞"],
-      丁: ["太陰", "天同", "天機", "巨門"],
-      戊: ["貪狼", "太陰", "右弼", "天機"],
-      己: ["武曲", "貪狼", "天梁", "文曲"],
-      庚: ["太陽", "武曲", "陰", "同"],
-      辛: ["巨", "陽", "曲", "昌"],
-      壬: ["梁", "紫", "左", "武"],
-      癸: ["破", "巨", "陰", "貪"],
+      甲: ["Lian Zhen", "Po Jun", "Wu Qu", "Tai Yang"],
+      乙: ["Tian Ji", "Tian Liang", "Zi Wei", "Tai Yin"],
+      丙: ["Tian Tong", "Tian Ji", "Wen Chang", "Lian Zhen"],
+      丁: ["Tai Yin", "Tian Tong", "Tian Ji", "Ju Men"],
+      戊: ["Tan Lang", "Tai Yin", "You Bi", "Tian Ji"],
+      己: ["Wu Qu", "Tan Lang", "Tian Liang", "Wen Qu"],
+      庚: ["Tai Yang", "Wu Qu", "Yin", "Tong"],
+      辛: ["Ju", "Yang", "Qu", "Chang"],
+      壬: ["Liang", "Zi", "Zuo", "Wu"],
+      癸: ["Po", "Ju", "Yin", "Tan"]
     };
+    
     function initPalaceLines() {
       let svg = document.getElementById("palaceLines");
       if (!svg) {
@@ -313,11 +306,12 @@ var ziweiUI = {
     initPalaceLines();
     // Function to handle palace click
     function handlePalaceClick(palaceIndex) {
-      console.log(palaceIndex);
       const palace = document.getElementById(`zw${palaceIndex}`);
+      console.log("Palace", palace);
       const mangAElements = palace.querySelectorAll(".MangA"); // Get all .MangA elements
-      const mangAContent = mangAElements[1].innerText.split("\n")[0].trim();
-      console.log(mangAContent);
+      console.log("MangA elements", mangAElements);
+      const mangAContent = mangAElements[0].innerText.substring(0,1).trim();
+      console.log("mangAContent", mangAContent);
       console.log(lines[mangAContent]);
       if (!mangAContent || !lines[mangAContent]) return;
 
