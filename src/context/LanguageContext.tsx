@@ -44,6 +44,8 @@ const translations: Record<Language, Record<string, string>> = {
     password: "Password",
     login: "Login",
     loading: "Loading...",
+    calculator_1: "Calculator 1",
+    calculator_2: "Calculator 2",
   },
   zh: {
     welcome: "欢迎",
@@ -73,6 +75,8 @@ const translations: Record<Language, Record<string, string>> = {
     password: "密码",
     login: "登录",
     loading: "加载中...",
+    calculator_1: "命盘1",
+    calculator_2: "命盘2",
   },
 };
 

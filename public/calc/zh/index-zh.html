@@ -1,0 +1,40 @@
+<html>
+<head>
+    <link rel="shortcut icon" type="image/png" href="img/star-ico.png"/>
+    <meta http-equiv="Content-Language" content="zh-tw">
+    <meta charset="UTF-8">
+    <title>紫微斗數命盤</title>
+    <link rel="stylesheet" type="text/css" href="/calc/zh/ziwei.css">
+    
+    <!-- Keep necessary scripts -->
+    <script src="/calc/zh/lunar.js" type="text/javascript"></script>
+
+    <!-- Dynamically load constants -->
+    <script>
+        (function() {
+            let language = localStorage.getItem("language") || "zh"; // Default to Chinese (zh)
+            let script = document.createElement("script");
+            script.src = `/calc/zh/constants_${language}.js`; // Load the correct constants file
+            script.type = "text/javascript";
+            script.onload = function() {
+                // Once constants are loaded, load the other scripts
+                let coreScript = document.createElement("script");
+                coreScript.src = "/calc/zh/ziweicore.js";
+                coreScript.type = "text/javascript";
+                document.head.appendChild(coreScript);
+
+                coreScript.onload = function() {
+                    let uiScript = document.createElement("script");
+                    uiScript.src = "/calc/zh/ziweiui.js";
+                    uiScript.type = "text/javascript";
+                    document.head.appendChild(uiScript);
+                };
+            };
+            document.head.appendChild(script);
+        })();
+    </script>
+</head>
+<body>
+    <div id="container"></div>
+</body>
+</html>

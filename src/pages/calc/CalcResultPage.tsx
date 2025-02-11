@@ -4,11 +4,13 @@ import { useLanguage } from "../../context/LanguageContext";
 import { useProfileContext } from "../../context/ProfileContext";
 import NavbarSidebarLayout from "../../layouts/navbar-sidebar";
 import LoadingPage from "../pages/loading";
+import { useParams } from "react-router-dom";
 
 const CalcResultPage: React.FC = () => {
   const navigate = useNavigate();
   const { language } = useLanguage(); // Language context
   const { loading, currentProfile } = useProfileContext();
+  const { calcType } = useParams();
 
   // 🔥 State to force iframe reload
   const [iframeKey, setIframeKey] = useState(0);
@@ -64,21 +66,14 @@ const CalcResultPage: React.FC = () => {
   return (
     <NavbarSidebarLayout isFooter={false}>
       <div className="flex items-center justify-center h-[100vh] gap-8">
-        {language === "en" ? (
-          <iframe
-            key={iframeKey} // 🔥 Changing key forces iframe reload
-            src={`/calc/index-en.html?${queryParams}`}
-            style={{ width: "100%", height: "100vh", border: "none" }}
-            title="Calculation Page"
-          />
-        ) : (
-          <iframe
-            key={iframeKey} // 🔥 Changing key forces iframe reload
-            src={`/calc/index.html?${queryParams}`}
-            style={{ width: "100%", height: "100vh", border: "none" }}
-            title="Calculation Page"
-          />
-        )}
+        <iframe
+          key={iframeKey} 
+          src={`/calc/${language}${
+            calcType === "2" ? "-2" : ""
+          }/index-${language}.html?${queryParams}`}
+          style={{ width: "100%", height: "100vh", border: "none" }}
+          title="Calculation Page"
+        />
       </div>
     </NavbarSidebarLayout>
   );

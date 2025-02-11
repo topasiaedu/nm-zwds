@@ -313,12 +313,9 @@ var ziweiUI = {
     initPalaceLines();
     // Function to handle palace click
     function handlePalaceClick(palaceIndex) {
-      console.log(palaceIndex);
       const palace = document.getElementById(`zw${palaceIndex}`);
       const mangAElements = palace.querySelectorAll(".MangA"); // Get all .MangA elements
       const mangAContent = mangAElements[1].innerText.split("\n")[0].trim();
-      console.log(mangAContent);
-      console.log(lines[mangAContent]);
       if (!mangAContent || !lines[mangAContent]) return;
 
       // Get the characters to match
@@ -376,6 +373,7 @@ var ziweiUI = {
 
       console.log(matches);
       // Draw lines to matches
+      console.log(palaceIndex, matches);
       drawLinesFromPalace(palaceIndex, matches);
     }
 

@@ -23,9 +23,9 @@ const ProfileFormPage: React.FC = () => {
   const { addProfile, setCurrentProfile } = useProfileContext();
   const { showAlert } = useAlertContext();
 
-  const handleAddProfile = async () => {
+  const handleAddProfile = async (calcType:string) => {
     if (!user) return;
-    if (!name || !birthday || !birthTime || !gender) {
+    if (!name || !birthday || !birthTime || !gender || !calcType) {
       showAlert(t("fill_all_fields"), "error");
       return;
     }
@@ -46,7 +46,7 @@ const ProfileFormPage: React.FC = () => {
           showAlert(t("profile_added_successfully"), "success");
           setCurrentProfile(data);
           // Redirect to results page
-          navigate(`/calc/results/${data.id}`);
+          navigate(`/calc/results/${data.id}/${calcType}`);
         } else {
           console.error("Error adding profile: Data is null");
           showAlert(t("error_adding_profile"), "error");
@@ -129,10 +129,19 @@ const ProfileFormPage: React.FC = () => {
             </div>
           </div>
 
-          <Button color="primary" onClick={handleAddProfile}>
-            <div className="flex items-center gap-x-3 text-md font-bold">
+          <Button color="primary" onClick={()=>{
+            handleAddProfile("1")
+          }}>            <div className="flex items-center gap-x-3 text-md font-bold">
               <HiPlus className="text-xl" />
               {t("add_profile")}
+            </div>
+          </Button>
+          <Button color="primary" onClick={()=>{
+            handleAddProfile("2")
+          }}>
+            <div className="flex items-center gap-x-3 text-md font-bold">
+              <HiPlus className="text-xl" />
+              {t("add_profile")} 2
             </div>
           </Button>
         </Card>

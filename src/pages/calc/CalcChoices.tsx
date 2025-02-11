@@ -1,32 +1,17 @@
 import { useNavigate } from "react-router-dom";
 import NavbarSidebarLayout from "../../layouts/navbar-sidebar";
-import React, { useEffect } from "react";
+import React from "react";
 import { useLanguage } from "../../context/LanguageContext";
-import { Profile, useProfileContext } from "../../context/ProfileContext";
-import { useAuthContext } from "../../context/AuthContext";
+import { useProfileContext } from "../../context/ProfileContext";
 import { Card } from "flowbite-react";
 import LoadingPage from "../pages/loading";
 
-const CalculatorPage: React.FC = () => {
+const CalcChoicesPage: React.FC = () => {
   const navigate = useNavigate();
   const { t } = useLanguage();
-  const { loading, profiles, setCurrentProfile } = useProfileContext();
-  const { user } = useAuthContext();
-  const [self, setSelf] = React.useState<Profile | null>(null);
+  const { loading, currentProfile } = useProfileContext();
 
-  useEffect(() => {
-    if (!user) return;
-    if (profiles.length === 0) return;
-
-    const self = profiles.find(
-      (profile) => profile.user_id === user.id && profile.is_self
-    );
-    if (self) {
-      setSelf(self);
-    }
-  }, [user, profiles]);
-
-  if (!user || loading) {
+  if (!currentProfile || loading) {
     return <LoadingPage />;
   }
 
@@ -38,33 +23,30 @@ const CalculatorPage: React.FC = () => {
           <Card
             className="max-w-sm rounded-lg shadow-lg p-8 cursor-pointer"
             onClick={() => {
-              if (!self) {
-                navigate("/calc/profile/true");
-              } else {
-                setCurrentProfile(self);
-                navigate("/calc/choices/" + self.id);
-              }
+              navigate("/calc/results/" + currentProfile.id + "/1");
             }}>
             <img
-              src="/images/self.svg"
+              src="/images/calc1.svg"
               alt="Discover yourself"
               className="w-64 h-64"
             />
             <h5 className="text-2xl font-bold text-center pt-4">
-              {t("discover_yourself")}
+              {t("calculator_1")}
             </h5>
           </Card>
 
           <Card
             className="max-w-sm rounded-lg shadow-lg p-8 cursor-pointer"
-            onClick={() => navigate("/calc/profiles")}>
+            onClick={() =>
+              navigate("/calc/results/" + currentProfile.id + "/2")
+            }>
             <img
-              src="/images/others.svg"
+              src="/images/calc1_snake.svg"
               alt="Discover others"
               className="w-64 h-64"
             />
             <h5 className="text-2xl font-bold text-center pt-4">
-              {t("discover_others")}
+              {t("calculator_2")}
             </h5>
           </Card>
         </>
@@ -73,4 +55,4 @@ const CalculatorPage: React.FC = () => {
   );
 };
 
-export default CalculatorPage;
+export default CalcChoicesPage;

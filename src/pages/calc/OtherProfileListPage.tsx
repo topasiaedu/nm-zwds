@@ -32,7 +32,7 @@ const OtherProfileListPage: React.FC = () => {
               <Card
                 key={profile.id}
                 className="rounded-lg shadow-lg p-4 w-64 mt-4"
-                onClick={() => navigate(`/calc/results/${profile.id}`)}>
+                onClick={() => navigate(`/calc/choices/${profile.id}`)}>
                 <h5 className="text-xl font-bold">{profile.name}</h5>
                 <p>
                   {" "}
