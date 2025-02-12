@@ -378,6 +378,180 @@ var ziweiUI = {
     initPalaceLines();
 
     // Function to draw lines with color-matching arrowheads
+    // Function to compute direction based on relative positioning
+    function computeDirection(originPalace, targetPalace) {
+      if (!originPalace || !targetPalace) return null;
+
+      const originRect = originPalace.getBoundingClientRect();
+      const targetRect = targetPalace.getBoundingClientRect();
+
+      const originCenter = {
+        x: originRect.left + originRect.width / 2,
+        y: originRect.top + originRect.height / 2,
+      };
+
+      const targetCenter = {
+        x: targetRect.left + targetRect.width / 2,
+        y: targetRect.top + targetRect.height / 2,
+      };
+
+      const dx = targetCenter.x - originCenter.x;
+      const dy = targetCenter.y - originCenter.y;
+
+      let direction = "";
+
+      if (Math.abs(dx) > Math.abs(dy)) {
+        direction = dx > 0 ? "right" : "left";
+      } else if (Math.abs(dy) > Math.abs(dx)) {
+        direction = dy > 0 ? "down" : "up";
+      } else {
+        if (dx > 0 && dy > 0) direction = "down-right";
+        if (dx < 0 && dy > 0) direction = "down-left";
+        if (dx > 0 && dy < 0) direction = "up-right";
+        if (dx < 0 && dy < 0) direction = "up-left";
+      }
+
+      return direction;
+    }
+
+    // Function to get the start point at the border of the origin palace
+    function getArrowStartPoint(originPalace, targetPalace) {
+      if (!originPalace || !targetPalace) return null;
+
+      const originRect = originPalace.getBoundingClientRect();
+      const direction = computeDirection(originPalace, targetPalace);
+
+      let startX = originRect.left + originRect.width / 2;
+      let startY = originRect.top + originRect.height / 2;
+
+      switch (direction) {
+        case "down":
+          startY = originRect.bottom;
+          break;
+        case "up":
+          startY = originRect.top;
+          break;
+        case "right":
+          startX = originRect.right;
+          break;
+        case "left":
+          startX = originRect.left;
+          break;
+        case "down-right":
+          startX = originRect.right;
+          startY = originRect.bottom;
+          break;
+        case "down-left":
+          startX = originRect.left;
+          startY = originRect.bottom;
+          break;
+        case "up-right":
+          startX = originRect.right;
+          startY = originRect.top;
+          break;
+        case "up-left":
+          startX = originRect.left;
+          startY = originRect.top;
+          break;
+      }
+
+      return { x: startX, y: startY };
+    }
+
+    // Function to get the destination center
+    function getDestinationCenter(targetPalace) {
+      if (!targetPalace) return null;
+
+      const targetRect = targetPalace.getBoundingClientRect();
+
+      return {
+        x: targetRect.left + targetRect.width / 2,
+        y: targetRect.top + targetRect.height / 2,
+      };
+    }
+
+    // Function to compute the angle between start and destination
+    function computeArrowAngle(start, destination) {
+      const dx = destination.x - start.x;
+      const dy = destination.y - start.y;
+      return Math.atan2(dy, dx); // Angle in radians
+    }
+
+    // Function to compute the end point, ensuring a length of 25 pixels
+    function getArrowEndPoint(start, destination) {
+      const angle = computeArrowAngle(start, destination);
+
+      return {
+        x: start.x + 75 * Math.cos(angle),
+        y: start.y + 75 * Math.sin(angle),
+      };
+    }
+
+    // Function to create a standard single arrowhead (old design)
+    function createArrowhead(svg, markerId, color) {
+      const defs = document.createElementNS(
+        "http://www.w3.org/2000/svg",
+        "defs"
+      );
+      const arrowhead = document.createElementNS(
+        "http://www.w3.org/2000/svg",
+        "marker"
+      );
+
+      arrowhead.setAttribute("id", markerId);
+      arrowhead.setAttribute("markerWidth", "10");
+      arrowhead.setAttribute("markerHeight", "7");
+      arrowhead.setAttribute("refX", "10");
+      arrowhead.setAttribute("refY", "3.5");
+      arrowhead.setAttribute("orient", "auto");
+
+      const arrowPath = document.createElementNS(
+        "http://www.w3.org/2000/svg",
+        "path"
+      );
+      arrowPath.setAttribute("d", "M0,0 L10,3.5 L0,7 Z"); // Old-school filled triangle
+      arrowPath.setAttribute("fill", color);
+
+      arrowhead.appendChild(arrowPath);
+      defs.appendChild(arrowhead);
+      svg.appendChild(defs);
+
+      return markerId;
+    }
+
+    // Function to create a **left-pointing** arrowhead
+    function createLeftArrowhead(svg, markerId, color) {
+      const defs = document.createElementNS(
+        "http://www.w3.org/2000/svg",
+        "defs"
+      );
+      const arrowhead = document.createElementNS(
+        "http://www.w3.org/2000/svg",
+        "marker"
+      );
+
+      arrowhead.setAttribute("id", markerId);
+      arrowhead.setAttribute("markerWidth", "10");
+      arrowhead.setAttribute("markerHeight", "7");
+      arrowhead.setAttribute("refX", "0"); // Flips the arrow to point left
+      arrowhead.setAttribute("refY", "3.5");
+      arrowhead.setAttribute("orient", "auto");
+
+      const arrowPath = document.createElementNS(
+        "http://www.w3.org/2000/svg",
+        "path"
+      );
+      arrowPath.setAttribute("d", "M10,0 L0,3.5 L10,7 Z"); // Reversed triangle (pointing left)
+      arrowPath.setAttribute("fill", color);
+
+      arrowhead.appendChild(arrowPath);
+      defs.appendChild(arrowhead);
+      svg.appendChild(defs);
+
+      return markerId;
+    }
+
+    // Function to draw the arrows
     function drawFixedLines() {
       const svg = document.getElementById("palaceLines");
       if (svg) {
@@ -386,14 +560,11 @@ var ziweiUI = {
 
       const pairs = [
         { from: 10, to: 4 },
-        { from: 4, to: 10 },
         { from: 8, to: 3 },
         { from: 7, to: 1 },
       ];
 
-      // Define colors for the lines
-      // const colors = ["green", "blue", "#ba8e23", "red"];
-      const colors = ["green", "green", "#ba8e23", "red"];
+      const colors = ["green", "#ba8e23", "red"];
 
       pairs.forEach((pair, index) => {
         const originPalace = document.getElementById(`zw${pair.from}`);
@@ -406,66 +577,83 @@ var ziweiUI = {
           return;
         }
 
-        const originRect = originPalace.getBoundingClientRect();
-        const targetRect = targetPalace.getBoundingClientRect();
+        const start = getArrowStartPoint(originPalace, targetPalace);
+        const destinationCenter = getDestinationCenter(targetPalace);
+        const end = getArrowEndPoint(start, destinationCenter);
 
-        const originCenter = {
-          x: originRect.left + originRect.width / 2,
-          y: originRect.top + originRect.height / 2,
-        };
+        const color = colors[index % colors.length];
 
-        const targetCenter = {
-          x: targetRect.left + targetRect.width / 2,
-          y: targetRect.top + targetRect.height / 2,
-        };
+        // If it's the first connection, create **both left and right arrowheads**
+        if (index === 0) {
+          const rightArrowId = createArrowhead(
+            svg,
+            `arrowhead-right-${index}`,
+            color
+          );
+          const leftArrowId = createLeftArrowhead(
+            svg,
+            `arrowhead-left-${index}`,
+            color
+          );
 
-        const color = colors[index % colors.length]; // Assign a color from the list
+          // Draw the bi-directional line with **two arrowheads**
+          const line = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "line"
+          );
+          line.setAttribute("stroke", color);
+          line.setAttribute("x1", start.x);
+          line.setAttribute("y1", start.y);
+          line.setAttribute("x2", end.x);
+          line.setAttribute("y2", end.y);
+          line.setAttribute("stroke-width", "2");
+          line.setAttribute("marker-start", `url(#${leftArrowId})`); // Left-facing arrow
+          line.setAttribute("marker-end", `url(#${rightArrowId})`); // Right-facing arrow
 
-        // Create a unique marker for this line
-        const markerId = `arrowhead-${index}`;
-        const defs = document.createElementNS(
-          "http://www.w3.org/2000/svg",
-          "defs"
-        );
-        const arrowhead = document.createElementNS(
-          "http://www.w3.org/2000/svg",
-          "marker"
-        );
+          svg.appendChild(line);
+        } else {
+          // For all other connections, create a **single arrowhead**
+          const markerId = createArrowhead(svg, `arrowhead-${index}`, color);
 
-        arrowhead.setAttribute("id", markerId);
-        arrowhead.setAttribute("markerWidth", "10");
-        arrowhead.setAttribute("markerHeight", "7");
-        arrowhead.setAttribute("refX", "10");
-        arrowhead.setAttribute("refY", "3.5");
-        arrowhead.setAttribute("orient", "auto");
+          // Draw the standard single-arrow line
+          const line = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "line"
+          );
+          line.setAttribute("stroke", color);
+          line.setAttribute("x1", start.x);
+          line.setAttribute("y1", start.y);
+          line.setAttribute("x2", end.x);
+          line.setAttribute("y2", end.y);
+          line.setAttribute("stroke-width", "2");
+          line.setAttribute("marker-end", `url(#${markerId})`);
 
-        const arrowPath = document.createElementNS(
-          "http://www.w3.org/2000/svg",
-          "path"
-        );
-        arrowPath.setAttribute("d", "M0,0 L10,3.5 L0,7 Z");
-        arrowPath.setAttribute("fill", color);
-        arrowhead.appendChild(arrowPath);
-        defs.appendChild(arrowhead);
-        svg.appendChild(defs);
-
-        // Draw a line from origin to target
-        const line = document.createElementNS(
-          "http://www.w3.org/2000/svg",
-          "line"
-        );
-        line.setAttribute("stroke", color);
-        line.setAttribute("x1", originCenter.x);
-        line.setAttribute("y1", originCenter.y);
-        line.setAttribute("x2", targetCenter.x);
-        line.setAttribute("y2", targetCenter.y);
-        line.setAttribute("stroke-width", "2");
-        line.setAttribute("marker-end", `url(#${markerId})`);
-
-        svg.appendChild(line);
+          svg.appendChild(line);
+        }
       });
     }
+
     drawFixedLines();
+
+    // Function to observe container size changes and redraw lines
+    function observeContainerResize() {
+      const container = document.getElementById("container");
+
+      if (!container) {
+        console.warn("Container not found!");
+        return;
+      }
+
+      // Create a ResizeObserver to watch for changes in the container size
+      const resizeObserver = new ResizeObserver(() => {
+        drawFixedLines(); // Recalculate and redraw arrows
+      });
+
+      // Start observing the container
+      resizeObserver.observe(container);
+    }
+
+    observeContainerResize(); // Start observing container changes
   },
 };
 window.addEventListener("load", function () {

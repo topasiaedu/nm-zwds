@@ -4,6 +4,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import Sidebar from "../components/sidebar";
 import { SidebarProvider, useSidebarContext } from "../context/SidebarContext"
+import Navbar from "../components/navbar";
 
 interface NavbarSidebarLayoutProps {
   isFooter?: boolean;
@@ -13,8 +14,8 @@ const NavbarSidebarLayout: React.FC<PropsWithChildren<NavbarSidebarLayoutProps>>
   function ({ children, isFooter = true }) {
     return (
       <SidebarProvider>
-        {/* <Navbar /> */}
-        <div className="flex items-start">
+        <Navbar />
+        <div className="flex items-start pt-16">
           <Sidebar />
           <MainContent isFooter={isFooter}>{children}</MainContent>
         </div>
@@ -31,9 +32,10 @@ const MainContent: React.FC<PropsWithChildren<NavbarSidebarLayoutProps>> = funct
   return (
     <main
       className={classNames(
-        "flex flex-col justify-between relative w-full h-full bg-gray-50 dark:bg-gray-900 min-h-screen",
+        "overflow-y-auto relative w-full h-full bg-gray-50 dark:bg-gray-900",
         isSidebarOpen ? "lg:ml-16" : "lg:ml-64"
-      )}>
+      )}
+    >
       {/* Content Area */}
       <div className="flex-grow">{children}</div>
 

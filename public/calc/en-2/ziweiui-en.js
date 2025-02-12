@@ -13,11 +13,29 @@ var ziweiUI = {
       annualFortune: "流<br>年",
       grandCycle: "大<br>限",
       name: "姓名",
-      age: "年齡","甲": "甲", "乙": "乙", "丙": "丙", "丁": "丁", "戊": "戊",
-      "己": "己", "庚": "庚", "辛": "辛", "壬": "壬", "癸": "癸",
-      "子": "子", "丑": "丑", "寅": "寅", "卯": "卯", "辰": "辰",
-      "巳": "巳", "午": "午", "未": "未", "申": "申", "酉": "酉",
-      "戌": "戌", "亥": "亥"
+      age: "年齡",
+      甲: "甲",
+      乙: "乙",
+      丙: "丙",
+      丁: "丁",
+      戊: "戊",
+      己: "己",
+      庚: "庚",
+      辛: "辛",
+      壬: "壬",
+      癸: "癸",
+      子: "子",
+      丑: "丑",
+      寅: "寅",
+      卯: "卯",
+      辰: "辰",
+      巳: "巳",
+      午: "午",
+      未: "未",
+      申: "申",
+      酉: "酉",
+      戌: "戌",
+      亥: "亥",
     },
     en: {
       solarCalendar: "Solar Calendar",
@@ -28,11 +46,29 @@ var ziweiUI = {
       annualFortune: "Annual<br>Fortune",
       grandCycle: "Grand<br>Cycle",
       name: "Name",
-      age: "Age","甲": "Jia", "乙": "Yi", "丙": "Bing", "丁": "Ding", "戊": "Wu",
-      "己": "Ji", "庚": "Geng", "辛": "Xin", "壬": "Ren", "癸": "Gui",
-      "子": "Rat", "丑": "Ox", "寅": "Tiger", "卯": "Rabbit", "辰": "Dragon",
-      "巳": "Snake", "午": "Horse", "未": "Goat", "申": "Monkey", "酉": "Rooster",
-      "戌": "Dog", "亥": "Pig",
+      age: "Age",
+      甲: "Jia",
+      乙: "Yi",
+      丙: "Bing",
+      丁: "Ding",
+      戊: "Wu",
+      己: "Ji",
+      庚: "Geng",
+      辛: "Xin",
+      壬: "Ren",
+      癸: "Gui",
+      子: "Rat",
+      丑: "Ox",
+      寅: "Tiger",
+      卯: "Rabbit",
+      辰: "Dragon",
+      巳: "Snake",
+      午: "Horse",
+      未: "Goat",
+      申: "Monkey",
+      酉: "Rooster",
+      戌: "Dog",
+      亥: "Pig",
     },
   },
 
@@ -63,156 +99,122 @@ var ziweiUI = {
     this.clearPalce();
   },
   genZiwei: function () {
-    zw=[
+    zw = [
       {
-          "MangA": "戊<br/>子",
-          "MangB": "【Health Palace】",
-          "MangC": "",
-          "StarA": [
-              "Wu Qu<br>",
-              "Tian Fu<br>"
-          ],
-          "StarB": [],
-          "StarC": [
-          ],
-          "Star6": [
-          ]
+        MangA: "戊<br/>子",
+        MangB: "【Health Palace】",
+        MangC: "",
+        StarA: ["Wu Qu<br>", "Tian Fu<br>"],
+        StarB: [],
+        StarC: [],
+        Star6: [],
       },
       {
-          "MangA": "己<br/>丑",
-          "MangB": "【Wealth Palace】",
-          "MangC": "",
-          "StarA": [
-              "Tai Yang<br>",
-              "Tai Yin Hua Ji<br>",
-              "Wen Chang<br>",
-              "Wen Qu \u21BB <br>"
-          ],
-          "StarB": [],
-          "StarC": [],
-          "Star6": []
+        MangA: "己<br/>丑",
+        MangB: "【Wealth Palace】",
+        MangC: "",
+        StarA: [
+          "Tai Yang<br>",
+          "Tai Yin Hua Ji<br>",
+          "Wen Chang<br>",
+          "Wen Qu \u21BB <br>",
+        ],
+        StarB: [],
+        StarC: [],
+        Star6: [],
       },
       {
-          "MangA": "戊<br/>寅",
-          "MangB": "【Child Palace】",
-          "MangC": "",
-          "StarA": [
-              "Tan Lang"
-          ],
-          "StarB": [],
-          "StarC": [],
-          "Star6": [
-          ]
+        MangA: "戊<br/>寅",
+        MangB: "【Child Palace】",
+        MangC: "",
+        StarA: ["Tan Lang"],
+        StarB: [],
+        StarC: [],
+        Star6: [],
       },
       {
-          "MangA": "己<br/>卯",
-          "MangB": "【Marriage Palace】",
-          "MangC": "",
-          "StarA": [
-              "Tian Ji Hua Lu<br>",
-              "Ju Men<br>"
-          ],
-          "StarB": [],
-          "StarC": [],
-          "Star6": []
+        MangA: "己<br/>卯",
+        MangB: "【Marriage Palace】",
+        MangC: "",
+        StarA: ["Tian Ji Hua Lu<br>", "Ju Men<br>"],
+        StarB: [],
+        StarC: [],
+        Star6: [],
       },
       {
-          "MangA": "庚<br/>辰",
-          "MangB": "【Siblings Palace】",
-          "MangC": "",
-          "StarA": [
-              "Zi Wei Hua Ke<br>",
-              "Tian Xiang<br>",
-              "Zuo Fu<br>"
-          ],
-          "StarB": [],
-          "StarC": [],
-          "Star6": []
+        MangA: "庚<br/>辰",
+        MangB: "【Siblings Palace】",
+        MangC: "",
+        StarA: ["Zi Wei Hua Ke<br>", "Tian Xiang<br>", "Zuo Fu<br>"],
+        StarB: [],
+        StarC: [],
+        Star6: [],
       },
       {
-          "MangA": "辛<br/>巳",
-          "MangB": "【Life Palace】",
-          "MangC": "",
-          "StarA": [
-              "Tian Liang Hua Quan<br>"
-          ],
-          "StarB": [
-          ],
-          "StarC": [
-          ],
-          "Star6": []
+        MangA: "辛<br/>巳",
+        MangB: "【Life Palace】",
+        MangC: "",
+        StarA: ["Tian Liang Hua Quan<br>"],
+        StarB: [],
+        StarC: [],
+        Star6: [],
       },
       {
-          "MangA": "壬<br/>午",
-          "MangB": "【Parents Palace】",
-          "MangC": "",
-          "StarA": [
-              "Qi Sha<br>"
-          ],
-          "StarB": [],
-          "StarC": [
-          ],
-          "Star6": [
-          ]
+        MangA: "壬<br/>午",
+        MangB: "【Parents Palace】",
+        MangC: "",
+        StarA: ["Qi Sha<br>"],
+        StarB: [],
+        StarC: [],
+        Star6: [],
       },
       {
-          "MangA": "癸<br/>未",
-          "MangB": "【Happy Palace】",
-          "MangC": "",
-          "StarA": [],
-          "StarB": [
-          ],
-          "StarC": [
-          ],
-          "Star6": []
+        MangA: "癸<br/>未",
+        MangB: "【Happy Palace】",
+        MangC: "",
+        StarA: [],
+        StarB: [],
+        StarC: [],
+        Star6: [],
       },
       {
-          "MangA": "甲<br/>申",
-          "MangB": "【Property Palace】",
-          "MangC": "",
-          "StarA": [
-              "Lian Zhen \u21BB <br>"
-          ],
-          "StarB": [],
-          "StarC": [],
-          "Star6": [
-          ]
+        MangA: "甲<br/>申",
+        MangB: "【Property Palace】",
+        MangC: "",
+        StarA: ["Lian Zhen \u21BB <br>"],
+        StarB: [],
+        StarC: [],
+        Star6: [],
       },
       {
-          "MangA": "乙<br/>酉",
-          "MangB": "【Career Palace】",
-          "MangC": "",
-          "StarA": [],
-          "StarB": [],
-          "StarC": [],
-          "Star6": []
+        MangA: "乙<br/>酉",
+        MangB: "【Career Palace】",
+        MangC: "",
+        StarA: [],
+        StarB: [],
+        StarC: [],
+        Star6: [],
       },
       {
-          "MangA": "丙<br/>戌",
-          "MangB": "【Friends Palace】",
-          "MangC": "",
-          "StarA": [
-              "Po Jun<br>"
-          ],
-          "StarB": [],
-          "StarC": [],
-          "Star6": [
-            "You Bi<br>"
-          ]
+        MangA: "丙<br/>戌",
+        MangB: "【Friends Palace】",
+        MangC: "",
+        StarA: ["Po Jun<br>"],
+        StarB: [],
+        StarC: [],
+        Star6: ["You Bi<br>"],
       },
       {
-          "MangA": "丁<br/>亥",
-          "MangB": "【Travel Palace】",
-          "MangC": "",
-          "StarA": [
-              "Tian Tong \u21BB <br>"
-          ],
-          "StarB": [],
-          "StarC": [],
-          "Star6": []
-      }
-  ]
-    
+        MangA: "丁<br/>亥",
+        MangB: "【Travel Palace】",
+        MangC: "",
+        StarA: ["Tian Tong \u21BB <br>"],
+        StarB: [],
+        StarC: [],
+        Star6: [],
+      },
+    ];
+
     //render Direction
     var styleLR = [" zwStarLeft", " zwStarRight"];
     if (this.right2left) {
@@ -225,8 +227,10 @@ var ziweiUI = {
         zw[i].MangA +
         "</div>" +
         "<div class='MangA-new'>" +
-        zw[i].MangA.replace(/<br\/>/g, ' ') 
-        .replace(/[\u4e00-\u9fff]/g, match => this.getTranslation(`${match}`)) +
+        zw[i].MangA.replace(/<br\/>/g, " ").replace(
+          /[\u4e00-\u9fff]/g,
+          (match) => this.getTranslation(`${match}`)
+        ) +
         "</div>" +
         "<div class='MangB'>" +
         zw[i].MangB +
@@ -250,10 +254,8 @@ var ziweiUI = {
       for (j = 0; j < zw[i].StarA.length; j++) {
         // tmpSatrA[0][k] = zw[i].StarA[j].substring(0, 1);
         // tmpSatrA[1][k] = zw[i].StarA[j].substring(1, 2);
-        tempStarA[0][k] = 
-          `<span class="blue-star">` +
-          zw[i].StarA[j] +
-          "</span>";
+        tempStarA[0][k] =
+          `<span class="blue-star">` + zw[i].StarA[j] + "</span>";
 
         k += 1;
       }
@@ -262,7 +264,7 @@ var ziweiUI = {
         tempStarA[1][k] = "<span>" + zw[i].Star6[j] + "</span>";
         tempStarA[2][k] =
           zw[i].Star6[j].length > 2
-            ? "<span>" + zw[i].Star6[j]+ "</span>"
+            ? "<span>" + zw[i].Star6[j] + "</span>"
             : "　";
         k += 1;
       }
@@ -326,9 +328,7 @@ var ziweiUI = {
     };
     for (i = 0; i < 12; i++) {
       document.getElementById("zw" + (i + 1).toString()).innerHTML +=
-        "<div class='MangY10'>" +
-        DS_Shian.DShian[i + 1] +
-        "</div>"
+        "<div class='MangY10'>" + DS_Shian.DShian[i + 1] + "</div>";
     }
 
     // Add 流年 tag to palaces
@@ -346,8 +346,6 @@ var ziweiUI = {
       palaceDiv.appendChild(liunianDiv);
     }
 
-
-    
     function initPalaceLines() {
       let svg = document.getElementById("palaceLines");
       if (!svg) {
@@ -369,34 +367,9 @@ var ziweiUI = {
     // Call this function during setup
     initPalaceLines();
     // Function to handle palace click
-   // Function to draw lines with color-matching arrowheads
-   function drawFixedLines() {
-    const svg = document.getElementById("palaceLines");
-    if (svg) {
-      svg.innerHTML = ""; // Clear previous lines
-    }
-
-    const pairs = [
-      { from: 10, to: 4 },
-      { from: 4, to: 10 },
-      { from: 8, to: 3 },
-      { from: 7, to: 1 },
-    ];
-
-    // Define colors for the lines
-    // const colors = ["green", "blue", "#ba8e23", "red"];
-    const colors = ["green", "green", "#ba8e23", "red"];
-
-    pairs.forEach((pair, index) => {
-      const originPalace = document.getElementById(`zw${pair.from}`);
-      const targetPalace = document.getElementById(`zw${pair.to}`);
-
-      if (!originPalace || !targetPalace) {
-        console.warn(
-          `Missing element for palace index ${pair.from} or ${pair.to}`
-        );
-        return;
-      }
+    // Function to compute direction based on relative positioning
+    function computeDirection(originPalace, targetPalace) {
+      if (!originPalace || !targetPalace) return null;
 
       const originRect = originPalace.getBoundingClientRect();
       const targetRect = targetPalace.getBoundingClientRect();
@@ -411,10 +384,100 @@ var ziweiUI = {
         y: targetRect.top + targetRect.height / 2,
       };
 
-      const color = colors[index % colors.length]; // Assign a color from the list
+      const dx = targetCenter.x - originCenter.x;
+      const dy = targetCenter.y - originCenter.y;
 
-      // Create a unique marker for this line
-      const markerId = `arrowhead-${index}`;
+      let direction = "";
+
+      if (Math.abs(dx) > Math.abs(dy)) {
+        direction = dx > 0 ? "right" : "left";
+      } else if (Math.abs(dy) > Math.abs(dx)) {
+        direction = dy > 0 ? "down" : "up";
+      } else {
+        if (dx > 0 && dy > 0) direction = "down-right";
+        if (dx < 0 && dy > 0) direction = "down-left";
+        if (dx > 0 && dy < 0) direction = "up-right";
+        if (dx < 0 && dy < 0) direction = "up-left";
+      }
+
+      return direction;
+    }
+
+    // Function to get the start point at the border of the origin palace
+    function getArrowStartPoint(originPalace, targetPalace) {
+      if (!originPalace || !targetPalace) return null;
+
+      const originRect = originPalace.getBoundingClientRect();
+      const direction = computeDirection(originPalace, targetPalace);
+
+      let startX = originRect.left + originRect.width / 2;
+      let startY = originRect.top + originRect.height / 2;
+
+      switch (direction) {
+        case "down":
+          startY = originRect.bottom;
+          break;
+        case "up":
+          startY = originRect.top;
+          break;
+        case "right":
+          startX = originRect.right;
+          break;
+        case "left":
+          startX = originRect.left;
+          break;
+        case "down-right":
+          startX = originRect.right;
+          startY = originRect.bottom;
+          break;
+        case "down-left":
+          startX = originRect.left;
+          startY = originRect.bottom;
+          break;
+        case "up-right":
+          startX = originRect.right;
+          startY = originRect.top;
+          break;
+        case "up-left":
+          startX = originRect.left;
+          startY = originRect.top;
+          break;
+      }
+
+      return { x: startX, y: startY };
+    }
+
+    // Function to get the destination center
+    function getDestinationCenter(targetPalace) {
+      if (!targetPalace) return null;
+
+      const targetRect = targetPalace.getBoundingClientRect();
+
+      return {
+        x: targetRect.left + targetRect.width / 2,
+        y: targetRect.top + targetRect.height / 2,
+      };
+    }
+
+    // Function to compute the angle between start and destination
+    function computeArrowAngle(start, destination) {
+      const dx = destination.x - start.x;
+      const dy = destination.y - start.y;
+      return Math.atan2(dy, dx); // Angle in radians
+    }
+
+    // Function to compute the end point, ensuring a length of 25 pixels
+    function getArrowEndPoint(start, destination) {
+      const angle = computeArrowAngle(start, destination);
+
+      return {
+        x: start.x + 75 * Math.cos(angle),
+        y: start.y + 75 * Math.sin(angle),
+      };
+    }
+
+    // Function to create a standard single arrowhead (old design)
+    function createArrowhead(svg, markerId, color) {
       const defs = document.createElementNS(
         "http://www.w3.org/2000/svg",
         "defs"
@@ -435,29 +498,150 @@ var ziweiUI = {
         "http://www.w3.org/2000/svg",
         "path"
       );
-      arrowPath.setAttribute("d", "M0,0 L10,3.5 L0,7 Z");
+      arrowPath.setAttribute("d", "M0,0 L10,3.5 L0,7 Z"); // Old-school filled triangle
       arrowPath.setAttribute("fill", color);
+
       arrowhead.appendChild(arrowPath);
       defs.appendChild(arrowhead);
       svg.appendChild(defs);
 
-      // Draw a line from origin to target
-      const line = document.createElementNS(
-        "http://www.w3.org/2000/svg",
-        "line"
-      );
-      line.setAttribute("stroke", color);
-      line.setAttribute("x1", originCenter.x);
-      line.setAttribute("y1", originCenter.y);
-      line.setAttribute("x2", targetCenter.x);
-      line.setAttribute("y2", targetCenter.y);
-      line.setAttribute("stroke-width", "2");
-      line.setAttribute("marker-end", `url(#${markerId})`);
+      return markerId;
+    }
 
-      svg.appendChild(line);
-    });
-  }
-  drawFixedLines();
+    // Function to create a **left-pointing** arrowhead
+    function createLeftArrowhead(svg, markerId, color) {
+      const defs = document.createElementNS(
+        "http://www.w3.org/2000/svg",
+        "defs"
+      );
+      const arrowhead = document.createElementNS(
+        "http://www.w3.org/2000/svg",
+        "marker"
+      );
+
+      arrowhead.setAttribute("id", markerId);
+      arrowhead.setAttribute("markerWidth", "10");
+      arrowhead.setAttribute("markerHeight", "7");
+      arrowhead.setAttribute("refX", "0"); // Flips the arrow to point left
+      arrowhead.setAttribute("refY", "3.5");
+      arrowhead.setAttribute("orient", "auto");
+
+      const arrowPath = document.createElementNS(
+        "http://www.w3.org/2000/svg",
+        "path"
+      );
+      arrowPath.setAttribute("d", "M10,0 L0,3.5 L10,7 Z"); // Reversed triangle (pointing left)
+      arrowPath.setAttribute("fill", color);
+
+      arrowhead.appendChild(arrowPath);
+      defs.appendChild(arrowhead);
+      svg.appendChild(defs);
+
+      return markerId;
+    }
+
+    // Function to draw the arrows
+    function drawFixedLines() {
+      const svg = document.getElementById("palaceLines");
+      if (svg) {
+        svg.innerHTML = ""; // Clear previous lines
+      }
+
+      const pairs = [
+        { from: 10, to: 4 },
+        { from: 8, to: 3 },
+        { from: 7, to: 1 },
+      ];
+
+      const colors = ["green", "#ba8e23", "red"];
+
+      pairs.forEach((pair, index) => {
+        const originPalace = document.getElementById(`zw${pair.from}`);
+        const targetPalace = document.getElementById(`zw${pair.to}`);
+
+        if (!originPalace || !targetPalace) {
+          console.warn(
+            `Missing element for palace index ${pair.from} or ${pair.to}`
+          );
+          return;
+        }
+
+        const start = getArrowStartPoint(originPalace, targetPalace);
+        const destinationCenter = getDestinationCenter(targetPalace);
+        const end = getArrowEndPoint(start, destinationCenter);
+
+        const color = colors[index % colors.length];
+
+        // If it's the first connection, create **both left and right arrowheads**
+        if (index === 0) {
+          const rightArrowId = createArrowhead(
+            svg,
+            `arrowhead-right-${index}`,
+            color
+          );
+          const leftArrowId = createLeftArrowhead(
+            svg,
+            `arrowhead-left-${index}`,
+            color
+          );
+
+          // Draw the bi-directional line with **two arrowheads**
+          const line = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "line"
+          );
+          line.setAttribute("stroke", color);
+          line.setAttribute("x1", start.x);
+          line.setAttribute("y1", start.y);
+          line.setAttribute("x2", end.x);
+          line.setAttribute("y2", end.y);
+          line.setAttribute("stroke-width", "2");
+          line.setAttribute("marker-start", `url(#${leftArrowId})`); // Left-facing arrow
+          line.setAttribute("marker-end", `url(#${rightArrowId})`); // Right-facing arrow
+
+          svg.appendChild(line);
+        } else {
+          // For all other connections, create a **single arrowhead**
+          const markerId = createArrowhead(svg, `arrowhead-${index}`, color);
+
+          // Draw the standard single-arrow line
+          const line = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "line"
+          );
+          line.setAttribute("stroke", color);
+          line.setAttribute("x1", start.x);
+          line.setAttribute("y1", start.y);
+          line.setAttribute("x2", end.x);
+          line.setAttribute("y2", end.y);
+          line.setAttribute("stroke-width", "2");
+          line.setAttribute("marker-end", `url(#${markerId})`);
+
+          svg.appendChild(line);
+        }
+      });
+    }
+    drawFixedLines();
+
+    // Function to observe container size changes and redraw lines
+    function observeContainerResize() {
+      const container = document.getElementById("container");
+
+      if (!container) {
+        console.warn("Container not found!");
+        return;
+      }
+
+      // Create a ResizeObserver to watch for changes in the container size
+      const resizeObserver = new ResizeObserver(() => {
+        drawFixedLines(); // Recalculate and redraw arrows
+      });
+
+      // Start observing the container
+      resizeObserver.observe(container);
+    }
+
+    observeContainerResize(); // Start observing container changes
   },
 };
 window.addEventListener("load", function () {
