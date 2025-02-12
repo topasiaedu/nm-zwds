@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import NavbarSidebarLayout from "../../layouts/navbar-sidebar";
-import React from "react";
+import React, { useEffect } from "react";
 import { useLanguage } from "../../context/LanguageContext";
 import { useProfileContext } from "../../context/ProfileContext";
 import { Card } from "flowbite-react";
@@ -10,10 +10,18 @@ const CalcChoicesPage: React.FC = () => {
   const navigate = useNavigate();
   const { t } = useLanguage();
   const { loading, currentProfile } = useProfileContext();
+  console.log("currentProfile", currentProfile);
+
+  useEffect(() => {
+
+  }, [currentProfile]);
 
   if (!currentProfile || loading) {
     return <LoadingPage />;
   }
+
+
+  console.log("currentProfile", currentProfile);
 
   return (
     <NavbarSidebarLayout isFooter={false}>

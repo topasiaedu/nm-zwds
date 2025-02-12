@@ -7,7 +7,7 @@ import { HiPlus } from "react-icons/hi";
 import { useNavigate } from "react-router-dom";
 
 const OtherProfileListPage: React.FC = () => {
-  const { profiles } = useProfileContext();
+  const { profiles, setCurrentProfile } = useProfileContext();
   const { t, language } = useLanguage();
   const navigate = useNavigate();
 
@@ -32,7 +32,10 @@ const OtherProfileListPage: React.FC = () => {
               <Card
                 key={profile.id}
                 className="rounded-lg shadow-lg p-4 w-64 mt-4"
-                onClick={() => navigate(`/calc/choices/${profile.id}`)}>
+                onClick={() => {
+                  setCurrentProfile(profile);
+                  navigate("/calc/results/" + profile.id + "/2");
+                }}>
                 <h5 className="text-xl font-bold">{profile.name}</h5>
                 <p>
                   {" "}
