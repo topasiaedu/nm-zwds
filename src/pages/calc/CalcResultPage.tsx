@@ -5,74 +5,104 @@ import { useProfileContext } from "../../context/ProfileContext";
 import NavbarSidebarLayout from "../../layouts/navbar-sidebar";
 import LoadingPage from "../pages/loading";
 import { useParams } from "react-router-dom";
+import ZiweiChart from '../../components/ziwei/ZiweiChart';
+import { ziweiCalculator } from '../../utils/ziweiCalculator';
 
 const CalcResultPage: React.FC = () => {
   const navigate = useNavigate();
-  const { language } = useLanguage(); // Language context
+  const { language } = useLanguage();
   const { loading, currentProfile } = useProfileContext();
   const { calcType } = useParams();
+  const [chartData, setChartData] = useState<any>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  // 🔥 State to force iframe reload
-  const [iframeKey, setIframeKey] = useState(0);
-
-  // 🔄 Reload iframe when language changes
+  // Handle profile validation and navigation
   useEffect(() => {
-    setIframeKey((prevKey) => prevKey + 1);
-  }, [language]);
+    if (!currentProfile) {
+      navigate("/");
+      return;
+    }
 
-  if (!currentProfile) {
-    navigate("/");
-    return null;
-  }
+    const birthdayString = currentProfile?.birthday ?? "";
+    const date = birthdayString ? new Date(birthdayString) : null;
+
+    if (!date || isNaN(date.getTime())) {
+      console.error("Invalid birthday format in profile.");
+      navigate("/");
+      return;
+    }
+  }, [currentProfile, navigate]);
+
+  // Handle chart data calculation
+  useEffect(() => {
+    const loadProfile = async () => {
+      if (!currentProfile) return;
+      
+      try {
+        const birthDate = new Date(currentProfile.birthday);
+        const chartData = ziweiCalculator.computeZiWei(
+          birthDate.getFullYear(),
+          birthDate.getMonth() + 1,
+          birthDate.getDate(),
+          currentProfile.birth_time || "00",
+          currentProfile.gender === 'male' ? 'M' : 'F',
+          currentProfile.name || "Unknown"
+        );
+
+        console.log("Chart Data:", chartData);
+        setChartData(chartData);
+        setError(null);
+      } catch (err) {
+        console.error("Error calculating chart:", err);
+        setError("Error calculating chart. Please check your birth information.");
+      }
+    };
+
+    loadProfile();
+  }, [currentProfile]);
 
   if (loading) {
     return <LoadingPage />;
   }
 
-  // Ensure birthday is a valid string before parsing
-  const birthdayString = currentProfile?.birthday ?? "";
-  const date = birthdayString ? new Date(birthdayString) : null;
-
-  if (!date || isNaN(date.getTime())) {
-    console.error("Invalid birthday format in profile.");
-    navigate("/");
-    return null;
+  if (error) {
+    return (
+      <NavbarSidebarLayout>
+        <div className="flex items-center justify-center h-screen">
+          <div className="text-red-600">{error}</div>
+        </div>
+      </NavbarSidebarLayout>
+    );
   }
 
-  // Extract date parts
-  const year = date.getFullYear().toString();
-  const month = (date.getMonth() + 1).toString().padStart(2, "0");
-  const day = date.getDate().toString().padStart(2, "0");
-
-  // Ensure hour and gender exist
-  const hour = currentProfile?.birth_time
-    ? currentProfile.birth_time.toString().padStart(2, "0")
-    : "00";
-  const gender = currentProfile?.gender || "unknown";
-
-  const name = currentProfile?.name || "Unknown";
-
-  // Construct query parameters
-  const queryParams = new URLSearchParams({
-    year,
-    month,
-    day,
-    hour,
-    gender,
-    name,
-    lang: language, // 🔥 Pass language as a query parameter
-  }).toString();
+  if (!chartData) {
+    return (
+      <NavbarSidebarLayout>
+        <div className="flex items-center justify-center h-screen">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
+        </div>
+      </NavbarSidebarLayout>
+    );
+  }
 
   return (
-    <NavbarSidebarLayout isFooter={false}>
-      <div className="block items-center justify-between border-b border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800 sm:flex">
-        <iframe
-          key={iframeKey}
-          src={`/calc/${language}${
-            calcType === "2" ? "-2" : ""
-          }/index-${language}.html?${queryParams}`}
-          style={{ width: "100%", height: "100vh", border: "none" }}
-          title="Calculation Page"
+    <NavbarSidebarLayout>
+      <div className="container mx-auto px-4 py-8">
+        <ZiweiChart 
+          palaces={chartData.palaces}
+          daShian={Object.values(chartData.centerInfo.daShian)}
+          siaoShian={Array(12).fill("").map((_, i) => {
+            const base = i * 12;
+            return `${base + 1},${base + 2},${base + 3},${base + 4},${base + 5},${base + 6} ...`;
+          })}
+          centerInfo={{
+            name: chartData.centerInfo.name,
+            gender: chartData.centerInfo.yinYangGender,
+            birthDate: chartData.centerInfo.lunarDate,
+            solarDate: chartData.centerInfo.solarDate,
+            shengXiao: chartData.centerInfo.zodiac,
+            fiveElement: chartData.centerInfo.fiveElement
+          }}
         />
       </div>
     </NavbarSidebarLayout>

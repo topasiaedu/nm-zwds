@@ -174,6 +174,7 @@ var ziwei = {
   getShengXiao: function () {
     return ShengXiaoGB[(yS - 4) % 12];
   },
+  
   getFiveElement: function () {
     return f;
   },

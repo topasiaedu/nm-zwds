@@ -1,5 +1,11 @@
-import { Card, TextInput, Datepicker, Button } from "flowbite-react";
-import React from "react";
+import {
+  Card,
+  TextInput,
+  Datepicker,
+  Button,
+  ToggleSwitch,
+} from "flowbite-react";
+import React, { useState } from "react";
 import { useLanguage } from "../../context/LanguageContext";
 import { useProfileContext } from "../../context/ProfileContext";
 import { Label, Radio } from "flowbite-react";
@@ -22,8 +28,11 @@ const ProfileFormPage: React.FC = () => {
   const { user } = useAuthContext();
   const { addProfile, setCurrentProfile } = useProfileContext();
   const { showAlert } = useAlertContext();
-
-  const handleAddProfile = async (calcType:string) => {
+  const [switch1, setSwitch1] = useState(false);
+  const [switch2, setSwitch2] = useState(true);
+  const [switch3, setSwitch3] = useState(true);
+  
+  const handleAddProfile = async (calcType: string) => {
     if (!user) return;
     if (!name || !birthday || !birthTime || !gender || !calcType) {
       showAlert(t("fill_all_fields"), "error");
@@ -90,6 +99,7 @@ const ProfileFormPage: React.FC = () => {
             <Datepicker
               id="birthday"
               name="birthday"
+              inline
               onChange={(date) => date && setBirthday(date)}
               value={birthday}
               className="z-50"
@@ -99,46 +109,37 @@ const ProfileFormPage: React.FC = () => {
           {/* Birth Time Picker */}
           <BirthTimePicker birthTime={birthTime} setBirthTime={setBirthTime} />
 
-          {/* Gender Selection */}
-          <div className="mt-4">
-            <legend className="mb-1">{t("gender")}</legend>
-            <div className="flex gap-2">
-              {/* Male Radio */}
-              <div className="flex items-center gap-2">
-                <Radio
-                  id="male"
-                  name="gender"
-                  value="male"
-                  checked={gender === "male"} // Fixed checked binding
-                  onChange={(e) => setGender(e.target.value)}
-                />
-                <Label htmlFor="male">{t("male")}</Label>
-              </div>
 
-              {/* Female Radio */}
-              <div className="flex items-center gap-2">
-                <Radio
-                  id="female"
-                  name="gender"
-                  value="female"
-                  checked={gender === "female"} // Correct checked state
-                  onChange={(e) => setGender(e.target.value)}
-                />
-                <Label htmlFor="female">{t("female")}</Label>
-              </div>
+          {/* Gender Toggle Switch */}
+          <div className="mt-4">
+            <Label htmlFor="gender">{t("gender")}</Label>
+            <div className="flex items-center mt-2 gap-4">
+              <span>{t("male")}</span>
+              <ToggleSwitch
+                checked={gender === "female"}
+                onChange={() =>
+                  setGender(gender === "male" ? "female" : "male")
+                }
+              />
+              <span>{t("female")}</span>
             </div>
           </div>
-
-          <Button color="primary" onClick={()=>{
-            handleAddProfile("1")
-          }}>            <div className="flex items-center gap-x-3 text-md font-bold">
+          <Button
+            color="primary"
+            onClick={() => {
+              handleAddProfile("1");
+            }}>
+            {" "}
+            <div className="flex items-center gap-x-3 text-md font-bold">
               <HiPlus className="text-xl" />
               {t("add_profile")}
             </div>
           </Button>
-          <Button color="primary" onClick={()=>{
-            handleAddProfile("2")
-          }}>
+          <Button
+            color="primary"
+            onClick={() => {
+              handleAddProfile("2");
+            }}>
             <div className="flex items-center gap-x-3 text-md font-bold">
               <HiPlus className="text-xl" />
               {t("add_profile")} 2
