@@ -23,6 +23,10 @@ const StarryBackground: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const animationRef = useRef<number>(0);
   const stars = useRef<Star[]>([]);
+  const isRunning = useRef<boolean>(false);
+  const lastFrameTime = useRef<number>(0);
+  const isPageVisible = useRef<boolean>(true);
+  const animationPaused = useRef<boolean>(false);
   const isDarkMode = useRef<boolean>(
     document.documentElement.classList.contains("dark") ||
     (!localStorage.getItem("theme") && window.matchMedia("(prefers-color-scheme: dark)").matches)
@@ -32,6 +36,7 @@ const StarryBackground: React.FC = () => {
    * Initialize stars with random positions, sizes, directions and speeds
    */
   const initStars = (count: number): Star[] => {
+    console.log("StarryBackground: Initializing", count, "stars");
     const newStars: Star[] = [];
     for (let i = 0; i < count; i++) {
       // Use more subtle opacity values
@@ -140,63 +145,166 @@ const StarryBackground: React.FC = () => {
   };
   
   /**
+   * Start the animation loop
+   */
+  const startAnimation = (): void => {
+    if (animationPaused.current) {
+      console.log("StarryBackground: Animation is paused, not starting");
+      return;
+    }
+    
+    if (animationRef.current) {
+      console.log("StarryBackground: Animation already running, not starting a new one");
+      return;
+    }
+    
+    console.log("StarryBackground: Starting animation");
+    isRunning.current = false; // Reset this to ensure animate() will run
+    animationRef.current = requestAnimationFrame(animate);
+  };
+  
+  /**
+   * Stop the animation loop
+   */
+  const stopAnimation = (): void => {
+    if (animationRef.current) {
+      console.log("StarryBackground: Stopping animation");
+      cancelAnimationFrame(animationRef.current);
+      animationRef.current = 0;
+    }
+  };
+  
+  /**
+   * Pause the animation (when page is not visible)
+   */
+  const pauseAnimation = (): void => {
+    console.log("StarryBackground: Pausing animation (page hidden)");
+    animationPaused.current = true;
+    stopAnimation();
+  };
+  
+  /**
+   * Resume the animation (when page becomes visible again)
+   */
+  const resumeAnimation = (): void => {
+    console.log("StarryBackground: Resuming animation (page visible)");
+    animationPaused.current = false;
+    startAnimation();
+  };
+  
+  /**
    * Animate the stars with random movement and very slow flickering
    */
-  const animate = (): void => {
+  const animate = (timestamp: number): void => {
+    // Skip if paused or already running
+    if (animationPaused.current) {
+      return;
+    }
+    
+    if (isRunning.current) {
+      // If already running, queue next frame and exit
+      animationRef.current = requestAnimationFrame(animate);
+      return;
+    }
+    
+    isRunning.current = true;
+    
+    // Calculate delta time for smooth animation regardless of frame rate
+    const deltaTime = timestamp - (lastFrameTime.current || timestamp);
+    lastFrameTime.current = timestamp;
+    
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!canvas) {
+      console.warn("StarryBackground: Canvas reference is null, skipping animation frame");
+      isRunning.current = false;
+      animationRef.current = requestAnimationFrame(animate);
+      return;
+    }
     
     const ctx = canvas.getContext("2d");
-    if (!ctx) return;
+    if (!ctx) {
+      console.warn("StarryBackground: Could not get 2D context from canvas");
+      isRunning.current = false;
+      animationRef.current = requestAnimationFrame(animate);
+      return;
+    }
     
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // Check if canvas dimensions match window (if not, resize it)
+    if (canvas.width !== window.innerWidth || canvas.height !== window.innerHeight) {
+      console.log("StarryBackground: Canvas size doesn't match window, resizing");
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
     
-    // Update star positions and opacities
-    stars.current.forEach((star) => {
-      // Very slow random movement in both X and Y directions
-      star.x += star.directionX * star.speed;
-      star.y += star.directionY * star.speed;
+    // Only clear if we have stars to draw
+    if (stars.current.length > 0) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
       
-      // Wrap around edges
-      if (star.x < 0) star.x = canvas.width;
-      if (star.x > canvas.width) star.x = 0;
-      if (star.y < 0) star.y = canvas.height;
-      if (star.y > canvas.height) star.y = 0;
+      // Update star positions and opacities with deltaTime for frame-rate independence
+      const speedFactor = Math.min(deltaTime / 16.67, 3); // Normalize based on 60fps, cap at 3x
       
-      // Add extremely slow twinkling effect
-      star.opacity = Math.max(
-        star.baseOpacity - 0.1, 
-        Math.min(
-          star.baseOpacity + 0.1, 
-          star.opacity + (star.flickerSpeed * star.flickerDirection)
-        )
-      );
+      stars.current.forEach((star) => {
+        // Very slow random movement adjusted by deltaTime
+        star.x += star.directionX * star.speed * speedFactor;
+        star.y += star.directionY * star.speed * speedFactor;
+        
+        // Wrap around edges
+        if (star.x < 0) star.x = canvas.width;
+        if (star.x > canvas.width) star.x = 0;
+        if (star.y < 0) star.y = canvas.height;
+        if (star.y > canvas.height) star.y = 0;
+        
+        // Add extremely slow twinkling effect adjusted by deltaTime
+        star.opacity = Math.max(
+          star.baseOpacity - 0.1, 
+          Math.min(
+            star.baseOpacity + 0.1, 
+            star.opacity + (star.flickerSpeed * star.flickerDirection * speedFactor)
+          )
+        );
+        
+        // Change flicker direction when reaching limits
+        if (star.opacity >= star.baseOpacity + 0.1) {
+          star.flickerDirection = -1;
+        } else if (star.opacity <= star.baseOpacity - 0.1) {
+          star.flickerDirection = 1;
+        }
+      });
       
-      // Change flicker direction when reaching limits
-      if (star.opacity >= star.baseOpacity + 0.1) {
-        star.flickerDirection = -1;
-      } else if (star.opacity <= star.baseOpacity - 0.1) {
-        star.flickerDirection = 1;
-      }
-    });
+      // Draw constellation lines first (so stars appear on top)
+      drawConstellations(ctx, stars.current);
+      
+      // Draw each star
+      stars.current.forEach((star) => {
+        drawStar(ctx, star.x, star.y, star.radius, star.opacity);
+      });
+    } else {
+      console.warn("StarryBackground: No stars to animate, reinitializing");
+      // Reinitialize stars if they're missing
+      const starCount = isDarkMode.current ? 80 : 60;
+      stars.current = initStars(starCount);
+    }
     
-    // Draw constellation lines first (so stars appear on top)
-    drawConstellations(ctx, stars.current);
-    
-    // Draw each star
-    stars.current.forEach((star) => {
-      drawStar(ctx, star.x, star.y, star.radius, star.opacity);
-    });
-    
-    animationRef.current = requestAnimationFrame(animate);
+    // Reset running flag and request next frame if not paused
+    isRunning.current = false;
+    if (!animationPaused.current) {
+      animationRef.current = requestAnimationFrame(animate);
+    } else {
+      animationRef.current = 0;
+    }
   };
   
   /**
    * Set up canvas and stars, start animation
    */
   useEffect(() => {
+    console.log("StarryBackground: Component mounted");
+    
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!canvas) {
+      console.error("StarryBackground: Cannot get canvas reference");
+      return;
+    }
     
     // Initialize canvas size
     canvas.width = window.innerWidth;
@@ -208,6 +316,7 @@ const StarryBackground: React.FC = () => {
     
     // Listen for theme changes
     const handleThemeChange = (e: MediaQueryListEvent): void => {
+      console.log("StarryBackground: Theme changed via media query");
       isDarkMode.current = e.matches;
     };
     
@@ -217,7 +326,11 @@ const StarryBackground: React.FC = () => {
     const observer = new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
         if (mutation.attributeName === "class") {
-          isDarkMode.current = document.documentElement.classList.contains("dark");
+          const newIsDarkMode = document.documentElement.classList.contains("dark");
+          if (isDarkMode.current !== newIsDarkMode) {
+            console.log("StarryBackground: Theme changed via class change");
+            isDarkMode.current = newIsDarkMode;
+          }
         }
       });
     });
@@ -228,13 +341,43 @@ const StarryBackground: React.FC = () => {
     const starCount = isDarkMode.current ? 80 : 60;
     stars.current = initStars(starCount);
     
-    // Start animation
-    animationRef.current = requestAnimationFrame(animate);
+    // Page visibility detection for performance optimization
+    const handleVisibilityChange = (): void => {
+      if (document.hidden) {
+        isPageVisible.current = false;
+        pauseAnimation();
+      } else {
+        isPageVisible.current = true;
+        resumeAnimation();
+      }
+    };
     
-    // Handle window resize
+    // Add visibility change listener
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    
+    // Handle window focus/blur events as additional visibility indicators
+    window.addEventListener("focus", () => {
+      if (!isPageVisible.current) {
+        isPageVisible.current = true;
+        resumeAnimation();
+      }
+    });
+    
+    window.addEventListener("blur", () => {
+      isPageVisible.current = false;
+      pauseAnimation();
+    });
+    
+    // Start animation
+    startAnimation();
+    
+    // Handle window resize with debounce to prevent performance issues
+    let resizeTimeout: number | null = null;
+    
     const handleResize = (): void => {
       if (!canvas) return;
       
+      console.log("StarryBackground: Window resized");
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
       
@@ -251,21 +394,71 @@ const StarryBackground: React.FC = () => {
       });
     };
     
-    window.addEventListener("resize", handleResize);
+    const debouncedResize = () => {
+      if (resizeTimeout) {
+        window.clearTimeout(resizeTimeout);
+      }
+      resizeTimeout = window.setTimeout(handleResize, 150);
+    };
     
-    // Cleanup
+    window.addEventListener("resize", debouncedResize);
+    
+    // Ensure animation continues even if there's a momentary hiccup
+    const intervalCheck = setInterval(() => {
+      if (!animationRef.current && !animationPaused.current) {
+        console.log("StarryBackground: Animation not running, restarting");
+        startAnimation();
+      }
+    }, 2000);
+    
+    // IntersectionObserver to detect if canvas is visible
+    const intersectionObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          if (animationPaused.current) {
+            console.log("StarryBackground: Canvas back in view, resuming animation");
+            resumeAnimation();
+          }
+        } else {
+          if (!animationPaused.current) {
+            console.log("StarryBackground: Canvas out of view, pausing animation");
+            pauseAnimation();
+          }
+        }
+      });
+    }, { threshold: 0.1 });
+    
+    intersectionObserver.observe(canvas);
+    
+    // Cleanup function
     return () => {
+      console.log("StarryBackground: Component unmounting");
+      stopAnimation();
+      
+      if (resizeTimeout) {
+        window.clearTimeout(resizeTimeout);
+      }
+      
+      clearInterval(intervalCheck);
+      
       darkModeMediaQuery.removeEventListener("change", handleThemeChange);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      window.removeEventListener("focus", resumeAnimation);
+      window.removeEventListener("blur", pauseAnimation);
       observer.disconnect();
-      window.removeEventListener("resize", handleResize);
-      cancelAnimationFrame(animationRef.current);
+      intersectionObserver.disconnect();
+      window.removeEventListener("resize", debouncedResize);
     };
   }, []);
   
   return (
     <canvas
       ref={canvasRef}
-      className="fixed inset-0 w-full h-full pointer-events-none z-0"
+      className="absolute inset-0 h-full w-full"
+      style={{ 
+        pointerEvents: "none",
+        zIndex: 0 
+      }}
       aria-hidden="true"
     />
   );

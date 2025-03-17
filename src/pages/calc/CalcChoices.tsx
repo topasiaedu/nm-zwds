@@ -31,7 +31,7 @@ const CalcChoicesPage: React.FC = () => {
           <Card
             className="max-w-sm rounded-lg shadow-lg p-8 cursor-pointer"
             onClick={() => {
-              navigate("/calc/results/" + currentProfile.id + "/1");
+              navigate(`/result/${currentProfile.id}`);
             }}>
             <img
               src="/images/calc1.svg"
@@ -46,7 +46,7 @@ const CalcChoicesPage: React.FC = () => {
           <Card
             className="max-w-sm rounded-lg shadow-lg p-8 cursor-pointer"
             onClick={() =>
-              navigate("/calc/results/" + currentProfile.id + "/2")
+              navigate(`/result/${currentProfile.id}`)
             }>
             <img
               src="/images/calc1_snake.svg"

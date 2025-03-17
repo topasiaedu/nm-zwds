@@ -147,6 +147,43 @@ const en = {
     startNow: "Start Now",
     explore: "Explore",
     register: "Register",
+    quickActions: "Quick Actions",
+    popularResources: "Popular Resources",
+    updatedAgo: "Updated {{time}} ago",
+    savedProfiles: "{{count}} saved profiles",
+    newBadge: "New",
+    resourceLinks: {
+      basics: "Introduction to 紫微斗数 Basics",
+      palaceSystem: "Understanding the 12 Palace System",
+      starTypes: "Main Stars and Their Influences"
+    },
+    actions: {
+      myChart: {
+        title: "My Chart",
+        description: "View your personal 紫微斗数 chart"
+      },
+      calculate: {
+        title: "Calculate",
+        description: "Generate charts for others"
+      }
+    },
+    table: {
+      name: "Name",
+      date: "Date",
+      type: "Type",
+      action: "Action",
+      view: "View",
+      gender: "Gender",
+      male: "Male",
+      female: "Female",
+      self: "Self",
+      other: "Other"
+    },
+    emptyState: {
+      title: "No results yet",
+      description: "Get started by creating a new chart calculation.",
+      action: "New Calculation"
+    }
   },
   
   // Profile & Settings
@@ -156,6 +193,13 @@ const en = {
     name: "Name",
     email: "Email",
     updateProfile: "Update Profile",
+    createSelfTitle: "Create Your Profile",
+    createOtherTitle: "Create New Profile",
+    createSelfDesc: "To generate your personal 紫微斗数 chart, please provide your birth information.",
+    createOtherDesc: "Enter the details of the person you're creating a chart for.",
+    createSelfSuccess: "Your profile has been created successfully!",
+    createOtherSuccess: "The profile has been created successfully!",
+    createError: "There was an error creating the profile. Please try again."
   },
   settings: {
     title: "Settings",
@@ -175,6 +219,7 @@ const en = {
   // App
   app: {
     title: "Purple Star Astrology",
+    subtitle: "Purple Star Astrology",
   },
   
   // Navigation (for AuthNav)
@@ -201,6 +246,13 @@ const en = {
     newCalculation: "New Calculation",
     enterDetails: "Enter the person's details to generate their 紫微斗数 chart",
     generateChart: "Generate Chart",
+    aboutZiWei: "About 紫微斗数 (Zi Wei Dou Shu)",
+    whatIsZiWei: "What is 紫微斗数?",
+    requiredInfo: "Required Information",
+    interpretation: "Interpretation",
+    whatIsDescription: "紫微斗数 (Zi Wei Dou Shu) is an ancient Chinese astrology system that creates a chart based on a person's birth date and time. It analyzes the positions of celestial bodies to provide insights into personality, relationships, career, and life path.",
+    requiredInfoDescription: "To create an accurate 紫微斗数 chart, you'll need the person's exact birth date, time, and location. The more precise this information, the more accurate the chart will be.",
+    interpretationDescription: "The chart analysis provides insights into various aspects of life including career, relationships, health, and personal development. The interpretation combines both traditional wisdom and modern psychological understanding."
   },
   
   // Form Fields
@@ -215,6 +267,16 @@ const en = {
     selectGender: "Select gender",
     male: "Male",
     female: "Female",
+    namePlaceholder: "Person's name",
+    relationshipPlaceholder: "e.g. Friend, Client, Father",
+    birthPlacePlaceholder: "City, Country",
+    yourNamePlaceholder: "Your name",
+    theirNamePlaceholder: "Their name",
+    cancel: "Cancel",
+    createSelfProfile: "Create My Profile",
+    createOtherProfile: "Create Profile",
+    selectedDate: "Selected Date",
+    selectTime: "Select Time",
   },
   
   // 404 Page
@@ -250,6 +312,18 @@ const en = {
     relationships: "Relationships & Family",
     lifePurpose: "Life Purpose & Spirituality",
     chartVisualization: "Chart Visualization",
+    createOtherProfile: "Create Profile for Someone Else",
+    fields: {
+      name: "Name",
+      type: "Type",
+      birthDate: "Birth Date",
+      birthTime: "Birth Time",
+      gender: "Gender",
+      male: "Male",
+      female: "Female",
+      self: "Self",
+      other: "Other"
+    }
   },
   
   // Result Page
@@ -257,21 +331,60 @@ const en = {
     loading: "Loading Chart...",
     chart: "Chart",
     subtitle: "紫微斗数 (Zi Wei Dou Shu) chart analysis",
-    chartVisualization: "Chart Visualization",
     profileDetails: "Profile Details",
-    placeholder: "This is a placeholder visualization. In the full implementation, this would show an interactive 紫微斗数 chart.",
-    house: "House",
-    createDate: "Created",
-    lifePath: "Life Path",
-    personality: "Personality",
-    relationships: "Relationships",
-    career: "Career & Wealth",
-    health: "Health & Wellness",
-    lifePurpose: "Life Purpose & Spirituality",
+    chartVisualization: "Chart Visualization",
+    chartVisualizationPlaceholder: "This is a placeholder visualization. In the full implementation, this would show an interactive 紫微斗数 chart.",
+    shareChart: "Share",
+    print: "Print",
+    refreshChart: "Refresh Chart",
     detailedAnalysis: "Detailed Analysis",
-    downloadPDF: "Download PDF",
-    shareChart: "Share Chart",
-    saveToProfile: "Save to Profile",
+    keyInsights: "Key Insights",
+    house: "House",
+    scrollToView: "Scroll to view entire chart",  
+    pinchToZoom: "Pinch to zoom",
+    viewportInstructions: "Use zoom controls and scroll to view all parts of the chart",
+    fields: {
+      relationship: "Relationship",
+      birthPlace: "Birth Place",
+      generated: "Generated"
+    },
+    insights: {
+      lifePath: "Life Path",
+      lifePathText: "Placeholder for life path insights",
+      personality: "Personality",
+      personalityText: "Placeholder for personality traits",
+      fortune: "Fortune",
+      fortuneText: "Placeholder for fortune predictions"
+    },
+    analysis: {
+      careerWealth: "Career & Wealth",
+      careerWealthText: "This is a placeholder for detailed career and wealth analysis. In a full implementation, this would contain personalized insights about career path, financial prospects, and wealth management recommendations.",
+      suitableCareer: "Suitable Career",
+      suitableCareerText: "Technology, Finance, Research",
+      financialOutlook: "Financial Outlook",
+      financialOutlookText: "Stable with growth potential",
+      
+      relationshipsFamily: "Relationships & Family",
+      relationshipsFamilyText: "This is a placeholder for relationship and family analysis. In a full implementation, this would contain personalized insights about relationship patterns, family dynamics, and compatibility with others.",
+      relationshipStyle: "Relationship Style",
+      relationshipStyleText: "Loyal, Patient, Analytical",
+      compatibleSigns: "Compatible Signs",
+      compatibleSignsText: "Horse, Rabbit, Goat",
+      
+      healthWellness: "Health & Wellness",
+      healthWellnessText: "This is a placeholder for health and wellness analysis. In a full implementation, this would contain personalized insights about health tendencies, potential concerns, and wellness recommendations.",
+      strengths: "Strengths",
+      strengthsText: "Resilient immune system, Strong vital energy",
+      areasAttention: "Areas for Attention",
+      areasAttentionText: "Digestive system, Stress management",
+      
+      lifePurpose: "Life Purpose & Potential",
+      lifePurposeText: "This is a placeholder for life purpose and potential analysis. In a full implementation, this would contain personalized insights about life mission, spiritual path, and personal growth opportunities.",
+      naturalTalents: "Natural Talents",
+      naturalTalentsText: "Analysis, Communication, Problem-solving",
+      lifeLessons: "Life Lessons",
+      lifeLessonsText: "Balance, Emotional expression, Trust"
+    }
   },
 };
 

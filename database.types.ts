@@ -17,6 +17,7 @@ export type Database = {
           gender: string
           id: string
           is_self: boolean
+          last_viewed: string | null
           name: string
           user_id: string
         }
@@ -27,6 +28,7 @@ export type Database = {
           gender: string
           id?: string
           is_self?: boolean
+          last_viewed?: string | null
           name: string
           user_id: string
         }
@@ -37,6 +39,7 @@ export type Database = {
           gender?: string
           id?: string
           is_self?: boolean
+          last_viewed?: string | null
           name?: string
           user_id?: string
         }

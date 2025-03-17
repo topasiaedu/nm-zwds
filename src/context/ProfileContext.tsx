@@ -19,7 +19,7 @@ interface ProfileContextProps {
   profiles: Profile[];
   addProfile: (profile: ProfileInsert) => Promise<Profile | null>;
   updateProfile: (profile: Profile) => void;
-  deleteProfile: (profileId: number) => void;
+  deleteProfile: (profileId: string) => void;
   currentProfile: Profile | null;
   setCurrentProfile: (profile: Profile) => void;
   setCurrentProfileById: (profileId: string) => void;
@@ -63,7 +63,7 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
         setProfiles((prev) => [...prev, payload.new]);
       } else if (payload.eventType === "UPDATE") {
         const updatedProfiles = profiles.map((profile) =>
-          profile.id === payload.new.profile_id ? payload.new : profile
+          profile.id === payload.new.id ? payload.new : profile
         );
 
         setProfiles((prev) => {
@@ -75,16 +75,16 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
         });
       } else if (payload.eventType === "DELETE") {
         setProfiles((prev) =>
-          prev.filter((profile) => profile.id !== payload.old.profile_id)
+          prev.filter((profile) => profile.id !== payload.old.id)
         );
       }
     };
 
     const subscription = supabase
-      .channel("profile")
+      .channel("profiles")
       .on(
         "postgres_changes",
-        { event: "*", schema: "public", table: "profile" },
+        { event: "*", schema: "public", table: "profiles" },
         (payload) => {
           handleChanges(payload);
         }
@@ -118,9 +118,9 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
 
   const updateProfile = useCallback(async (profile: Profile) => {
     const { error } = await supabase
-      .from("profile")
+      .from("profiles")
       .update(profile)
-      .match({ profile_id: profile.id })
+      .match({ id: profile.id })
       .single();
 
     if (error) {
@@ -129,11 +129,11 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  const deleteProfile = useCallback(async (profileId: number) => {
+  const deleteProfile = useCallback(async (profileId: string) => {
     const { error } = await supabase
-      .from("profile")
+      .from("profiles")
       .delete()
-      .match({ profile_id: profileId });
+      .match({ id: profileId });
 
     if (error) {
       console.error("Error deleting profile:", error);

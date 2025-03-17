@@ -89,7 +89,7 @@ const Navbar: React.FC = () => {
                               border border-white/10
                               backdrop-filter backdrop-blur-2xl 
                               bg-white/10 hover:bg-white/15 
-                              dark:bg-black/10 dark:hover:bg-black/20
+                              dark:bg-black/80 dark:hover:bg-black/100
                               transition-all duration-300 z-50">
                   <div className="px-4 py-3 text-sm border-b border-white/10 dark:border-gray-800/50">
                     <div className="font-medium truncate dark:text-white">
@@ -131,9 +131,16 @@ const Navbar: React.FC = () => {
         </div>
         
         <Link to="/" className="flex items-center">
-          <span className="self-center text-2xl font-semibold whitespace-nowrap text-purple-600 dark:text-purple-400">
-            紫微斗数
-          </span>
+          <div className="flex flex-col items-center leading-tight">
+            <div className="flex items-center">
+              <span className="text-3xl font-bold whitespace-nowrap bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent dark:from-purple-400 dark:to-indigo-400">
+                紫微斗数
+              </span>
+              <span className="ml-1 text-sm font-bold px-2 py-0.5 rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 text-white dark:from-purple-500 dark:to-indigo-500 uppercase tracking-wider">
+                CAE
+              </span>
+            </div>
+          </div>
         </Link>
         
         {!user && (

@@ -55,7 +55,7 @@ const ProfileFormPage: React.FC = () => {
           showAlert(t("profile_added_successfully"), "success");
           setCurrentProfile(data);
           // Redirect to results page
-          navigate(`/calc/results/${data.id}/${calcType}`);
+          navigate(`/result/${data.id}`);
         } else {
           console.error("Error adding profile: Data is null");
           showAlert(t("error_adding_profile"), "error");
