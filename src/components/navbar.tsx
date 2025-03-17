@@ -45,8 +45,8 @@ const Navbar: React.FC = () => {
   }, []);
   
   return (
-    <nav className="bg-transparent border-gray-200 px-4 py-2.5 border-b border-white/10 dark:border-gray-800/50">
-      <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto">
+    <nav className="fixed top-0 left-0 right-0 z-50 h-14 bg-transparent border-gray-200 px-4 border-b border-white/10 dark:border-gray-800/50 backdrop-blur-md">
+      <div className="h-full max-w-screen-xl flex flex-wrap items-center justify-between mx-auto">
         <div className="flex items-center">
           {/* Language toggle */}
           <div className="flex items-center mr-3">
