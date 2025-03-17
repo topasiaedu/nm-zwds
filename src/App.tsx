@@ -1,100 +1,106 @@
 import React from "react";
-import { Route, Routes } from "react-router";
-import { BrowserRouter } from "react-router-dom";
-import { AlertComponent } from "./components/AlertComponent";
-import FlowbiteWrapper from "./components/FlowbiteWrapper";
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { AuthProvider, useAuth } from "./context/AuthContext";
+import { LanguageProvider } from "./context/LanguageContext";
+import { SidebarProvider } from "./context/SidebarContext";
 import ProtectedRoute from "./components/ProtectedRoute";
-import { AlertProvider } from "./context/AlertContext";
-import { AuthProvider } from "./context/AuthContext";
-import "./index.css";
-import DashboardPage from "./pages";
-import ForgotPasswordPage from "./pages/authentication/forgot-password";
-import ProfileLockPage from "./pages/authentication/profile-lock";
-import ResetPasswordPage from "./pages/authentication/reset-password";
+import MainLayout from "./layouts/MainLayout";
+import Dashboard from "./pages/dashboard/index";
 import SignInPage from "./pages/authentication/sign-in";
 import SignUpPage from "./pages/authentication/sign-up";
-import PrivacyPage from "./pages/legal/privacy";
-import NotFoundPage from "./pages/pages/404";
-import ServerErrorPage from "./pages/pages/500";
-import LoadingPage from "./pages/pages/loading";
-import MaintenancePage from "./pages/pages/maintenance";
-import OtherProfileListPage from "./pages/calc/OtherProfileListPage";
-import ProfileFormPage from "./pages/calc/ProfileFormPage";
-import CalcResultPage from "./pages/calc/CalcResultPage";
-import CalcChoicesPage from "./pages/calc/CalcChoices";
-import { LanguageProvider } from "./context/LanguageContext";
-import { ProfileProvider } from "./context/ProfileContext";
+import ForgotPasswordPage from "./pages/authentication/forgot-password";
+import ResetPasswordPage from "./pages/authentication/reset-password";
+import NotFoundPage from "./pages/404";
+import MyChart from "./pages/my-chart";
+import Calculate from "./pages/calculate";
+import Result from "./pages/result";
 
-const App = () => (
-  <LanguageProvider>
-    <AlertProvider>
+/**
+ * Authentication route wrapper that redirects authenticated users to dashboard
+ */
+const AuthRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { user } = useAuth();
+  const location = useLocation();
+  
+  // If user is authenticated and trying to access auth pages, redirect to dashboard
+  if (user && location.pathname.includes("/authentication")) {
+    return <Navigate to="/dashboard" replace />;
+  }
+  
+  return <>{children}</>;
+};
+
+/**
+ * Main application component
+ */
+const App: React.FC = () => {
+  return (
+    <Router>
       <AuthProvider>
-        <ProfileProvider>
-          <AlertComponent />
-          <BrowserRouter>
-            <Routes>
-              <Route element={<FlowbiteWrapper />}>
-                {/* Protected Routes */}
-                <Route element={<ProtectedRoute />}>
-                  <Route path="/" element={<DashboardPage />} index />
-                  <Route
-                    path="/calc/profiles"
-                    element={<OtherProfileListPage />}
-                  />
-                  <Route
-                    path="/calc/profile/:isSelf"
-                    element={<ProfileFormPage />}
-                  />
+        <LanguageProvider>
+          <SidebarProvider>
+            <MainLayout>
+              <Routes>
+                {/* Authentication routes */}
+                <Route path="/authentication/sign-in" element={
+                  <AuthRoute>
+                    <SignInPage />
+                  </AuthRoute>
+                } />
+                <Route path="/authentication/sign-up" element={
+                  <AuthRoute>
+                    <SignUpPage />
+                  </AuthRoute>
+                } />
+                <Route path="/authentication/forgot-password" element={
+                  <AuthRoute>
+                    <ForgotPasswordPage />
+                  </AuthRoute>
+                } />
+                <Route path="/authentication/reset-password" element={
+                  <AuthRoute>
+                    <ResetPasswordPage />
+                  </AuthRoute>
+                } />
+                
+                {/* Protected routes */}
+                <Route path="/" element={
+                  <ProtectedRoute>
+                    <Navigate to="/dashboard" replace />
+                  </ProtectedRoute>
+                } />
+                <Route path="/dashboard" element={
+                  <ProtectedRoute>
+                    <Dashboard />
+                  </ProtectedRoute>
+                } />
 
-                  <Route path="/calc/choices/:profileId" element={<CalcChoicesPage />} />
-
-                  <Route
-                    path="/calc/results/:profileId/:calcType"
-                    element={<CalcResultPage />}
-                  />
-                </Route>
-
-                <Route
-                  path="/pages/maintenance"
-                  element={<MaintenancePage />}
-                />
-                <Route
-                  path="/authentication/sign-in"
-                  element={<SignInPage />}
-                />
-                <Route
-                  path="/authentication/sign-up"
-                  element={<SignUpPage />}
-                />
-                <Route
-                  path="/authentication/forgot-password"
-                  element={<ForgotPasswordPage />}
-                />
-                <Route
-                  path="/authentication/reset-password"
-                  element={<ResetPasswordPage />}
-                />
-                <Route
-                  path="/authentication/profile-lock"
-                  element={<ProfileLockPage />}
-                />
-
-                {/* Legal Pages */}
-                <Route path="/legal/privacy" element={<PrivacyPage />} />
-
-                {/* Testing */}
-                <Route path="/loading" element={<LoadingPage />} />
-
-                {/* Error Handling Routes */}
-                <Route path="/500" element={<ServerErrorPage />} />
+                {/* 紫微斗数 (Zi Wei Dou Shu) Routes */}
+                <Route path="/my-chart" element={
+                  <ProtectedRoute>
+                    <MyChart />
+                  </ProtectedRoute>
+                } />
+                <Route path="/calculate" element={
+                  <ProtectedRoute>
+                    <Calculate />
+                  </ProtectedRoute>
+                } />
+                <Route path="/result/:id" element={
+                  <ProtectedRoute>
+                    <Result />
+                  </ProtectedRoute>
+                } />
+                
+                {/* 404 page */}
                 <Route path="*" element={<NotFoundPage />} />
-              </Route>
-            </Routes>
-          </BrowserRouter>
-        </ProfileProvider>
+              </Routes>
+            </MainLayout>
+          </SidebarProvider>
+        </LanguageProvider>
       </AuthProvider>
-    </AlertProvider>
-  </LanguageProvider>
-);
+    </Router>
+  );
+};
 
 export default App;

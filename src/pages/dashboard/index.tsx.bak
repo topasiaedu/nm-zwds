@@ -1,0 +1,337 @@
+import React from "react";
+import { useLanguage } from "../../context/LanguageContext";
+import { useAuth } from "../../context/AuthContext";
+import { Link } from "react-router-dom";
+import PageTransition from "../../components/PageTransition";
+
+/**
+ * Dashboard component for 紫微斗数 (Zi Wei Dou Shu/Purple Star Astrology) application
+ * Displays various sections for the user to interact with
+ */
+const Dashboard: React.FC = () => {
+  const { t } = useLanguage();
+  const { user } = useAuth();
+  
+  /**
+   * Placeholder recent results data
+   */
+  const recentResults = [
+    { id: "result1", name: "Zhang Wei", date: "2023-12-15", type: "完整八字命盘" },
+    { id: "result2", name: "Li Na", date: "2023-12-10", type: "紫微斗数命盘" },
+    { id: "result3", name: "Wang Fei", date: "2023-12-05", type: "五行分析" },
+  ];
+  
+  return (
+    <PageTransition>
+      <div className="h-screen w-full overflow-hidden p-4 bg-gradient-to-br from-purple-50 to-indigo-50 dark:from-gray-900 dark:to-gray-800 flex flex-col">
+        {/* Header section */}
+        <div className="mb-4">
+          <h1 className="text-2xl font-bold dark:text-white">
+            {t("dashboard.welcome")}, {user?.email?.split("@")[0] || "User"}
+          </h1>
+          <p className="text-sm text-gray-600 dark:text-gray-400">
+            {t("dashboard.subtitle") || "Your personal 紫微斗数 (Zi Wei Dou Shu) dashboard"}
+          </p>
+        </div>
+        
+        {/* Main grid layout */}
+        <div className="grid grid-cols-12 gap-4 flex-1 overflow-hidden">
+          {/* Left column - 8 columns */}
+          <div className="col-span-8 grid grid-rows-7 gap-4">
+            {/* Recent Results - 3 rows tall */}
+            <div className="row-span-3 rounded-2xl border border-white/20 bg-white/30 backdrop-blur-xl shadow-lg
+                          dark:bg-black/20 dark:border-white/10 p-4 overflow-hidden flex flex-col">
+              <h2 className="text-lg font-bold mb-2 dark:text-white flex items-center">
+                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                </svg>
+                {t("dashboard.recentResults") || "Recent Results"}
+              </h2>
+              
+              <div className="flex-1 overflow-hidden">
+                <div className="h-full overflow-y-auto custom-scrollbar pr-1">
+                  <table className="min-w-full">
+                    <thead className="bg-white/30 dark:bg-white/5">
+                      <tr>
+                        <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400">Name</th>
+                        <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400">Date</th>
+                        <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400">Type</th>
+                        <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-white/10 dark:divide-gray-700/30">
+                      {recentResults.map((result) => (
+                        <tr key={result.id} className="hover:bg-white/20 dark:hover:bg-white/5">
+                          <td className="px-3 py-2 text-sm font-medium text-gray-900 dark:text-white">{result.name}</td>
+                          <td className="px-3 py-2 text-sm text-gray-500 dark:text-gray-400">{result.date}</td>
+                          <td className="px-3 py-2 text-sm text-gray-500 dark:text-gray-400">{result.type}</td>
+                          <td className="px-3 py-2 text-sm">
+                            <Link to={`/result/${result.id}`} className="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400">
+                              View
+                            </Link>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            
+            {/* Stats Grid - 2 rows tall */}
+            <div className="row-span-2 grid grid-cols-2 gap-4">
+              {/* Monthly Activity */}
+              <div className="rounded-2xl border border-white/20 bg-white/30 backdrop-blur-xl shadow-lg
+                            dark:bg-black/20 dark:border-white/10 p-4">
+                <h3 className="text-sm font-bold mb-2 dark:text-white flex items-center">
+                  <svg className="w-4 h-4 mr-1 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                  </svg>
+                  Monthly Activity
+                </h3>
+                
+                <div className="mt-3 h-20 flex items-end space-x-1">
+                  {[25, 45, 15, 30, 20, 35, 40, 30, 25, 48, 35, 25].map((height, i) => (
+                    <div key={i} className="flex-1 bg-indigo-500/20 dark:bg-indigo-600/30 rounded-t" style={{ height: `${height}%` }}></div>
+                  ))}
+                </div>
+                
+                <div className="mt-2 flex justify-between">
+                  <span className="text-xs text-gray-500 dark:text-gray-400">Jan</span>
+                  <span className="text-xs text-gray-500 dark:text-gray-400">Dec</span>
+                </div>
+              </div>
+              
+              {/* Daily Fortune */}
+              <div className="rounded-2xl border border-white/20 bg-white/30 backdrop-blur-xl shadow-lg
+                            dark:bg-black/20 dark:border-white/10 p-4">
+                <h3 className="text-sm font-bold mb-2 dark:text-white flex items-center">
+                  <svg className="w-4 h-4 mr-1 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                  </svg>
+                  Today's Fortune
+                </h3>
+                
+                <div className="mt-2 space-y-1">
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-gray-600 dark:text-gray-400">Lucky Element:</span>
+                    <span className="text-xs font-medium text-yellow-600 dark:text-yellow-400">Wood (木)</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-gray-600 dark:text-gray-400">Lucky Direction:</span>
+                    <span className="text-xs font-medium text-blue-600 dark:text-blue-400">East (东)</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-gray-600 dark:text-gray-400">Lucky Color:</span>
+                    <span className="text-xs font-medium text-green-600 dark:text-green-400">Green</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-gray-600 dark:text-gray-400">Compatibility:</span>
+                    <span className="text-xs font-medium text-red-600 dark:text-red-400">Rabbit, Dragon</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Quick Tools - 2 rows tall */}
+            <div className="row-span-2 rounded-2xl border border-white/20 bg-white/30 backdrop-blur-xl shadow-lg
+                          dark:bg-black/20 dark:border-white/10 p-4">
+              <h3 className="text-sm font-bold mb-3 dark:text-white flex items-center">
+                <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                Quick Tools
+              </h3>
+              
+              <div className="grid grid-cols-4 gap-2">
+                <Link to="/tools/daily-fortune" className="flex flex-col items-center justify-center p-2 rounded-lg bg-white/20 dark:bg-white/10 hover:bg-white/30 dark:hover:bg-white/15 transition-all">
+                  <svg className="w-6 h-6 mb-1 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  <span className="text-xs font-medium dark:text-white">Daily</span>
+                </Link>
+                
+                <Link to="/tools/compatibility" className="flex flex-col items-center justify-center p-2 rounded-lg bg-white/20 dark:bg-white/10 hover:bg-white/30 dark:hover:bg-white/15 transition-all">
+                  <svg className="w-6 h-6 mb-1 text-pink-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                  </svg>
+                  <span className="text-xs font-medium dark:text-white">Match</span>
+                </Link>
+                
+                <Link to="/tools/yearly-forecast" className="flex flex-col items-center justify-center p-2 rounded-lg bg-white/20 dark:bg-white/10 hover:bg-white/30 dark:hover:bg-white/15 transition-all">
+                  <svg className="w-6 h-6 mb-1 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
+                  </svg>
+                  <span className="text-xs font-medium dark:text-white">Year</span>
+                </Link>
+                
+                <Link to="/tools/element-analysis" className="flex flex-col items-center justify-center p-2 rounded-lg bg-white/20 dark:bg-white/10 hover:bg-white/30 dark:hover:bg-white/15 transition-all">
+                  <svg className="w-6 h-6 mb-1 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
+                  </svg>
+                  <span className="text-xs font-medium dark:text-white">Elements</span>
+                </Link>
+                
+                <Link to="/tools/auspicious-dates" className="flex flex-col items-center justify-center p-2 rounded-lg bg-white/20 dark:bg-white/10 hover:bg-white/30 dark:hover:bg-white/15 transition-all">
+                  <svg className="w-6 h-6 mb-1 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  <span className="text-xs font-medium dark:text-white">Dates</span>
+                </Link>
+                
+                <Link to="/tools/name-analysis" className="flex flex-col items-center justify-center p-2 rounded-lg bg-white/20 dark:bg-white/10 hover:bg-white/30 dark:hover:bg-white/15 transition-all">
+                  <svg className="w-6 h-6 mb-1 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
+                  </svg>
+                  <span className="text-xs font-medium dark:text-white">Names</span>
+                </Link>
+                
+                <Link to="/tools/flying-stars" className="flex flex-col items-center justify-center p-2 rounded-lg bg-white/20 dark:bg-white/10 hover:bg-white/30 dark:hover:bg-white/15 transition-all">
+                  <svg className="w-6 h-6 mb-1 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                  </svg>
+                  <span className="text-xs font-medium dark:text-white">Stars</span>
+                </Link>
+                
+                <Link to="/tools/help" className="flex flex-col items-center justify-center p-2 rounded-lg bg-white/20 dark:bg-white/10 hover:bg-white/30 dark:hover:bg-white/15 transition-all">
+                  <svg className="w-6 h-6 mb-1 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span className="text-xs font-medium dark:text-white">Help</span>
+                </Link>
+              </div>
+            </div>
+          </div>
+          
+          {/* Right column - 4 columns */}
+          <div className="col-span-4 grid grid-rows-5 gap-4">
+            {/* User Profile */}
+            <div className="row-span-1 rounded-2xl border border-white/20 bg-white/30 backdrop-blur-xl shadow-lg
+                          dark:bg-black/20 dark:border-white/10 p-4 flex items-center">
+              <div className="w-12 h-12 rounded-full bg-gradient-to-r from-purple-500 to-indigo-500 flex items-center justify-center text-white font-bold text-lg mr-3">
+                {user?.email?.charAt(0).toUpperCase() || "U"}
+              </div>
+              
+              <div className="flex-1">
+                <h3 className="font-bold dark:text-white">{user?.email?.split("@")[0] || "User"}</h3>
+                <p className="text-xs text-gray-500 dark:text-gray-400">{user?.email || "user@example.com"}</p>
+              </div>
+              
+              <Link to="/profile" className="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 text-sm">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+              </Link>
+            </div>
+            
+            {/* Main Actions - 3 rows */}
+            <div className="row-span-3 grid grid-rows-3 gap-4">
+              {/* Check My Chart */}
+              <Link to="/my-chart" className="rounded-2xl border border-white/20 bg-white/30 backdrop-blur-xl shadow-lg
+                                            dark:bg-black/20 dark:border-white/10 p-4 transition-all duration-300
+                                            hover:bg-white/40 dark:hover:bg-white/5 flex flex-col justify-between">
+                <div className="flex items-start justify-between">
+                  <h3 className="text-md font-bold dark:text-white flex items-center">
+                    <svg className="w-5 h-5 mr-2 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />
+                    </svg>
+                    My Chart
+                  </h3>
+                  <svg className="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </div>
+                <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+                  View your personal 紫微斗数 chart and analysis
+                </p>
+                <div className="mt-1 flex justify-end">
+                  <span className="text-xs py-0.5 px-1.5 rounded bg-indigo-100 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-300">
+                    Updated 2d ago
+                  </span>
+                </div>
+              </Link>
+
+              {/* Calculate for Others */}
+              <Link to="/calculate" className="rounded-2xl border border-white/20 bg-white/30 backdrop-blur-xl shadow-lg
+                                            dark:bg-black/20 dark:border-white/10 p-4 transition-all duration-300
+                                            hover:bg-white/40 dark:hover:bg-white/5 flex flex-col justify-between">
+                <div className="flex items-start justify-between">
+                  <h3 className="text-md font-bold dark:text-white flex items-center">
+                    <svg className="w-5 h-5 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    Calculate
+                  </h3>
+                  <svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </div>
+                <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+                  Generate charts for friends and family
+                </p>
+                <div className="mt-1 flex justify-between items-center">
+                  <span className="text-xs text-gray-500 dark:text-gray-400">3 saved profiles</span>
+                  <span className="text-xs py-0.5 px-1.5 rounded bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">
+                    New
+                  </span>
+                </div>
+              </Link>
+
+              {/* Learn */}
+              <Link to="/learn" className="rounded-2xl border border-white/20 bg-white/30 backdrop-blur-xl shadow-lg
+                                         dark:bg-black/20 dark:border-white/10 p-4 transition-all duration-300
+                                         hover:bg-white/40 dark:hover:bg-white/5 flex flex-col justify-between">
+                <div className="flex items-start justify-between">
+                  <h3 className="text-md font-bold dark:text-white flex items-center">
+                    <svg className="w-5 h-5 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                    </svg>
+                    Learn
+                  </h3>
+                  <svg className="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </div>
+                <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+                  Explore 紫微斗数 principles and techniques
+                </p>
+                <div className="mt-1 flex justify-end">
+                  <span className="text-xs py-0.5 px-1.5 rounded bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">
+                    5 courses
+                  </span>
+                </div>
+              </Link>
+            </div>
+            
+            {/* Resources - 1 row */}
+            <div className="row-span-1 rounded-2xl border border-white/20 bg-white/30 backdrop-blur-xl shadow-lg
+                          dark:bg-black/20 dark:border-white/10 p-4">
+              <h3 className="text-sm font-bold mb-2 dark:text-white flex items-center">
+                <svg className="w-4 h-4 mr-1 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                </svg>
+                Popular Resources
+              </h3>
+              
+              <div className="space-y-1.5">
+                <Link to="/learn/basics" className="block text-xs text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400">
+                  • Introduction to 紫微斗数 Basics
+                </Link>
+                <Link to="/learn/palace-system" className="block text-xs text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400">
+                  • Understanding the 12 Palace System
+                </Link>
+                <Link to="/learn/star-types" className="block text-xs text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400">
+                  • Main Stars and Their Influences
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </PageTransition>
+  );
+};
+
+export default Dashboard; 

@@ -1,54 +1,135 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import { Button, Card, Checkbox, Label, TextInput } from "flowbite-react";
-import type { FC } from "react";
-import React from "react";
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { Alert, Card, Label, TextInput } from "flowbite-react";
+import { useAuth } from "../../context/AuthContext";
+import { useLanguage } from "../../context/LanguageContext";
+import PageTransition from "../../components/PageTransition";
 
-const ForgotPasswordPage: FC = function () {
+/**
+ * ForgotPasswordPage component
+ * Allows users to request a password reset
+ */
+const ForgotPasswordPage: React.FC = () => {
+  const [email, setEmail] = useState<string>("");
+  const [error, setError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [success, setSuccess] = useState<boolean>(false);
+  
+  const { resetPassword } = useAuth();
+  const { t } = useLanguage();
+  
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    
+    if (!email) {
+      setError(t("validation.required"));
+      return;
+    }
+    
+    try {
+      setIsSubmitting(true);
+      const { error } = await resetPassword(email);
+      
+      if (error) {
+        setError(error.message);
+        return;
+      }
+      
+      setSuccess(true);
+    } catch (err) {
+      setError("An unexpected error occurred. Please try again.");
+      console.error(err);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+  
   return (
-    <div className="flex flex-col items-center justify-center px-6 lg:h-screen lg:gap-y-12">
-      <a href="/" className="my-6 flex items-center gap-x-1 lg:my-0">
-        <img
-          alt="Flowbite logo"
-          src="https://flowbite.com/docs/images/logo.svg"
-          className="mr-3 h-10"
-        />
-        <span className="self-center whitespace-nowrap text-2xl font-semibold dark:text-white">
-          Flowbite
-        </span>
-      </a>
-      <Card className="w-full lg:max-w-[640px] lg:[&>*]:w-full lg:[&>*]:p-16">
-        <h1 className="text-2xl font-bold dark:text-white md:text-3xl">
-          Forgot your password?
-        </h1>
-        <p className="mb-3 text-gray-500 dark:text-gray-300">
-          Don&apos;t fret! Just type in your email and we will send you a code to
-          reset your pasword!
-        </p>
-        <form>
-          <div className="mb-6 flex flex-col gap-y-3">
-            <Label htmlFor="email">Your email</Label>
-            <TextInput
-              id="email"
-              name="email"
-              placeholder="name@company.com"
-              type="email"
-            />
-          </div>
-          <div className="mb-6 flex items-center gap-x-3">
-            <Checkbox id="acceptTerms" name="acceptTerms" />
-            <Label htmlFor="acceptTerms">
-              I accept the&nbsp;
-              <a href="#" className="text-primary-700 dark:text-primary-300">
-                Terms and Conditions
-              </a>
-            </Label>
-          </div>
-          <div>
-            <Button type="submit" className="w-full lg:w-auto">
-              Reset password
-            </Button>
-          </div>
-        </form>
+    <div className="flex flex-col items-center justify-center">
+      <Card className="w-full max-w-md relative z-10 rounded-2xl shadow-2xl 
+                     border border-white/10
+                     backdrop-filter backdrop-blur-2xl 
+                     bg-white/10 hover:bg-white/15 
+                     dark:bg-black/10 dark:hover:bg-black/20 
+                     transition-all duration-300">
+        <div className="space-y-6">
+          <h2 className="text-2xl font-bold text-center dark:text-white">
+            {t("auth.forgot.title")}
+          </h2>
+          <p className="text-center text-gray-600 dark:text-gray-400">
+            {t("auth.forgot.description")}
+          </p>
+          
+          {error && (
+            <Alert color="failure">
+              {error}
+            </Alert>
+          )}
+          
+          {success ? (
+            <div className="space-y-6">
+              <Alert color="success">
+                {t("auth.forgot.success")}
+              </Alert>
+              <div className="text-center">
+                <Link 
+                  to="/authentication/sign-in"
+                  className="text-blue-500 dark:text-blue-400 hover:underline"
+                >
+                  {t("auth.forgot.back")}
+                </Link>
+              </div>
+            </div>
+          ) : (
+            <form className="space-y-4" onSubmit={handleSubmit}>
+              <div>
+                <div className="mb-2 block">
+                  <Label htmlFor="email" value={t("auth.forgot.email")} className="dark:text-white" />
+                </div>
+                <TextInput
+                  id="email"
+                  type="email"
+                  placeholder="name@company.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </div>
+              
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full px-4 py-2 text-white font-medium rounded-lg transition-all 
+                         bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700
+                         focus:ring-4 focus:ring-purple-300 focus:outline-none
+                         disabled:opacity-70 disabled:cursor-not-allowed"
+              >
+                {isSubmitting ? (
+                  <div className="flex items-center justify-center">
+                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    {t("auth.forgot.submit")}
+                  </div>
+                ) : (
+                  t("auth.forgot.submit")
+                )}
+              </button>
+              
+              <div className="text-center">
+                <Link 
+                  to="/authentication/sign-in"
+                  className="text-blue-500 dark:text-blue-400 hover:underline"
+                >
+                  {t("auth.forgot.back")}
+                </Link>
+              </div>
+            </form>
+          )}
+        </div>
       </Card>
     </div>
   );

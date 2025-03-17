@@ -1,110 +1,113 @@
 import React, { createContext, useContext, useState, ReactNode } from "react";
+import en from "../translations/en";
+import zh from "../translations/zh";
 
-// Define language types
+/**
+ * Available languages
+ */
 export type Language = "en" | "zh";
 
-// Define context shape
-interface LanguageContextType {
+/**
+ * Translation map type
+ */
+interface TranslationMap {
+  [key: string]: string | TranslationMap;
+}
+
+/**
+ * Language context type definition
+ */
+export interface LanguageContextType {
   language: Language;
-  setLanguage: (lang: Language) => void;
+  changeLanguage: (lang: Language) => void;
   t: (key: string) => string;
 }
 
-// Create context with default values
-const LanguageContext = createContext<LanguageContextType | undefined>(
-  undefined
-);
-
-const translations: Record<Language, Record<string, string>> = {
-  en: {
-    welcome: "Welcome",
-    change_language: "Change Language",
-    hello: "Hello",
-    discover_yourself: "Discover Yourself",
-    discover_others: "Discover Others",
-    name: "Name",
-    select_date: "Select Date",
-    select_birth_time: "Select Birth Time",
-    profile_form: "Profile Form",
-    gender: "Gender",
-    male: "Male",
-    female: "Female",
-    birth_time_placeholder: "Please select birth time",
-    add_profile: "Add Profile",
-    fill_all_fields: "Please fill in all fields",
-    profile_added_successfully: "Profile added successfully",
-    error_adding_profile: "Error adding profile",
-    other_profiles: "Other Profiles",
-    dashboard: "Dashboard",
-    logout: "Logout",
-    contact_us: "Contact Us",
-    app_name: "Zi Wei Dou Shu Chart",
-    welcome_back: "Welcome Back!",
-    email: "Email",
-    password: "Password",
-    login: "Login",
-    loading: "Loading...",
-    calculator_1: "Calculator 1",
-    calculator_2: "Calculator 2",
-  },
-  zh: {
-    welcome: "欢迎",
-    change_language: "更改语言",
-    hello: "你好",
-    discover_yourself: "发现自己",
-    discover_others: "发现他人",
-    name: "名字",
-    select_date: "选择日期",
-    select_birth_time: "选择出生时间",
-    profile_form: "个人资料",
-    gender: "性别",
-    male: "男",
-    female: "女",
-    birth_time_placeholder: "请选择出生时间",
-    add_profile: "添加个人资料",
-    fill_all_fields: "请填写所有字段",
-    profile_added_successfully: "成功添加个人资料",
-    error_adding_profile: "添加个人资料时出错",
-    other_profiles: "其他个人资料",
-    dashboard: "紫微斗數命盤",
-    logout: "退出登录",
-    contact_us: "联系我们",
-    app_name: "紫微斗數命盤",
-    welcome_back: "欢迎回来!",
-    email: "电子邮件",
-    password: "密码",
-    login: "登录",
-    loading: "加载中...",
-    calculator_1: "命盘1",
-    calculator_2: "命盘2",
-  },
+/**
+ * Translation resources for each language
+ */
+const resources: Record<Language, TranslationMap> = {
+  en,
+  zh,
 };
 
-export const LanguageProvider: React.FC<{ children: ReactNode }> = ({
-  children,
-}) => {
-  const [language, setLanguage2] = useState<Language>(localStorage.getItem("language") as Language || "en");
+/**
+ * Create the language context
+ */
+const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
-  // Function to translate a key
-  const t = (key: string) => translations[language][key] || key;
+/**
+ * Props for LanguageProvider
+ */
+interface LanguageProviderProps {
+  children: ReactNode;
+}
 
-  const setLanguage = (lang: Language) => {
-    // Set to local storage
+/**
+ * Provider component for language context
+ */
+export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) => {
+  // Get saved language from localStorage or use browser language or default to English
+  const getBrowserLanguage = (): Language => {
+    const browserLang = navigator.language.split("-")[0];
+    return (browserLang === "zh") ? "zh" : "en";
+  };
+
+  const [language, setLanguage] = useState<Language>(
+    (localStorage.getItem("language") as Language) || getBrowserLanguage()
+  );
+
+  /**
+   * Change the current language
+   */
+  const changeLanguage = (lang: Language): void => {
+    setLanguage(lang);
     localStorage.setItem("language", lang);
-    setLanguage2(lang);
-  }
+  };
+
+  /**
+   * Get translation for a key
+   */
+  const t = (key: string): string => {
+    const keys = key.split(".");
+    let value: any = resources[language];
+
+    for (const k of keys) {
+      if (value && typeof value === "object" && k in value) {
+        value = value[k];
+      } else {
+        console.warn(`Translation key not found: ${key}`);
+        return key;
+      }
+    }
+
+    if (typeof value === "string") {
+      return value;
+    }
+
+    console.warn(`Translation key does not resolve to a string: ${key}`);
+    return key;
+  };
+
+  const value = {
+    language,
+    changeLanguage,
+    t,
+  };
 
   return (
-    <LanguageContext.Provider value={{ language, setLanguage, t }}>
+    <LanguageContext.Provider value={value}>
       {children}
     </LanguageContext.Provider>
   );
 };
 
-// Custom hook to use language context
-export const useLanguage = () => {
+/**
+ * Hook to use the language context
+ */
+export const useLanguage = (): LanguageContextType => {
   const context = useContext(LanguageContext);
-  if (!context) {
+  if (context === undefined) {
     throw new Error("useLanguage must be used within a LanguageProvider");
   }
   return context;

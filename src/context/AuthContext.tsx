@@ -1,145 +1,220 @@
-import type { PropsWithChildren } from "react";
-import React, {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
-import { supabase } from "../utils/supabaseClient";
-import isEqual from "lodash/isEqual"; // Import lodash's isEqual for deep comparison
+import React, { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { supabase } from "../utils/supabase-client";
+import { Session, User, AuthError } from "@supabase/supabase-js";
+import { useNavigate } from "react-router-dom";
 
-interface AuthContextProps {
-  user: any;
-  signIn: (email: string, password: string) => Promise<any>;
-  signOut: () => Promise<any>;
-  signUp: (email: string, password: string) => Promise<any>;
-  loading: boolean;
+/**
+ * AuthResponse type for standardizing auth function responses
+ */
+interface AuthResponse {
+  data: {
+    user?: User | null;
+    session?: Session | null;
+  };
+  error: AuthError | null;
 }
 
-const AuthContext = createContext<AuthContextProps>(undefined!);
+/**
+ * Auth context type definition
+ */
+interface AuthContextType {
+  user: User | null;
+  session: Session | null;
+  loading: boolean;
+  signIn: (email: string, password: string) => Promise<AuthResponse>;
+  signUp: (email: string, password: string) => Promise<AuthResponse>;
+  signOut: () => Promise<void>;
+  resetPassword: (email: string) => Promise<{ error: AuthError | null }>;
+  completePasswordReset: (token: string, newPassword: string) => Promise<{ error: AuthError | null }>;
+}
 
-export function AuthProvider({ children }: PropsWithChildren) {
-  const [user, setUser] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+/**
+ * Create the Authentication Context
+ */
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+/**
+ * Provider component that wraps the app and makes auth object available
+ * to any child component that calls useAuth().
+ */
+export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const [user, setUser] = useState<User | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchUser = async () => {
-      const {
-        data: { user },
-        error,
-      } = await supabase.auth.getUser();
-
-      if (error) {
-        console.error("Error getting user:", error);
-      }
-
-
-      // Only update state if the new user is different from the current one
-      setUser((prevUser: any) => {
-        if (!isEqual(prevUser, user)) {
-          return user;
+    // Get session from local storage and set states
+    const initializeAuth = async () => {
+      setLoading(true);
+      
+      try {
+        // Get current session
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (session) {
+          setSession(session);
+          setUser(session.user);
         }
-        return prevUser;
-      });
-      setLoading(false); // Update loading state after user is set
+      } catch (error) {
+        console.error("Error loading auth:", error);
+      } finally {
+        setLoading(false);
+      }
     };
 
-    fetchUser();
+    initializeAuth();
 
-    const { data: listener } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        // Only update state if the new session user is different from the current user
-        setUser((prevUser: any) => {
-          if (!isEqual(prevUser, session?.user)) {
-            return session?.user || null;
-          }
-          return prevUser;
-        });
-        setLoading(false); // Ensure to set loading to false here as well
+    // Set up auth state listener
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        console.log(`Supabase auth event: ${event}`);
+        setSession(session);
+        setUser(session?.user ?? null);
+        
+        if (event === "SIGNED_OUT") {
+          navigate("/authentication/sign-in");
+        }
       }
     );
 
+    // Clean up subscription
     return () => {
-      listener?.subscription.unsubscribe();
+      authListener.subscription.unsubscribe();
     };
-  }, []);
+  }, [navigate]);
 
-  const signIn = useCallback(async (email: string, password: string) => {
-    setLoading(true); // Consider setting loading to true to indicate starting the sign-in process
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    if (error) {
-      console.error("Error during sign in:", error);
-      setLoading(false); // Ensure to set loading to false in case of an error
-      return { error };
+  /**
+   * Sign in with email and password
+   */
+  const signIn = async (email: string, password: string): Promise<AuthResponse> => {
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      return {
+        data: {
+          user: data.user,
+          session: data.session,
+        },
+        error,
+      };
+    } catch (error) {
+      console.error("Error signing in:", error);
+      return {
+        data: { user: null, session: null },
+        error: error as AuthError,
+      };
     }
-    // Only update state if the new user is different from the current one
-    setUser((prevUser: any) => {
-      if (!isEqual(prevUser, data.user)) {
-        return data.user;
-      }
-      return prevUser;
-    });
-    setLoading(false);
-    return { user: data.user };
-  }, []);
+  };
 
-  const signOut = useCallback(async () => {
-    setLoading(true);
-    const { error } = await supabase.auth.signOut();
-    if (error) {
+  /**
+   * Sign up with email and password
+   */
+  const signUp = async (email: string, password: string): Promise<AuthResponse> => {
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+      });
+
+      return {
+        data: {
+          user: data.user,
+          session: data.session,
+        },
+        error,
+      };
+    } catch (error) {
+      console.error("Error signing up:", error);
+      return {
+        data: { user: null, session: null },
+        error: error as AuthError,
+      };
+    }
+  };
+
+  /**
+   * Sign out the current user
+   */
+  const signOut = async (): Promise<void> => {
+    try {
+      await supabase.auth.signOut();
+    } catch (error) {
       console.error("Error signing out:", error);
-      setLoading(false);
-      return { error };
     }
-    setUser(null);
-    setLoading(false);
-  }, []);
+  };
 
-  const signUp = useCallback(async (email: string, password: string) => {
-    setLoading(true);
-    const { data, error } = await supabase.auth.signUp({ email, password });
-    if (error) {
-      console.error("Error during sign up:", error);
-      setLoading(false);
+  /**
+   * Reset password (send reset email)
+   */
+  const resetPassword = async (email: string): Promise<{ error: AuthError | null }> => {
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: window.location.origin + "/authentication/reset-password",
+      });
       return { error };
+    } catch (error) {
+      console.error("Error resetting password:", error);
+      return { error: error as AuthError };
     }
-    // Only update state if the new user is different from the current one
-    setUser((prevUser: any) => {
-      if (!isEqual(prevUser, data.user)) {
-        return data.user;
-      }
-      return prevUser;
-    });
-    setLoading(false);
-    return { user: data.user };
-  }, []);
+  };
 
-  const contextValue = useMemo(
-    () => ({ user, signIn, signOut, signUp, loading }),
-    [user, signIn, signOut, signUp, loading]
-  );
+  /**
+   * Complete password reset (set new password with token)
+   */
+  const completePasswordReset = async (
+    token: string,
+    newPassword: string
+  ): Promise<{ error: AuthError | null }> => {
+    try {
+      const { error } = await supabase.auth.updateUser({
+        password: newPassword,
+      });
+      return { error };
+    } catch (error) {
+      console.error("Error completing password reset:", error);
+      return { error: error as AuthError };
+    }
+  };
+
+  // Create the value object that will be provided by the context
+  const value = {
+    user,
+    session,
+    loading,
+    signIn,
+    signUp,
+    signOut,
+    resetPassword,
+    completePasswordReset,
+  };
 
   return (
-    <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
+    <AuthContext.Provider value={value}>
+      {!loading ? children : <div className="flex items-center justify-center h-screen w-screen">
+        <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500"></div>
+      </div>}
+    </AuthContext.Provider>
   );
-}
+};
 
-// Add the whyDidYouRender property after defining the component
-(AuthProvider as any).whyDidYouRender = true;
-
-export function useAuthContext() {
+/**
+ * Hook for easy access to the auth context
+ */
+export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
-
-  if (typeof context === "undefined") {
-    throw new Error(
-      "useAuthContext should be used within the AuthProvider provider!"
-    );
+  
+  if (context === undefined) {
+    throw new Error("useAuth must be used within an AuthProvider");
   }
-
+  
   return context;
-}
+};
+
+/**
+ * Alias for useAuth() to maintain compatibility with existing code
+ */
+export const useAuthContext = useAuth;

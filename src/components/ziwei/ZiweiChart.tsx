@@ -131,12 +131,12 @@ const ZiweiChart: React.FC<Props> = ({ palaces, daShian, siaoShian, centerInfo }
       <div className="ziwei">
         {palaces.map((palace, index) => renderPalace(index, palace))}
         <div className="zwDivCenter">
-          <div>{`${t("name")}: ${centerInfo.name}`}</div>
-          <div>{`${t("gender")}: ${centerInfo.gender}`}</div>
-          <div>{`${t("birthDate")}: ${centerInfo.birthDate}`}</div>
-          <div>{`${t("solarDate")}: ${centerInfo.solarDate}`}</div>
-          <div>{`${t("shengXiao")}: ${centerInfo.shengXiao}`}</div>
-          <div>{`${t("fiveElement")}: ${centerInfo.fiveElement}`}</div>
+          <div>{`${t("chartInfo.name")}: ${centerInfo.name}`}</div>
+          <div>{`${t("chartInfo.gender")}: ${centerInfo.gender}`}</div>
+          <div>{`${t("chartInfo.birthDate")}: ${centerInfo.birthDate}`}</div>
+          <div>{`${t("chartInfo.solarDate")}: ${centerInfo.solarDate}`}</div>
+          <div>{`${t("chartInfo.shengXiao")}: ${centerInfo.shengXiao}`}</div>
+          <div>{`${t("chartInfo.fiveElement")}: ${centerInfo.fiveElement}`}</div>
           
           <div className="debug-info mt-4">
             <div>大限分佈:</div>
