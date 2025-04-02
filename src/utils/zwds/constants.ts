@@ -1,0 +1,677 @@
+/**
+ * Constants for Zi Wei Dou Shu calculations
+ */
+
+/**
+ * Main stars and their properties
+ */
+export const MAIN_STARS = {
+  ZI_WEI: { name: "紫微", brightness: "bright" },
+  TIAN_JI: { name: "天机", brightness: "bright" },
+  TAI_YANG: { name: "太阳", brightness: "bright" },
+  WU_QU: { name: "武曲", brightness: "bright" },
+  TIAN_TONG: { name: "天同", brightness: "bright" },
+  LIAN_ZHEN: { name: "廉贞", brightness: "bright" },
+  FU_YI: { name: "府尹", brightness: "bright" },
+  TAI_YIN: { name: "太阴", brightness: "bright" },
+  TAN_LANG: { name: "贪狼", brightness: "bright" },
+  JU_MEN: { name: "巨门", brightness: "bright" },
+  TIAN_XIANG: { name: "天相", brightness: "bright" },
+  TIAN_LIANG: { name: "天梁", brightness: "bright" },
+  QI_SHA: { name: "七杀", brightness: "bright" },
+  PO_JUN: { name: "破军", brightness: "bright" }
+} as const;
+
+/**
+ * Body stars and their properties
+ */
+export const BODY_STARS = {
+  TIAN_FU: { name: "天府", brightness: "bright" },
+  TAI_YIN: { name: "太阴", brightness: "bright" },
+  TAN_LANG: { name: "贪狼", brightness: "bright" },
+  JU_MEN: { name: "巨门", brightness: "bright" },
+  TIAN_XIANG: { name: "天相", brightness: "bright" },
+  TIAN_LIANG: { name: "天梁", brightness: "bright" },
+  QI_SHA: { name: "七杀", brightness: "bright" },
+  PO_JUN: { name: "破军", brightness: "bright" }
+} as const;
+
+/**
+ * Minor stars and their properties
+ */
+export const MINOR_STARS = {
+  WEN_CHANG: { name: "文昌", brightness: "bright" },
+  WEN_QU: { name: "文曲", brightness: "bright" },
+  TIAN_KUI: { name: "天魁", brightness: "bright" },
+  TIAN_YUE: { name: "天钺", brightness: "bright" },
+  ZUO_FU: { name: "左辅", brightness: "bright" },
+  YOU_BI: { name: "右弼", brightness: "bright" },
+  TIAN_CHU: { name: "天厨", brightness: "bright" },
+  TIAN_XING: { name: "天刑", brightness: "bright" },
+  TIAN_YAO: { name: "天姚", brightness: "bright" },
+  TIAN_XI: { name: "天喜", brightness: "bright" },
+  TIAN_KONG: { name: "天哭", brightness: "bright" },
+  TIAN_XU: { name: "天虚", brightness: "bright" }
+} as const;
+
+/**
+ * Auxiliary stars and their properties
+ */
+export const AUXILIARY_STARS = {
+  HUO_XING: { name: "火星", brightness: "bright" },
+  LING_XING: { name: "铃星", brightness: "bright" },
+  DI_KONG: { name: "地空", brightness: "dim" },
+  DI_JIE: { name: "地劫", brightness: "dim" },
+  QING_LONG: { name: "青龙", brightness: "bright" },
+  BAI_HU: { name: "白虎", brightness: "bright" },
+  FU_CHI: { name: "伏兵", brightness: "dim" },
+  GUAN_SUO: { name: "官符", brightness: "dim" }
+} as const;
+
+/**
+ * Year stars and their properties
+ */
+export const YEAR_STARS = {
+  TAI_SUI: { name: "太岁", brightness: "bright" },
+  JIAN_FU: { name: "建符", brightness: "bright" },
+  GUAN_FU: { name: "官符", brightness: "bright" },
+  BING_FU: { name: "病符", brightness: "dim" },
+  TAI_FU: { name: "太符", brightness: "bright" },
+  FU_DU: { name: "伏都", brightness: "dim" },
+  BAI_HU: { name: "白虎", brightness: "dim" },
+  TIAN_DU: { name: "天都", brightness: "bright" }
+} as const;
+
+/**
+ * Month stars and their properties
+ */
+export const MONTH_STARS = {
+  YUE_JIAN: { name: "月建", brightness: "bright" },
+  YUE_JI: { name: "月忌", brightness: "dim" },
+  YUE_KONG: { name: "月空", brightness: "dim" },
+  YUE_DE: { name: "月德", brightness: "bright" },
+  YUE_HUI: { name: "月会", brightness: "bright" },
+  YUE_XING: { name: "月星", brightness: "bright" }
+} as const;
+
+/**
+ * Day stars and their properties
+ */
+export const DAY_STARS = {
+  TIAN_DE: { name: "天德", brightness: "bright" },
+  YUE_DE: { name: "月德", brightness: "bright" },
+  TIAN_CHU: { name: "天厨", brightness: "bright" },
+  TIAN_XING: { name: "天刑", brightness: "dim" },
+  TIAN_YAO: { name: "天姚", brightness: "dim" },
+  TIAN_XI: { name: "天喜", brightness: "bright" }
+} as const;
+
+/**
+ * Hour stars and their properties
+ */
+export const HOUR_STARS = {
+  TAI_YI: { name: "太乙", brightness: "bright" },
+  TIAN_YI: { name: "天乙", brightness: "bright" },
+  TAI_YIN: { name: "太阴", brightness: "bright" },
+  TAI_YANG: { name: "太阳", brightness: "bright" },
+  TIAN_GUI: { name: "天贵", brightness: "bright" },
+  TIAN_GUAN: { name: "天官", brightness: "bright" }
+} as const;
+
+/**
+ * Palace names in Chinese
+ */
+export const PALACE_NAMES = [
+  "命宫", "兄弟", "夫妻", "子女", "财帛", "疾厄",
+  "迁移", "交友", "官禄", "田宅", "福德", "父母"
+] as const;
+
+/**
+ * Earthly Branch names in Chinese
+ */
+export const EARTHLY_BRANCHES = [
+  "子", "丑", "寅", "卯", "辰", "巳",
+  "午", "未", "申", "酉", "戌", "亥"
+] as const;
+
+/**
+ * Heavenly Stem names in Chinese
+ */
+export const HEAVENLY_STEMS = [
+  "甲", "乙", "丙", "丁", "戊",
+  "己", "庚", "辛", "壬", "癸"
+] as const;
+
+/**
+ * Star transformation rules
+ */
+export const STAR_TRANSFORMATIONS = {
+  ZI_WEI: {
+    TAI_YANG: "化科",
+    TAI_YIN: "化科",
+    TAN_LANG: "化禄",
+    JU_MEN: "化忌",
+    TIAN_TONG: "化科",
+    WU_QU: "化权",
+    TIAN_FU: "化科",
+    TIAN_LIANG: "化科",
+    QI_SHA: "化权",
+    PO_JUN: "化权"
+  }
+} as const;
+
+/**
+ * ZiWei star position lookup table based on lunar day and five elements
+ * Format: [lunar_day][five_elements] = earthly branch
+ */
+export const ZIWEI_POSITIONS = {
+  // First image (top part - days 1-15)
+  "初一": { "水二局": "丑", "木三局": "辰", "金四局": "巳", "土五局": "午", "火六局": "酉" },
+  "初二": { "水二局": "寅", "木三局": "丑", "金四局": "辰", "土五局": "巳", "火六局": "午" },
+  "初三": { "水二局": "寅", "木三局": "寅", "金四局": "丑", "土五局": "辰", "火六局": "巳" },
+  "初四": { "水二局": "卯", "木三局": "巳", "金四局": "寅", "土五局": "丑", "火六局": "辰" },
+  "初五": { "水二局": "卯", "木三局": "寅", "金四局": "子", "土五局": "寅", "火六局": "丑" },
+  "初六": { "水二局": "辰", "木三局": "卯", "金四局": "巳", "土五局": "未", "火六局": "寅" },
+  "初七": { "水二局": "辰", "木三局": "午", "金四局": "寅", "土五局": "子", "火六局": "戌" },
+  "初八": { "水二局": "巳", "木三局": "卯", "金四局": "寅", "土五局": "子", "火六局": "未" },
+  "初九": { "水二局": "巳", "木三局": "辰", "金四局": "卯", "土五局": "巳", "火六局": "申" },
+  "初十": { "水二局": "巳", "木三局": "未", "金四局": "丑", "土五局": "寅", "火六局": "子" },
+  "十一": { "水二局": "午", "木三局": "午", "金四局": "午", "土五局": "卯", "火六局": "巳" },
+  "十二": { "水二局": "未", "木三局": "辰", "金四局": "卯", "土五局": "申", "火六局": "寅" },
+  "十三": { "水二局": "申", "木三局": "巳", "金四局": "辰", "土五局": "丑", "火六局": "卯" },
+  "十四": { "水二局": "申", "木三局": "申", "金四局": "寅", "土五局": "午", "火六局": "辰" },
+  "十五": { "水二局": "申", "木三局": "午", "金四局": "辰", "土五局": "卯", "火六局": "申" },
+  
+  // First image (bottom part - days 16-30)
+  "十六": { "水二局": "酉", "木三局": "酉", "金四局": "巳", "土五局": "酉", "火六局": "午" },
+  "十七": { "水二局": "酉", "木三局": "午", "金四局": "卯", "土五局": "寅", "火六局": "卯" },
+  "十八": { "水二局": "戌", "木三局": "未", "金四局": "申", "土五局": "寅", "火六局": "辰" },
+  "十九": { "水二局": "戌", "木三局": "戌", "金四局": "巳", "土五局": "辰", "火六局": "子" },
+  "二十": { "水二局": "亥", "木三局": "申", "金四局": "午", "土五局": "巳", "火六局": "酉" },
+  "廿一": { "水二局": "亥", "木三局": "申", "金四局": "辰", "土五局": "戌", "火六局": "寅" },
+  "廿二": { "水二局": "子", "木三局": "亥", "金四局": "酉", "土五局": "卯", "火六局": "申" },
+  "廿三": { "水二局": "子", "木三局": "辰", "金四局": "巳", "土五局": "申", "火六局": "午" },
+  "廿四": { "水二局": "丑", "木三局": "酉", "金四局": "午", "土五局": "巳", "火六局": "巳" },
+  "廿五": { "水二局": "丑", "木三局": "子", "金四局": "巳", "土五局": "午", "火六局": "丑" },
+  "廿六": { "水二局": "寅", "木三局": "酉", "金四局": "戌", "土五局": "亥", "火六局": "戌" },
+  "廿七": { "水二局": "寅", "木三局": "戌", "金四局": "申", "土五局": "辰", "火六局": "卯" },
+  "廿八": { "水二局": "卯", "木三局": "丑", "金四局": "申", "土五局": "酉", "火六局": "申" },
+  "廿九": { "水二局": "卯", "木三局": "戌", "金四局": "午", "土五局": "午", "火六局": "巳" },
+  "三十": { "水二局": "辰", "木三局": "亥", "金四局": "亥", "土五局": "未", "火六局": "午" }
+} as const;
+
+/**
+ * Fixed star placement patterns based on ZiWei position
+ * Each array represents relative positions from ZiWei for:
+ * [天机, 太阳, 武曲, 天同, 廉贞]
+ */
+export const STAR_PATTERNS_FROM_ZIWEI = {
+  1: [2, 3, 4, 5, 6],    // If ZiWei in palace 1
+  2: [3, 4, 5, 6, 7],    // If ZiWei in palace 2
+  3: [4, 5, 6, 7, 8],    // If ZiWei in palace 3
+  4: [5, 6, 7, 8, 9],    // If ZiWei in palace 4
+  5: [6, 7, 8, 9, 10],   // If ZiWei in palace 5
+  6: [7, 8, 9, 10, 11],  // If ZiWei in palace 6
+  7: [8, 9, 10, 11, 12], // If ZiWei in palace 7
+  8: [9, 10, 11, 12, 1], // If ZiWei in palace 8
+  9: [10, 11, 12, 1, 2], // If ZiWei in palace 9
+  10: [11, 12, 1, 2, 3], // If ZiWei in palace 10
+  11: [12, 1, 2, 3, 4],  // If ZiWei in palace 11
+  12: [1, 2, 3, 4, 5]    // If ZiWei in palace 12
+} as const;
+
+/**
+ * Fixed positions for 天府 star based on ZiWei position
+ */
+export const TIANFU_POSITIONS = {
+  1: 8,   // If ZiWei in palace 1, TianFu starts in palace 8
+  2: 9,   // If ZiWei in palace 2, TianFu starts in palace 9
+  3: 10,  // and so on...
+  4: 11,
+  5: 12,
+  6: 1,
+  7: 2,
+  8: 3,
+  9: 4,
+  10: 5,
+  11: 6,
+  12: 7
+} as const;
+
+/**
+ * Fixed sequence of stars that follow TianFu
+ * These stars are placed in consecutive palaces starting from TianFu's position
+ */
+export const TIANFU_SEQUENCE = [
+  "天府",
+  "太阴",
+  "贪狼",
+  "巨门",
+  "天相",
+  "天梁",
+  "七杀",
+  "破军"
+] as const;
+
+
+/**
+ * Position lookup table for Left Support (左輔) star
+ * Based on birth month only
+ */
+export const LEFT_SUPPORT_POSITIONS: { [month: number]: string } = {
+  1: "辰",   // Month 1 corresponds to 寅
+  2: "巳",   // Month 2 corresponds to 丑
+  3: "午",   // Month 3 corresponds to 子
+  4: "未",   // Month 4 corresponds to 亥
+  5: "申",   // Month 5 corresponds to 戌
+  6: "酉",   // Month 6 corresponds to 酉
+  7: "戌",   // Month 7 corresponds to 申
+  8: "亥",   // Month 8 corresponds to 未
+  9: "子",   // Month 9 corresponds to 午
+  10: "丑",  // Month 10 corresponds to 巳
+  11: "寅",  // Month 11 corresponds to 辰
+  12: "卯"   // Month 12 corresponds to 卯
+};
+
+/**
+ * Position lookup table for Right Support (右弼) star
+ * Based on birth month only
+ */
+export const RIGHT_SUPPORT_POSITIONS: { [month: number]: string } = {
+  1: "戌",   // Month 1 corresponds to 申
+  2: "酉",   // Month 2 corresponds to 酉
+  3: "申",   // Month 3 corresponds to 戌
+  4: "未",   // Month 4 corresponds to 亥
+  5: "午",   // Month 5 corresponds to 子
+  6: "巳",   // Month 6 corresponds to 丑
+  7: "辰",   // Month 7 corresponds to 寅
+  8: "卯",   // Month 8 corresponds to 卯
+  9: "寅",   // Month 9 corresponds to 辰
+  10: "丑",  // Month 10 corresponds to 巳
+  11: "子",  // Month 11 corresponds to 午
+  12: "亥"   // Month 12 corresponds to 未
+};
+
+/**
+ * Position lookup table for Wen Chang (文昌) star
+ * Based on birth hour only
+ */
+export const WEN_CHANG_POSITIONS: { [hour: number]: string } = {
+  23: "戌",  // 23:00-01:00 corresponds to 寅
+  1: "酉",   // 01:00-03:00 corresponds to 卯
+  3: "申",   // 03:00-05:00 corresponds to 辰
+  5: "未",   // 05:00-07:00 corresponds to 巳
+  7: "午",   // 07:00-09:00 corresponds to 午
+  9: "巳",   // 09:00-11:00 corresponds to 未
+  11: "辰",  // 11:00-13:00 corresponds to 申
+  13: "卯",  // 13:00-15:00 corresponds to 酉
+  15: "寅",  // 15:00-17:00 corresponds to 戌
+  17: "丑",  // 17:00-19:00 corresponds to 亥
+  19: "子",  // 19:00-21:00 corresponds to 子
+  21: "亥"   // 21:00-23:00 corresponds to 丑
+};
+
+/**
+ * Position lookup table for Wen Qu (文曲) star
+ * Based on birth hour only
+ */
+export const WEN_QU_POSITIONS: { [hour: number]: string } = {
+  23: "辰",  // 23:00-01:00 corresponds to 申
+  1: "巳",   // 01:00-03:00 corresponds to 酉
+  3: "午",   // 03:00-05:00 corresponds to 戌
+  5: "未",   // 05:00-07:00 corresponds to 亥
+  7: "申",   // 07:00-09:00 corresponds to 子
+  9: "酉",   // 09:00-11:00 corresponds to 丑
+  11: "戌",  // 11:00-13:00 corresponds to 寅
+  13: "亥",  // 13:00-15:00 corresponds to 卯
+  15: "子",  // 15:00-17:00 corresponds to 辰
+  17: "丑",  // 17:00-19:00 corresponds to 巳
+  19: "寅",  // 19:00-21:00 corresponds to 午
+  21: "卯"   // 21:00-23:00 corresponds to 未
+};
+
+/**
+ * Four Transformation (四化星) lookup table
+ * Based on birth year's Heavenly Stem
+ * Each entry maps a Heavenly Stem to which stars receive which transformations
+ */
+export const FOUR_TRANSFORMATIONS: {
+  [stem in typeof HEAVENLY_STEMS[number]]: {
+    祿: string;  // 化祿
+    權: string;  // 化權
+    科: string;  // 化科
+    忌: string;  // 化忌
+  };
+} = {
+  "甲": {
+    祿: "廉貞",   // 化科 goes to 廉貞
+    權: "破軍",   // 化權 goes to 破軍
+    科: "武曲",   // 化祿 goes to 武曲
+    忌: "太陽"    // 化忌 goes to 太陽
+  },
+  "乙": {
+    祿: "天機",
+    權: "天梁",
+    科: "紫微",
+    忌: "太陰"
+  },
+  "丙": {
+    祿: "天同",
+    權: "天機",
+    科: "文昌",
+    忌: "廉貞"
+  },
+  "丁": {
+    祿: "太陰",
+    權: "天同",
+    科: "天機",
+    忌: "巨門"
+  },
+  "戊": {
+    祿: "貪狼",
+    權: "太陰",
+    科: "右弼",
+    忌: "天機"
+  },
+  "己": {
+    祿: "武曲",
+    權: "貪狼",
+    科: "天梁",
+    忌: "文曲"
+  },
+  "庚": {
+    祿: "太陽",
+    權: "武曲",
+    科: "太陰",
+    忌: "天同"
+  },
+  "辛": {
+    祿: "巨門",
+    權: "太陽",
+    科: "文曲",
+    忌: "文昌"
+  },
+  "壬": {
+    祿: "天梁",
+    權: "紫微",
+    科: "左輔",
+    忌: "武曲"
+  },
+  "癸": {
+    祿: "破軍",
+    權: "巨門",
+    科: "太陰",
+    忌: "貪狼"
+  }
+};
+
+/**
+ * Life Palace position lookup table
+ * Each row represents a month (1-12)
+ * Each column represents an hour branch (子, 丑, 寅, etc.)
+ * Values are the resulting Earthly Branch for the Life Palace
+ */
+export const LIFE_PALACE_TABLE = [
+  ["寅", "丑", "子", "亥", "戌", "酉", "申", "未", "午", "巳", "辰", "卯"],    // Month 1
+  ["卯", "寅", "丑", "子", "亥", "戌", "酉", "申", "未", "午", "巳", "辰"],    // Month 2
+  ["辰", "卯", "寅", "丑", "子", "亥", "戌", "酉", "申", "未", "午", "巳"],    // Month 3
+  ["巳", "辰", "卯", "寅", "丑", "子", "亥", "戌", "酉", "申", "未", "午"],    // Month 4
+  ["午", "巳", "辰", "卯", "寅", "丑", "子", "亥", "戌", "酉", "申", "未"],    // Month 5
+  ["未", "午", "巳", "辰", "卯", "寅", "丑", "子", "亥", "戌", "酉", "申"],    // Month 6
+  ["申", "未", "午", "巳", "辰", "卯", "寅", "丑", "子", "亥", "戌", "酉"],    // Month 7
+  ["酉", "申", "未", "午", "巳", "辰", "卯", "寅", "丑", "子", "亥", "戌"],    // Month 8
+  ["戌", "酉", "申", "未", "午", "巳", "辰", "卯", "寅", "丑", "子", "亥"],    // Month 9
+  ["亥", "戌", "酉", "申", "未", "午", "巳", "辰", "卯", "寅", "丑", "子"],    // Month 10
+  ["子", "亥", "戌", "酉", "申", "未", "午", "巳", "辰", "卯", "寅", "丑"],    // Month 11
+  ["丑", "子", "亥", "戌", "酉", "申", "未", "午", "巳", "辰", "卯", "寅"]     // Month 12
+] as const;
+
+/**
+ * Five Elements lookup table based on Heavenly Stem and Earthly Branch
+ */
+export const FIVE_ELEMENTS_TABLE = {
+  "甲": { "子": "水二局", "寅": "木三局", "辰": "土五局", "午": "火六局", "申": "金四局", "戌": "土五局" },
+  "乙": { "丑": "土五局", "卯": "木三局", "巳": "火六局", "未": "土五局", "酉": "金四局", "亥": "水二局" },
+  "丙": { "子": "水二局", "寅": "木三局", "辰": "土五局", "午": "火六局", "申": "金四局", "戌": "土五局" },
+  "丁": { "丑": "土五局", "卯": "木三局", "巳": "火六局", "未": "土五局", "酉": "金四局", "亥": "水二局" },
+  "戊": { "子": "水二局", "寅": "木三局", "辰": "土五局", "午": "火六局", "申": "金四局", "戌": "土五局" },
+  "己": { "丑": "土五局", "卯": "木三局", "巳": "火六局", "未": "土五局", "酉": "金四局", "亥": "水二局" },
+  "庚": { "子": "水二局", "寅": "木三局", "辰": "土五局", "午": "火六局", "申": "金四局", "戌": "土五局" },
+  "辛": { "丑": "土五局", "卯": "木三局", "巳": "火六局", "未": "土五局", "酉": "金四局", "亥": "水二局" },
+  "壬": { "子": "水二局", "寅": "木三局", "辰": "土五局", "午": "火六局", "申": "金四局", "戌": "土五局" },
+  "癸": { "丑": "土五局", "卯": "木三局", "巳": "火六局", "未": "土五局", "酉": "金四局", "亥": "水二局" }
+} as const;
+
+/**
+ * Lunar day number to Chinese string mapping
+ */
+export const LUNAR_DAY_MAP = {
+  1: "初一", 2: "初二", 3: "初三", 4: "初四", 5: "初五",
+  6: "初六", 7: "初七", 8: "初八", 9: "初九", 10: "初十",
+  11: "十一", 12: "十二", 13: "十三", 14: "十四", 15: "十五",
+  16: "十六", 17: "十七", 18: "十八", 19: "十九", 20: "二十",
+  21: "廿一", 22: "廿二", 23: "廿三", 24: "廿四", 25: "廿五",
+  26: "廿六", 27: "廿七", 28: "廿八", 29: "廿九", 30: "三十"
+} as const;
+
+/**
+ * Starting ages for Major Limits based on Five Elements
+ */
+export const MAJOR_LIMIT_STARTING_AGES = {
+  "水二局": 2,
+  "木三局": 3,
+  "金四局": 4,
+  "土五局": 5,
+  "火六局": 6
+} as const;
+
+/**
+ * Stars that follow ZiWei's pattern
+ */
+export const ZIWEI_FOLLOWERS = [
+  { name: "天机", brightness: "bright" as const },
+  { name: "太阳", brightness: "bright" as const },
+  { name: "武曲", brightness: "bright" as const },
+  { name: "天同", brightness: "bright" as const },
+  { name: "廉贞", brightness: "bright" as const }
+] as const;
+
+/**
+ * Main stars placement based on the grid patterns shown in the images
+ * First level key is the earthly branch where ZiWei is located (紫薇在X)
+ * Second level keys are the earthly branches of palace positions
+ * Values are arrays of star names appearing in that position
+ */
+export const MAIN_STARS_TABLE = {
+  // 紫薇在子 (top-left chart in first image)
+  "子": {
+    "子": ["紫微"], 
+    "丑": [], 
+    "寅": ["破军"], 
+    "卯": [], 
+    "辰": ["天府","廉贞"], 
+    "巳": ["太阴"], 
+    "午": ["貪狼"], 
+    "未": ["巨門","天同"], 
+    "申": ["天相","武曲"], 
+    "酉": ["天梁","太阳"], 
+    "戌": ["七杀"], 
+    "亥": ["天机"]
+  },
+  
+  // 紫薇在丑 (top-right chart in first image)
+  "丑": {
+    "子": ["天机"], 
+    "丑": ["破军","紫微"], 
+    "寅": [],
+    "卯": ["天府"], 
+    "辰": ["太阴"], 
+    "巳": ["貪狼","廉贞"], 
+    "午": ["巨門"], 
+    "未": ["天相"], 
+    "申": ["天梁","天同"], 
+    "酉": ["七杀","武曲"], 
+    "戌": ["太阴"], 
+    "亥": []
+  },
+  
+  // 紫薇在寅 (middle-left chart in first image)
+  "寅": {
+    "子": ["破军"],
+    "丑": ["天機"], 
+    "寅": ["天府","紫微"], 
+    "卯": ["太阴"], 
+    "辰": ["貪狼"], 
+    "巳": ["巨門"], 
+    "午": ["天相","廉貞"], 
+    "未": ["天梁"], 
+    "申": ["七杀"], 
+    "酉": ["天同"], 
+    "戌": ["武曲"], 
+    "亥": ["太陽"]
+  },
+  
+  // 紫薇在卯 (middle-right chart in first image)
+  "卯": {
+    "子": ["太阳"], 
+    "丑": ["天府"], 
+    "寅": ["太阴", "天机"], 
+    "卯": ["贪狼","紫微"], 
+    "辰": ["巨門"], 
+    "巳": ["天相"], 
+    "午": ["天梁"], 
+    "未": ["七杀","廉贞"], 
+    "申": [], 
+    "酉": [], 
+    "戌": ["天同"], 
+    "亥": ["破军","武曲"]
+  },
+  
+  // 紫薇在辰 (bottom-left chart in first image)
+  "辰": {
+    "子": ["天府","武曲"], 
+    "丑": ["太阴","太阳"], 
+    "寅": ["贪狼"], 
+    "卯": ["巨門", "天机"], 
+    "辰": ["天相","紫微"], 
+    "巳": ["天梁"], 
+    "午": ["七杀"], 
+    "未": [], 
+    "申": ["廉贞"], 
+    "酉": [], 
+    "戌": ["破军"], 
+    "亥": ["天同"]
+  },
+  
+  // 紫薇在巳 (bottom-right chart in first image)
+  "巳": {
+    "子": ["太阴","天同"], 
+    "丑": ["贪狼","武曲"], 
+    "寅": ["巨门","太阳"], 
+    "卯": ["天相"], 
+    "辰": ["天梁", "天机"], 
+    "巳": ["七杀","紫微"], 
+    "午": [], 
+    "未": [], 
+    "申": [], 
+    "酉": ["破军","廉贞"], 
+    "戌": [], 
+    "亥": ["天府"]
+  },
+  
+  // 紫薇在午 (top-left chart in second image)
+  "午": {
+    "子": ["贪狼"], 
+    "丑": ["巨门","天同"], 
+    "寅": ["天相","武曲"], 
+    "卯": ["天梁","太阳"], 
+    "辰": ["七杀"], 
+    "巳": ["天机"], 
+    "午": ["紫微"], 
+    "未": [], 
+    "申": ["破军"], 
+    "酉": [], 
+    "戌": ["天府","廉贞"], 
+    "亥": ["太阴"]
+  },
+  
+  // 紫薇在未 (top-right chart in second image)
+  "未": {
+    "子": ["巨门"], 
+    "丑": ["天相"], 
+    "寅": ["天梁","天同"], 
+    "卯": ["七杀","武曲"], 
+    "辰": ["太阳"], 
+    "巳": [], 
+    "午": ["天机"], 
+    "未": ["破军","紫微"], 
+    "申": [], 
+    "酉": ["天府"], 
+    "戌": ["太阴"], 
+    "亥": ["贪狼","廉贞"]
+  },
+  
+  // 紫薇在戌 (bottom-left chart in second image)
+  "戌": {
+    "子": ["七杀"], 
+    "丑": [], 
+    "寅": ["廉贞"], 
+    "卯": [], 
+    "辰": ["破军"], 
+    "巳": ["天同"], 
+    "午": ["天府","武曲"], 
+    "未": ["太阴","太阳"], 
+    "申": ["贪狼"], 
+    "酉": ["巨门","天机"], 
+    "戌": ["天相", "紫微"], 
+    "亥": ["天梁"]
+  },
+  
+  // 紫薇在亥 (bottom-right chart in second image)
+  "亥": {
+    "子": [], 
+    "丑": [], 
+    "寅": [], 
+    "卯": ["破军","廉贞"], 
+    "辰": [], 
+    "巳": ["天府"], 
+    "午": ["太阴","天同"], 
+    "未": ["贪狼","武曲"], 
+    "申": ["巨门","太阳"], 
+    "酉": ["天相"], 
+    "戌": ["天梁","天机"], 
+    "亥": ["七杀","紫微"]
+  },
+  
+  // 紫薇在申 (middle-left chart in second image)
+  "申": {
+    "子": ["天相", "廉贞"], 
+    "丑": ["天梁"], 
+    "寅": ["七杀"], 
+    "卯": ["天同"], 
+    "辰": ["武曲"], 
+    "巳": ["太阳"], 
+    "午": ["破军"], 
+    "未": ["天机"], 
+    "申": ["天府", "紫微"], 
+    "酉": ["太阴"], 
+    "戌": ["贪狼"], 
+    "亥": ["巨门"]
+  },
+  
+  // 紫薇在酉 (middle-right chart in second image)
+  "酉": {
+    "子": ["天梁"], 
+    "丑": ["七杀","廉贞"], 
+    "寅": [], 
+    "卯": [], 
+    "辰": ["天同"], 
+    "巳": ["破军","武曲"], 
+    "午": ["太阳"], 
+    "未": ["天府"], 
+    "申": ["太阴","天机"], 
+    "酉": ["贪狼","紫微"], 
+    "戌": ["巨门"], 
+    "亥": ["天相"]
+  }
+} as const; 
