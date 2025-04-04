@@ -1,35 +1,23 @@
 import {
   ChartInput,
   ChartData,
-  Star,
-  Palace,
-  FiveElementType,
+  Star, FiveElementType,
   EarthlyBranchMap,
-  FiveElementsTable,
-  LunarDayString,
-  ZiWeiPositionsTable,
+  FiveElementsTable
 } from "./types";
 import {
   EARTHLY_BRANCHES,
   HEAVENLY_STEMS,
   PALACE_NAMES,
-  ZIWEI_POSITIONS,
-  STAR_PATTERNS_FROM_ZIWEI,
-  TIANFU_POSITIONS,
-  TIANFU_SEQUENCE,
-  LEFT_SUPPORT_POSITIONS,
+  ZIWEI_POSITIONS, LEFT_SUPPORT_POSITIONS,
   RIGHT_SUPPORT_POSITIONS,
   WEN_CHANG_POSITIONS,
   WEN_QU_POSITIONS,
   FOUR_TRANSFORMATIONS,
   LIFE_PALACE_TABLE,
-  FIVE_ELEMENTS_TABLE,
-  LUNAR_DAY_MAP,
-  MAJOR_LIMIT_STARTING_AGES,
-  ZIWEI_FOLLOWERS,
-  MAIN_STARS_TABLE,
+  FIVE_ELEMENTS_TABLE, MAJOR_LIMIT_STARTING_AGES, MAIN_STARS_TABLE
 } from "./constants";
-import { getHourBranch, getLunarDayString, findStarByName, getLunarDayFromBirthday } from "./utils";
+import { getHourBranch, findStarByName, getLunarDayFromBirthday } from "./utils";
 
 /**
  * Main calculator class for Zi Wei Dou Shu chart calculations

@@ -2674,8 +2674,751 @@ export const FOUR_TRANSFORMATIONS_ANALYSIS: Record<string, Record<"祿" | "權" 
       }
     }
   }
+},
+"文昌": {
+  "祿": {
+    career: {
+      content: {
+        mainText: "文昌化禄在事业上代表才华横溢、文笔出众，适合从事文字、教育、策划等领域，能凭借智慧与表达力赢得机会与财富。",
+        positivePoints: ["思维敏捷", "文才出众", "学习能力强"],
+        cautionPoints: ["过于理想化", "执行力需加强"]
+      },
+      details: {
+        suitableCareers: ["作家", "教师", "顾问", "编辑策划"],
+        financialOutlook: "通过才智与沟通能力稳步累积财富"
+      }
+    },
+    relationships: {
+      content: {
+        mainText: "文昌化禄的人在关系中重视思想交流与共同兴趣，喜欢与志同道合的人建立深入联系，家庭气氛注重教育与文化氛围。",
+        positivePoints: ["沟通顺畅", "志趣相投", "关系融洽"],
+        cautionPoints: ["过于理性处理感情", "情感表达需加强"]
+      },
+      details: {
+        relationshipStyle: ["理性沟通型", "兴趣相投型", "平和温暖型"],
+        compatibleSigns: ["文曲", "天同", "紫微"]
+      }
+    },
+    health: {
+      content: {
+        mainText: "文昌化禄有助于形成良好的生活作息与精神调节，但需要注意久坐与思虑过多引发的身体不适，适当锻炼身心更为理想。",
+        positivePoints: ["健康管理理性", "预防意识强"],
+        cautionPoints: ["久坐少动", "神经紧张"]
+      },
+      details: {
+        strengths: ["神经系统", "免疫系统"],
+        areasOfAttention: ["脊椎", "视力疲劳", "精神压力"]
+      }
+    },
+    lifePurpose: {
+      content: {
+        mainText: "文昌化禄的人生使命与知识传播、文化教育及思想启蒙有关，适合以文字或教学方式影响他人并提升社会文明。",
+        positivePoints: ["善于传播知识", "启发他人", "思维清晰"],
+        cautionPoints: ["容易理论化", "缺乏实际行动"]
+      },
+      details: {
+        naturalTalents: ["文字表达", "教育指导", "知识整合"],
+        lifeLessons: ["将理论落地实践", "保持情感连接", "鼓励自我行动力"]
+      }
+    }
+  },
+  "權": {
+    career: {
+      content: {
+        mainText: "文昌化权代表在事业上以才智掌握话语权和决策影响力，适合策划、行政、学术指导等领域，善于运用知识资源掌控局势。",
+        positivePoints: ["才智领导", "表达有力", "策略思考佳"],
+        cautionPoints: ["言辞过于尖锐", "容易争执"]
+      },
+      details: {
+        suitableCareers: ["策划总监", "项目经理", "学术顾问"],
+        financialOutlook: "通过知识决策获得事业与财富成长"
+      }
+    },
+    relationships: {
+      content: {
+        mainText: "文昌化权在人际关系中展现较强的思想主导性，擅长引导讨论与决策，但需避免因意见过于坚持导致冲突。",
+        positivePoints: ["思路清晰", "善于沟通主导", "能引导共识"],
+        cautionPoints: ["表达过于强势", "需学会倾听"]
+      },
+      details: {
+        relationshipStyle: ["理性引导型", "讨论型", "互动积极型"],
+        compatibleSigns: ["文曲", "天梁", "紫微"]
+      }
+    },
+    health: {
+      content: {
+        mainText: "文昌化权容易因脑力劳动与精神紧绷带来压力相关症状，需要平衡用脑与放松，注重休息与运动。",
+        positivePoints: ["思维活跃", "精神集中"],
+        cautionPoints: ["精神过劳", "焦虑失眠"]
+      },
+      details: {
+        strengths: ["脑力", "神经系统灵活"],
+        areasOfAttention: ["神经系统", "头部健康"]
+      }
+    },
+    lifePurpose: {
+      content: {
+        mainText: "文昌化权的人生目标在于以知识与智慧引导方向，善于整合信息并制定策略，有助于成为学术、策划或知识型领导者。",
+        positivePoints: ["智慧主导", "策略布局", "知识影响力"],
+        cautionPoints: ["容易固执己见", "忽略他人感受"]
+      },
+      details: {
+        naturalTalents: ["战略策划", "知识运用", "表达与引导"],
+        lifeLessons: ["学会包容", "平衡主导与协作", "谦逊表达"]
+      }
+    }
+  },
+  "科": {
+    career: {
+      content: {
+        mainText: "文昌化科展现出卓越的学术、教育与写作才能，适合从事研究、教育、文化创意等职业，以知识积累换取成就。",
+        positivePoints: ["学术素养高", "表达清晰", "分析严谨"],
+        cautionPoints: ["理论性过强", "实践应用需加强"]
+      },
+      details: {
+        suitableCareers: ["学者", "文化顾问", "研究人员"],
+        financialOutlook: "通过知识专业带来稳定收入"
+      }
+    },
+    relationships: {
+      content: {
+        mainText: "文昌化科在关系中重视精神与思想交流，强调价值观一致性，倾向与文化修养高的人建立长久关系。",
+        positivePoints: ["思想交流深入", "价值观契合", "理解力强"],
+        cautionPoints: ["情感表达不足", "过于理性化"]
+      },
+      details: {
+        relationshipStyle: ["学术型", "思想型", "价值共鸣型"],
+        compatibleSigns: ["文曲", "天同", "天梁"]
+      }
+    },
+    health: {
+      content: {
+        mainText: "文昌化科有助于养成良好的健康管理与学习习惯，但需注意精神压力导致的失眠或神经紧张。",
+        positivePoints: ["自律良好", "重视健康知识"],
+        cautionPoints: ["精神紧张", "过度思虑"]
+      },
+      details: {
+        strengths: ["系统规划能力", "健康自律性"],
+        areasOfAttention: ["神经系统", "睡眠质量"]
+      }
+    },
+    lifePurpose: {
+      content: {
+        mainText: "文昌化科的人生使命是通过教育、传播知识、培养人才，实现自我价值，并影响社会文明进步。",
+        positivePoints: ["启迪智慧", "知识传承", "文化推动"],
+        cautionPoints: ["理论与实际脱节", "需增强亲和力"]
+      },
+      details: {
+        naturalTalents: ["教学指导", "学术研究", "知识传播"],
+        lifeLessons: ["知行合一", "提升实践力", "情感与理性平衡"]
+      }
+    }
+  },
+  "忌": {
+    career: {
+      content: {
+        mainText: "文昌化忌可能导致事业上因过于理想化、文字沟通失误或思考过度而受阻，需避免纸上谈兵与优柔寡断。",
+        positivePoints: ["学习能力好", "具备专业素养"],
+        cautionPoints: ["理论脱离实际", "沟通障碍"]
+      },
+      details: {
+        suitableCareers: ["需强调实作与沟通的工作，如市场研究、教育辅导"],
+        financialOutlook: "收入波动大，易受认知与表达能力影响"
+      }
+    },
+    relationships: {
+      content: {
+        mainText: "文昌化忌在人际关系中可能因表达误解、过度理性或自我怀疑而导致疏远，需加强情感沟通与包容心。",
+        positivePoints: ["有思想深度", "注重价值交流"],
+        cautionPoints: ["沟通障碍", "情感疏离"]
+      },
+      details: {
+        relationshipStyle: ["理性型", "疏离型", "思辨型"],
+        compatibleSigns: ["天机", "文曲", "紫微"]
+      }
+    },
+    health: {
+      content: {
+        mainText: "文昌化忌影响健康主要在神经系统与压力管理上，思虑过多易导致焦虑、失眠与肠胃不适。",
+        positivePoints: ["健康意识强", "重视自律"],
+        cautionPoints: ["精神疲劳", "压力相关疾病"]
+      },
+      details: {
+        strengths: ["身体敏感度高", "健康知识好"],
+        areasOfAttention: ["精神压力", "胃肠功能"]
+      }
+    },
+    lifePurpose: {
+      content: {
+        mainText: "文昌化忌的人生课题在于学会将知识应用于实际，平衡理想与现实，避免陷入空谈与内耗之中。",
+        positivePoints: ["追求知识", "重视精神成长"],
+        cautionPoints: ["空谈理论", "理想化失衡"]
+      },
+      details: {
+        naturalTalents: ["思考分析", "知识探索"],
+        lifeLessons: ["脚踏实地", "情理结合", "落实行动"]
+      }
+    }
+  }
+},
+"文曲": {
+  "祿": {
+    career: {
+      content: {
+        mainText: "文曲化禄在事业上象征艺术才华与人际魅力，适合从事艺术创作、媒体传播、文化娱乐等领域，凭借才情与人脉获得财富与机会。",
+        positivePoints: ["艺术天赋", "沟通能力佳", "魅力十足"],
+        cautionPoints: ["感性过重", "需注意实际执行力"]
+      },
+      details: {
+        suitableCareers: ["艺术家", "媒体人", "文化创意", "公关活动策划"],
+        financialOutlook: "通过艺术与人际关系稳步增财"
+      }
+    },
+    relationships: {
+      content: {
+        mainText: "文曲化禄在人际关系中展现亲和与浪漫，重视情感共鸣与美感享受，适合建立温馨细腻的关系网络。",
+        positivePoints: ["人缘极佳", "富有浪漫情调", "善于表达情感"],
+        cautionPoints: ["过度依赖情绪", "情感起伏"]
+      },
+      details: {
+        relationshipStyle: ["浪漫型", "感性型", "情感细腻型"],
+        compatibleSigns: ["文昌", "太阴", "天同"]
+      }
+    },
+    health: {
+      content: {
+        mainText: "文曲化禄有助于身心舒畅与气血流畅，但需注意因情绪波动或生活不规律导致的内分泌失衡问题。",
+        positivePoints: ["恢复力好", "感知敏锐"],
+        cautionPoints: ["情绪起伏", "内分泌失调"]
+      },
+      details: {
+        strengths: ["循环系统", "新陈代谢良好"],
+        areasOfAttention: ["情绪平衡", "内分泌健康"]
+      }
+    },
+    lifePurpose: {
+      content: {
+        mainText: "文曲化禄的人生使命在于以艺术、美感与情感连接他人，传递爱与美的能量，丰富人们的心灵世界。",
+        positivePoints: ["美感敏锐", "情感表达丰富", "启发心灵"],
+        cautionPoints: ["感性过盛", "理性思考需加强"]
+      },
+      details: {
+        naturalTalents: ["艺术创作", "情感沟通", "美学表达"],
+        lifeLessons: ["平衡感性与理性", "落实实际行动", "情绪自我管理"]
+      }
+    }
+  },
+  "權": {
+    career: {
+      content: {
+        mainText: "文曲化权展现出以艺术魅力、沟通能力掌控局势的特质，适合领导文化、创意或传播领域，擅长以柔克刚达成目标。",
+        positivePoints: ["艺术领导力", "人际操控灵活", "创意丰富"],
+        cautionPoints: ["感性操控", "情绪影响决策"]
+      },
+      details: {
+        suitableCareers: ["文化总监", "公关负责人", "艺术策展人"],
+        financialOutlook: "靠魅力与艺术执行力创造丰厚收入"
+      }
+    },
+    relationships: {
+      content: {
+        mainText: "文曲化权在关系中展现情感主导力，擅长以情感拉近距离，但需避免无意操控他人情绪。",
+        positivePoints: ["感性引导", "关系凝聚力强", "温柔主导"],
+        cautionPoints: ["情绪操控倾向", "需尊重他人意愿"]
+      },
+      details: {
+        relationshipStyle: ["温柔主导型", "情感互动型", "默契型"],
+        compatibleSigns: ["文昌", "太阴", "天相"]
+      }
+    },
+    health: {
+      content: {
+        mainText: "文曲化权需留意情绪管理对健康的影响，情绪压抑易引发慢性疾病，建议养成良好情绪释放习惯。",
+        positivePoints: ["感知身体变化灵敏", "自我调整快"],
+        cautionPoints: ["情绪积压", "慢性压力"]
+      },
+      details: {
+        strengths: ["恢复力", "情绪调节能力"],
+        areasOfAttention: ["心血管系统", "内分泌系统"]
+      }
+    },
+    lifePurpose: {
+      content: {
+        mainText: "文曲化权的人生目标是以艺术与情感的力量影响世界，通过美与爱创造积极变化。",
+        positivePoints: ["以美启发", "情感领导力", "温柔而坚定"],
+        cautionPoints: ["过度感性用事", "需要理智评估"]
+      },
+      details: {
+        naturalTalents: ["艺术引导", "情感激励", "美学策划"],
+        lifeLessons: ["理性补强感性", "情绪独立", "平衡影响力与尊重"]
+      }
+    }
+  },
+  "科": {
+    career: {
+      content: {
+        mainText: "文曲化科在事业上体现出艺术修养、文化深度与美学素养，适合从事艺术教育、文化推广、心理咨询等领域。",
+        positivePoints: ["文化素养高", "美学敏感", "心理理解力强"],
+        cautionPoints: ["过于理想主义", "执行力需加强"]
+      },
+      details: {
+        suitableCareers: ["艺术教师", "文化编辑", "心理顾问"],
+        financialOutlook: "以专业知识和审美积累稳定财富"
+      }
+    },
+    relationships: {
+      content: {
+        mainText: "文曲化科的人在关系中重视精神与艺术层次的共鸣，适合以共同爱好、文化背景为基础的深度交流关系。",
+        positivePoints: ["心灵交流", "文化契合", "理解力好"],
+        cautionPoints: ["缺乏实际行动", "容易理想化对方"]
+      },
+      details: {
+        relationshipStyle: ["精神共鸣型", "文化兴趣型", "细腻型"],
+        compatibleSigns: ["文昌", "天梁", "天同"]
+      }
+    },
+    health: {
+      content: {
+        mainText: "文曲化科有助于心理平衡与情绪细腻调节，但过度敏感易引发焦虑与失眠问题，需保持心灵稳定。",
+        positivePoints: ["心理敏感", "情绪管理意识好"],
+        cautionPoints: ["焦虑", "神经紧绷"]
+      },
+      details: {
+        strengths: ["心理弹性", "自我调节力"],
+        areasOfAttention: ["神经系统", "情绪相关健康"]
+      }
+    },
+    lifePurpose: {
+      content: {
+        mainText: "文曲化科的人生使命在于传播美感、启发心灵，以文化艺术的形式滋养社会与人心。",
+        positivePoints: ["美感教化", "艺术传承", "心理启迪"],
+        cautionPoints: ["理想主义", "缺乏实际行动力"]
+      },
+      details: {
+        naturalTalents: ["艺术教育", "文化推广", "心理辅导"],
+        lifeLessons: ["实际落实", "行动与梦想结合", "情感与理性兼顾"]
+      }
+    }
+  },
+  "忌": {
+    career: {
+      content: {
+        mainText: "文曲化忌在事业上可能导致情绪化决策、创作瓶颈或人际混乱，需要理清情绪与实际目标的界限。",
+        positivePoints: ["艺术潜能丰富", "感知细腻"],
+        cautionPoints: ["情绪影响工作", "创作焦虑"]
+      },
+      details: {
+        suitableCareers: ["自由创作", "辅助性文化工作"],
+        financialOutlook: "收入波动大，情绪状态影响明显"
+      }
+    },
+    relationships: {
+      content: {
+        mainText: "文曲化忌在关系中可能因情绪过敏、幻想过高而导致关系不稳定，需要学会实际面对与情绪疏导。",
+        positivePoints: ["感情真挚", "细腻体贴"],
+        cautionPoints: ["情绪依赖", "幻想破灭"]
+      },
+      details: {
+        relationshipStyle: ["情绪化型", "幻想型", "敏感型"],
+        compatibleSigns: ["文昌", "太阴", "天同"]
+      }
+    },
+    health: {
+      content: {
+        mainText: "文曲化忌对健康影响主要表现在情绪相关疾病上，如焦虑症、抑郁倾向与失眠等，需学会情绪释放。",
+        positivePoints: ["身体敏感度高", "感知细腻"],
+        cautionPoints: ["精神压力", "情绪疾病"]
+      },
+      details: {
+        strengths: ["情绪感知", "身体警觉性"],
+        areasOfAttention: ["神经系统", "睡眠障碍"]
+      }
+    },
+    lifePurpose: {
+      content: {
+        mainText: "文曲化忌的人生课题在于学会在情绪起伏中保持内在稳定，用真实感受创造有温度的艺术与关系。",
+        positivePoints: ["情感深刻", "艺术天赋高"],
+        cautionPoints: ["情绪失控", "逃避现实"]
+      },
+      details: {
+        naturalTalents: ["情感共鸣", "艺术感知"],
+        lifeLessons: ["稳定情绪", "实际面对人生", "用艺术疗愈自我与他人"]
+      }
+    }
+  }
+},
+"右弼": {
+  "祿": {
+    career: {
+      content: {
+        mainText: "右弼化禄在事业上代表良好的人缘与助力运，适合在团队合作、公共事务、行政管理等领域发展，易得贵人提携而事业顺遂。",
+        positivePoints: ["人际关系佳", "贵人运旺", "合作顺利"],
+        cautionPoints: ["依赖他人", "自主性较弱"]
+      },
+      details: {
+        suitableCareers: ["行政管理", "公共关系", "协调组织"],
+        financialOutlook: "靠人脉与合作关系累积财富"
+      }
+    },
+    relationships: {
+      content: {
+        mainText: "右弼化禄在人际关系中展现温和亲切、助人为乐的特质，擅长维护和谐气氛，适合建立互助互信的深厚关系。",
+        positivePoints: ["亲和力强", "善于助人", "关系稳定"],
+        cautionPoints: ["过度付出", "界限感不足"]
+      },
+      details: {
+        relationshipStyle: ["温暖型", "互助型", "亲密型"],
+        compatibleSigns: ["左辅", "天同", "文昌"]
+      }
+    },
+    health: {
+      content: {
+        mainText: "右弼化禄有助于身心调和与免疫系统稳定，但需注意因过度配合他人而忽略自身需求，造成心理负担。",
+        positivePoints: ["恢复力强", "身体协调好"],
+        cautionPoints: ["情绪压抑", "过劳问题"]
+      },
+      details: {
+        strengths: ["免疫力佳", "自我修复力强"],
+        areasOfAttention: ["肩颈疲劳", "情绪压力"]
+      }
+    },
+    lifePurpose: {
+      content: {
+        mainText: "右弼化禄的人生使命在于扶助他人成长，与他人共同建立互信互助的理想环境，展现无私精神与团队精神。",
+        positivePoints: ["助人精神", "团队协作佳", "凝聚力强"],
+        cautionPoints: ["牺牲自我", "容易迷失个人目标"]
+      },
+      details: {
+        naturalTalents: ["协调能力", "团队建设", "人际修复力"],
+        lifeLessons: ["保持自我意识", "设定健康界限", "平衡付出与回收"]
+      }
+    }
+  },
+  "權": {
+    career: {
+      content: {
+        mainText: "右弼化权在事业上展现隐性领导力，擅长以协调与辅助方式掌控局势，适合在行政、后勤、策略支持等领域成为重要推手。",
+        positivePoints: ["协调力强", "暗中掌控局势", "有组织力"],
+        cautionPoints: ["权力运作隐晦", "责任归属不清"]
+      },
+      details: {
+        suitableCareers: ["幕僚", "项目协调", "后勤管理"],
+        financialOutlook: "通过策略性配合与支援达成财富增长"
+      }
+    },
+    relationships: {
+      content: {
+        mainText: "右弼化权在人际关系中展现为隐性主导，通过默默付出与支持取得话语权，但需警惕过度干预他人选择。",
+        positivePoints: ["柔性主导", "关系协调良好"],
+        cautionPoints: ["容易操控他人", "难以放手"]
+      },
+      details: {
+        relationshipStyle: ["柔性领导型", "支持型", "暗中引导型"],
+        compatibleSigns: ["左辅", "天梁", "太阴"]
+      }
+    },
+    health: {
+      content: {
+        mainText: "右弼化权需注意因长期隐性压力积累而产生的内在紧张，需学会主动排解压力，维护神经系统健康。",
+        positivePoints: ["耐压能力好", "恢复速度快"],
+        cautionPoints: ["慢性压力", "内在紧张"]
+      },
+      details: {
+        strengths: ["恢复能力", "情绪调节能力"],
+        areasOfAttention: ["神经系统", "肩颈僵硬"]
+      }
+    },
+    lifePurpose: {
+      content: {
+        mainText: "右弼化权的人生目标在于透过支持、整合与策略协助，成就团队或组织整体利益，同时发展自身影响力。",
+        positivePoints: ["隐性领导", "支持型成就", "凝聚力强"],
+        cautionPoints: ["自我价值感低", "过度依赖他人认可"]
+      },
+      details: {
+        naturalTalents: ["整合能力", "组织支援", "策略布局"],
+        lifeLessons: ["树立独立自我", "明确自身价值", "主动承担责任"]
+      }
+    }
+  },
+  "科": {
+    career: {
+      content: {
+        mainText: "右弼化科适合从事组织管理、教育培训、心理咨询等领域，通过辅助与整合才能提升组织效率与社会价值。",
+        positivePoints: ["细致周全", "知识丰富", "善于辅导他人"],
+        cautionPoints: ["过度配合", "缺乏突破性"]
+      },
+      details: {
+        suitableCareers: ["教育辅导", "组织管理", "心理辅导"],
+        financialOutlook: "以知识与服务累积稳定收入"
+      }
+    },
+    relationships: {
+      content: {
+        mainText: "右弼化科在关系中重视理性沟通与协作，擅长以理解与支持促进关系稳定，但需防止过度理性压抑情感表达。",
+        positivePoints: ["理性沟通", "互助合作", "稳定可靠"],
+        cautionPoints: ["情感流动不足", "容易压抑自我"]
+      },
+      details: {
+        relationshipStyle: ["支持型", "理性协作型", "教育型"],
+        compatibleSigns: ["文昌", "左辅", "天梁"]
+      }
+    },
+    health: {
+      content: {
+        mainText: "右弼化科有助于养成规律生活和健康管理习惯，但精神压力长期积累时需注意神经性疾病风险。",
+        positivePoints: ["健康自律好", "注重身心平衡"],
+        cautionPoints: ["精神压力隐匿", "焦虑积压"]
+      },
+      details: {
+        strengths: ["生活规律", "心理管理力"],
+        areasOfAttention: ["神经系统", "焦虑症状"]
+      }
+    },
+    lifePurpose: {
+      content: {
+        mainText: "右弼化科的人生使命在于通过教育、辅导、组织协作贡献社会，用知识与智慧帮助他人成长。",
+        positivePoints: ["教育贡献", "助人精神", "智慧传递"],
+        cautionPoints: ["缺乏自我突破", "易被组织绑架"]
+      },
+      details: {
+        naturalTalents: ["组织教育", "辅导支持", "知识整合"],
+        lifeLessons: ["激发个人潜力", "超越辅助角色", "勇于独立表达"]
+      }
+    }
+  },
+  "忌": {
+    career: {
+      content: {
+        mainText: "右弼化忌在事业上可能因过度依赖他人或缺乏独立主张而受阻，需培养自主性与明确个人定位。",
+        positivePoints: ["愿意配合", "乐于服务"],
+        cautionPoints: ["缺乏独立性", "随波逐流"]
+      },
+      details: {
+        suitableCareers: ["支持性工作", "协作辅助岗位"],
+        financialOutlook: "受环境与人际影响大，财富积累波动"
+      }
+    },
+    relationships: {
+      content: {
+        mainText: "右弼化忌在人际关系中容易因过度迁就或忽视自我需求导致关系失衡，需学会设立清晰界限。",
+        positivePoints: ["亲切温暖", "乐于助人"],
+        cautionPoints: ["关系失衡", "容易自我牺牲"]
+      },
+      details: {
+        relationshipStyle: ["配合型", "支持型", "低调型"],
+        compatibleSigns: ["左辅", "天同", "文昌"]
+      }
+    },
+    health: {
+      content: {
+        mainText: "右弼化忌对健康影响表现在长期情绪压抑导致慢性压力与神经系统问题，建议重视自我表达与情绪释放。",
+        positivePoints: ["身体适应力好", "恢复快"],
+        cautionPoints: ["心理压抑", "慢性疲劳"]
+      },
+      details: {
+        strengths: ["忍耐力强", "适应性好"],
+        areasOfAttention: ["情绪压抑", "神经紧绷"]
+      }
+    },
+    lifePurpose: {
+      content: {
+        mainText: "右弼化忌的人生课题在于学习在助人之中不迷失自我，找到既能支持他人又能成就自己的平衡道路。",
+        positivePoints: ["助人精神", "团队意识"],
+        cautionPoints: ["自我价值感弱", "容易情绪消耗"]
+      },
+      details: {
+        naturalTalents: ["辅佐才能", "协调力"],
+        lifeLessons: ["确立个人目标", "坚持自我原则", "避免情绪依赖"]
+      }
+    }
+  }
+},
+"左輔": {
+  "祿": {
+    career: {
+      content: {
+        mainText: "左辅化禄在事业上象征组织力强、人缘好，适合从事团队管理、辅助领导、行政协调等领域，能因可靠形象获得事业机会。",
+        positivePoints: ["组织力强", "合作顺利", "受上级器重"],
+        cautionPoints: ["依赖团队", "缺乏独立决策力"]
+      },
+      details: {
+        suitableCareers: ["行政管理", "团队协调", "企业顾问"],
+        financialOutlook: "通过组织与协作能力稳步积累财富"
+      }
+    },
+    relationships: {
+      content: {
+        mainText: "左辅化禄在人际关系中表现为忠诚可靠、乐于助人，容易获得朋友与伴侣的信赖，适合建立稳固、持久的关系。",
+        positivePoints: ["忠诚守信", "支持力强", "关系稳定"],
+        cautionPoints: ["过于付出", "界限感需加强"]
+      },
+      details: {
+        relationshipStyle: ["忠诚型", "支持型", "责任型"],
+        compatibleSigns: ["右弼", "天梁", "天相"]
+      }
+    },
+    health: {
+      content: {
+        mainText: "左辅化禄有助于形成规律健康的生活习惯，但需注意因过度工作或助人而忽略自身休息。",
+        positivePoints: ["体力充沛", "自我调节能力强"],
+        cautionPoints: ["工作过劳", "忽略自身需求"]
+      },
+      details: {
+        strengths: ["身体耐力", "免疫系统"],
+        areasOfAttention: ["肩颈酸痛", "肠胃负担"]
+      }
+    },
+    lifePurpose: {
+      content: {
+        mainText: "左辅化禄的人生目标是以辅佐与支持角色成就大局，在团队中发挥关键整合与辅助力量。",
+        positivePoints: ["助人成就", "合作精神强", "责任心重"],
+        cautionPoints: ["缺乏个人主张", "需建立个人价值感"]
+      },
+      details: {
+        naturalTalents: ["团队整合", "助人协调", "稳定支持"],
+        lifeLessons: ["坚持自我立场", "设定健康界限", "主动发展领导力"]
+      }
+    }
+  },
+  "權": {
+    career: {
+      content: {
+        mainText: "左辅化权代表在组织体系内的实际影响力上升，擅长调配资源与推动计划，适合担任幕僚长、项目总协调等角色。",
+        positivePoints: ["资源整合能力强", "执行力出色", "组织管理佳"],
+        cautionPoints: ["权责界限模糊", "承担过多事务"]
+      },
+      details: {
+        suitableCareers: ["项目总监", "行政高管", "资源管理"],
+        financialOutlook: "通过管理与协调获得财富与地位"
+      }
+    },
+    relationships: {
+      content: {
+        mainText: "左辅化权在人际关系中展现出隐性领导地位，以实际行动赢得他人尊敬，但需注意避免承担他人过多责任。",
+        positivePoints: ["实际行动带动关系", "可靠领导"],
+        cautionPoints: ["负担感强", "情感交流需加强"]
+      },
+      details: {
+        relationshipStyle: ["实际型", "辅助型", "领导型"],
+        compatibleSigns: ["右弼", "天梁", "紫微"]
+      }
+    },
+    health: {
+      content: {
+        mainText: "左辅化权需注意因职责繁重导致的慢性疲劳问题，特别是肩背压力和消化系统健康。",
+        positivePoints: ["行动力佳", "恢复能力好"],
+        cautionPoints: ["过度操劳", "压力型疾病"]
+      },
+      details: {
+        strengths: ["恢复力强", "压力适应能力好"],
+        areasOfAttention: ["肩颈背部", "肠胃系统"]
+      }
+    },
+    lifePurpose: {
+      content: {
+        mainText: "左辅化权的人生目标是以幕后掌控与支持方式成就大局，适合在组织架构中发挥稳定推动力量。",
+        positivePoints: ["掌控全局", "推进行动", "团队核心"],
+        cautionPoints: ["过度隐性付出", "自我价值感隐匿"]
+      },
+      details: {
+        naturalTalents: ["组织策划", "协调管理", "执行推动"],
+        lifeLessons: ["强化自我主导", "平衡支持与自我实现", "界定清晰责任"]
+      }
+    }
+  },
+  "科": {
+    career: {
+      content: {
+        mainText: "左辅化科擅长在系统化、标准化环境下提升组织效率，适合制度建设、流程优化、教育训练等工作。",
+        positivePoints: ["制度观念强", "执行规范", "优化能力佳"],
+        cautionPoints: ["过于程序化", "缺乏灵活应变"]
+      },
+      details: {
+        suitableCareers: ["制度规划", "流程优化师", "教育培训"],
+        financialOutlook: "以稳定专业服务换取长期收益"
+      }
+    },
+    relationships: {
+      content: {
+        mainText: "左辅化科在关系中注重规则与责任，喜欢以规范与标准维护关系稳定，但情感流动性需加强。",
+        positivePoints: ["责任感强", "关系稳固"],
+        cautionPoints: ["表达拘谨", "情感流动不足"]
+      },
+      details: {
+        relationshipStyle: ["制度型", "责任型", "稳重型"],
+        compatibleSigns: ["右弼", "天同", "天梁"]
+      }
+    },
+    health: {
+      content: {
+        mainText: "左辅化科有良好的自律性与健康习惯，但因心理压力可能带来神经系统与肠胃功能失调问题。",
+        positivePoints: ["生活规律", "健康意识高"],
+        cautionPoints: ["精神压力积压", "神经紧张"]
+      },
+      details: {
+        strengths: ["免疫力佳", "身体协调性好"],
+        areasOfAttention: ["神经系统", "消化系统"]
+      }
+    },
+    lifePurpose: {
+      content: {
+        mainText: "左辅化科的人生使命是以制度建设、规范推广、助人优化成长为目标，适合扮演规则制定者与执行者角色。",
+        positivePoints: ["制度建设力", "秩序维护者"],
+        cautionPoints: ["过度程序化", "缺乏弹性应变"]
+      },
+      details: {
+        naturalTalents: ["规范制定", "程序优化", "教育培训"],
+        lifeLessons: ["提升变通能力", "情感融入规范", "人性化管理"]
+      }
+    }
+  },
+  "忌": {
+    career: {
+      content: {
+        mainText: "左辅化忌在事业上容易因过度拘泥规则或依赖团队支持而限制发展，需学会独立决策与灵活应变。",
+        positivePoints: ["责任心重", "配合意识好"],
+        cautionPoints: ["缺乏突破", "依赖组织"]
+      },
+      details: {
+        suitableCareers: ["辅助型岗位", "行政支持"],
+        financialOutlook: "收入起伏受制于组织环境变化"
+      }
+    },
+    relationships: {
+      content: {
+        mainText: "左辅化忌在人际关系中过于强调责任与规范，导致情感交流受限，容易让关系僵化。",
+        positivePoints: ["愿意承担责任", "关系稳重"],
+        cautionPoints: ["感情表达不足", "过度强调规则"]
+      },
+      details: {
+        relationshipStyle: ["责任型", "辅助型", "规范型"],
+        compatibleSigns: ["右弼", "天相", "文昌"]
+      }
+    },
+    health: {
+      content: {
+        mainText: "左辅化忌需注意长期压力累积导致的慢性疾病，尤其是消化系统与肩颈压力问题，需适度放松身心。",
+        positivePoints: ["自律强", "身体耐力佳"],
+        cautionPoints: ["精神压抑", "慢性疲劳"]
+      },
+      details: {
+        strengths: ["耐力好", "自我要求高"],
+        areasOfAttention: ["消化系统", "神经紧张"]
+      }
+    },
+    lifePurpose: {
+      content: {
+        mainText: "左辅化忌的人生课题是学会在规则中保持灵活性与情感流动，避免陷入责任束缚而失去自我。",
+        positivePoints: ["组织能力", "规范意识"],
+        cautionPoints: ["缺乏弹性", "容易被责任压垮"]
+      },
+      details: {
+        naturalTalents: ["组织规范", "责任担当"],
+        lifeLessons: ["释放控制欲", "培养弹性思维", "情感与制度并行"]
+      }
+    }
+  }
 }
-
 };
 
 /**

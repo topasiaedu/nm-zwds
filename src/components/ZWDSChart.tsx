@@ -34,6 +34,11 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
     height: window.innerHeight,
   });
 
+  // Track starRefs population status
+  const [refsReady, setRefsReady] = useState<boolean>(false);
+
+  console.log("ChartData", chartData);
+
   // Update window size when resized
   useEffect(() => {
     const handleResize = () => {
@@ -117,7 +122,6 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
     if (element) {
       const key = `${palaceNumber}:${starName}`;
       starRefs.current.set(key, element);
-      console.log(`Registered star ref: ${key}`);
     }
   };
 
@@ -193,7 +197,6 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
       normalized = normalized.replace(new RegExp(traditional, 'g'), simplified);
     }
     
-    console.log(`Normalized "${text}" to "${normalized}"`);
     return normalized;
   };
 
@@ -201,23 +204,18 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
    * Find a star by name in all palaces
    */
   const findStarByName = (name: string) => {
-    console.log(`Searching for star: ${name}`);
     
     // Normalize star name for comparison using our helper function
     const normalizedName = normalizeChineseCharacters(name);
-    console.log(`Normalized star name: ${normalizedName}`);
     
     // First try a direct match
     for (let i = 0; i < chartData.palaces.length; i++) {
       const palace = chartData.palaces[i];
-      console.log(`Checking palace ${i+1} (${palace.name})...`);
       
       // Check main stars
       if (palace.mainStar && palace.mainStar.length > 0) {
-        console.log(`Palace ${i+1} has ${palace.mainStar.length} main stars`);
         for (const star of palace.mainStar) {
           if (star.name === name) {
-            console.log(`Direct match found: ${name} as main star in palace ${i + 1}`);
             return { star, palaceNumber: i + 1 };
           }
         }
@@ -225,10 +223,8 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
       
       // Check minor stars
       if (palace.minorStars && palace.minorStars.length > 0) {
-        console.log(`Palace ${i+1} has ${palace.minorStars.length} minor stars`);
         for (const star of palace.minorStars) {
           if (star.name === name) {
-            console.log(`Direct match found: ${name} as minor star in palace ${i + 1}`);
             return { star, palaceNumber: i + 1 };
           }
         }
@@ -243,10 +239,8 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
       if (palace.mainStar && palace.mainStar.length > 0) {
         for (const star of palace.mainStar) {
           const normalizedStarName = normalizeChineseCharacters(star.name);
-          console.log(`Comparing normalized: "${normalizedStarName}" vs "${normalizedName}"`);
           
           if (normalizedStarName === normalizedName) {
-            console.log(`Normalized match found: ${name} (${star.name}) as main star in palace ${i + 1}`);
             return { star, palaceNumber: i + 1 };
           }
         }
@@ -256,10 +250,8 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
       if (palace.minorStars && palace.minorStars.length > 0) {
         for (const star of palace.minorStars) {
           const normalizedStarName = normalizeChineseCharacters(star.name);
-          console.log(`Comparing normalized: "${normalizedStarName}" vs "${normalizedName}"`);
           
           if (normalizedStarName === normalizedName) {
-            console.log(`Normalized match found: ${name} (${star.name}) as minor star in palace ${i + 1}`);
             return { star, palaceNumber: i + 1 };
           }
         }
@@ -267,7 +259,6 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
     }
     
     // If still not found, try a looser matching approach
-    console.log(`Star not found with exact matching, trying substring comparison for: ${name}`);
     for (let i = 0; i < chartData.palaces.length; i++) {
       const palace = chartData.palaces[i];
       
@@ -279,7 +270,6 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
           
           // Check if the star name contains the target name or vice versa
           if (normalizedStarName.includes(normalizedName) || normalizedName.includes(normalizedStarName)) {
-            console.log(`Substring match found: ${name} (${star.name}) as main star in palace ${i + 1}`);
             return { star, palaceNumber: i + 1 };
           }
         }
@@ -293,17 +283,12 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
           
           // Check if the star name contains the target name or vice versa
           if (normalizedStarName.includes(normalizedName) || normalizedName.includes(normalizedStarName)) {
-            console.log(`Substring match found: ${name} (${star.name}) as minor star in palace ${i + 1}`);
             return { star, palaceNumber: i + 1 };
           }
         }
       }
     }
-    
-    console.log(`Star not found after all attempts: ${name}`);
-    console.log(`Available stars in chart:`, chartData.palaces.flatMap(p => 
-      [...(p.mainStar || []), ...p.minorStars].map(s => s.name)
-    ));
+   
     
     return null;
   };
@@ -317,28 +302,22 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
     // Get the selected palace's heavenly stem
     const palace = chartData.palaces[selectedPalace - 1];
     if (!palace || !palace.heavenlyStem) {
-      console.log(`Palace ${selectedPalace} has no heavenly stem:`, palace);
       return [];
     }
     
-    console.log(`Using heavenly stem ${palace.heavenlyStem} for palace ${selectedPalace}`);
     
     const transformations = FOUR_TRANSFORMATIONS[palace.heavenlyStem];
     if (!transformations) {
-      console.log(`No transformations found for heavenly stem ${palace.heavenlyStem}`);
       return [];
     }
     
-    console.log(`Found transformations for ${palace.heavenlyStem}:`, transformations);
     
     const results = [];
     
     for (const [type, starName] of Object.entries(transformations)) {
-      console.log(`Looking for star: ${starName} for transformation ${type}`);
       const targetStarInfo = findStarByName(starName);
       
       if (targetStarInfo) {
-        console.log(`Found ${starName} in palace ${targetStarInfo.palaceNumber}`);
         let transformationType: "祿" | "權" | "科" | "忌";
         
         switch (type) {
@@ -356,11 +335,9 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
           starName: targetStarInfo.star.name
         });
       } else {
-        console.log(`Could not find star: ${starName}`);
       }
     }
     
-    console.log(`Final transformation results:`, results);
     return results;
   };
 
@@ -387,18 +364,15 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
    * Draw transformation lines between palaces
    */
   const renderTransformationLines = () => {
-    if (!selectedPalace || !chartRef.current) {
-      console.log("Cannot render lines: no selected palace or chart ref");
+    if (!selectedPalace || !chartRef.current || !refsReady) {
       return null;
     }
     
     const transformations = calculateTransformations();
     if (transformations.length === 0) {
-      console.log("No transformations to render");
       return null;
     }
     
-    console.log(`Rendering ${transformations.length} transformation lines`);
     const chartRect = chartRef.current.getBoundingClientRect();
     
     const lines = transformations.map((transformation, index) => {
@@ -409,12 +383,6 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
       const toStarRef = starRefs.current.get(toStarKey);
       
       if (!fromPalaceRef || !toStarRef) {
-        console.log(`Missing refs for transformation ${index}:`, {
-          fromPalace: !!fromPalaceRef,
-          toStar: !!toStarRef,
-          toStarKey
-        });
-        console.log("Available star refs:", Array.from(starRefs.current.keys()));
         return null;
       }
       
@@ -522,6 +490,11 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
    */
   const handlePalaceClick = (palaceNumber: number) => {
     setSelectedPalace(selectedPalace === palaceNumber ? null : palaceNumber);
+    
+    // Ensure refs are ready for rendering transformation lines
+    if (!refsReady) {
+      setRefsReady(true);
+    }
   };
 
   /**
@@ -746,7 +719,7 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
 
         {/* Annual Flow Indicator - moved to middle left */}
         {showAnnualFlow && (
-          <div className="absolute left-0.5 xs:left-1 sm:left-2 top-1/2 transform -translate-y-1/2 bg-rose-50 dark:bg-rose-900/60 text-rose-600 dark:text-rose-300 px-0.5 xs:px-1 sm:px-2.5 py-0.5 rounded-full text-3xs xs:text-2xs sm:text-xs font-medium z-20">
+          <div className="absolute left-0.5 xs:left-1 sm:left-2 top-1/2 transform -translate-y-1/2 bg-red-50 dark:bg-red-900/60 text-red-600 dark:text-red-300 px-0.5 xs:px-1 sm:px-2.5 py-0.5 rounded-full text-3xs xs:text-2xs sm:text-xs font-medium z-20">
             {language === "en" && t("zwds.chart.流年") ? t("zwds.chart.流年") : "流年"}
           </div>
         )}
@@ -970,17 +943,35 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
 
   // Reset starRefs when chart data changes
   useEffect(() => {
-    console.log("Resetting star refs due to chart data change");
     starRefs.current = new Map();
   }, [chartData]);
 
-  // Log available star refs when selected palace changes
+  // Track starRefs population status
   useEffect(() => {
     if (selectedPalace) {
-      console.log(`Palace ${selectedPalace} selected`);
-      console.log("Available star refs:", Array.from(starRefs.current.keys()));
+      // Check if we have refs populated for this palace
+      const palaceStarsPopulated = Array.from(starRefs.current.keys()).some(key => 
+        key.startsWith(`${selectedPalace}:`)
+      );
+      
+      if (!palaceStarsPopulated) {
+        // Force a re-render to ensure refs are populated
+        setTimeout(() => {
+          setRefsReady(true);
+        }, 100);
+      }
     }
   }, [selectedPalace]);
+
+  // Ensure refs are properly populated after first render
+  useEffect(() => {
+    // After component mounts, ensure refs are marked as ready
+    const timer = setTimeout(() => {
+      setRefsReady(true);
+    }, 500);
+    
+    return () => clearTimeout(timer);
+  }, []);
 
   /**
    * Check if a star has a self-transformation when the palace is selected

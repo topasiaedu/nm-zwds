@@ -190,7 +190,7 @@ const Dashboard: React.FC = () => {
                       {t("dashboard.recentResults")}
                     </h2>
                     <Link 
-                      to="/results" 
+                      to="/calculate" 
                       className="text-sm text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 hover:bg-gray-50 dark:hover:bg-gray-700/50 px-3 py-1 rounded-lg transition-colors"
                     >
                       {t("dashboard.viewAll")}
