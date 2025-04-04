@@ -256,7 +256,7 @@ export const FOUR_TRANSFORMATIONS_ANALYSIS: Record<string, Record<"祿" | "權" 
       }
     }
   },
-  "天機": {
+  "天机": {
     "祿": {
       career: {
         content: {

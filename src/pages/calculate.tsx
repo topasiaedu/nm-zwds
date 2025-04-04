@@ -18,6 +18,7 @@ const Calculate: React.FC = () => {
    * @param profileId - ID of the newly created profile
    */
   const handleProfileSuccess = (profileId?: string) => {
+    console.log("handleProfileSuccess", profileId);
     if (profileId) {
       navigate(`/result/${profileId}`);
     }

@@ -110,7 +110,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ isSelfProfile, onSuccess }) =
         last_viewed: new Date().toISOString()
       };
 
-      await addProfile(newProfile);
+      const createdProfile = await addProfile(newProfile);
       showAlert(
         isSelfProfile 
           ? t("profile.createSelfSuccess") 
@@ -118,8 +118,9 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ isSelfProfile, onSuccess }) =
         "success"
       );
       
-      if (onSuccess) {
-        onSuccess(newProfile.id);
+      if (onSuccess && createdProfile) {
+        console.log("Calling onSuccess with profile ID:", createdProfile.id);
+        onSuccess(createdProfile.id);
       } else if (isSelfProfile) {
         navigate("/my-chart");
       } else {

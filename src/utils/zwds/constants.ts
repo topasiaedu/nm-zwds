@@ -5,122 +5,6 @@
 import { ChartData } from "./types";
 
 /**
- * Main stars and their properties
- */
-export const MAIN_STARS = {
-  ZI_WEI: { name: "紫微", brightness: "bright" },
-  TIAN_JI: { name: "天机", brightness: "bright" },
-  TAI_YANG: { name: "太阳", brightness: "bright" },
-  WU_QU: { name: "武曲", brightness: "bright" },
-  TIAN_TONG: { name: "天同", brightness: "bright" },
-  LIAN_ZHEN: { name: "廉贞", brightness: "bright" },
-  FU_YI: { name: "府尹", brightness: "bright" },
-  TAI_YIN: { name: "太阴", brightness: "bright" },
-  TAN_LANG: { name: "贪狼", brightness: "bright" },
-  JU_MEN: { name: "巨门", brightness: "bright" },
-  TIAN_XIANG: { name: "天相", brightness: "bright" },
-  TIAN_LIANG: { name: "天梁", brightness: "bright" },
-  QI_SHA: { name: "七杀", brightness: "bright" },
-  PO_JUN: { name: "破军", brightness: "bright" },
-} as const;
-
-/**
- * Body stars and their properties
- */
-export const BODY_STARS = {
-  TIAN_FU: { name: "天府", brightness: "bright" },
-  TAI_YIN: { name: "太阴", brightness: "bright" },
-  TAN_LANG: { name: "贪狼", brightness: "bright" },
-  JU_MEN: { name: "巨门", brightness: "bright" },
-  TIAN_XIANG: { name: "天相", brightness: "bright" },
-  TIAN_LIANG: { name: "天梁", brightness: "bright" },
-  QI_SHA: { name: "七杀", brightness: "bright" },
-  PO_JUN: { name: "破军", brightness: "bright" },
-} as const;
-
-/**
- * Minor stars and their properties
- */
-export const MINOR_STARS = {
-  WEN_CHANG: { name: "文昌", brightness: "bright" },
-  WEN_QU: { name: "文曲", brightness: "bright" },
-  TIAN_KUI: { name: "天魁", brightness: "bright" },
-  TIAN_YUE: { name: "天钺", brightness: "bright" },
-  ZUO_FU: { name: "左辅", brightness: "bright" },
-  YOU_BI: { name: "右弼", brightness: "bright" },
-  TIAN_CHU: { name: "天厨", brightness: "bright" },
-  TIAN_XING: { name: "天刑", brightness: "bright" },
-  TIAN_YAO: { name: "天姚", brightness: "bright" },
-  TIAN_XI: { name: "天喜", brightness: "bright" },
-  TIAN_KONG: { name: "天哭", brightness: "bright" },
-  TIAN_XU: { name: "天虚", brightness: "bright" },
-} as const;
-
-/**
- * Auxiliary stars and their properties
- */
-export const AUXILIARY_STARS = {
-  HUO_XING: { name: "火星", brightness: "bright" },
-  LING_XING: { name: "铃星", brightness: "bright" },
-  DI_KONG: { name: "地空", brightness: "dim" },
-  DI_JIE: { name: "地劫", brightness: "dim" },
-  QING_LONG: { name: "青龙", brightness: "bright" },
-  BAI_HU: { name: "白虎", brightness: "bright" },
-  FU_CHI: { name: "伏兵", brightness: "dim" },
-  GUAN_SUO: { name: "官符", brightness: "dim" },
-} as const;
-
-/**
- * Year stars and their properties
- */
-export const YEAR_STARS = {
-  TAI_SUI: { name: "太岁", brightness: "bright" },
-  JIAN_FU: { name: "建符", brightness: "bright" },
-  GUAN_FU: { name: "官符", brightness: "bright" },
-  BING_FU: { name: "病符", brightness: "dim" },
-  TAI_FU: { name: "太符", brightness: "bright" },
-  FU_DU: { name: "伏都", brightness: "dim" },
-  BAI_HU: { name: "白虎", brightness: "dim" },
-  TIAN_DU: { name: "天都", brightness: "bright" },
-} as const;
-
-/**
- * Month stars and their properties
- */
-export const MONTH_STARS = {
-  YUE_JIAN: { name: "月建", brightness: "bright" },
-  YUE_JI: { name: "月忌", brightness: "dim" },
-  YUE_KONG: { name: "月空", brightness: "dim" },
-  YUE_DE: { name: "月德", brightness: "bright" },
-  YUE_HUI: { name: "月会", brightness: "bright" },
-  YUE_XING: { name: "月星", brightness: "bright" },
-} as const;
-
-/**
- * Day stars and their properties
- */
-export const DAY_STARS = {
-  TIAN_DE: { name: "天德", brightness: "bright" },
-  YUE_DE: { name: "月德", brightness: "bright" },
-  TIAN_CHU: { name: "天厨", brightness: "bright" },
-  TIAN_XING: { name: "天刑", brightness: "dim" },
-  TIAN_YAO: { name: "天姚", brightness: "dim" },
-  TIAN_XI: { name: "天喜", brightness: "bright" },
-} as const;
-
-/**
- * Hour stars and their properties
- */
-export const HOUR_STARS = {
-  TAI_YI: { name: "太乙", brightness: "bright" },
-  TIAN_YI: { name: "天乙", brightness: "bright" },
-  TAI_YIN: { name: "太阴", brightness: "bright" },
-  TAI_YANG: { name: "太阳", brightness: "bright" },
-  TIAN_GUI: { name: "天贵", brightness: "bright" },
-  TIAN_GUAN: { name: "天官", brightness: "bright" },
-} as const;
-
-/**
  * Palace names in Chinese
  */
 export const PALACE_NAMES = [
@@ -172,23 +56,6 @@ export const HEAVENLY_STEMS = [
   "癸",
 ] as const;
 
-/**
- * Star transformation rules
- */
-export const STAR_TRANSFORMATIONS = {
-  ZI_WEI: {
-    TAI_YANG: "化科",
-    TAI_YIN: "化科",
-    TAN_LANG: "化禄",
-    JU_MEN: "化忌",
-    TIAN_TONG: "化科",
-    WU_QU: "化权",
-    TIAN_FU: "化科",
-    TIAN_LIANG: "化科",
-    QI_SHA: "化权",
-    PO_JUN: "化权",
-  },
-} as const;
 
 /**
  * ZiWei star position lookup table based on lunar day and five elements
@@ -556,31 +423,31 @@ export const FOUR_TRANSFORMATIONS: {
     祿: "廉貞", // 化科 goes to 廉貞
     權: "破軍", // 化權 goes to 破軍
     科: "武曲", // 化祿 goes to 武曲
-    忌: "太陽", // 化忌 goes to 太陽
+    忌: "太阳", // 化忌 goes to 太阳
   },
   乙: {
-    祿: "天機",
+    祿: "天机",
     權: "天梁",
     科: "紫微",
-    忌: "太陰",
+    忌: "太阴",
   },
   丙: {
     祿: "天同",
-    權: "天機",
+    權: "天机",
     科: "文昌",
     忌: "廉貞",
   },
   丁: {
-    祿: "太陰",
+    祿: "太阴",
     權: "天同",
-    科: "天機",
-    忌: "巨門",
+    科: "天机",
+    忌: "巨门",
   },
   戊: {
     祿: "贪狼",
-    權: "太陰",
+    權: "太阴",
     科: "右弼",
-    忌: "天機",
+    忌: "天机",
   },
   己: {
     祿: "武曲",
@@ -589,14 +456,14 @@ export const FOUR_TRANSFORMATIONS: {
     忌: "文曲",
   },
   庚: {
-    祿: "太陽",
+    祿: "太阳",
     權: "武曲",
-    科: "太陰",
+    科: "太阴",
     忌: "天同",
   },
   辛: {
-    祿: "巨門",
-    權: "太陽",
+    祿: "巨门",
+    權: "太阳",
     科: "文曲",
     忌: "文昌",
   },
@@ -608,8 +475,8 @@ export const FOUR_TRANSFORMATIONS: {
   },
   癸: {
     祿: "破軍",
-    權: "巨門",
-    科: "太陰",
+    權: "巨门",
+    科: "太阴",
     忌: "贪狼",
   },
 };
@@ -795,7 +662,7 @@ export const MAIN_STARS_TABLE = {
     辰: ["天府", "廉贞"],
     巳: ["太阴"],
     午: ["贪狼"],
-    未: ["巨門", "天同"],
+    未: ["巨门", "天同"],
     申: ["天相", "武曲"],
     酉: ["天梁", "太阳"],
     戌: ["七杀"],
@@ -810,7 +677,7 @@ export const MAIN_STARS_TABLE = {
     卯: ["天府"],
     辰: ["太阴"],
     巳: ["贪狼", "廉贞"],
-    午: ["巨門"],
+    午: ["巨门"],
     未: ["天相"],
     申: ["天梁", "天同"],
     酉: ["七杀", "武曲"],
@@ -821,17 +688,17 @@ export const MAIN_STARS_TABLE = {
   // 紫薇在寅 (middle-left chart in first image)
   寅: {
     子: ["破军"],
-    丑: ["天機"],
+    丑: ["天机"],
     寅: ["天府", "紫微"],
     卯: ["太阴"],
     辰: ["贪狼"],
-    巳: ["巨門"],
+    巳: ["巨门"],
     午: ["天相", "廉貞"],
     未: ["天梁"],
     申: ["七杀"],
     酉: ["天同"],
     戌: ["武曲"],
-    亥: ["太陽"],
+    亥: ["太阳"],
   },
 
   // 紫薇在卯 (middle-right chart in first image)
@@ -840,7 +707,7 @@ export const MAIN_STARS_TABLE = {
     丑: ["天府"],
     寅: ["太阴", "天机"],
     卯: ["贪狼", "紫微"],
-    辰: ["巨門"],
+    辰: ["巨门"],
     巳: ["天相"],
     午: ["天梁"],
     未: ["七杀", "廉贞"],
@@ -855,7 +722,7 @@ export const MAIN_STARS_TABLE = {
     子: ["天府", "武曲"],
     丑: ["太阴", "太阳"],
     寅: ["贪狼"],
-    卯: ["巨門", "天机"],
+    卯: ["巨门", "天机"],
     辰: ["天相", "紫微"],
     巳: ["天梁"],
     午: ["七杀"],
@@ -1259,14 +1126,14 @@ export const ZIWEI_2025_READING = {
       originalPalace: 9,
       mainStar: [
         {
-          name: "太陰",
+          name: "太阴",
           brightness: "bright",
           palace: 9,
           isTransformed: false,
           transformations: ["化忌"],
         },
         {
-          name: "太陽",
+          name: "太阳",
           brightness: "bright",
           palace: 9,
           isTransformed: false,
@@ -1326,13 +1193,13 @@ export const ZIWEI_2025_READING = {
       originalPalace: 11,
       mainStar: [
         {
-          name: "巨門",
+          name: "巨门",
           brightness: "bright",
           palace: 11,
           isTransformed: false,
         },
         {
-          name: "天機",
+          name: "天机",
           brightness: "bright",
           palace: 11,
           isTransformed: false,
