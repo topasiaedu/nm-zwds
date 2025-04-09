@@ -18,6 +18,7 @@ import {
   FIVE_ELEMENTS_TABLE, MAJOR_LIMIT_STARTING_AGES, MAIN_STARS_TABLE
 } from "./constants";
 import { getHourBranch, findStarByName, getLunarDayFromBirthday } from "./utils";
+import { lunar } from "../lunar";
 
 /**
  * Main calculator class for Zi Wei Dou Shu chart calculations
@@ -169,22 +170,7 @@ export class ZWDSCalculator {
       mainStar = lifePalace.mainStar[0].name;
     }
 
-    // Before returning the calculated data, log the structure with transformations
-    console.log("ZWDS Calculated Data Structure:", {
-      transformations: {
-        huaLu, 
-        huaQuan,
-        huaKe,
-        huaJi
-      },
-      mainStar,
-      palaces: this.chartData.palaces?.map(p => ({
-        name: p.name,
-        stars: p.mainStar?.map(s => s.name)
-      })),
-      year: this.input.year
-    });
-
+  
     // Create a properly formatted transformation object
     const transformationObject = {
       huaLu,
@@ -302,23 +288,26 @@ export class ZWDSCalculator {
   private step4(): void {
     // DONE THIS IS CORRECT ALREADY
 
-    const { month, hour } = this.input;
+    const { year, month, day, hour } = this.input;
+
+    // Convert solar date to lunar date
+    // We need to import the lunar utility at the top of the file to use this
+    const lunarDate = lunar.convertSolarToLunar(year, month, day);
+    const lunarMonth = lunarDate.month;
 
     // Convert hour to Earthly Branch position (0-11)
     const hourBranch = getHourBranch(hour);
     const hourBranchName = EARTHLY_BRANCHES[hourBranch];
 
-
     // LIFE_PALACE_TABLE is organized as:
     // [month-1][hourBranch] = earthly branch name for life palace
-    // We need to subtract 1 from month because arrays are 0-indexed
-    const lifePalaceEarthlyBranch = LIFE_PALACE_TABLE[month - 1][hourBranch];
-    
+    // We need to subtract 1 from lunarMonth because arrays are 0-indexed
+    const lifePalaceEarthlyBranch = LIFE_PALACE_TABLE[lunarMonth - 1][hourBranch];
     
     if (!lifePalaceEarthlyBranch) {
       console.error("Invalid Life Palace earthly branch:", lifePalaceEarthlyBranch);
-      console.error("Month:", month, "Hour Branch:", hourBranch);
-      throw new Error(`Invalid Life Palace earthly branch: ${lifePalaceEarthlyBranch} for month ${month} and hour branch ${hourBranch}`);
+      console.error("Lunar Month:", lunarMonth, "Hour Branch:", hourBranch);
+      throw new Error(`Invalid Life Palace earthly branch: ${lifePalaceEarthlyBranch} for lunar month ${lunarMonth} and hour branch ${hourBranch}`);
     }
     
     let lifePalace = 0;
@@ -339,7 +328,7 @@ export class ZWDSCalculator {
 
     // Record the calculation step
     this.chartData.calculationSteps.step4 = 
-      `Life Palace calculation: Month ${month} (row), ` +
+      `Life Palace calculation: Lunar Month ${lunarMonth} (row), ` +
       `Hour Branch ${hourBranchName} (column), ` +
       `Found earthly branch ${lifePalaceEarthlyBranch}, ` +
       `mapped to palace position ${lifePalace}`;
@@ -382,7 +371,7 @@ export class ZWDSCalculator {
     // Get the Life Palace position
     const lifePalacePos = this.chartData.lifePalace - 1; // Convert to 0-based index
     const lifePalace = this.chartData.palaces[lifePalacePos];
-
+    console.log("Life Palace:", lifePalace);
     // Get the Heavenly Stem and Earthly Branch of the Life Palace
     const heavenlyStem = lifePalace.heavenlyStem as keyof FiveElementsTable;
     const earthlyBranch = lifePalace.earthlyBranch as keyof EarthlyBranchMap;
@@ -406,7 +395,6 @@ export class ZWDSCalculator {
    * This serves as an anchor point for placing other stars
    */
   private step7(): void {
-    console.log("==================STEP 7==================");
 
     const { day } = this.input;
     const fiveElements = this.chartData.fiveElements;
@@ -420,7 +408,6 @@ export class ZWDSCalculator {
     // Convert day number to lunar day string
     const lunarDay = getLunarDayFromBirthday(this.input.year, this.input.month, this.input.day);
 
-    console.log("Lunar Day:", lunarDay);
 
     // Get ZiWei earthly branch from lookup table
     const ziWeiEarthlyBranch = ZIWEI_POSITIONS[lunarDay as keyof typeof ZIWEI_POSITIONS]?.[fiveElements as keyof typeof ZIWEI_POSITIONS[keyof typeof ZIWEI_POSITIONS]];
@@ -477,9 +464,7 @@ export class ZWDSCalculator {
 
     // Populate the other main stars based on ZiWei's position
     const earthlyBranch = this.chartData.palaces[ziWeiPosition - 1].earthlyBranch;
-    console.log("Earthly Branch:", earthlyBranch);
     const mainstars = MAIN_STARS_TABLE[earthlyBranch as keyof typeof MAIN_STARS_TABLE];
-    console.log("Main Stars:", mainstars);
     
     // Initialize mainStar arrays for all palaces if not already initialized
     for (let i = 0; i < this.chartData.palaces.length; i++) {
@@ -524,14 +509,18 @@ export class ZWDSCalculator {
   private step9(): void {
 
     // DONE THIS IS CORRECT ALREADY
-    const { month, hour } = this.input;
+    const { year, month, day, hour } = this.input;
 
-    // Get earthly branches for Left Support and Right Support based on month
-    const leftSupportEarthlyBranch = LEFT_SUPPORT_POSITIONS[month];
-    const rightSupportEarthlyBranch = RIGHT_SUPPORT_POSITIONS[month];
+    // Convert solar date to lunar date
+    const lunarDate = lunar.convertSolarToLunar(year, month, day);
+    const lunarMonth = lunarDate.month;
+
+    // Get earthly branches for Left Support and Right Support based on lunar month
+    const leftSupportEarthlyBranch = LEFT_SUPPORT_POSITIONS[lunarMonth];
+    const rightSupportEarthlyBranch = RIGHT_SUPPORT_POSITIONS[lunarMonth];
 
     if (!leftSupportEarthlyBranch || !rightSupportEarthlyBranch) {
-      throw new Error(`Invalid month ${month} for support stars calculation`);
+      throw new Error(`Invalid lunar month ${lunarMonth} for support stars calculation`);
     }
 
     // Get earthly branches for Wen Chang and Wen Qu based on hour
@@ -622,14 +611,11 @@ export class ZWDSCalculator {
       }
     });
 
-
-    console.log("Support Stars:", supportStars);
-
     // Record the calculation step
     this.chartData.calculationSteps.step9 =
       `Support stars placed: ` +
       `左輔 in ${leftSupportEarthlyBranch} (palace ${leftSupportPosition}) and ` +
-      `右弼 in ${rightSupportEarthlyBranch} (palace ${rightSupportPosition}) based on month ${month}, ` +
+      `右弼 in ${rightSupportEarthlyBranch} (palace ${rightSupportPosition}) based on lunar month ${lunarMonth}, ` +
       `文昌 in ${wenChangEarthlyBranch} (palace ${wenChangPosition}) and ` +
       `文曲 in ${wenQuEarthlyBranch} (palace ${wenQuPosition}) based on hour ${hour}`;
   }
@@ -640,7 +626,6 @@ export class ZWDSCalculator {
   private step10(): void {
 
     // DONE THIS IS CORRECT ALREADY
-    console.log("==================STEP 10==================");
     // Get birth year's Heavenly Stem
     const yearStem = this.chartData
       .heavenlyStem as keyof typeof FOUR_TRANSFORMATIONS;
@@ -660,7 +645,6 @@ export class ZWDSCalculator {
       );
     }
 
-    console.log("Transformations:", transformations);
     // Apply each transformation
     const transformationResults: string[] = [];
 
@@ -758,20 +742,22 @@ export class ZWDSCalculator {
       (gender === "male" && yinYang === "Yang") ||
       (gender === "female" && yinYang === "Yin");
 
+      console.log("isClockwise", isClockwise);
+
     // Calculate major limits for each palace
     for (let i = 0; i < 12; i++) {
-      // Calculate the palace position based on direction
-      const offset = isClockwise ? -i : i;
-      const palaceIndex = (lifePalace - 1 + offset + 12) % 12;
-      const palace = this.chartData.palaces[palaceIndex];
+  // Move backwards manually
+  const palaceIndex = (lifePalace - 1 - i + 12) % 12;
+  const palace = this.chartData.palaces[palaceIndex];
+  console.log("palaceIndex", palaceIndex);
 
-      // Calculate age range for this palace
-      const ageOffset = i * 10;
-      palace.majorLimit = {
-        startAge: startingAge + ageOffset,
-        endAge: startingAge + ageOffset + 9,
-      };
-    }
+  // Calculate age range
+  const ageOffset = i * 10;
+  palace.majorLimit = {
+    startAge: startingAge + ageOffset,
+    endAge: startingAge + ageOffset + 9,
+  };
+}
 
     // Record the calculation step
     this.chartData.calculationSteps.step11 =
