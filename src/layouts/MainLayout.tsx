@@ -3,7 +3,7 @@ import { useLocation } from "react-router-dom";
 import PageTransition from "../components/PageTransition";
 import { AnimatePresence } from "framer-motion";
 import StarryBackground from "../components/StarryBackground"; // Use the improved StarryBackground component
-import Navbar from "../components/Navbar"; // Explicitly match the exact case
+import Navbar from "../components/Navbar";
 
 /**
  * Props for the MainLayout component
