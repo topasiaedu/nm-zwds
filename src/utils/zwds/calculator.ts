@@ -1,9 +1,7 @@
 import {
   ChartInput,
   ChartData,
-  Star, FiveElementType,
-  EarthlyBranchMap,
-  FiveElementsTable
+  Star, FiveElementType
 } from "./types";
 import {
   EARTHLY_BRANCHES,
@@ -24,8 +22,8 @@ import { lunar } from "../lunar";
  * Main calculator class for Zi Wei Dou Shu chart calculations
  */
 export class ZWDSCalculator {
-  private input: ChartInput;
-  private chartData: ChartData;
+  private readonly input: ChartInput;
+  private readonly chartData: ChartData;
 
   constructor(input: ChartInput) {
     this.input = input;
@@ -118,10 +116,6 @@ export class ZWDSCalculator {
     this.step10();
     this.step11();
     this.step12();
-
-    // Extract the transformation results
-    const yearStem = this.chartData.heavenlyStem;
-    const transformations = FOUR_TRANSFORMATIONS[yearStem as keyof typeof FOUR_TRANSFORMATIONS];
 
     // Find the stars with transformations
     let huaLu = "";
@@ -373,8 +367,8 @@ export class ZWDSCalculator {
     const lifePalace = this.chartData.palaces[lifePalacePos];
     console.log("Life Palace:", lifePalace);
     // Get the Heavenly Stem and Earthly Branch of the Life Palace
-    const heavenlyStem = lifePalace.heavenlyStem as keyof FiveElementsTable;
-    const earthlyBranch = lifePalace.earthlyBranch as keyof EarthlyBranchMap;
+    const heavenlyStem = lifePalace.heavenlyStem;
+    const earthlyBranch = lifePalace.earthlyBranch;
 
     // Get the Five Elements type
     const fiveElements = (
@@ -395,8 +389,6 @@ export class ZWDSCalculator {
    * This serves as an anchor point for placing other stars
    */
   private step7(): void {
-
-    const { day } = this.input;
     const fiveElements = this.chartData.fiveElements;
 
     if (!fiveElements) {
@@ -464,7 +456,7 @@ export class ZWDSCalculator {
 
     // Populate the other main stars based on ZiWei's position
     const earthlyBranch = this.chartData.palaces[ziWeiPosition - 1].earthlyBranch;
-    const mainstars = MAIN_STARS_TABLE[earthlyBranch as keyof typeof MAIN_STARS_TABLE];
+    const mainStars = MAIN_STARS_TABLE[earthlyBranch];
     
     // Initialize mainStar arrays for all palaces if not already initialized
     for (let i = 0; i < this.chartData.palaces.length; i++) {
@@ -474,7 +466,7 @@ export class ZWDSCalculator {
     // Populate main stars for each palace
     for (let i = 0; i < this.chartData.palaces.length; i++) {
       const palace = this.chartData.palaces[i];
-      const stars = mainstars[palace.earthlyBranch as keyof typeof mainstars] as readonly string[];
+      const stars = mainStars[palace.earthlyBranch] as readonly string[];
       
       if (!stars || stars.length === 0) {
         continue;
@@ -627,8 +619,7 @@ export class ZWDSCalculator {
 
     // DONE THIS IS CORRECT ALREADY
     // Get birth year's Heavenly Stem
-    const yearStem = this.chartData
-      .heavenlyStem as keyof typeof FOUR_TRANSFORMATIONS;
+    const yearStem = this.chartData      .heavenlyStem ;
 
     if (!yearStem) {
       throw new Error(
@@ -815,7 +806,7 @@ export class ZWDSCalculator {
     // Record the calculation step
     this.chartData.calculationSteps.step12 =
       `Annual Flow calculated for current year ${currentYear}. ` +
-      `Current year is in palace ${currentYearPalace?.number || "unknown"}. ` +
+      `Current year is in palace ${currentYearPalace?.number ?? "unknown"}. ` +
       `Base cycle: 2013-2024, repeating every 12 years.`;
   }
 }

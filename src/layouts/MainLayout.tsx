@@ -3,7 +3,7 @@ import { useLocation } from "react-router-dom";
 import PageTransition from "../components/PageTransition";
 import { AnimatePresence } from "framer-motion";
 import StarryBackground from "../components/StarryBackground"; // Use the improved StarryBackground component
-import Navbar from "../components/navbar"; // Import Navbar component
+import Navbar from "../components/Navbar"; // Import Navbar component
 
 /**
  * Props for the MainLayout component

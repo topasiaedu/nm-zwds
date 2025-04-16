@@ -391,18 +391,18 @@ const en = {
   zwds: {
     // Palace names
     palaces: {
-      "命宫": "Life Palace",
-      "兄弟": "Siblings Palace",
-      "夫妻": "Marriage Palace",
-      "子女": "Children Palace",
-      "财帛": "Wealth Palace",
-      "疾厄": "Health Palace",
-      "迁移": "Travel Palace",
-      "交友": "Friends Palace",
-      "官禄": "Career Palace",
-      "田宅": "Property Palace",
-      "福德": "Fortune Palace",
-      "父母": "Parents Palace"
+      "命宫": "Life",
+      "兄弟": "Siblings",
+      "夫妻": "Marriage",
+      "子女": "Children",
+      "财帛": "Wealth",
+      "疾厄": "Health",
+      "迁移": "Travel",
+      "交友": "Friends",
+      "官禄": "Career",
+      "田宅": "Property",
+      "福德": "Fortune",
+      "父母": "Parents"
     },
     
     // Heavenly Stems
@@ -421,18 +421,18 @@ const en = {
     
     // Earthly Branches
     branches: {
-      "子": "Zi (Rat)",
-      "丑": "Chou (Ox)",
-      "寅": "Yin (Tiger)",
-      "卯": "Mao (Rabbit)",
-      "辰": "Chen (Dragon)",
-      "巳": "Si (Snake)",
-      "午": "Wu (Horse)",
-      "未": "Wei (Goat)",
-      "申": "Shen (Monkey)",
-      "酉": "You (Rooster)",
-      "戌": "Xu (Dog)",
-      "亥": "Hai (Pig)"
+      "子": "Zi",
+      "丑": "Chou",
+      "寅": "Yin",
+      "卯": "Mao",
+      "辰": "Chen",
+      "巳": "Si",
+      "午": "Wu",
+      "未": "Wei",
+      "申": "Shen",
+      "酉": "You",
+      "戌": "Xu",
+      "亥": "Hai"
     },
     
     // Main stars

@@ -7,7 +7,6 @@ import ProfileForm from "../components/ProfileForm";
 import ZWDSChart from "../components/ZWDSChart";
 import { ZWDSCalculator } from "../utils/zwds/calculator";
 import { ChartInput } from "../utils/zwds/types";
-import { generateAnalysis } from "../utils/zwds/analysis";
 
 /**
  * Interface for chart data
@@ -42,7 +41,6 @@ const Result: React.FC = () => {
   );
 
   const [calculatedChartData, setCalculatedChartData] = useState<any>(null);
-  const [chartAnalysis, setChartAnalysis] = useState<any>(null);
 
   // Memoize formatBirthTime function to prevent it from changing on every render
   const formatBirthTime = useCallback((birthTimeString: string): string => {
@@ -269,11 +267,6 @@ const Result: React.FC = () => {
         const calculator = new ZWDSCalculator(chartInput);
         const calculatedData = calculator.calculate();
         setCalculatedChartData(calculatedData);
-
-        // Generate analysis based on calculated data
-        const analysis = generateAnalysis(calculatedData);
-        setChartAnalysis(analysis);
-        console.log("Chart analysis:", analysis);
       } catch (error) {
         console.error("Error calculating chart:", error);
         setError(`Failed to calculate chart data: ${error}`);
@@ -620,238 +613,7 @@ const Result: React.FC = () => {
                     </div>
                   )}
                 </div>
-              </div>
-
-              {/* Detailed analysis */}
-              <div className="lg:col-span-3">
-                <div
-                  className="rounded-2xl shadow-2xl overflow-hidden
-                            border border-white/10
-                            backdrop-filter backdrop-blur-2xl 
-                            bg-white/10 hover:bg-white/15 
-                            dark:bg-black/10 dark:hover:bg-black/20 
-                            transition-all duration-300 p-6">
-                  <h2 className="text-2xl font-bold mb-6 dark:text-white">
-                    {t("result.detailedAnalysis") || "详细分析"}
-                  </h2>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div>
-                      <h3 className="text-lg font-bold mb-3 dark:text-white flex items-center">
-                        <svg
-                          className="w-5 h-5 mr-2 text-yellow-500"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                          xmlns="http://www.w3.org/2000/svg">
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                          />
-                        </svg>
-                        {t("result.analysis.careerWealth") || "事业与财富"}
-                      </h3>
-                      <div className="space-y-4">
-                        <p className="text-gray-600 dark:text-gray-400">
-                          {chartAnalysis?.career?.content?.mainText ||
-                            t("result.analysis.careerWealthText") ||
-                            "这是事业与财富详细分析的占位文本。在完整实现中，这里将包含个性化的职业道路、财务前景和财富管理建议。"}
-                        </p>
-                        <div className="grid grid-cols-2 gap-3">
-                          <div className="bg-yellow-50 dark:bg-yellow-900/20 p-3 rounded-lg">
-                            <h4 className="text-sm font-medium text-yellow-800 dark:text-yellow-300 mb-1">
-                              {t("result.analysis.suitableCareer") ||
-                                "适合的职业"}
-                            </h4>
-                            <p className="text-xs text-yellow-600 dark:text-yellow-400">
-                              {chartAnalysis?.career?.details?.suitableCareers?.join(
-                                ", "
-                              ) ||
-                                t("result.analysis.suitableCareerText") ||
-                                "技术, 金融, 研究"}
-                            </p>
-                          </div>
-                          <div className="bg-yellow-50 dark:bg-yellow-900/20 p-3 rounded-lg">
-                            <h4 className="text-sm font-medium text-yellow-800 dark:text-yellow-300 mb-1">
-                              {t("result.analysis.financialOutlook") ||
-                                "财务前景"}
-                            </h4>
-                            <p className="text-xs text-yellow-600 dark:text-yellow-400">
-                              {chartAnalysis?.career?.details
-                                ?.financialOutlook ||
-                                t("result.analysis.financialOutlookText") ||
-                                "稳定且有增长潜力"}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div>
-                      <h3 className="text-lg font-bold mb-3 dark:text-white flex items-center">
-                        <svg
-                          className="w-5 h-5 mr-2 text-red-500"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                          xmlns="http://www.w3.org/2000/svg">
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-                          />
-                        </svg>
-                        {t("result.analysis.relationshipsFamily") ||
-                          "人际关系与家庭"}
-                      </h3>
-                      <div className="space-y-4">
-                        <p className="text-gray-600 dark:text-gray-400">
-                          {chartAnalysis?.relationships?.content?.mainText ||
-                            t("result.analysis.relationshipsFamilyText") ||
-                            "这是人际关系与家庭分析的占位文本。在完整实现中，这里将包含个性化的关系模式、家庭动态和与他人的兼容性分析。"}
-                        </p>
-                        <div className="grid grid-cols-2 gap-3">
-                          <div className="bg-red-50 dark:bg-red-900/20 p-3 rounded-lg">
-                            <h4 className="text-sm font-medium text-red-800 dark:text-red-300 mb-1">
-                              {t("result.analysis.relationshipStyle") ||
-                                "关系风格"}
-                            </h4>
-                            <p className="text-xs text-red-600 dark:text-red-400">
-                              {chartAnalysis?.relationships?.details?.relationshipStyle?.join(
-                                ", "
-                              ) ||
-                                t("result.analysis.relationshipStyleText") ||
-                                "忠诚, 耐心, 分析型"}
-                            </p>
-                          </div>
-                          <div className="bg-red-50 dark:bg-red-900/20 p-3 rounded-lg">
-                            <h4 className="text-sm font-medium text-red-800 dark:text-red-300 mb-1">
-                              {t("result.analysis.compatibleSigns") ||
-                                "相配的生肖"}
-                            </h4>
-                            <p className="text-xs text-red-600 dark:text-red-400">
-                              {chartAnalysis?.relationships?.details?.compatibleSigns?.join(
-                                ", "
-                              ) ||
-                                t("result.analysis.compatibleSignsText") ||
-                                "马, 兔, 羊"}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div>
-                      <h3 className="text-lg font-bold mb-3 dark:text-white flex items-center">
-                        <svg
-                          className="w-5 h-5 mr-2 text-green-500"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                          xmlns="http://www.w3.org/2000/svg">
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
-                          />
-                        </svg>
-                        {t("result.analysis.healthWellness") || "健康与养生"}
-                      </h3>
-                      <div className="space-y-4">
-                        <p className="text-gray-600 dark:text-gray-400">
-                          {chartAnalysis?.health?.content?.mainText ||
-                            t("result.analysis.healthWellnessText") ||
-                            "这是健康与养生分析的占位文本。在完整实现中，这里将包含个性化的健康倾向、潜在问题和养生建议。"}
-                        </p>
-                        <div className="grid grid-cols-2 gap-3">
-                          <div className="bg-green-50 dark:bg-green-900/20 p-3 rounded-lg">
-                            <h4 className="text-sm font-medium text-green-800 dark:text-green-300 mb-1">
-                              {t("result.analysis.strengths") || "优势"}
-                            </h4>
-                            <p className="text-xs text-green-600 dark:text-green-400">
-                              {chartAnalysis?.health?.details?.strengths?.join(
-                                ", "
-                              ) ||
-                                t("result.analysis.strengthsText") ||
-                                "强健的免疫系统, 充沛的生命能量"}
-                            </p>
-                          </div>
-                          <div className="bg-green-50 dark:bg-green-900/20 p-3 rounded-lg">
-                            <h4 className="text-sm font-medium text-green-800 dark:text-green-300 mb-1">
-                              {t("result.analysis.areasAttention") ||
-                                "需要关注的领域"}
-                            </h4>
-                            <p className="text-xs text-green-600 dark:text-green-400">
-                              {chartAnalysis?.health?.details?.areasOfAttention?.join(
-                                ", "
-                              ) ||
-                                t("result.analysis.areasAttentionText") ||
-                                "消化系统, 压力管理"}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div>
-                      <h3 className="text-lg font-bold mb-3 dark:text-white flex items-center">
-                        <svg
-                          className="w-5 h-5 mr-2 text-blue-500"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                          xmlns="http://www.w3.org/2000/svg">
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M13 10V3L4 14h7v7l9-11h-7z"
-                          />
-                        </svg>
-                        {t("result.analysis.lifePurpose") || "人生目标与潜能"}
-                      </h3>
-                      <div className="space-y-4">
-                        <p className="text-gray-600 dark:text-gray-400">
-                          {chartAnalysis?.lifePurpose?.content?.mainText ||
-                            t("result.analysis.lifePurposeText") ||
-                            "这是人生目标与潜能分析的占位文本。在完整实现中，这里将包含个性化的生命使命、精神道路和个人成长机会的见解。"}
-                        </p>
-                        <div className="grid grid-cols-2 gap-3">
-                          <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg">
-                            <h4 className="text-sm font-medium text-blue-800 dark:text-blue-300 mb-1">
-                              {t("result.analysis.naturalTalents") ||
-                                "天赋才能"}
-                            </h4>
-                            <p className="text-xs text-blue-600 dark:text-blue-400">
-                              {chartAnalysis?.lifePurpose?.details?.naturalTalents?.join(
-                                ", "
-                              ) ||
-                                t("result.analysis.naturalTalentsText") ||
-                                "分析能力, 沟通能力, 解决问题能力"}
-                            </p>
-                          </div>
-                          <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg">
-                            <h4 className="text-sm font-medium text-blue-800 dark:text-blue-300 mb-1">
-                              {t("result.analysis.lifeLessons") || "人生课题"}
-                            </h4>
-                            <p className="text-xs text-blue-600 dark:text-blue-400">
-                              {chartAnalysis?.lifePurpose?.details?.lifeLessons?.join(
-                                ", "
-                              ) ||
-                                t("result.analysis.lifeLessonsText") ||
-                                "平衡, 情感表达, 信任"}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              </div>        
             </div>
           )
         )}
