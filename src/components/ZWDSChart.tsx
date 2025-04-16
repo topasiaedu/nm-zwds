@@ -399,21 +399,110 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
       
       // Determine line color based on transformation type
       let lineColor;
+      let shadowColor; // Add shadow color
       switch (transformation.type) {
-        case "祿": lineColor = "#10b981"; break; // green
-        case "權": lineColor = "#3b82f6"; break; // blue
-        case "科": lineColor = "#f59e0b"; break; // yellow
-        case "忌": lineColor = "#ef4444"; break; // red
-        default: lineColor = "#6b7280"; // gray fallback
+        case "祿": 
+          lineColor = "rgba(16, 185, 129, 0.7)"; // semi-transparent
+          shadowColor = "rgba(16, 185, 129, 0.3)";
+          break; // green
+        case "權": 
+          lineColor = "rgba(56, 189, 248, 0.85)"; // brighter sky blue with higher opacity
+          shadowColor = "rgba(56, 189, 248, 0.4)";
+          break; // blue
+        case "科": 
+          lineColor = "rgba(245, 158, 11, 0.7)"; // semi-transparent
+          shadowColor = "rgba(245, 158, 11, 0.3)";
+          break; // yellow
+        case "忌": 
+          lineColor = "rgba(239, 68, 68, 0.7)"; // semi-transparent
+          shadowColor = "rgba(239, 68, 68, 0.3)";
+          break; // red
+        default: 
+          lineColor = "rgba(107, 114, 128, 0.7)"; // semi-transparent
+          shadowColor = "rgba(107, 114, 128, 0.3)";
+          break; // gray fallback
       }
       
       // Check if transformation points to the same palace
       const isSelfTransformation = transformation.fromPalace === transformation.toPalace;
       
+      // Use the windowSize state to determine screen size
+      const isSmallScreen = windowSize.width < SCREEN_SM; // sm breakpoint
+      
+      // Adjust stroke width based on screen size - make lines thicker
+      const strokeWidth = isSmallScreen ? "3" : "4";
+      // Style for all lines
+      const lineStyle = {
+        filter: `drop-shadow(0 0 4px ${shadowColor})`,
+        opacity: 0.8, // Additional transparency for all lines
+      };
+      
       if (isSelfTransformation) {
-        // Skip drawing circular arrows for self-transformations
-        // We'll mark these directly in the star name display instead
-        return null;
+        // For self-transformations, draw a curved arc or loop
+        // Get position relative to the star
+        const starX = toX - fromX;
+        const starY = toY - fromY;
+        
+        // Determine the direction to bend the arc based on star position
+        let angle;
+        if (Math.abs(starX) > Math.abs(starY)) {
+          // Star is more horizontal from palace center
+          angle = starX > 0 ? Math.PI * 3/4 : Math.PI * 1/4;
+        } else {
+          // Star is more vertical from palace center
+          angle = starY > 0 ? Math.PI * 5/4 : Math.PI * 7/4;
+        }
+        
+        // Create control points for a bezier curve
+        const radius = Math.min(fromRect.width, fromRect.height) * 0.5;
+        
+        // Calculate control point coordinates for a quadratic bezier curve
+        const controlX = fromX + radius * Math.cos(angle);
+        const controlY = fromY + radius * Math.sin(angle);
+        
+        // Create animated dashes for the arc
+        const arcLength = Math.PI * radius; // Approximate arc length
+        const dashLength = arcLength / 10;
+        const dashArray = `${dashLength},${dashLength/2}`;
+        
+        // Calculate arrowhead angle
+        const arrowAngle = Math.atan2(toY - controlY, toX - controlX);
+        
+        return (
+          <g key={index} style={lineStyle}>
+            <motion.path
+              d={`M ${fromX} ${fromY} Q ${controlX} ${controlY} ${toX} ${toY}`}
+              fill="none"
+              stroke={lineColor}
+              strokeWidth={strokeWidth}
+              strokeDasharray={dashArray}
+              initial={{ strokeDashoffset: arcLength }}
+              animate={{ 
+                strokeDashoffset: [arcLength, 0],
+                pathLength: [0, 1]
+              }}
+              transition={{ 
+                duration: 1.5,
+                ease: "easeOut" 
+              }}
+            />
+            <motion.polygon
+              points={`${toX},${toY} ${
+                toX - 10 * Math.cos(arrowAngle - Math.PI/6)},${
+                toY - 10 * Math.sin(arrowAngle - Math.PI/6)} ${
+                toX - 10 * Math.cos(arrowAngle + Math.PI/6)},${
+                toY - 10 * Math.sin(arrowAngle + Math.PI/6)}`
+              }
+              fill={lineColor}
+              initial={{ opacity: 0, scale: 0 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ 
+                delay: 0.8,
+                duration: 0.3
+              }}
+            />
+          </g>
+        );
       } else {
         // Draw a line between palace and star
         const lineLength = Math.sqrt(Math.pow(toX - fromX, 2) + Math.pow(toY - fromY, 2));
@@ -421,27 +510,21 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
         // Calculate the angle of the line
         const angle = Math.atan2(toY - fromY, toX - fromX);
         
-        // Calculate arrowhead points
-        const arrowLength = 10;
-        const arrowWidth = 6;
+        // Calculate arrowhead points - make arrowhead larger
+        const arrowLength = 12;
+        const arrowWidth = 8;
         
         const x1 = toX - arrowLength * Math.cos(angle) - arrowWidth * Math.cos(angle - Math.PI/2);
         const y1 = toY - arrowLength * Math.sin(angle) - arrowWidth * Math.sin(angle - Math.PI/2);
         const x2 = toX - arrowLength * Math.cos(angle) - arrowWidth * Math.cos(angle + Math.PI/2);
         const y2 = toY - arrowLength * Math.sin(angle) - arrowWidth * Math.sin(angle + Math.PI/2);
         
-        // Use the windowSize state to determine screen size
-        const isSmallScreen = windowSize.width < SCREEN_SM; // sm breakpoint
-        
-        // Adjust stroke width based on screen size
-        const strokeWidth = isSmallScreen ? "1.5" : "2";
-        
         // Create animated dashes for the lines
         const dashLength = lineLength / 10;
         const dashArray = `${dashLength},${dashLength/2}`;
         
         return (
-          <g key={index}>
+          <g key={index} style={lineStyle}>
             <motion.line
               x1={fromX}
               y1={fromY}
@@ -477,7 +560,7 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
     
     return (
       <svg 
-        className="absolute top-0 left-0 w-full h-full pointer-events-none z-10"
+        className="absolute top-0 left-0 w-full h-full pointer-events-none z-5"
         style={{ overflow: "visible" }}
       >
         {lines}
@@ -550,7 +633,7 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
     if (isTargetPalace && !isSelected) {
       const borderColor = 
         transformationType === "祿" ? "rgba(16, 185, 129, 0.7)" : // green
-        transformationType === "權" ? "rgba(59, 130, 246, 0.7)" : // blue
+        transformationType === "權" ? "rgba(56, 189, 248, 0.85)" : // brighter sky blue with higher opacity
         transformationType === "科" ? "rgba(245, 158, 11, 0.7)" : // yellow
         transformationType === "忌" ? "rgba(239, 68, 68, 0.7)" : // red
         "rgba(107, 114, 128, 0.7)"; // gray fallback
@@ -592,105 +675,81 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
         ref={el => palaceRefs.current[palaceNumber - 1] = el}>
 
         {/* Top left: Main Stars */}
-        <div className="absolute top-0.5 xs:top-1 sm:top-2 left-0.5 xs:left-1 sm:left-2 z-20">
+        <div className="absolute top-0.5 xs:top-1 sm:top-2 left-0.5 xs:left-1 sm:left-2 z-30">
           {palace.mainStar && palace.mainStar.length > 0 && (
-            <div className="font-medium text-3xs xs:text-2xs sm:text-xs">
-              {palace.mainStar.map((star, starIndex) => {
-                const selfTransform = hasSelfTransformation(palaceNumber, star.name);
-                return (
-                  <div 
-                    key={starIndex} 
-                    className={`mb-0.5 ${isSelected ? "text-white dark:text-white" : "text-zinc-800 dark:text-zinc-200"}`}
-                    ref={el => el && registerStarRef(palaceNumber, star.name, el)}
-                  >
-                    {translateStarName(star.name, "mainStars")}
-                    {selfTransform.has && (
-                      <span className={`ml-0.5 sm:ml-1 ${
-                        isSelected 
-                          ? getTransformationBadgeColor(selfTransform.type) 
-                          : getTransformationColor(selfTransform.type)
-                      }`}>
-                        ⟲{translateTransformation(selfTransform.type || "")}
-                      </span>
-                    )}
-                    {star.transformations?.map((transformation, idx) => (
-                      <span key={idx} className={`text-3xs xs:text-2xs sm:text-xs ml-0.5 sm:ml-1 ${
-                        isSelected ? (
-                          transformation === "化祿" ? "text-green-300 font-bold" :
-                          transformation === "化權" ? "text-blue-300 font-bold" :
-                          transformation === "化科" ? "text-yellow-300 font-bold" :
-                          transformation === "化忌" ? "text-red-300 font-bold" :
-                          "text-rose-300 font-bold"
-                        ) : (
-                          transformation === "化祿" ? "text-green-500" :
-                          transformation === "化權" ? "text-blue-500" :
-                          transformation === "化科" ? "text-yellow-500" :
-                          transformation === "化忌" ? "text-red-500" :
-                          "text-rose-500"
-                        )
-                      }`}>
-                        {language === "en" && t(`zwds.transformations.${transformation}`) 
-                          ? t(`zwds.transformations.${transformation}`).split(' ')[0]
-                          : transformation}
-                      </span>
-                    ))}
-                  </div>
-                );
-              })}
+            <div className="font-medium text-2xs xs:text-xs sm:text-sm">
+              {palace.mainStar.map((star, starIndex) => (
+                <div 
+                  key={starIndex} 
+                  className={`mb-0.5 ${isSelected ? "text-white dark:text-white font-semibold" : "text-zinc-800 dark:text-zinc-200 font-semibold"}`}
+                  ref={el => el && registerStarRef(palaceNumber, star.name, el)}
+                >
+                  {translateStarName(star.name, "mainStars")}
+                  {star.transformations?.map((transformation, idx) => (
+                    <span key={idx} className={`text-2xs xs:text-xs sm:text-sm ml-0.5 sm:ml-1 ${
+                      isSelected ? (
+                        transformation === "化祿" ? "text-green-300 font-bold" :
+                        transformation === "化權" ? "text-cyan-300 font-bold" : // Brighter cyan instead of blue
+                        transformation === "化科" ? "text-yellow-300 font-bold" :
+                        transformation === "化忌" ? "text-red-300 font-bold" :
+                        "text-rose-300 font-bold"
+                      ) : (
+                        transformation === "化祿" ? "text-green-500" :
+                        transformation === "化權" ? "text-cyan-500" : // Brighter cyan instead of blue
+                        transformation === "化科" ? "text-yellow-500" :
+                        transformation === "化忌" ? "text-red-500" :
+                        "text-rose-500"
+                      )
+                    }`}>
+                      {language === "en" && t(`zwds.transformations.${transformation}`) 
+                        ? t(`zwds.transformations.${transformation}`).split(' ')[0]
+                        : transformation}
+                    </span>
+                  ))}
+                </div>
+              ))}
             </div>
           )}
         </div>
 
         {/* Top right: Minor Stars */}
-        <div className="absolute top-0.5 xs:top-1 sm:top-2 right-0.5 xs:right-1 sm:right-2 text-right z-20">
-          {palace.minorStars.map((star, idx) => {
-            const selfTransform = hasSelfTransformation(palaceNumber, star.name);
-            return (
-              <div 
-                key={idx} 
-                className={`text-3xs xs:text-2xs sm:text-xs mb-0.5 ${
-                  isSelected
-                    ? "font-medium text-white dark:text-white"
-                    : star.brightness === "bright"
-                      ? "font-medium text-zinc-700 dark:text-zinc-300"
-                      : "text-zinc-500 dark:text-zinc-400"
-                }`}
-                ref={el => el && registerStarRef(palaceNumber, star.name, el)}
-              >
-                {selfTransform.has && (
-                  <span className={`mr-0.5 sm:mr-1 ${
-                    isSelected 
-                      ? getTransformationBadgeColor(selfTransform.type) 
-                      : getTransformationColor(selfTransform.type)
-                  }`}>
-                    {translateTransformation(selfTransform.type || "")}⟲
-                  </span>
-                )}
-                {translateStarName(star.name, "minorStars")}
-                {star.transformations?.map((transformation, tidx) => (
-                  <span key={tidx} className={`text-3xs xs:text-2xs sm:text-xs ml-0.5 sm:ml-1 ${
-                    isSelected ? (
-                      transformation === "化祿" ? "text-green-300 font-bold" :
-                      transformation === "化權" ? "text-blue-300 font-bold" :
-                      transformation === "化科" ? "text-yellow-300 font-bold" :
-                      transformation === "化忌" ? "text-red-300 font-bold" :
-                      "text-rose-300 font-bold"
-                    ) : (
-                      transformation === "化祿" ? "text-green-500" :
-                      transformation === "化權" ? "text-blue-500" :
-                      transformation === "化科" ? "text-yellow-500" :
-                      transformation === "化忌" ? "text-red-500" :
-                      "text-rose-500"
-                    )
-                  }`}>
-                    {language === "en" && t(`zwds.transformations.${transformation}`) 
-                      ? t(`zwds.transformations.${transformation}`).split(' ')[0]
-                      : transformation}
-                  </span>
-                ))}
-              </div>
-            );
-          })}
+        <div className="absolute top-0.5 xs:top-1 sm:top-2 right-0.5 xs:right-1 sm:right-2 text-right z-30">
+          {palace.minorStars.map((star, idx) => (
+            <div 
+              key={idx} 
+              className={`text-2xs xs:text-xs sm:text-sm mb-0.5 ${
+                isSelected
+                  ? "font-medium text-white dark:text-white"
+                  : star.brightness === "bright"
+                    ? "font-medium text-zinc-700 dark:text-zinc-300"
+                    : "text-zinc-500 dark:text-zinc-400"
+              }`}
+              ref={el => el && registerStarRef(palaceNumber, star.name, el)}
+            >
+              {translateStarName(star.name, "minorStars")}
+              {star.transformations?.map((transformation, tidx) => (
+                <span key={tidx} className={`text-2xs xs:text-xs sm:text-sm ml-0.5 sm:ml-1 ${
+                  isSelected ? (
+                    transformation === "化祿" ? "text-green-300 font-bold" :
+                    transformation === "化權" ? "text-cyan-300 font-bold" : // Brighter cyan instead of blue
+                    transformation === "化科" ? "text-yellow-300 font-bold" :
+                    transformation === "化忌" ? "text-red-300 font-bold" :
+                    "text-rose-300 font-bold"
+                  ) : (
+                    transformation === "化祿" ? "text-green-500" :
+                    transformation === "化權" ? "text-cyan-500" : // Brighter cyan instead of blue
+                    transformation === "化科" ? "text-yellow-500" :
+                    transformation === "化忌" ? "text-red-500" :
+                    "text-rose-500"
+                  )
+                }`}>
+                  {language === "en" && t(`zwds.transformations.${transformation}`) 
+                    ? t(`zwds.transformations.${transformation}`).split(' ')[0]
+                    : transformation}
+                </span>
+              ))}
+            </div>
+          ))}
         </div>
 
         {/* Bottom middle: Palace Name - moved higher up */}
@@ -735,203 +794,163 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
     
     return (
       <motion.div 
-        className="col-span-2 row-span-2 border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 flex flex-col h-full w-full rounded-lg shadow-sm p-2 sm:p-3 md:p-5"
+        className="col-span-2 row-span-2 border border-gray-700 dark:border-gray-800 bg-white dark:bg-gray-900 flex flex-col h-full w-full rounded-lg shadow-sm overflow-hidden"
         variants={centerInfoVariants}>
         
         {/* Content container */}
         <div className="flex flex-col h-full">
           {/* Name with animation */}
-          {input.name && (
-            <motion.div 
-              className="text-base sm:text-lg md:text-xl font-medium mb-2 sm:mb-4 text-zinc-800 dark:text-zinc-200"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5 }}>
-              {input.name}
-            </motion.div>
-          )}
-            
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-1.5 sm:gap-3 mb-auto">
-            {/* Solar Birthday section */}
-            <div className="border border-gray-100 dark:border-gray-700 rounded-lg overflow-hidden">
-              <div className="bg-zinc-50 dark:bg-zinc-700 px-2 sm:px-3 py-1 sm:py-2 border-b border-gray-100 dark:border-gray-600">
-                <span className="text-2xs sm:text-sm font-medium text-zinc-700 dark:text-zinc-200">
+          <motion.div 
+            className="text-base sm:text-lg font-medium py-2 px-3 sm:px-4 text-zinc-800 dark:text-zinc-100 text-center bg-zinc-100/50 dark:bg-gray-800/80"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}>
+            {input.name || "staney testing"}
+          </motion.div>
+          
+          {/* Cards in a grid layout */}
+          <div className="flex-grow overflow-auto p-2 sm:p-3">
+            <div className="grid grid-cols-2 gap-2 sm:gap-3 h-full">
+              {/* Solar Birthday Card */}
+              <div className="bg-gray-800/30 rounded p-2 flex flex-col justify-center">
+                <div className="flex items-center text-2xs sm:text-xs text-zinc-500 dark:text-zinc-400 mb-0.5">
+                  <HiCalendar className="mr-1 text-2xs sm:text-xs" />
                   {language === "en" && t("zwds.chart.阳历") ? t("zwds.chart.阳历") : "陽曆生日"}
-                </span>
-              </div>
-              <div className="p-1.5 sm:p-3">
-                <div className="flex items-center mb-1 sm:mb-2">
-                  <HiCalendar className="text-zinc-400 mr-1 sm:mr-2 text-xs sm:text-base" />
-                  <span className="text-2xs sm:text-sm text-zinc-600 dark:text-zinc-300">
-                    {input.year}{language === "en" ? " " : "年 "}{input.month}{language === "en" ? " " : "月 "}{input.day}{language === "en" ? "" : "日"}
-                  </span>
                 </div>
-                <div className="flex items-center">
-                  <HiClock className="text-zinc-400 mr-1 sm:mr-2 text-xs sm:text-base" />
-                  <span className="text-2xs sm:text-sm text-zinc-600 dark:text-zinc-300">
-                    {input.hour}{language === "en" ? "" : "時"}
-                  </span>
+                <div className="text-2xs sm:text-sm text-zinc-700 dark:text-zinc-200">
+                  {input.year}{language === "en" ? " " : "年 "}{input.month}{language === "en" ? " " : "月 "}{input.day}{language === "en" ? "" : "日"} {input.hour}{language === "en" ? "" : "時"}
                 </div>
               </div>
-            </div>
-     
-            {/* Lunar Birthday section */}
-            <div className="border border-gray-100 dark:border-gray-700 rounded-lg overflow-hidden">
-              <div className="bg-zinc-50 dark:bg-zinc-700 px-2 sm:px-3 py-1 sm:py-2 border-b border-gray-100 dark:border-gray-600">
-                <span className="text-2xs sm:text-sm font-medium text-zinc-700 dark:text-zinc-200">
+              
+              {/* Lunar Birthday Card */}
+              <div className="bg-gray-800/30 rounded p-2 flex flex-col justify-center">
+                <div className="flex items-center text-2xs sm:text-xs text-zinc-500 dark:text-zinc-400 mb-0.5">
+                  <HiCalendar className="mr-1 text-2xs sm:text-xs" />
                   {language === "en" && t("zwds.chart.阴历") ? t("zwds.chart.阴历") : "農曆生日"}
-                </span>
+                </div>
+                <div className="text-2xs sm:text-sm text-zinc-700 dark:text-zinc-200">
+                  {language === "en" && t(`zwds.stems.${chartData.heavenlyStem}`) ? t(`zwds.stems.${chartData.heavenlyStem}`) : chartData.heavenlyStem}
+                  {language === "en" ? " " : ""}
+                  {language === "en" && t(`zwds.branches.${chartData.earthlyBranch}`) ? t(`zwds.branches.${chartData.earthlyBranch}`) : chartData.earthlyBranch}
+                  {language === "en" ? " Year" : "年"}
+                </div>
               </div>
-              <div className="p-1.5 sm:p-3">
-                <div className="flex items-center mb-1 sm:mb-2">
-                  <HiCalendar className="text-zinc-400 mr-1 sm:mr-2 text-xs sm:text-base" />
-                  <span className="text-2xs sm:text-sm text-zinc-600 dark:text-zinc-300">
-                    {language === "en" && t(`zwds.stems.${chartData.heavenlyStem}`) ? t(`zwds.stems.${chartData.heavenlyStem}`) : chartData.heavenlyStem}
-                    {language === "en" ? " " : ""}
-                    {language === "en" && t(`zwds.branches.${chartData.earthlyBranch}`) ? t(`zwds.branches.${chartData.earthlyBranch}`) : chartData.earthlyBranch}
-                    {language === "en" ? " Year " : "年 "}
-                    {/* Display lunar month - using placeholder until proper conversion is implemented */}
-                    {chartData.palaces?.find(p => p.annualFlow?.year === input.year)?.annualFlow?.heavenlyStem || ""}
-                    {chartData.palaces?.find(p => p.annualFlow?.year === input.year)?.annualFlow?.earthlyBranch || ""}
-                    {language === "en" ? " Month " : "月 "}
-                    {/* Try to find lunar day from birth info or fall back to approximate calculation */}
-                    {(() => {
-                      // Simple conversion for demonstration - replace with proper lunar calendar conversion
-                      const lunarDay = Math.max(1, (input.day % 30) || 30);
-                      const lunarDayStrings = ["初一", "初二", "初三", "初四", "初五", "初六", "初七", "初八", "初九", "初十", 
-                                             "十一", "十二", "十三", "十四", "十五", "十六", "十七", "十八", "十九", "二十", 
-                                             "廿一", "廿二", "廿三", "廿四", "廿五", "廿六", "廿七", "廿八", "廿九", "三十"];
-                      return lunarDayStrings[lunarDay - 1];
-                    })()}
-                  </span>
+
+              {/* Five Elements Card */}
+              <div className="bg-gray-800/30 rounded p-2 flex flex-col justify-center">
+                <div className="text-2xs sm:text-xs text-zinc-500 dark:text-zinc-400 mb-0.5">
+                  {language === "en" && t("zwds.chart.五行") ? t("zwds.chart.五行") : "五行"}
+                </div>
+                <div className="text-2xs sm:text-sm text-zinc-700 dark:text-zinc-200">
+                  {language === "en" && chartData.fiveElements && t(`zwds.fiveElements.${chartData.fiveElements}`) 
+                    ? t(`zwds.fiveElements.${chartData.fiveElements}`) 
+                    : chartData.fiveElements}
+                </div>
+              </div>
+              
+              {/* Gender Card */}
+              <div className="bg-gray-800/30 rounded p-2 flex flex-col justify-center">
+                <div className="text-2xs sm:text-xs text-zinc-500 dark:text-zinc-400 mb-0.5">
+                  {language === "en" ? "Gender" : "性別"}
+                </div>
+                <div className="text-2xs sm:text-sm text-zinc-700 dark:text-zinc-200">
+                  {language === "en" 
+                    ? (input.gender === "female" ? "Female" : "Male") 
+                    : (chartData.yinYang === "Yin" ? "陰" : "陽") + (input.gender === "female" ? "女" : "男")}
+                </div>
+              </div>
+              
+              {/* Age Card */}
+              <div className="bg-gray-800/30 rounded p-2 flex flex-col justify-center">
+                <div className="text-2xs sm:text-xs text-zinc-500 dark:text-zinc-400 mb-0.5">
+                  {language === "en" ? "Age" : "年齡"}
+                </div>
+                <div className="text-2xs sm:text-sm text-zinc-700 dark:text-zinc-200">
+                  {new Date().getFullYear() - input.year}{language === "en" ? "" : "歲"}
+                </div>
+              </div>
+              
+              {/* Chinese Zodiac Card */}
+              <div className="bg-gray-800/30 rounded p-2 flex flex-col justify-center">
+                <div className="text-2xs sm:text-xs text-zinc-500 dark:text-zinc-400 mb-0.5">
+                  {language === "en" ? "Chinese Zodiac" : "生肖"}
                 </div>
                 <div className="flex items-center">
-                  <HiClock className="text-zinc-400 mr-1 sm:mr-2 text-xs sm:text-base" />
-                  <span className="text-2xs sm:text-sm text-zinc-600 dark:text-zinc-300">
-                    {language === "en" && ["子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥"][Math.floor(((input.hour + 1) % 24) / 2)]
-                      ? t(`zwds.branches.${["子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥"][Math.floor(((input.hour + 1) % 24) / 2)]}`)
-                      : ["子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥"][Math.floor(((input.hour + 1) % 24) / 2)]}
-                    {language === "en" ? " Hour" : "時"}
-                  </span>
+                  <div className="text-base sm:text-xl mr-1.5">
+                    {["🐭","🐂","🐯","🐰","🐲","🐍","🐴","🐑","🐵","🐔","🐶","🐷"][(input.year - 4) % 12]}
+                  </div>
+                  <div className="text-2xs sm:text-sm text-zinc-700 dark:text-zinc-200">
+                    {["鼠","牛","虎","兔","龍","蛇","馬","羊","猴","雞","狗","豬"][(input.year - 4) % 12]}
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
-
-          {/* Personal details */}
-          <div className="mt-1.5 sm:mt-3 mb-1.5 sm:mb-3 grid grid-cols-3 gap-1 sm:gap-2 text-2xs sm:text-sm">
-            <div className="flex flex-col items-center p-1 sm:p-2 bg-zinc-50 dark:bg-zinc-700/50 rounded-lg">
-              <span className="text-zinc-500 dark:text-zinc-400 text-3xs sm:text-xs mb-0.5 sm:mb-1">
-                {language === "en" && t("zwds.chart.五行") ? t("zwds.chart.五行") : "五行"}
-              </span>
-              <span className="font-medium text-2xs sm:text-sm text-zinc-800 dark:text-zinc-200">
-                {language === "en" && chartData.fiveElements && t(`zwds.fiveElements.${chartData.fiveElements}`) 
-                  ? t(`zwds.fiveElements.${chartData.fiveElements}`) 
-                  : chartData.fiveElements}
-              </span>
-            </div>
-            <div className="flex flex-col items-center p-1 sm:p-2 bg-zinc-50 dark:bg-zinc-700/50 rounded-lg">
-              <span className="text-zinc-500 dark:text-zinc-400 text-3xs sm:text-xs mb-0.5 sm:mb-1">
-                {language === "en" ? "Gender" : "性別"}
-              </span>
-              <span className="font-medium text-2xs sm:text-sm text-zinc-800 dark:text-zinc-200">
-                {language === "en" 
-                  ? (input.gender === "female" ? "Female" : "Male") 
-                  : (chartData.yinYang === "Yin" ? "陰" : "陽") + (input.gender === "female" ? "女" : "男")}
-              </span>
-            </div>
-            <div className="flex flex-col items-center p-1 sm:p-2 bg-zinc-50 dark:bg-zinc-700/50 rounded-lg">
-              <span className="text-zinc-500 dark:text-zinc-400 text-3xs sm:text-xs mb-0.5 sm:mb-1">
-                {language === "en" ? "Age" : "年齡"}
-              </span>
-              <span className="font-medium text-2xs sm:text-sm text-zinc-800 dark:text-zinc-200">
-                {new Date().getFullYear() - input.year}{language === "en" ? "" : "歲"}
-              </span>
-            </div>
-          </div>
-
-          {/* Zodiac Information */}
-          <div className="grid grid-cols-2 gap-2 sm:gap-4 mt-auto">
-            {/* Chinese Zodiac */}
-            <div className="flex flex-col items-center">
-              <div className="mb-0.5 sm:mb-1 text-zinc-500 dark:text-zinc-400 text-3xs sm:text-xs">生肖</div>
-              <div className="flex flex-col items-center">
-                <div className="text-2xl sm:text-4xl mb-0.5 sm:mb-1">
-                  {/* Chinese zodiac emoji/symbols */}
-                  {["🐭","🐂","🐯","🐰","🐲","🐍","🐴","🐑","🐵","🐔","🐶","🐷"][(input.year - 4) % 12]}
+              
+              {/* Western Zodiac Card */}
+              <div className="bg-gray-800/30 rounded p-2 flex flex-col justify-center">
+                <div className="text-2xs sm:text-xs text-zinc-500 dark:text-zinc-400 mb-0.5">
+                  {language === "en" ? "Western Zodiac" : "星座"}
                 </div>
-                <div className="text-2xs sm:text-sm text-zinc-700 dark:text-zinc-300">
-                  {["鼠","牛","虎","兔","龍","蛇","馬","羊","猴","雞","狗","豬"][(input.year - 4) % 12]}
-                </div>
-              </div>
-            </div>
-            
-            {/* Western Zodiac */}
-            <div className="flex flex-col items-center">
-              <div className="mb-0.5 sm:mb-1 text-zinc-500 dark:text-zinc-400 text-3xs sm:text-xs">星座</div>
-              <div className="flex flex-col items-center">
-                <div className="text-2xl sm:text-4xl mb-0.5 sm:mb-1">
-                  {/* Western zodiac symbol */}
-                  {(() => {
-                    const month = input.month;
-                    const day = input.day;
-                    
-                    // Map date to zodiac sign symbol
-                    if ((month === 3 && day >= 21) || (month === 4 && day <= 19))
-                      return "♈";
-                    if ((month === 4 && day >= 20) || (month === 5 && day <= 20))
-                      return "♉";
-                    if ((month === 5 && day >= 21) || (month === 6 && day <= 21))
-                      return "♊";
-                    if ((month === 6 && day >= 22) || (month === 7 && day <= 22))
-                      return "♋";
-                    if ((month === 7 && day >= 23) || (month === 8 && day <= 22))
-                      return "♌";
-                    if ((month === 8 && day >= 23) || (month === 9 && day <= 22))
-                      return "♍";
-                    if ((month === 9 && day >= 23) || (month === 10 && day <= 23))
-                      return "♎";
-                    if ((month === 10 && day >= 24) || (month === 11 && day <= 22))
-                      return "♏";
-                    if ((month === 11 && day >= 23) || (month === 12 && day <= 21))
-                      return "♐";
-                    if ((month === 12 && day >= 22) || (month === 1 && day <= 19))
-                      return "♑";
-                    if ((month === 1 && day >= 20) || (month === 2 && day <= 18))
-                      return "♒";
-                    return "♓"; // Feb 19 - Mar 20
-                  })()}
-                </div>
-                <div className="text-2xs sm:text-sm text-zinc-700 dark:text-zinc-300">
-                  {(() => {
-                    const month = input.month;
-                    const day = input.day;
-                    
-                    // Map date to zodiac sign
-                    if ((month === 3 && day >= 21) || (month === 4 && day <= 19))
-                      return "白羊座";
-                    if ((month === 4 && day >= 20) || (month === 5 && day <= 20))
-                      return "金牛座";
-                    if ((month === 5 && day >= 21) || (month === 6 && day <= 21))
-                      return "雙子座";
-                    if ((month === 6 && day >= 22) || (month === 7 && day <= 22))
-                      return "巨蟹座";
-                    if ((month === 7 && day >= 23) || (month === 8 && day <= 22))
-                      return "獅子座";
-                    if ((month === 8 && day >= 23) || (month === 9 && day <= 22))
-                      return "處女座";
-                    if ((month === 9 && day >= 23) || (month === 10 && day <= 23))
-                      return "天秤座";
-                    if ((month === 10 && day >= 24) || (month === 11 && day <= 22))
-                      return "天蠍座";
-                    if ((month === 11 && day >= 23) || (month === 12 && day <= 21))
-                      return "射手座";
-                    if ((month === 12 && day >= 22) || (month === 1 && day <= 19))
-                      return "摩羯座";
-                    if ((month === 1 && day >= 20) || (month === 2 && day <= 18))
-                      return "水瓶座";
-                    return "雙魚座"; // Feb 19 - Mar 20
-                  })()}
+                <div className="flex items-center">
+                  <div className="text-base sm:text-xl mr-1.5">
+                    {(() => {
+                      const month = input.month;
+                      const day = input.day;
+                      
+                      if ((month === 3 && day >= 21) || (month === 4 && day <= 19))
+                        return "♈";
+                      if ((month === 4 && day >= 20) || (month === 5 && day <= 20))
+                        return "♉";
+                      if ((month === 5 && day >= 21) || (month === 6 && day <= 21))
+                        return "♊";
+                      if ((month === 6 && day >= 22) || (month === 7 && day <= 22))
+                        return "♋";
+                      if ((month === 7 && day >= 23) || (month === 8 && day <= 22))
+                        return "♌";
+                      if ((month === 8 && day >= 23) || (month === 9 && day <= 22))
+                        return "♍";
+                      if ((month === 9 && day >= 23) || (month === 10 && day <= 23))
+                        return "♎";
+                      if ((month === 10 && day >= 24) || (month === 11 && day <= 22))
+                        return "♏";
+                      if ((month === 11 && day >= 23) || (month === 12 && day <= 21))
+                        return "♐";
+                      if ((month === 12 && day >= 22) || (month === 1 && day <= 19))
+                        return "♑";
+                      if ((month === 1 && day >= 20) || (month === 2 && day <= 18))
+                        return "♒";
+                      return "♓"; // Feb 19 - Mar 20
+                    })()}
+                  </div>
+                  <div className="text-2xs sm:text-sm text-zinc-700 dark:text-zinc-200">
+                    {(() => {
+                      const month = input.month;
+                      const day = input.day;
+                      
+                      if ((month === 3 && day >= 21) || (month === 4 && day <= 19))
+                        return "白羊座";
+                      if ((month === 4 && day >= 20) || (month === 5 && day <= 20))
+                        return "金牛座";
+                      if ((month === 5 && day >= 21) || (month === 6 && day <= 21))
+                        return "雙子座";
+                      if ((month === 6 && day >= 22) || (month === 7 && day <= 22))
+                        return "巨蟹座";
+                      if ((month === 7 && day >= 23) || (month === 8 && day <= 22))
+                        return "獅子座";
+                      if ((month === 8 && day >= 23) || (month === 9 && day <= 22))
+                        return "處女座";
+                      if ((month === 9 && day >= 23) || (month === 10 && day <= 23))
+                        return "天秤座";
+                      if ((month === 10 && day >= 24) || (month === 11 && day <= 22))
+                        return "天蠍座";
+                      if ((month === 11 && day >= 23) || (month === 12 && day <= 21))
+                        return "射手座";
+                      if ((month === 12 && day >= 22) || (month === 1 && day <= 19))
+                        return "摩羯座";
+                      if ((month === 1 && day >= 20) || (month === 2 && day <= 18))
+                        return "水瓶座";
+                      return "雙魚座"; // Feb 19 - Mar 20
+                    })()}
+                  </div>
                 </div>
               </div>
             </div>
@@ -1016,7 +1035,7 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
     if (!type) return "";
     switch (type) {
       case "祿": return "text-green-500";
-      case "權": return "text-blue-500";
+      case "權": return "text-cyan-500"; // Changed from blue to cyan
       case "科": return "text-yellow-500";
       case "忌": return "text-red-500";
       default: return "text-gray-500";
@@ -1068,7 +1087,7 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
     if (!type) return "";
     switch (type) {
       case "祿": return "text-green-300 font-bold px-1 py-0.5 bg-green-900/30 rounded";
-      case "權": return "text-blue-300 font-bold px-1 py-0.5 bg-blue-900/30 rounded";
+      case "權": return "text-cyan-300 font-bold px-1 py-0.5 bg-cyan-900/30 rounded";
       case "科": return "text-yellow-300 font-bold px-1 py-0.5 bg-yellow-900/30 rounded";
       case "忌": return "text-red-300 font-bold px-1 py-0.5 bg-red-900/30 rounded";
       default: return "text-gray-300 font-bold";
