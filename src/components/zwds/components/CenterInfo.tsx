@@ -48,46 +48,48 @@ const CenterInfo: React.FC<CenterInfoProps> = ({ chartData }) => {
           {input.name || "Chart"}
         </motion.div>
         
-        {/* Cards in a grid layout */}
+        {/* Cards in a grid layout - 1 column on mobile, 2 columns on sm and up */}
         <div className="flex-grow overflow-auto p-2 sm:p-3 bg-gradient-to-br from-white to-indigo-50/30 dark:from-indigo-900/10 dark:to-purple-900/20">
-          <div className="grid grid-cols-2 gap-2 sm:gap-3 h-full">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 h-full">
             {/* Solar Birthday Card */}
-            <div className="bg-white/80 dark:bg-indigo-800/40 rounded-lg p-2 flex flex-col justify-center shadow-sm border border-indigo-100 dark:border-indigo-700/30">
+            <div className="bg-white/80 dark:bg-indigo-800/40 rounded-lg p-1.5 sm:p-2 flex flex-col justify-center shadow-sm border border-indigo-100 dark:border-indigo-700/30">
               <div className="flex items-center text-2xs sm:text-xs text-indigo-700 dark:text-indigo-300 mb-0.5">
                 <HiCalendar className="mr-1 text-2xs sm:text-xs" />
                 {language === "en" && t("zwds.chart.阳历") ? t("zwds.chart.阳历") : "陽曆生日"}
               </div>
-              <div className="text-2xs sm:text-sm text-zinc-700 dark:text-zinc-200">
+              <div className="text-xs sm:text-sm text-zinc-700 dark:text-zinc-200">
                 {input.year}{language === "en" ? " " : "年 "}{input.month}{language === "en" ? " " : "月 "}{input.day}{language === "en" ? "" : "日"} {input.hour}{language === "en" ? "" : "時"}
               </div>
             </div>
             
             {/* Lunar Birthday Card */}
-            <div className="bg-white/80 dark:bg-indigo-800/40 rounded-lg p-2 flex flex-col justify-center shadow-sm border border-indigo-100 dark:border-indigo-700/30">
+            <div className="bg-white/80 dark:bg-indigo-800/40 rounded-lg p-1.5 sm:p-2 flex flex-col justify-center shadow-sm border border-indigo-100 dark:border-indigo-700/30">
               <div className="flex items-center text-2xs sm:text-xs text-indigo-700 dark:text-indigo-300 mb-0.5">
                 <HiCalendar className="mr-1 text-2xs sm:text-xs" />
                 {language === "en" && t("zwds.chart.阴历") ? t("zwds.chart.阴历") : "農曆生日"}
               </div>
-              <div className="text-2xs sm:text-sm text-zinc-700 dark:text-zinc-200">
-                {language === "en" && t(`zwds.stems.${chartData.heavenlyStem}`) ? t(`zwds.stems.${chartData.heavenlyStem}`) : chartData.heavenlyStem}
+              <div className="text-xs sm:text-sm text-zinc-700 dark:text-zinc-200 flex flex-wrap items-center">
+                <span className="mr-1">
+                  {language === "en" && t(`zwds.stems.${chartData.heavenlyStem}`) ? t(`zwds.stems.${chartData.heavenlyStem}`) : chartData.heavenlyStem}
                   {language === "en" ? " " : ""}
                   {language === "en" && t(`zwds.branches.${chartData.earthlyBranch}`) ? t(`zwds.branches.${chartData.earthlyBranch}`) : chartData.earthlyBranch}
-                  {language === "en" ? " Year " : "年 "}
-                  {/* Display lunar month - using placeholder until proper conversion is implemented */}
+                  {language === "en" ? " Year" : "年"}
+                </span>
+                <span className="mr-1">
                   {chartData.palaces?.find(p => p.annualFlow?.year === input.year)?.annualFlow?.heavenlyStem ?? ""}
                   {EARTHLY_BRANCHES[chartData.monthBranch] ?? ""}
-                  {language === "en" ? " Month " : "月 "}
-                  {/* Try to find lunar day from birth info or fall back to approximate calculation */}
+                  {language === "en" ? " Month" : "月"}
+                </span>
+                <span>
                   {(() => {
-                    // Simple conversion for demonstration - replace with proper lunar calendar conversion
                     const lunarDay = Math.max(1, (input.day % 30) || 30);
                     const lunarDayStrings = ["初一", "初二", "初三", "初四", "初五", "初六", "初七", "初八", "初九", "初十", 
-                                           "十一", "十二", "十三", "十四", "十五", "十六", "十七", "十八", "十九", "二十", 
-                                           "廿一", "廿二", "廿三", "廿四", "廿五", "廿六", "廿七", "廿八", "廿九", "三十"];
+                                          "十一", "十二", "十三", "十四", "十五", "十六", "十七", "十八", "十九", "二十", 
+                                          "廿一", "廿二", "廿三", "廿四", "廿五", "廿六", "廿七", "廿八", "廿九", "三十"];
                     return lunarDayStrings[lunarDay - 1];
                   })()}
-
-                   <span className="text-2xs sm:text-sm text-zinc-600 dark:text-zinc-300">
+                </span>
+                <span className="text-2xs sm:text-sm text-zinc-600 dark:text-zinc-300 ml-1">
                   {language === "en" && ["子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥"][Math.floor(((input.hour + 1) % 24) / 2)]
                     ? t(`zwds.branches.${["子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥"][Math.floor(((input.hour + 1) % 24) / 2)]}`)
                     : ["子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥"][Math.floor(((input.hour + 1) % 24) / 2)]}
@@ -96,8 +98,32 @@ const CenterInfo: React.FC<CenterInfoProps> = ({ chartData }) => {
               </div>
             </div>
 
-            {/* Five Elements Card */}
-            <div className="bg-white/80 dark:bg-indigo-800/40 rounded-lg p-2 flex flex-col justify-center shadow-sm border border-indigo-100 dark:border-indigo-700/30">
+            {/* Combined Five Elements and Gender Card on mobile, separate on larger screens */}
+            <div className="sm:hidden bg-white/80 dark:bg-indigo-800/40 rounded-lg p-1.5 flex justify-between shadow-sm border border-indigo-100 dark:border-indigo-700/30">
+              <div className="flex flex-col">
+                <div className="text-2xs text-indigo-700 dark:text-indigo-300 mb-0.5">
+                  {language === "en" && t("zwds.chart.五行") ? t("zwds.chart.五行") : "五行"}
+                </div>
+                <div className="text-xs text-zinc-700 dark:text-zinc-200">
+                  {language === "en" && chartData.fiveElements && t(`zwds.fiveElements.${chartData.fiveElements}`) 
+                    ? t(`zwds.fiveElements.${chartData.fiveElements}`) 
+                    : chartData.fiveElements}
+                </div>
+              </div>
+              <div className="flex flex-col">
+                <div className="text-2xs text-indigo-700 dark:text-indigo-300 mb-0.5">
+                  {language === "en" ? "Gender" : "性別"}
+                </div>
+                <div className="text-xs text-zinc-700 dark:text-zinc-200">
+                  {language === "en" 
+                    ? (input.gender === "female" ? "Female" : "Male") 
+                    : (chartData.yinYang === "Yin" ? "陰" : "陽") + (input.gender === "female" ? "女" : "男")}
+                </div>
+              </div>
+            </div>
+            
+            {/* Five Elements Card (visible on sm and up) */}
+            <div className="hidden sm:flex bg-white/80 dark:bg-indigo-800/40 rounded-lg p-2 flex-col justify-center shadow-sm border border-indigo-100 dark:border-indigo-700/30">
               <div className="text-2xs sm:text-xs text-indigo-700 dark:text-indigo-300 mb-0.5">
                 {language === "en" && t("zwds.chart.五行") ? t("zwds.chart.五行") : "五行"}
               </div>
@@ -108,8 +134,8 @@ const CenterInfo: React.FC<CenterInfoProps> = ({ chartData }) => {
               </div>
             </div>
             
-            {/* Gender Card */}
-            <div className="bg-white/80 dark:bg-indigo-800/40 rounded-lg p-2 flex flex-col justify-center shadow-sm border border-indigo-100 dark:border-indigo-700/30">
+            {/* Gender Card (visible on sm and up) */}
+            <div className="hidden sm:flex bg-white/80 dark:bg-indigo-800/40 rounded-lg p-2 flex-col justify-center shadow-sm border border-indigo-100 dark:border-indigo-700/30">
               <div className="text-2xs sm:text-xs text-indigo-700 dark:text-indigo-300 mb-0.5">
                 {language === "en" ? "Gender" : "性別"}
               </div>
@@ -120,8 +146,33 @@ const CenterInfo: React.FC<CenterInfoProps> = ({ chartData }) => {
               </div>
             </div>
             
-            {/* Age Card */}
-            <div className="bg-white/80 dark:bg-indigo-800/40 rounded-lg p-2 flex flex-col justify-center shadow-sm border border-indigo-100 dark:border-indigo-700/30">
+            {/* Combined Age and Chinese Zodiac Card on mobile, separate on larger screens */}
+            <div className="sm:hidden bg-white/80 dark:bg-indigo-800/40 rounded-lg p-1.5 flex justify-between shadow-sm border border-indigo-100 dark:border-indigo-700/30">
+              <div className="flex flex-col">
+                <div className="text-2xs text-indigo-700 dark:text-indigo-300 mb-0.5">
+                  {language === "en" ? "Age" : "年齡"}
+                </div>
+                <div className="text-xs text-zinc-700 dark:text-zinc-200">
+                  {new Date().getFullYear() - input.year}{language === "en" ? "" : "歲"}
+                </div>
+              </div>
+              <div className="flex flex-col">
+                <div className="text-2xs text-indigo-700 dark:text-indigo-300 mb-0.5">
+                  {language === "en" ? "Zodiac" : "生肖"}
+                </div>
+                <div className="flex items-center">
+                  <div className="text-base mr-1">
+                    {["🐭","🐂","🐯","🐰","🐲","🐍","🐴","🐑","🐵","🐔","🐶","🐷"][(input.year - 4) % 12]}
+                  </div>
+                  <div className="text-xs text-zinc-700 dark:text-zinc-200">
+                    {["鼠","牛","虎","兔","龍","蛇","馬","羊","猴","雞","狗","豬"][(input.year - 4) % 12]}
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Age Card (visible on sm and up) */}
+            <div className="hidden sm:flex bg-white/80 dark:bg-indigo-800/40 rounded-lg p-2 flex-col justify-center shadow-sm border border-indigo-100 dark:border-indigo-700/30">
               <div className="text-2xs sm:text-xs text-indigo-700 dark:text-indigo-300 mb-0.5">
                 {language === "en" ? "Age" : "年齡"}
               </div>
@@ -130,8 +181,8 @@ const CenterInfo: React.FC<CenterInfoProps> = ({ chartData }) => {
               </div>
             </div>
             
-            {/* Chinese Zodiac Card */}
-            <div className="bg-white/80 dark:bg-indigo-800/40 rounded-lg p-2 flex flex-col justify-center shadow-sm border border-indigo-100 dark:border-indigo-700/30">
+            {/* Chinese Zodiac Card (visible on sm and up) */}
+            <div className="hidden sm:flex bg-white/80 dark:bg-indigo-800/40 rounded-lg p-2 flex-col justify-center shadow-sm border border-indigo-100 dark:border-indigo-700/30">
               <div className="text-2xs sm:text-xs text-indigo-700 dark:text-indigo-300 mb-0.5">
                 {language === "en" ? "Chinese Zodiac" : "生肖"}
               </div>
@@ -146,7 +197,7 @@ const CenterInfo: React.FC<CenterInfoProps> = ({ chartData }) => {
             </div>
             
             {/* Western Zodiac Card */}
-            <div className="bg-white/80 dark:bg-indigo-800/40 rounded-lg p-2 flex flex-col justify-center shadow-sm border border-indigo-100 dark:border-indigo-700/30">
+            <div className="bg-white/80 dark:bg-indigo-800/40 rounded-lg p-1.5 sm:p-2 flex flex-col justify-center shadow-sm border border-indigo-100 dark:border-indigo-700/30">
               <div className="text-2xs sm:text-xs text-indigo-700 dark:text-indigo-300 mb-0.5">
                 {language === "en" ? "Western Zodiac" : "星座"}
               </div>
@@ -181,7 +232,7 @@ const CenterInfo: React.FC<CenterInfoProps> = ({ chartData }) => {
                     return "♓"; // Feb 19 - Mar 20
                   })()}
                 </div>
-                <div className="text-2xs sm:text-sm text-zinc-700 dark:text-zinc-200">
+                <div className="text-xs sm:text-sm text-zinc-700 dark:text-zinc-200">
                   {(() => {
                     const month = input.month;
                     const day = input.day;
