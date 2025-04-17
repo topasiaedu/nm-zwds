@@ -4,6 +4,7 @@ import { Palace as PalaceType } from "../../../utils/zwds/types";
 import { useLanguage } from "../../../context/LanguageContext";
 import { translateStarName } from "../utils/helpers";
 import ZodiacIcons from "../icons";
+import ZodiacIconWrapper from "./ZodiacIconWrapper";
 
 // Map earthly branches to their zodiac animals
 const getZodiacIcon = (earthlyBranch: string): React.ElementType | null => {
@@ -209,7 +210,7 @@ const Palace: React.FC<PalaceProps> = ({
   return (
     <motion.div 
       key={`palace-${palaceNumber}-${selectedPalace}`}
-      className={`relative border border-gray-100 dark:border-gray-700 p-0.5 xs:p-1 sm:p-2 md:p-3 min-h-[90px] xs:min-h-[100px] sm:min-h-[120px] md:min-h-[150px] ${
+      className={`relative border border-gray-100 dark:border-gray-700 p-0.5 xs:p-1 sm:p-2 md:p-3 min-h-[70px] xs:min-h-[80px] sm:min-h-[100px] md:min-h-[150px] ${
         isSelected 
           ? "bg-indigo-50/80 dark:bg-indigo-900/30 text-white" 
           : "bg-white dark:bg-gray-800"
@@ -238,7 +239,10 @@ const Palace: React.FC<PalaceProps> = ({
       {/* Zodiac icon background */}
       {ZodiacIcon && (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.07] dark:opacity-[0.15] z-10">
-          <ZodiacIcon className="w-3/5 h-3/5 text-black dark:text-white" />
+          <ZodiacIconWrapper 
+            Icon={ZodiacIcon} 
+            className="w-[85%] h-[85%] xs:w-[80%] xs:h-[80%] sm:w-[75%] sm:h-[75%]" 
+          />
         </div>
       )}
 

@@ -155,9 +155,9 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
       variants={containerVariants}
       ref={chartRef}
       style={{
-        minHeight: windowSize.width < SCREEN_SM ? 'calc(100vh - 200px)' : undefined,
-        height: windowSize.width < SCREEN_SM ? 'calc(100vh - 180px)' : undefined,
-        maxHeight: windowSize.width < SCREEN_SM ? '800px' : undefined
+        minHeight: windowSize.width < SCREEN_SM ? 'calc(100vh - 280px)' : undefined,
+        height: windowSize.width < SCREEN_SM ? 'calc(100vh - 260px)' : undefined,
+        maxHeight: '800px'
       }}>
       <motion.div 
         className="grid grid-cols-4 grid-rows-4 gap-0.5 xs:gap-1 sm:gap-2 p-0 xs:p-0.5 sm:p-1 md:p-3 h-full rounded-xl"

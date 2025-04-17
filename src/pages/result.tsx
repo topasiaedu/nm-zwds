@@ -7,6 +7,7 @@ import ProfileForm from "../components/ProfileForm";
 import ZWDSChart from "../components/ZWDSChart";
 import { ZWDSCalculator } from "../utils/zwds/calculator";
 import { ChartInput } from "../utils/zwds/types";
+import { CareerAnalysis, HealthAnalysis } from "../components/analysis";
 
 /**
  * Interface for chart data
@@ -507,7 +508,7 @@ const Result: React.FC = () => {
                             backdrop-filter backdrop-blur-2xl 
                             bg-white/10 hover:bg-white/15 
                             dark:bg-black/10 dark:hover:bg-black/20 
-                            transition-all duration-300 p-6">
+                            transition-all duration-300 p-6 mb-6">
                   <h2 className="text-xl font-bold mb-4 dark:text-white">
                     {t("result.profileDetails") || "Profile Details"}
                   </h2>
@@ -616,6 +617,36 @@ const Result: React.FC = () => {
               </div>        
             </div>
           )
+        )}
+
+        {/* Analysis Section */}
+        {calculatedChartData && !loading && !error && (
+          <div className="mt-8">
+            <h2 className="text-2xl font-bold mb-6 dark:text-white flex items-center">
+              <svg 
+                className="w-6 h-6 mr-2 text-indigo-500" 
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24" 
+                xmlns="http://www.w3.org/2000/svg">
+                <path 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round" 
+                  strokeWidth={2} 
+                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" 
+                />
+              </svg>
+              {t("analysis.title") || "Chart Analysis"}
+            </h2>
+            
+            <div className="space-y-8">
+              {/* Career Analysis */}
+              {/* <CareerAnalysis chartData={calculatedChartData} /> */}
+              
+              {/* Health Analysis */}
+              {/* <HealthAnalysis chartData={calculatedChartData} /> */}
+            </div>
+          </div>
         )}
       </div>
     </PageTransition>
