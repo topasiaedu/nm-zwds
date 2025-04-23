@@ -591,7 +591,8 @@ const zh = {
     },
     health: {
       title: "健康分析"
-    }
+    },
+    fourKeyPalace: "四化分析"
   },
   
   // ZWDS Chart-specific terminology

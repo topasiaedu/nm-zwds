@@ -345,10 +345,10 @@ const HealthAnalysis: React.FC<HealthAnalysisProps> = ({ chartData }) => {
               {/* Human body visualization - SVG with invisible organs that highlight when affected */}
               <div className="bg-gray-50 dark:bg-gray-700/30 rounded-lg flex items-center justify-center p-4">
                 <div className="w-60 max-w-full mx-auto">
-                  <HumanBodySVG 
+                  {/* <HumanBodySVG 
                     affectedParts={affectedBodyParts} 
                     gender={gender} 
-                  />
+                  /> */}
                 </div>
               </div>
               

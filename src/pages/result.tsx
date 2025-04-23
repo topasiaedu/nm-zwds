@@ -643,7 +643,7 @@ const Result: React.FC = () => {
             
             <div className="space-y-8">
               {/* Four Key Palace Analysis */}
-              {/* <FourKeyPalaceAnalysis chartData={calculatedChartData} /> */}
+              <FourKeyPalaceAnalysis chartData={calculatedChartData} />
               
               {/* Career Analysis */}
               <CareerAnalysis chartData={calculatedChartData} />

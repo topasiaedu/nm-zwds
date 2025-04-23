@@ -25,6 +25,9 @@ const FourKeyPalaceAnalysis: React.FC<FourKeyPalaceAnalysisProps> = ({ chartData
   const [isOpen, setIsOpen] = useState<boolean>(true); // Start open for debugging
   const [transformationPalaces, setTransformationPalaces] = useState<Record<string, string>>({});
   const [debugInfo, setDebugInfo] = useState<string>("");
+  const [validPalaceNames, setValidPalaceNames] = useState<string[]>([]);
+  // Track transformation info errors
+  const [transformationErrors, setTransformationErrors] = useState<Record<string, string>>({});
 
   // The four transformations in Chinese (both simplified and traditional) and their English equivalents
   const transformationTypes: Record<TransformationType, { key: TransformationKey, english: string }> = {
@@ -42,6 +45,31 @@ const FourKeyPalaceAnalysis: React.FC<FourKeyPalaceAnalysisProps> = ({ chartData
     "化忌": "化忌"  // Same in both
   };
 
+  // Mapping for traditional to simplified Chinese palace names
+  const palaceNameMapping: Record<string, string> = {
+    // Traditional to simplified
+    "命宮": "命宫",
+    "兄弟宮": "兄弟宫",
+    "夫妻宮": "夫妻宫",
+    "子女宮": "子女宫",
+    "財帛宮": "财帛宫",
+    "疾厄宮": "疾厄宫",
+    "遷移宮": "迁移宫",
+    "交友宮": "交友宫",
+    "官祿宮": "官禄宫",
+    "田宅宮": "田宅宫",
+    "福德宮": "福德宫",
+    "父母宮": "父母宫",
+    // Add any other mappings that might be needed
+  };
+
+  // Initialize with valid palace names
+  useEffect(() => {
+    const palaceNames = Object.keys(FOUR_KEY_PALACE_ANALYSIS_CONSTANTS);
+    setValidPalaceNames(palaceNames);
+    console.log("Valid palace names:", palaceNames);
+  }, []);
+
   useEffect(() => {
     if (!chartData) return;
 
@@ -53,35 +81,65 @@ const FourKeyPalaceAnalysis: React.FC<FourKeyPalaceAnalysisProps> = ({ chartData
     let debug = "";
 
     try {
+      debug += `Valid palace names from constants: ${Object.keys(FOUR_KEY_PALACE_ANALYSIS_CONSTANTS).join(", ")}\n`;
+      
       // Examine all palaces and stars to find transformations
       if (chartData.palaces && Array.isArray(chartData.palaces)) {
         debug += `Found ${chartData.palaces.length} palaces\n`;
         
         chartData.palaces.forEach((palace: any, index: number) => {
-          const palaceName = palace.name;
-          debug += `Palace ${index + 1}: ${palaceName}\n`;
+          const rawPalaceName = palace.name;
+          // Convert traditional to simplified if needed
+          const palaceName = palaceNameMapping[rawPalaceName] || rawPalaceName;
           
-          // Check main stars
-          if (palace.mainStar && Array.isArray(palace.mainStar)) {
-            debug += `  Found ${palace.mainStar.length} main stars\n`;
-            
-            palace.mainStar.forEach((star: any) => {
-              if (star.transformations && Array.isArray(star.transformations)) {
-                debug += `  Star ${star.name} has transformations: ${star.transformations.join(', ')}\n`;
+          debug += `Palace ${index + 1}: ${rawPalaceName} -> ${palaceName}\n`;
+          
+          // Check if this palace name is in our constants
+          const isValid = isValidPalaceName(palaceName);
+          debug += `  Is valid palace name: ${isValid}\n`;
+          
+          // Check all star types (mainStar, minorStars, and others)
+          const starTypes = ["mainStar", "minorStars", "auxiliaryStar", "otherStars"];
+          
+          starTypes.forEach(starType => {
+            if (palace[starType] && Array.isArray(palace[starType])) {
+              debug += `  Found ${palace[starType].length} ${starType}s\n`;
+              
+              palace[starType].forEach((star: any) => {
+                // Add star name to debug
+                debug += `  Star: ${star.name || "unnamed"}\n`;
                 
-                star.transformations.forEach((transformation: string) => {
-                  // Convert traditional to simplified if needed
-                  const simplifiedTransformation = traditionToSimplified[transformation] || transformation;
+                // Check for transformations in different possible formats
+                const transformationsArray = star.transformations || star.transformation || [];
+                const transformsToCheck = Array.isArray(transformationsArray) 
+                  ? transformationsArray 
+                  : [transformationsArray];
+                
+                if (transformsToCheck.length > 0) {
+                  debug += `  Star ${star.name || "unnamed"} has transformations: ${transformsToCheck.join(', ')}\n`;
                   
-                  if (simplifiedTransformation in transformationTypes) {
-                    transformations[simplifiedTransformation] = palaceName;
-                    debug += `  Mapped ${transformation} to ${simplifiedTransformation} in palace ${palaceName}\n`;
-                  }
-                });
-              }
-            });
-          }
+                  transformsToCheck.forEach((transformation: string) => {
+                    if (!transformation) return;
+                    
+                    // Convert traditional to simplified if needed
+                    const simplifiedTransformation = traditionToSimplified[transformation] || transformation;
+                    
+                    debug += `  Checking transformation: ${transformation} → ${simplifiedTransformation}\n`;
+                    debug += `  Is valid transformation: ${simplifiedTransformation in transformationTypes}\n`;
+                    
+                    if (simplifiedTransformation in transformationTypes) {
+                      transformations[simplifiedTransformation] = palaceName;
+                      debug += `  Mapped ${transformation} to ${simplifiedTransformation} in palace ${palaceName}\n`;
+                    }
+                  });
+                }
+              });
+            }
+          });
         });
+      } else {
+        debug += "chartData.palaces is not an array or is undefined\n";
+        debug += `chartData structure: ${JSON.stringify(Object.keys(chartData))}\n`;
       }
       
       // Check if we found all four transformations
@@ -89,11 +147,41 @@ const FourKeyPalaceAnalysis: React.FC<FourKeyPalaceAnalysisProps> = ({ chartData
       for (const trans of expectedTransformations) {
         if (!transformations[trans]) {
           debug += `Missing transformation: ${trans}\n`;
+        } else {
+          const palace = transformations[trans];
+          debug += `Found transformation: ${trans} in palace "${palace}"\n`;
+          debug += `  Is valid palace name: ${isValidPalaceName(palace)}\n`;
+          
+          if (isValidPalaceName(palace)) {
+            const key = transformationTypes[trans as TransformationType].key;
+            try {
+              const info = FOUR_KEY_PALACE_ANALYSIS_CONSTANTS[palace][key];
+              debug += `  Has proper info: ${Boolean(info)}\n`;
+              debug += `  Title: ${info?.title || "missing"}\n`;
+            } catch (error) {
+              debug += `  Error accessing info: ${String(error)}\n`;
+            }
+          }
         }
       }
       
       setTransformationPalaces(transformations);
       setDebugInfo(debug);
+      
+      // Pre-check all transformation info and log errors
+      const errors: Record<string, string> = {};
+      Object.entries(transformations).forEach(([transType, palace]) => {
+        try {
+          const transformInfo = getTransformationInfo(transType as TransformationType, palace);
+          if (!transformInfo.title || transformInfo.title === "") {
+            errors[transType] = `Missing title for ${transType} in palace ${palace}`;
+          }
+        } catch (error) {
+          errors[transType] = `Error getting info for ${transType} in palace ${palace}: ${String(error)}`;
+        }
+      });
+      setTransformationErrors(errors);
+      
     } catch (error) {
       console.error("Error processing chart data:", error);
       setDebugInfo(`Error: ${String(error)}\n${debug}`);
@@ -107,6 +195,38 @@ const FourKeyPalaceAnalysis: React.FC<FourKeyPalaceAnalysisProps> = ({ chartData
    */
   const isValidPalaceName = (name: string): name is PalaceName => {
     return name in FOUR_KEY_PALACE_ANALYSIS_CONSTANTS;
+  };
+
+  /**
+   * Get transformation information even if palace name isn't in constants
+   * This fallback ensures we can display something even if there's a palace name mismatch
+   */
+  const getTransformationInfo = (transformationType: TransformationType, palaceName: string) => {
+    // Default information if palace isn't found
+    const defaultInfo = {
+      title: `${transformationType} in ${palaceName}`,
+      description: `This transformation is in the ${palaceName} palace.`,
+      quote: "Information not available for this palace."
+    };
+    
+    try {
+      // Try to get info from constants if palace name is valid
+      if (isValidPalaceName(palaceName)) {
+        const key = transformationTypes[transformationType].key;
+        const info = FOUR_KEY_PALACE_ANALYSIS_CONSTANTS[palaceName][key];
+        
+        // Check if we have valid info
+        if (info && typeof info === 'object' && 'title' in info) {
+          return info;
+        } else {
+          console.warn(`Missing or invalid info for ${transformationType} in palace ${palaceName}`);
+        }
+      }
+    } catch (error) {
+      console.error(`Error getting transformation info for ${transformationType} in palace ${palaceName}:`, error);
+    }
+    
+    return defaultInfo;
   };
 
   return (
@@ -139,34 +259,75 @@ const FourKeyPalaceAnalysis: React.FC<FourKeyPalaceAnalysisProps> = ({ chartData
       {isOpen && (
         <div className="px-4 py-5 sm:px-6 border-t border-gray-200 dark:border-gray-700">
           <div className="space-y-6">
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              {t("analysis.fourKeyPalaceDescription") || 
-                "The Four Transformations (化禄, 化权, 化科, 化忌) show where your prosperity, power, achievements, and challenges lie."}
-            </p>
-            
-            {/* Debug Info - only in development */}
-            {process.env.NODE_ENV === 'development' && debugInfo && (
-              <div className="my-4 p-2 bg-gray-100 dark:bg-gray-700 rounded-md overflow-auto text-xs font-mono">
-                <pre>{debugInfo}</pre>
+            {/* Debug info showing available data - always show for now during debugging */}
+            <div className="my-4 p-2 bg-gray-100 dark:bg-gray-700 rounded-md overflow-auto text-xs font-mono">
+              <details>
+                <summary className="cursor-pointer text-blue-600 dark:text-blue-400 font-semibold">
+                  Debug Information (Click to expand)
+                </summary>
+                <pre className="mt-2">{debugInfo}</pre>
                 <p className="mt-2">Transformation data: {JSON.stringify(transformationPalaces, null, 2)}</p>
+                <p className="mt-2">Valid palace names: {validPalaceNames.join(", ")}</p>
+                {Object.keys(transformationErrors).length > 0 && (
+                  <div className="mt-2 text-red-500">
+                    <p>Errors:</p>
+                    <pre>{JSON.stringify(transformationErrors, null, 2)}</pre>
+                  </div>
+                )}
+                
+                <div className="mt-4 p-2 bg-blue-50 dark:bg-blue-900/20 rounded">
+                  <p className="font-semibold">Transformation info test:</p>
+                  {Object.entries(transformationPalaces).map(([transType, palace]) => (
+                    <div key={transType} className="mt-1">
+                      <p>Testing {transType} in {palace}:</p>
+                      <pre>
+                        {JSON.stringify(
+                          isValidPalaceName(palace) ? 
+                            FOUR_KEY_PALACE_ANALYSIS_CONSTANTS[palace][transformationTypes[transType as TransformationType].key] : 
+                            "Palace not found in constants", 
+                          null, 2
+                        )}
+                      </pre>
+                    </div>
+                  ))}
+                </div>
+              </details>
+            </div>
+            
+            {/* Display message if no transformations found */}
+            {Object.keys(transformationPalaces).length === 0 && (
+              <div className="bg-yellow-50 dark:bg-yellow-900/30 p-4 rounded-lg text-yellow-800 dark:text-yellow-300">
+                No transformations found in the chart data.
               </div>
             )}
             
             {/* Four Transformations Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {Object.entries(transformationTypes).map(([chineseName, { key, english }]) => {
                 const transformationType = chineseName as TransformationType;
                 // Get palace name from our processed data
                 const palaceName = transformationPalaces[transformationType];
                 
-                if (!palaceName || !isValidPalaceName(palaceName)) return (
+                // Get transformation color based on type
+                const getTransformationColor = (type: TransformationType) => {
+                  switch(type) {
+                    case "化禄": return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300 border-green-400";
+                    case "化权": return "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300 border-blue-400";
+                    case "化科": return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300 border-yellow-400";
+                    case "化忌": return "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300 border-red-400";
+                    default: return "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300 border-purple-400";
+                  }
+                };
+                
+                const transformationColorClass = getTransformationColor(transformationType);
+                
+                if (!palaceName) return (
                   <div 
                     key={chineseName}
-                    className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow duration-300 border border-red-200 dark:border-red-800"
+                    className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-5 shadow-md hover:shadow-lg transition-shadow duration-300 border border-red-200 dark:border-red-800"
                   >
                     <div className="mb-3">
-                      <span className="inline-block px-2 py-1 text-xs font-semibold rounded-full 
-                        bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300 mr-2">
+                      <span className={`inline-block px-3 py-1.5 text-sm font-semibold rounded-full ${transformationColorClass} mr-2`}>
                         {chineseName} ({english})
                       </span>
                       <span className="text-red-500 dark:text-red-400 font-medium">
@@ -176,49 +337,68 @@ const FourKeyPalaceAnalysis: React.FC<FourKeyPalaceAnalysisProps> = ({ chartData
                   </div>
                 );
                 
-                const palaceData = FOUR_KEY_PALACE_ANALYSIS_CONSTANTS[palaceName];
-                const transformationInfo = palaceData[key];
+                // Get transformation info (with fallback if palace name is invalid)
+                const transformationInfo = getTransformationInfo(transformationType, palaceName);
+                
+                // Get keyword and meaning for palace if available
+                let keyword = "";
+                let meaning = "";
+                if (isValidPalaceName(palaceName)) {
+                  const keywordValue = FOUR_KEY_PALACE_ANALYSIS_CONSTANTS[palaceName].keyword;
+                  keyword = keywordValue !== undefined ? String(keywordValue) : "";
+                  meaning = FOUR_KEY_PALACE_ANALYSIS_CONSTANTS[palaceName].meaning || "";
+                }
                 
                 return (
                   <div 
                     key={chineseName}
-                    className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow duration-300"
+                    className="bg-white dark:bg-gray-800 rounded-lg p-5 shadow-md hover:shadow-lg transition-shadow duration-300 border border-gray-100 dark:border-gray-700"
                   >
-                    <div className="mb-3">
-                      <span className="inline-block px-2 py-1 text-xs font-semibold rounded-full 
-                        bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300 mr-2">
-                        {chineseName} ({english})
-                      </span>
-                      <span className="text-gray-700 dark:text-gray-300 font-medium">
-                        → {t(`palaces.${palaceName}`) || palaceName}
-                      </span>
+                    {/* Palace name header with transformation tag at bottom right */}
+                    <div className="mb-4 pb-3 border-b border-gray-200 dark:border-gray-700 relative">
+                      <div className="flex justify-between items-start mb-2">
+                        <div>
+                          <h3 className="text-base font-bold text-gray-900 dark:text-white mb-1">
+                            {palaceName} 宫
+                          </h3>
+                          {meaning && (
+                            <div className="text-sm text-gray-600 dark:text-gray-400">
+                              {meaning}
+                            </div>
+                          )}
+                        </div>
+                        {keyword && !isNaN(keyword as any) ? null : (
+                          <div className="text-sm font-medium text-purple-600 dark:text-purple-400 ml-2">
+                            {keyword}
+                          </div>
+                        )}
+                      </div>
+                      
+                      {/* Transformation badge positioned at bottom right */}
+                      <div className="absolute bottom-3 right-0">
+                        <span className={`inline-block px-3 py-1.5 text-sm font-semibold rounded-full ${transformationColorClass}`}>
+                          {chineseName} ({english})
+                        </span>
+                      </div>
                     </div>
                     
-                    <h4 className="text-sm font-semibold text-gray-800 dark:text-white mb-2">
-                      {transformationInfo.title}
-                    </h4>
-                    
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
-                      {transformationInfo.description}
-                    </p>
-                    
-                    <div className="italic text-xs text-gray-500 dark:text-gray-400 border-l-2 border-purple-300 pl-2">
-                      &quot;{transformationInfo.quote}&quot;
+                    {/* Transformation content */}
+                    <div className="space-y-3">
+                      <h4 className="text-lg font-semibold text-gray-800 dark:text-white">
+                        {transformationInfo.title}
+                      </h4>
+                      
+                      <p className="text-base text-gray-600 dark:text-gray-300">
+                        {transformationInfo.description}
+                      </p>
+                      
+                      <div className={`italic text-sm text-gray-600 dark:text-gray-400 border-l-3 pl-3 py-1 mt-3 bg-opacity-20 dark:bg-opacity-10 rounded-r ${transformationColorClass}`}>
+                        &quot;{transformationInfo.quote}&quot;
+                      </div>
                     </div>
                   </div>
                 );
               })}
-            </div>
-            
-            {/* Additional Guidance */}
-            <div className="mt-4 text-sm text-gray-600 dark:text-gray-400 bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg">
-              <p className="font-semibold text-blue-700 dark:text-blue-300 mb-1">
-                {t("analysis.guidanceTitle") || "Guidance"}:
-              </p>
-              <p>
-                {t("analysis.fourKeyPalaceGuidance") || 
-                  "Pay special attention to where 化禄 (Prosperity) and 化科 (Achievement) land, as these indicate your areas of natural advantage. The palace with 化忌 (Obstacle) shows where you need extra care and awareness."}
-              </p>
             </div>
           </div>
         </div>
