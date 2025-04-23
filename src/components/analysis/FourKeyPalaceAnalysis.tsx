@@ -243,7 +243,7 @@ const FourKeyPalaceAnalysis: React.FC<FourKeyPalaceAnalysisProps> = ({ chartData
                       <div className="flex justify-between items-start mb-2">
                         <div>
                           <h3 className="text-base font-bold text-gray-900 dark:text-white mb-1">
-                            {palaceName} 宫
+                            {palaceName}宫
                           </h3>
                           {meaning && (
                             <div className="text-sm text-gray-600 dark:text-gray-400">
