@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { analyzeHealth, getStarsInPalace } from "../../utils/zwds/analysis";
 import { useLanguage } from "../../context/LanguageContext";
-import { ReactComponent as FemaleSVG } from "../../assets/female.svg";
-import { ReactComponent as MaleSVG } from "../../assets/male.svg";
 
 /**
  * Props interface for the HealthAnalysis component
@@ -12,102 +10,210 @@ interface HealthAnalysisProps {
 }
 
 /**
- * Type definition for body part highlight positions
+ * Custom human body outline SVG with pre-positioned organs
+ * that only become visible when highlighted
  */
-interface BodyPartPosition {
-  top?: string;
-  left?: string;
-  right?: string;
-  bottom?: string;
-  width: string;
-  height: string;
-  borderRadius?: string;
-}
-
-/**
- * Map of body parts to their relative positions in the SVG for highlighting
- */
-const bodyPartPositions: Record<string, Record<"male" | "female", BodyPartPosition>> = {
-  "头": {
-    male: { top: "6%", left: "50%", width: "17%", height: "13%", borderRadius: "50%" },
-    female: { top: "12%", left: "50%", width: "17%", height: "13%", borderRadius: "50%" }
-  },
-  "眼": {
-    male: { top: "8%", left: "50%", width: "20%", height: "3%", borderRadius: "50%" },
-    female: { top: "14%", left: "50%", width: "20%", height: "3%", borderRadius: "50%" }
-  },
-  "心脏": {
-    male: { top: "25%", left: "50%", width: "15%", height: "10%", borderRadius: "50%" },
-    female: { top: "28%", left: "50%", width: "15%", height: "10%", borderRadius: "50%" }
-  },
-  "肺": {
-    male: { top: "23%", left: "50%", width: "30%", height: "12%", borderRadius: "50%" },
-    female: { top: "26%", left: "50%", width: "30%", height: "12%", borderRadius: "50%" }
-  },
-  "胃": {
-    male: { top: "35%", left: "50%", width: "20%", height: "12%", borderRadius: "50%" },
-    female: { top: "38%", left: "50%", width: "20%", height: "12%", borderRadius: "50%" }
-  },
-  "肝脏": {
-    male: { top: "34%", left: "42%", width: "14%", height: "12%", borderRadius: "50%" },
-    female: { top: "38%", left: "42%", width: "14%", height: "12%", borderRadius: "50%" }
-  },
-  "肠": {
-    male: { top: "44%", left: "50%", width: "24%", height: "14%", borderRadius: "50%" },
-    female: { top: "47%", left: "50%", width: "24%", height: "14%", borderRadius: "50%" }
-  },
-  "肾": {
-    male: { top: "42%", left: "36%", width: "10%", height: "8%", borderRadius: "50%" },
-    female: { top: "45%", left: "36%", width: "10%", height: "8%", borderRadius: "50%" }
-  },
-  "肾右": {
-    male: { top: "42%", left: "64%", width: "10%", height: "8%", borderRadius: "50%" },
-    female: { top: "45%", left: "64%", width: "10%", height: "8%", borderRadius: "50%" }
-  },
-  "膀胱": {
-    male: { top: "54%", left: "50%", width: "16%", height: "8%", borderRadius: "50%" },
-    female: { top: "55%", left: "50%", width: "16%", height: "8%", borderRadius: "50%" }
-  },
-  "生殖器": {
-    male: { top: "59%", left: "50%", width: "14%", height: "8%", borderRadius: "50%" },
-    female: { top: "60%", left: "50%", width: "14%", height: "8%", borderRadius: "50%" }
-  },
-  "膝盖": {
-    male: { top: "75%", left: "38%", width: "8%", height: "8%", borderRadius: "50%" },
-    female: { top: "75%", left: "38%", width: "8%", height: "8%", borderRadius: "50%" }
-  },
-  "膝盖右": {
-    male: { top: "75%", left: "62%", width: "8%", height: "8%", borderRadius: "50%" },
-    female: { top: "75%", left: "62%", width: "8%", height: "8%", borderRadius: "50%" }
-  },
-  "关节": {
-    male: { top: "75%", left: "38%", width: "8%", height: "8%", borderRadius: "50%" },
-    female: { top: "75%", left: "38%", width: "8%", height: "8%", borderRadius: "50%" }
-  },
-  "关节右": {
-    male: { top: "75%", left: "62%", width: "8%", height: "8%", borderRadius: "50%" },
-    female: { top: "75%", left: "62%", width: "8%", height: "8%", borderRadius: "50%" }
-  },
-  "手": {
-    male: { top: "48%", left: "22%", width: "12%", height: "10%", borderRadius: "50%" },
-    female: { top: "45%", left: "20%", width: "12%", height: "10%", borderRadius: "50%" }
-  },
-  "手右": {
-    male: { top: "48%", left: "78%", width: "12%", height: "10%", borderRadius: "50%" },
-    female: { top: "45%", left: "80%", width: "12%", height: "10%", borderRadius: "50%" }
-  },
-  "脚": {
-    male: { bottom: "3%", left: "35%", width: "9%", height: "6%", borderRadius: "40%" },
-    female: { bottom: "3%", left: "35%", width: "9%", height: "6%", borderRadius: "40%" }
-  },
-  "脚右": {
-    male: { bottom: "3%", left: "65%", width: "9%", height: "6%", borderRadius: "40%" },
-    female: { bottom: "3%", left: "65%", width: "9%", height: "6%", borderRadius: "40%" }
-  },
-  "神经系统": {
-    male: { top: "0", left: "0", width: "100%", height: "100%", borderRadius: "0" },
-    female: { top: "0", left: "0", width: "100%", height: "100%", borderRadius: "0" }
-  }
+const HumanBodySVG: React.FC<{
+  affectedParts: string[];
+  gender: "male" | "female";
+}> = ({ affectedParts, gender }) => {
+  return (
+    <svg 
+      viewBox="0 0 300 600" 
+      className="max-w-full h-auto"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      {/* Base human outline - always visible */}
+      <path 
+        d="M150,60 C175,60 195,85 195,115 C195,145 175,170 150,170 C125,170 105,145 105,115 C105,85 125,60 150,60 Z
+           M150,170 C190,170 220,240 220,320 C220,400 190,450 150,450 C110,450 80,400 80,320 C80,240 110,170 150,170 Z
+           M220,220 C240,230 260,270 260,300 C260,330 240,360 220,370
+           M80,220 C60,230 40,270 40,300 C40,330 60,360 80,370
+           M115,450 C110,490 105,530 100,570 
+           M185,450 C190,490 195,530 200,570"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        className="dark:stroke-gray-200"
+      />
+      
+      {/* Head - highlight when affected */}
+      <path 
+        d="M150,60 C175,60 195,85 195,115 C195,145 175,170 150,170 C125,170 105,145 105,115 C105,85 125,60 150,60 Z" 
+        fill="#ef4444"
+        className={`${affectedParts.includes("头") ? "opacity-40 animate-pulse" : "hidden"}`}
+      />
+      
+      {/* Eyes */}
+      <g className={`${affectedParts.includes("眼") ? "opacity-40 animate-pulse" : "hidden"}`}>
+        <ellipse 
+          cx="135" 
+          cy="105" 
+          rx="8" 
+          ry="5" 
+          fill="#ef4444"
+        />
+        <ellipse 
+          cx="165" 
+          cy="105" 
+          rx="8" 
+          ry="5" 
+          fill="#ef4444"
+        />
+      </g>
+      
+      {/* Heart */}
+      <path 
+        d="M150,220 C160,210 175,230 150,245 C125,230 140,210 150,220 Z" 
+        fill="#ef4444"
+        className={`${affectedParts.includes("心脏") ? "opacity-40 animate-pulse" : "hidden"}`}
+      />
+      
+      {/* Lungs */}
+      <g className={`${affectedParts.includes("肺") ? "opacity-40 animate-pulse" : "hidden"}`}>
+        <path 
+          d="M130,210 C115,220 115,250 130,270 C140,260 140,220 130,210 Z" 
+          fill="#ef4444"
+        />
+        <path 
+          d="M170,210 C185,220 185,250 170,270 C160,260 160,220 170,210 Z" 
+          fill="#ef4444"
+        />
+      </g>
+      
+      {/* Stomach */}
+      <ellipse 
+        cx="150" 
+        cy="290" 
+        rx="25" 
+        ry="20" 
+        fill="#ef4444"
+        className={`${affectedParts.includes("胃") ? "opacity-40 animate-pulse" : "hidden"}`}
+      />
+      
+      {/* Liver */}
+      <path 
+        d="M120,280 C105,275 105,295 120,300 C130,295 130,275 120,280 Z" 
+        fill="#ef4444"
+        className={`${affectedParts.includes("肝脏") ? "opacity-40 animate-pulse" : "hidden"}`}
+      />
+      
+      {/* Intestines */}
+      <path 
+        d="M150,320 C180,320 190,335 190,345 C190,355 180,370 150,370 C120,370 110,355 110,345 C110,335 120,320 150,320 Z" 
+        fill="#ef4444"
+        className={`${affectedParts.includes("肠") ? "opacity-40 animate-pulse" : "hidden"}`}
+      />
+      
+      {/* Kidneys */}
+      <g className={`${affectedParts.includes("肾") || affectedParts.includes("肾右") ? "opacity-40 animate-pulse" : "hidden"}`}>
+        <ellipse 
+          cx="120" 
+          cy="310" 
+          rx="12" 
+          ry="8" 
+          fill="#ef4444"
+        />
+        <ellipse 
+          cx="180" 
+          cy="310" 
+          rx="12" 
+          ry="8" 
+          fill="#ef4444"
+        />
+      </g>
+      
+      {/* Bladder */}
+      <ellipse 
+        cx="150" 
+        cy="400" 
+        rx="15" 
+        ry="12" 
+        fill="#ef4444"
+        className={`${affectedParts.includes("膀胱") ? "opacity-40 animate-pulse" : "hidden"}`}
+      />
+      
+      {/* Reproductive area */}
+      <ellipse 
+        cx="150" 
+        cy="430" 
+        rx="12" 
+        ry="10" 
+        fill="#ef4444"
+        className={`${affectedParts.includes("生殖器") ? "opacity-40 animate-pulse" : "hidden"}`}
+      />
+      
+      {/* Hands */}
+      <g className={`${affectedParts.includes("手") || affectedParts.includes("手右") ? "opacity-40 animate-pulse" : "hidden"}`}>
+        <circle 
+          cx="40" 
+          cy="300" 
+          r="15" 
+          fill="#ef4444"
+        />
+        <circle 
+          cx="260" 
+          cy="300" 
+          r="15" 
+          fill="#ef4444"
+        />
+      </g>
+      
+      {/* Knees */}
+      <g className={`${affectedParts.includes("膝盖") || affectedParts.includes("关节") || affectedParts.includes("膝盖右") || affectedParts.includes("关节右") ? "opacity-40 animate-pulse" : "hidden"}`}>
+        <circle 
+          cx="100" 
+          cy="500" 
+          r="15" 
+          fill="#ef4444"
+        />
+        <circle 
+          cx="200" 
+          cy="500" 
+          r="15" 
+          fill="#ef4444"
+        />
+      </g>
+      
+      {/* Feet */}
+      <g className={`${affectedParts.includes("脚") || affectedParts.includes("脚右") ? "opacity-40 animate-pulse" : "hidden"}`}>
+        <ellipse 
+          cx="100" 
+          cy="570" 
+          rx="20" 
+          ry="10" 
+          fill="#ef4444"
+        />
+        <ellipse 
+          cx="200" 
+          cy="570" 
+          rx="20" 
+          ry="10" 
+          fill="#ef4444"
+        />
+      </g>
+      
+      {/* Nervous system overlay (only visible when affected) */}
+      {affectedParts.includes("神经系统") && (
+        <g className="opacity-40 animate-pulse">
+          <path 
+            d="M150,115 L150,500" 
+            stroke="#ef4444"
+            strokeWidth="5"
+            strokeDasharray="7,7"
+            fill="none"
+          />
+          <path 
+            d="M150,290 L60,300 M150,290 L240,300" 
+            stroke="#ef4444"
+            strokeWidth="5"
+            strokeDasharray="7,7"
+            fill="none"
+          />
+        </g>
+      )}
+    </svg>
+  );
 };
 
 /**
@@ -180,88 +286,6 @@ const HealthAnalysis: React.FC<HealthAnalysisProps> = ({ chartData }) => {
     }
   }, [chartData]);
 
-  /**
-   * Check if a body part is in the affected list
-   * @param bodyPart - The body part to check
-   * @returns True if the body part is affected
-   */
-  const isBodyPartAffected = (bodyPart: string): boolean => {
-    return affectedBodyParts.includes(bodyPart);
-  };
-
-  /**
-   * Generates all highlight elements needed for affected body parts
-   * @param gender - The gender of the chart subject
-   * @returns Array of highlight JSX elements
-   */
-  const generateHighlights = (gender: "male" | "female") => {
-    const highlights: JSX.Element[] = [];
-    
-    // Special case for nervous system
-    if (isBodyPartAffected("神经系统")) {
-      highlights.push(
-        <div 
-          key="神经系统"
-          className="absolute inset-0 border-2 border-red-500 border-dashed opacity-30 animate-pulse" 
-          style={{ borderRadius: "0" }}
-        />
-      );
-    }
-    
-    // Handle paired body parts (left and right sides)
-    const pairedParts = ["肾", "膝盖", "关节", "手", "脚"];
-    
-    affectedBodyParts.forEach(bodyPart => {
-      // Skip nervous system as it's handled separately
-      if (bodyPart === "神经系统") return;
-      
-      // For standard body parts
-      if (bodyPartPositions[bodyPart]) {
-        const position = bodyPartPositions[bodyPart][gender];
-        highlights.push(
-          <div 
-            key={bodyPart}
-            className="absolute transform -translate-x-1/2 bg-red-500 opacity-30 animate-pulse" 
-            style={{
-              top: position.top,
-              left: position.left,
-              right: position.right,
-              bottom: position.bottom,
-              width: position.width,
-              height: position.height,
-              borderRadius: position.borderRadius || "50%",
-            }}
-          />
-        );
-      }
-      
-      // Handle paired body parts - add the right side if the main part is affected
-      if (pairedParts.includes(bodyPart)) {
-        const rightPart = `${bodyPart}右`;
-        if (bodyPartPositions[rightPart]) {
-          const position = bodyPartPositions[rightPart][gender];
-          highlights.push(
-            <div 
-              key={rightPart}
-              className="absolute transform -translate-x-1/2 bg-red-500 opacity-30 animate-pulse" 
-              style={{
-                top: position.top,
-                left: position.left,
-                right: position.right,
-                bottom: position.bottom,
-                width: position.width,
-                height: position.height,
-                borderRadius: position.borderRadius || "50%",
-              }}
-            />
-          );
-        }
-      }
-    });
-    
-    return highlights;
-  };
-
   if (loading) {
     return (
       <div className="flex items-center justify-center p-8">
@@ -318,19 +342,13 @@ const HealthAnalysis: React.FC<HealthAnalysisProps> = ({ chartData }) => {
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
-              {/* Human body visualization - gender-specific SVG */}
-              <div className="relative">
-                <div className="aspect-[3/4] bg-gray-50 dark:bg-gray-700/30 rounded-lg flex items-center justify-center p-4">
-                  <div className="relative h-full" style={{ width: "280px", maxWidth: "100%" }}>
-                    {gender === "female" ? (
-                      <FemaleSVG className="w-full h-full" />
-                    ) : (
-                      <MaleSVG className="w-full h-full" />
-                    )}
-                    
-                    {/* Overlay highlights for affected body parts */}
-                    {generateHighlights(gender)}
-                  </div>
+              {/* Human body visualization - SVG with invisible organs that highlight when affected */}
+              <div className="bg-gray-50 dark:bg-gray-700/30 rounded-lg flex items-center justify-center p-4">
+                <div className="w-60 max-w-full mx-auto">
+                  <HumanBodySVG 
+                    affectedParts={affectedBodyParts} 
+                    gender={gender} 
+                  />
                 </div>
               </div>
               

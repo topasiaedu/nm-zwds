@@ -7,7 +7,9 @@ import ProfileForm from "../components/ProfileForm";
 import ZWDSChart from "../components/ZWDSChart";
 import { ZWDSCalculator } from "../utils/zwds/calculator";
 import { ChartInput } from "../utils/zwds/types";
-import { CareerAnalysis, HealthAnalysis } from "../components/analysis";
+import CareerAnalysis from "../components/analysis/CareerAnalysis";
+import HealthAnalysis from "../components/analysis/HealthAnalysis";
+import FourKeyPalaceAnalysis from "../components/analysis/FourKeyPalaceAnalysis";
 
 /**
  * Interface for chart data
@@ -640,11 +642,14 @@ const Result: React.FC = () => {
             </h2>
             
             <div className="space-y-8">
+              {/* Four Key Palace Analysis */}
+              {/* <FourKeyPalaceAnalysis chartData={calculatedChartData} /> */}
+              
               {/* Career Analysis */}
-              {/* <CareerAnalysis chartData={calculatedChartData} /> */}
+              <CareerAnalysis chartData={calculatedChartData} />
               
               {/* Health Analysis */}
-              {/* <HealthAnalysis chartData={calculatedChartData} /> */}
+              <HealthAnalysis chartData={calculatedChartData} />
             </div>
           </div>
         )}

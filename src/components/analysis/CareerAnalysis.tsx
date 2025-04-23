@@ -104,56 +104,48 @@ const CareerAnalysis: React.FC<CareerAnalysisProps> = ({ chartData }) => {
 
     // Define career categories for grouping with functional categories
     const categories: Record<string, string[]> = {
-      "Creators": [
-        // Creative and production roles
-        "艺术创作", "创意产业", "装潢设计", "策划设计", "文化创意", "表演艺术", 
-        "摄影", "舞蹈", "音乐制作", "文学创作", "艺术设计", "礼品设计", "文创产品", 
-        "编剧写作", "礼仪顾问", "珠宝", "钟表", "珍贵细致物品", "广告营销", "房地产",
-        "建材", "工程拆除", "装修工程", "高级品", "机械制造", "工程设备", "软件工程", 
-        "工程顾问", "AI开发", "技术研发", "研究分析", "专业技能", "特殊技能",
-        "作家", "园艺设计", "车辆改装", "纸业", "出版印刷"
+      "Visionaries 灵感者": [
+        "艺术创作", "创意产业", "装潢设计", "策划设计", "文化创意", "表演艺术", "摄影", "舞蹈", "音乐制作",
+        "文学创作", "艺术设计", "礼品设计", "文创产品", "编剧写作", "礼仪顾问", "园艺设计", "作家",
+        "珠宝", "钟表", "珍贵细致物品", "广告营销", "纸业", "出版印刷", "车辆改装"
       ],
-      "Caregivers": [
-        // Care, support and healing roles
-        "医疗管理", "医疗手术", "中医药", "药品销售", "医护人员", "养老服务", 
-        "社工", "长照服务", "志工组织", "美容保健", "美容护理", "美容美发", 
-        "地下医疗", "月子中心", "命理咨询", "家庭服务", "清洁服务"
+      "Lifekeepers 生命守护者": [
+        "医疗管理", "医疗手术", "中医药", "药品销售", "医护人员", "养老服务", "社工", "长照服务", "志工组织",
+        "美容保健", "美容护理", "美容美发", "地下医疗", "月子中心", "命理咨询", "家庭服务", "清洁服务"
       ],
-      "Educators": [
-        // Knowledge transfer roles
-        "教育培训", "教育辅导", "幼教", "讲师", "教学辅助", "宗教传教", 
-        "图书馆管理", "演讲者", "演讲", "研究单位", "翻译", "争议解决专家"
+      "Educators 教育者": [
+        "教育培训", "教育辅导", "幼教", "讲师", "教学辅助", "宗教传教", "图书馆管理", "演讲者", "演讲",
+        "研究单位", "翻译", "争议解决专家"
       ],
-      "Organizers": [
-        // Planning, management, and coordination roles
-        "管理业", "高阶主管", "行政官员", "行政", "策略顾问", "行政助理", 
-        "品牌顾问", "辅助人员", "助理", "顾问", "辅助岗位", "人事行政", 
-        "方向指导", "辅助决策", "计划执行", "中间人", "幕后策划", "团队协调",
+      "Strategists 策略者": [
+        "管理业", "高阶主管", "行政官员", "行政", "策略顾问", "行政助理", "品牌顾问", "辅助人员", "助理",
+        "顾问", "辅助岗位", "人事行政", "方向指导", "辅助决策", "计划执行", "中间人", "幕后策划", "团队协调",
         "问题解决顾问", "创业顾问", "饭店管理", "餐饮顾问"
       ],
-      "Operators": [
-        // System and machine operating roles
-        "技术研发", "重工业", "金属业", "采矿业", "生产制造", "能源事业", 
-        "光电产业", "交通工具", "仓储物流", "船务公司", "救灾重建", "服务业", 
-        "软性服务", "餐饮业", "饭店前台", "接待", "旅馆业", "清洁行业", 
-        "小吃餐饮", "种植业", "畜牧业", "农业行政", "肉品加工", "屠宰业",
-        "营养品销售", "自由职业", "轻松工作"
+      "Architects 架构者": [
+        "软件工程", "工程设备", "AI开发", "技术研发", "工程顾问", "工程拆除", "装修工程", "机械制造",
+        "高级品", "研究分析", "专业技能", "特殊技能", "重工业", "金属业", "采矿业", "生产制造",
+        "能源事业", "光电产业", "交通工具", "房地产", "建材"
       ],
-      "Protectors": [
-        // Rule enforcement and safety roles
+      "Stewards 执行者": [
+        "仓储物流", "船务公司", "救灾重建", "服务业", "软性服务", "餐饮业", "饭店前台", "接待", "旅馆业",
+        "清洁行业", "小吃餐饮", "种植业", "畜牧业", "农业行政", "肉品加工", "屠宰业", "营养品销售",
+        "自由职业", "轻松工作", "文书处理", "语言沟通", "跳蚤市场", "衣食住行行业"
+      ],
+      "Guardians 守护者": [
         "军警系统", "政治工作", "外交", "公职", "稳定性企业", "政府单位"
       ],
-      "Sellers/Influencers": [
-        // Persuasion and exchange roles
-        "金融业", "财经业", "银行", "保险", "投资理财", "资产管理", "会计", 
-        "企业财务顾问", "财务", "律师", "法务助理", "直播主", "公关", "星探", 
-        "网红经济", "媒体公关", "宣传传播", "新闻传播", "网评员", "文书处理", 
-        "语言沟通", "名牌销售", "水果批发", "批发行", "服饰零售", "女性产品", 
-        "化妆品", "床具销售", "小孩用品", "原料买卖", "跳蚤市场", "饮料业", 
-        "国际贸易", "百货公司", "市场开发", "酒吧", "情色行业", "中介买卖",
-        "高级汽车", "出租业", "衣食住行行业"
+      "Vanguards 先锋者": [
+        "直播主", "公关", "星探", "网红经济", "媒体公关", "宣传传播", "新闻传播", "网评员", "市场开发",
+        "酒吧", "情色行业", "中介买卖", "名牌销售", "水果批发", "批发行", "服饰零售", "女性产品",
+        "化妆品", "床具销售", "小孩用品", "原料买卖", "饮料业", "国际贸易", "百货公司", "高级汽车", "出租业"
+      ],
+      "Advisors 筹策者": [
+        "金融业", "财经业", "银行", "保险", "投资理财", "资产管理", "会计", "企业财务顾问", "财务",
+        "律师", "法务助理"
       ]
-    };
+    }
+    
 
     // Keep track of which careers belong to each category
     const categorizedCareers: Record<string, string[]> = {};
@@ -185,29 +177,47 @@ const CareerAnalysis: React.FC<CareerAnalysisProps> = ({ chartData }) => {
 
     // Generate colors based on category - using a professional color palette that's distinct
     const colors = {
-      "Creators": "#FF6B6B",      // Coral red
-      "Caregivers": "#4ECDC4",    // Teal
-      "Educators": "#F9C80E",     // Yellow
-      "Organizers": "#7367F0",    // Purple
-      "Operators": "#43A047",     // Green
-      "Protectors": "#3F51B5",    // Indigo
-      "Sellers/Influencers": "#FF9800" // Orange
+      "Visionaries 灵感者": "#FF6B6B",   // Coral red
+      "Lifekeepers 生命守护者": "#4ECDC4", // Teal
+      "Educators 教育者": "#F9C80E",     // Yellow
+      "Strategists 策略者": "#7367F0",   // Purple
+      "Architects 架构者": "#43A047",    // Green
+      "Stewards 执行者": "#3F51B5",      // Indigo
+      "Guardians 守护者": "#FF9800",     // Orange
+      "Vanguards 先锋者": "#9C27B0",     // Deep purple
+      "Advisors 筹策者": "#1976D2"       // Blue
     };
 
     // Simplified category translations - just names, no descriptions
     const categoryTranslations = {
-      "Creators": t("analysis.career.creators"),
-      "Caregivers": t("analysis.career.caregivers"),
-      "Educators": t("analysis.career.educators"),
-      "Organizers": t("analysis.career.organizers"),
-      "Operators": t("analysis.career.operators"),
-      "Protectors": t("analysis.career.protectors"),
-      "Sellers/Influencers": t("analysis.career.sellers")
+      "Visionaries 灵感者": t("analysis.career.visionaries"),
+      "Lifekeepers 生命守护者": t("analysis.career.lifekeepers"),
+      "Educators 教育者": t("analysis.career.educators"),
+      "Strategists 策略者": t("analysis.career.strategists"),
+      "Architects 架构者": t("analysis.career.architects"),
+      "Stewards 执行者": t("analysis.career.stewards"),
+      "Guardians 守护者": t("analysis.career.guardians"),
+      "Vanguards 先锋者": t("analysis.career.vanguards"),
+      "Advisors 筹策者": t("analysis.career.advisors")
+    };
+
+    // Create direct display values for categories
+    const displayCategories: Record<string, string> = {
+      "Visionaries 灵感者": language === "en" ? "Visionaries" : "灵感者",
+      "Lifekeepers 生命守护者": language === "en" ? "Lifekeepers" : "生命守护者",
+      "Educators 教育者": language === "en" ? "Educators" : "教育者",
+      "Strategists 策略者": language === "en" ? "Strategists" : "策略者",
+      "Architects 架构者": language === "en" ? "Architects" : "架构者",
+      "Stewards 执行者": language === "en" ? "Stewards" : "执行者",
+      "Guardians 守护者": language === "en" ? "Guardians" : "守护者",
+      "Vanguards 先锋者": language === "en" ? "Vanguards" : "先锋者",
+      "Advisors 筹策者": language === "en" ? "Advisors" : "筹策者",
+      "其他": language === "en" ? "Others" : "其他"
     };
 
     const data = Object.entries(categorizedCareers)
       .map(([category, careers]) => ({
-        category: category === "其他" ? t("analysis.career.others") : categoryTranslations[category as keyof typeof categoryTranslations] || category,
+        category: category === "其他" ? displayCategories["其他"] : displayCategories[category] || category.split(" ")[0],
         englishCategory: category,
         value: careers.length,
         color: category === "其他" ? "#9E9E9E" : colors[category as keyof typeof colors] || "#9E9E9E"
@@ -219,7 +229,7 @@ const CareerAnalysis: React.FC<CareerAnalysisProps> = ({ chartData }) => {
       careersInCategories: categorizedCareers,
       categories
     };
-  }, [careerAptitudes, t]);
+  }, [careerAptitudes, t, language]);
 
   // Translate career name
   const translateCareer = (careerName: string): string => {
@@ -279,7 +289,7 @@ const CareerAnalysis: React.FC<CareerAnalysisProps> = ({ chartData }) => {
                   top: 10,
                   right: 20,
                   bottom: 40,
-                  left: containerWidth < 500 ? 60 : 100,
+                  left: containerWidth < 500 ? 80 : 120,
                 }}
                 padding={0.3}
                 layout="horizontal"
@@ -302,8 +312,8 @@ const CareerAnalysis: React.FC<CareerAnalysisProps> = ({ chartData }) => {
                   tickSize: 5,
                   tickPadding: 5,
                   tickRotation: 0,
-                  truncateTickAt: containerWidth < 500 ? 10 : undefined,
-                  renderTick: containerWidth < 400 ? 
+                  truncateTickAt: containerWidth < 600 ? 15 : undefined,
+                  renderTick: containerWidth < 500 ? 
                     (props: TickProps) => {
                       const { x, y, value } = props;
                       return (
@@ -313,13 +323,13 @@ const CareerAnalysis: React.FC<CareerAnalysisProps> = ({ chartData }) => {
                             dominantBaseline="middle"
                             style={{
                               fill: "#718096",
-                              fontSize: "10px",
+                              fontSize: "11px",
                             }}
                             x={-10}
                             y={0}
                           >
-                            {typeof value === "string" && value.length > 8 
-                              ? `${value.substring(0, 7)}...` 
+                            {typeof value === "string" && value.length > 12 
+                              ? `${value.substring(0, 11)}...` 
                               : value}
                           </text>
                         </g>
@@ -346,33 +356,24 @@ const CareerAnalysis: React.FC<CareerAnalysisProps> = ({ chartData }) => {
                       })
                     : careersInCategories[englishCategory] || [];
 
-                  // Get translated category name
-                  const translatedCategory = englishCategory === "其他" 
-                    ? t("analysis.career.others")
-                    : t(`analysis.career.${englishCategory.toLowerCase()}`);
-
-                  // Get category description key
-                  const categoryDescKey = `analysis.career.${englishCategory.toLowerCase()}.desc`;
-                  
-                  // Only include description if the englishCategory is not "其他" and if translation exists
-                  const descTranslation = englishCategory !== "其他" ? t(categoryDescKey) : "";
-                  const showDescription = englishCategory !== "其他" && descTranslation !== categoryDescKey;
+                  // Get display category name based on current language
+                  const displayCategory = englishCategory === "其他" 
+                    ? (language === "en" ? "Others" : "其他")
+                    : (language === "en" 
+                      ? englishCategory.split(" ")[0]  // English part
+                      : englishCategory.split(" ")[1]  // Chinese part
+                    );
 
                   return (
                     <div className="backdrop-blur-md bg-gray-800/80 text-white p-3 rounded-md shadow-lg text-sm max-w-xs border border-gray-700/50">
                       <div className="font-bold border-b border-gray-600/50 pb-1 mb-2">
                         <div className="flex items-center mb-1.5">
                           <span className="w-3 h-3 rounded-full mr-2" style={{ backgroundColor: color }}></span>
-                          <span>{translatedCategory}</span>
+                          <span>{displayCategory}</span>
                           <span className="ml-auto">
-                            {value} {value > 1 ? t("analysis.career.options") : t("analysis.career.option")}
+                            {value} {value > 1 ? (language === "en" ? "options" : "选项") : (language === "en" ? "option" : "选项")}
                           </span>
                         </div>
-                        {showDescription && (
-                          <div className="text-xs text-gray-300 mt-1 pb-1">
-                            {descTranslation}
-                          </div>
-                        )}
                       </div>
                       <div className="grid grid-cols-1 gap-1 mt-1">
                         {careersInThisCategory.map((career, i) => {
