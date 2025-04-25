@@ -22,7 +22,12 @@ interface FourKeyPalaceAnalysisProps {
  */
 const FourKeyPalaceAnalysis: React.FC<FourKeyPalaceAnalysisProps> = ({ chartData }) => {
   const { t, language } = useLanguage();
-  const [isOpen, setIsOpen] = useState<boolean>(true);
+  const [openCardStates, setOpenCardStates] = useState<Record<TransformationType, boolean>>({
+    "化禄": true,
+    "化权": true,
+    "化科": true,
+    "化忌": true
+  });
   const [transformationPalaces, setTransformationPalaces] = useState<Record<string, string>>({});
 
   // The four transformations in Chinese (both simplified and traditional) and their English equivalents
@@ -57,6 +62,22 @@ const FourKeyPalaceAnalysis: React.FC<FourKeyPalaceAnalysisProps> = ({ chartData
     "福德宮": "福德宫",
     "父母宮": "父母宫",
     // Add any other mappings that might be needed
+  };
+
+  // User-friendly names for Chinese palaces
+  const userFriendlyPalaceNames: Record<string, { zh: string, en: string }> = {
+    "命宫": { zh: "命运", en: "Destiny" },
+    "兄弟宫": { zh: "兄弟姐妹", en: "Siblings" },
+    "夫妻宫": { zh: "感情", en: "Love & Marriage" },
+    "子女宫": { zh: "子女", en: "Children" },
+    "财帛宫": { zh: "财富", en: "Financial Prosperity" },
+    "疾厄宫": { zh: "健康", en: "Health & Wellbeing" },
+    "迁移宫": { zh: "旅行与变动", en: "Travel & Changes" },
+    "交友宫": { zh: "人际关系", en: "Social Circle" },
+    "官禄宫": { zh: "事业", en: "Career & Achievement" },
+    "田宅宫": { zh: "住宅", en: "Property" },
+    "福德宫": { zh: "福气", en: "Happiness" },
+    "父母宫": { zh: "父母", en: "Parents" }
   };
 
   useEffect(() => {
@@ -137,7 +158,7 @@ const FourKeyPalaceAnalysis: React.FC<FourKeyPalaceAnalysisProps> = ({ chartData
         const info = FOUR_KEY_PALACE_ANALYSIS_CONSTANTS[palaceName][key];
         
         // Check if we have valid info
-        if (info && typeof info === 'object' && 'title' in info) {
+        if (info && typeof info === "object" && "title" in info) {
           return info;
         }
       }
@@ -148,145 +169,157 @@ const FourKeyPalaceAnalysis: React.FC<FourKeyPalaceAnalysisProps> = ({ chartData
     return defaultInfo;
   };
 
+  /**
+   * Toggle the expanded/collapsed state of a specific transformation card
+   * @param transformationType - The transformation type to toggle
+   */
+  const toggleCardState = (transformationType: TransformationType) => {
+    setOpenCardStates(prevState => ({
+      ...prevState,
+      [transformationType]: !prevState[transformationType]
+    }));
+  };
+
   return (
     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden transition-all duration-300">
-      {/* Analysis Header */}
-      <div 
-        className="px-4 py-5 sm:px-6 cursor-pointer flex justify-between items-center"
-        onClick={() => setIsOpen(!isOpen)}
-      >
-        <div className="flex items-center">
-          <svg className="w-5 h-5 mr-2 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-          </svg>
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-            {t("analysis.fourKeyPalace") || "Four Key Palace Analysis"}
-          </h3>
-        </div>
-        <svg 
-          className={`w-5 h-5 text-gray-500 transition-transform duration-300 ${isOpen ? 'transform rotate-180' : ''}`}
-          fill="none" 
-          stroke="currentColor" 
-          viewBox="0 0 24 24" 
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+      {/* Analysis Header - non-collapsible */}
+      <div className="px-4 py-5 sm:px-6 flex items-center">
+        <svg className="w-5 h-5 mr-2 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
         </svg>
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+          {t("analysis.fourKeyPalace") || "Four Key Palace Analysis"}
+        </h3>
       </div>
 
-      {/* Analysis Content */}
-      {isOpen && (
-        <div className="px-4 py-5 sm:px-6 border-t border-gray-200 dark:border-gray-700">
-          <div className="space-y-6">
-            {/* Display message if no transformations found */}
-            {Object.keys(transformationPalaces).length === 0 && (
-              <div className="bg-yellow-50 dark:bg-yellow-900/30 p-4 rounded-lg text-yellow-800 dark:text-yellow-300">
-                No transformations found in the chart data.
-              </div>
-            )}
-            
-            {/* Four Transformations Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {Object.entries(transformationTypes).map(([chineseName, { key, english }]) => {
-                const transformationType = chineseName as TransformationType;
-                // Get palace name from our processed data
-                const palaceName = transformationPalaces[transformationType];
-                
-                // Get transformation color based on type
-                const getTransformationColor = (type: TransformationType) => {
-                  switch(type) {
-                    case "化禄": return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300 border-green-400";
-                    case "化权": return "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300 border-blue-400";
-                    case "化科": return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300 border-yellow-400";
-                    case "化忌": return "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300 border-red-400";
-                    default: return "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300 border-purple-400";
-                  }
-                };
-                
-                const transformationColorClass = getTransformationColor(transformationType);
-                
-                if (!palaceName) return (
-                  <div 
-                    key={chineseName}
-                    className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-5 shadow-md hover:shadow-lg transition-shadow duration-300 border border-red-200 dark:border-red-800"
-                  >
-                    <div className="mb-3">
-                      <span className={`inline-block px-3 py-1.5 text-sm font-semibold rounded-full ${transformationColorClass} mr-2`}>
-                        {chineseName} ({english})
-                      </span>
-                      <span className="text-red-500 dark:text-red-400 font-medium">
-                        Not found in chart
-                      </span>
-                    </div>
-                  </div>
-                );
-                
-                // Get transformation info (with fallback if palace name is invalid)
-                const transformationInfo = getTransformationInfo(transformationType, palaceName);
-                
-                // Get keyword and meaning for palace if available
-                let keyword = "";
-                let meaning = "";
-                if (isValidPalaceName(palaceName)) {
-                  const keywordValue = FOUR_KEY_PALACE_ANALYSIS_CONSTANTS[palaceName].keyword;
-                  keyword = keywordValue !== undefined ? String(keywordValue) : "";
-                  meaning = FOUR_KEY_PALACE_ANALYSIS_CONSTANTS[palaceName].meaning || "";
+      {/* Analysis Content - always visible */}
+      <div className="px-4 py-5 sm:px-6 border-t border-gray-200 dark:border-gray-700">
+        <div className="space-y-6">
+          {/* Display message if no transformations found */}
+          {Object.keys(transformationPalaces).length === 0 && (
+            <div className="bg-yellow-50 dark:bg-yellow-900/30 p-4 rounded-lg text-yellow-800 dark:text-yellow-300">
+              No transformations found in the chart data.
+            </div>
+          )}
+          
+          {/* Four Transformations Grid - now two columns */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {Object.entries(transformationTypes).map(([chineseName, { key, english }]) => {
+              const transformationType = chineseName as TransformationType;
+              // Get palace name from our processed data
+              const palaceName = transformationPalaces[transformationType];
+              
+              // Get transformation color based on type
+              const getTransformationColor = (type: TransformationType) => {
+                switch(type) {
+                  case "化禄": return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300 border-green-400";
+                  case "化权": return "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300 border-blue-400";
+                  case "化科": return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300 border-yellow-400";
+                  case "化忌": return "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300 border-red-400";
+                  default: return "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300 border-purple-400";
                 }
-                
-                return (
+              };
+              
+              const transformationColorClass = getTransformationColor(transformationType);
+              const isCardOpen = openCardStates[transformationType];
+              
+              if (!palaceName) return (
+                <div 
+                  key={chineseName}
+                  className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-5 shadow-md hover:shadow-lg transition-shadow duration-300 border border-red-200 dark:border-red-800"
+                >
+                  <div className="mb-3">
+                    <span className={`inline-block px-3 py-1.5 text-sm font-semibold rounded-full ${transformationColorClass} mr-2`}>
+                      {chineseName} ({english})
+                    </span>
+                    <span className="text-red-500 dark:text-red-400 font-medium">
+                      Not found in chart
+                    </span>
+                  </div>
+                </div>
+              );
+              
+              // Get transformation info (with fallback if palace name is invalid)
+              const transformationInfo = getTransformationInfo(transformationType, palaceName);
+              
+              // Get keyword and meaning for palace if available
+              let keyword = "";
+              let meaning = "";
+              if (isValidPalaceName(palaceName)) {
+                const keywordValue = FOUR_KEY_PALACE_ANALYSIS_CONSTANTS[palaceName].keyword;
+                keyword = keywordValue !== undefined ? String(keywordValue) : "";
+                meaning = FOUR_KEY_PALACE_ANALYSIS_CONSTANTS[palaceName].meaning || "";
+              }
+              
+              return (
+                <div 
+                  key={chineseName}
+                  className="bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg border border-gray-100 dark:border-gray-700 overflow-hidden"
+                >
+                  {/* Palace name header with transformation tag */}
                   <div 
-                    key={chineseName}
-                    className="bg-white dark:bg-gray-800 rounded-lg p-5 shadow-md hover:shadow-lg transition-shadow duration-300 border border-gray-100 dark:border-gray-700"
+                    className={`cursor-pointer transition-colors duration-200 ${isCardOpen ? "bg-gray-50 dark:bg-gray-750" : ""}`}
+                    onClick={() => toggleCardState(transformationType)}
                   >
-                    {/* Palace name header with transformation tag at bottom right */}
-                    <div className="mb-4 pb-3 border-b border-gray-200 dark:border-gray-700 relative">
-                      <div className="flex justify-between items-start mb-2">
-                        <div>
-                          <h3 className="text-base font-bold text-gray-900 dark:text-white mb-1">
-                            {palaceName}宫
-                          </h3>
-                          {meaning && (
-                            <div className="text-sm text-gray-600 dark:text-gray-400">
-                              {meaning}
-                            </div>
-                          )}
-                        </div>
-                        {keyword && !isNaN(keyword as any) ? null : (
-                          <div className="text-sm font-medium text-purple-600 dark:text-purple-400 ml-2">
-                            {keyword}
-                          </div>
-                        )}
-                      </div>
+                    <div className="flex flex-col p-4">
+                      {/* Palace name prominently displayed */}
+                      <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-1">
+                        {t(palaceName)}
+                      </h3>
                       
-                      {/* Transformation badge positioned at bottom right */}
-                      <div className="absolute bottom-3 right-0">
-                        <span className={`inline-block px-3 py-1.5 text-sm font-semibold rounded-full ${transformationColorClass}`}>
+                      {/* Transformation tag - smaller and less prominent */}
+                      <div className="flex items-center justify-between">
+                        <span className={`inline-block px-2.5 py-1 text-xs font-medium rounded-full ${transformationColorClass}`}>
                           {chineseName} ({english})
                         </span>
+                        
+                        <svg 
+                          className={`w-5 h-5 text-gray-400 transition-transform duration-300 ${isCardOpen ? "transform rotate-180" : ""}`}
+                          fill="none" 
+                          stroke="currentColor" 
+                          viewBox="0 0 24 24" 
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
                       </div>
                     </div>
-                    
-                    {/* Transformation content */}
-                    <div className="space-y-3">
-                      <h4 className="text-lg font-semibold text-gray-800 dark:text-white">
+                  </div>
+                  
+                  {/* Transformation content - collapsible */}
+                  <div 
+                    className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                      isCardOpen 
+                        ? "max-h-96 opacity-100" 
+                        : "max-h-0 opacity-0 p-0"
+                    }`}
+                  >
+                    <div className="p-4 space-y-3 bg-gray-50 dark:bg-gray-750 border-t border-gray-100 dark:border-gray-700">
+                      {meaning && (
+                        <div className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                          {meaning}
+                        </div>
+                      )}
+                      
+                      <h4 className="text-base font-semibold text-gray-800 dark:text-white">
                         {transformationInfo.title}
                       </h4>
                       
-                      <p className="text-base text-gray-600 dark:text-gray-300">
+                      <p className="text-sm text-gray-600 dark:text-gray-300">
                         {transformationInfo.description}
                       </p>
                       
-                      <div className={`italic text-sm text-gray-600 dark:text-gray-400 border-l-3 pl-3 py-1 mt-3 bg-opacity-20 dark:bg-opacity-10 rounded-r ${transformationColorClass}`}>
+                      <div className={`italic text-xs text-gray-600 dark:text-gray-400 border-l-2 pl-3 py-1 mt-2 ${transformationColorClass}`}>
                         &quot;{transformationInfo.quote}&quot;
                       </div>
                     </div>
                   </div>
-                );
-              })}
-            </div>
+                </div>
+              );
+            })}
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 };

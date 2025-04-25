@@ -59,8 +59,7 @@ export const HEAVENLY_STEMS = [
 
 /**
  * ZiWei star position lookup table based on lunar day and five elements
- * Format: [lunar_day][five_elements] = earthly branch
- */
+ * Format: [lunar_day][five_elements] = earthly branch */
 export const ZIWEI_POSITIONS = {
   // First image (top part - days 1-15)
   初一: {

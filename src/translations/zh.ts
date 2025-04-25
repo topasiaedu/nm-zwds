@@ -326,25 +326,29 @@ const zh = {
   
   // Result Page
   result: {
-    loading: "加载星盘中...",
-    chart: "星盘",
-    subtitle: "紫微斗数星盘分析",
-    profileDetails: "档案详情",
-    chartVisualization: "星盘可视化",
-    chartVisualizationPlaceholder: "这是一个占位图。在完整实现中，这里会显示一个互动式紫微斗数星盘。",
+    loading: "正在加载图表...",
+    chart: "命盘",
+    subtitle: "紫微斗数命盘分析",
+    profileDetails: "个人资料详情",
+    chartVisualization: "命盘可视化",
+    chartVisualizationPlaceholder: "这是一个占位符可视化。在完整实现中，这里将显示交互式紫微斗数命盘。",
     shareChart: "分享",
     print: "打印",
-    refreshChart: "刷新星盘",
+    exportPdf: "下载PDF",
+    exportTitle: "紫微斗数命盘分析",
+    generatedOn: "生成于",
+    confidential: "机密报告 - 仅供个人使用",
+    refreshChart: "刷新图表",
     detailedAnalysis: "详细分析",
     keyInsights: "关键洞察",
-    house: "宫位",
-    scrollToView: "滚动以查看整个星盘",
-    pinchToZoom: "捏合以缩放",
-    viewportInstructions: "使用缩放控件和滚动以查看整个星盘",
+    house: "宫",
+    scrollToView: "滚动查看整个图表",
+    pinchToZoom: "捏合缩放",
+    viewportInstructions: "使用缩放控件和滚动查看图表的所有部分",
     fields: {
       relationship: "关系",
       birthPlace: "出生地",
-      generated: "生成日期"
+      generated: "生成"
     },
     insights: {
       lifePath: "人生道路",
