@@ -105,7 +105,6 @@ export function dayOfWeek(year: number, month: number, day: number): number {
  */
 export function getHourBranch(hour: number): number {
   // Log the input
-  console.log("Getting hour branch for hour:", hour);
   
   // Validate hour is a number
   if (typeof hour !== 'number' || isNaN(hour)) {
@@ -132,7 +131,6 @@ export function getHourBranch(hour: number): number {
     branch = 1;
   }
   
-  console.log("Calculated hour branch:", branch);
   return branch;
 }
 

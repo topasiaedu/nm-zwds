@@ -1,11 +1,8 @@
 import React, { useMemo, useState } from "react";
 import { useLanguage } from "../../context/LanguageContext";
-import { 
+import {
   analyzeLifeAreas,
-  getScoreBadgeClasses,
-  getStarTypeBadgeClasses,
-  type ChartDataType,
-  type LifeAreaResult
+  getScoreBadgeClasses, type ChartDataType
 } from "../../utils/zwds/analysis";
 
 /**
@@ -14,6 +11,20 @@ import {
 interface LifeAreasExplanationProps {
   chartData: ChartDataType;
 }
+
+/**
+ * Helper function to normalize star names for translation lookup
+ * This handles potential character variations between data and translations
+ */
+const normalizeStarName = (name: string): string => {
+  // Map of variant characters to their standard form
+  const charMap: Record<string, string> = {
+    "辅": "輔", // Variant of 輔
+  };
+  
+  // Replace any variant characters with their standard form
+  return name.split("").map(char => charMap[char] || char).join("");
+};
 
 /**
  * Component that displays detailed explanations for each life area score
@@ -31,18 +42,41 @@ const LifeAreasExplanation: React.FC<LifeAreasExplanationProps> = ({ chartData }
   }, [chartData, language]);
 
   /**
-   * Get star type label
+   * Get the translation for a star description
    */
-  const getStarTypeLabel = (starType: string): string => {
-    return starType === "main" 
-      ? (t("analysis.mainStar") || "Main Star") 
-      : (t("analysis.minorStar") || "Minor Star");
+  const getStarDescription = (area: string, starName: string, fallback: string): string => {
+    // Try exact match first
+    const exactMatch = t(`analysis.areas.${area}.stars.${starName}.description`);
+    if (exactMatch !== `analysis.areas.${area}.stars.${starName}.description`) {
+      return exactMatch;
+    }
+    
+    // Try normalized name
+    const normalizedName = normalizeStarName(starName);
+    if (normalizedName !== starName) {
+      const normalizedMatch = t(`analysis.areas.${area}.stars.${normalizedName}.description`);
+      if (normalizedMatch !== `analysis.areas.${area}.stars.${normalizedName}.description`) {
+        return normalizedMatch;
+      }
+    }
+    
+    // Return fallback if no translation found
+    return fallback;
+  };
+
+  const getStarName = (area: string, starName: string, fallback: string): string => {
+    // Try exact match first
+    const exactMatch = t(`analysis.areas.${area}.stars.${starName}.name`);
+    if (exactMatch !== `analysis.areas.${area}.stars.${starName}.name`) {
+      return exactMatch;
+    }
+    return fallback;
   };
 
   return (
     <div className="space-y-6">
       <h3 className="text-xl font-bold dark:text-white">
-        {t("analysis.lifeAreasExplanation") || "Life Areas Analysis"}
+        {t("analysis.lifeAreasExplanation")}
       </h3>
 
       {lifeAreaAnalysis.length > 0 ? (
@@ -86,17 +120,19 @@ const LifeAreasExplanation: React.FC<LifeAreasExplanationProps> = ({ chartData }
                     <div key={`${star.name}-${star.starType}`} className="mb-4">
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center gap-2">
-                          <span className="font-medium dark:text-white">{star.name}</span>
-                          <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${getStarTypeBadgeClasses(star.starType)}`}>
-                            {getStarTypeLabel(star.starType)}
-                          </span>
+                          <span className="font-medium dark:text-white">{
+                            language === "en" ? getStarName(area.area, star.name, star.name) : star.name
+                            }</span>
                         </div>
                         <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${getScoreBadgeClasses(star.score)}`}>
                           {star.score}/100
                         </span>
                       </div>
                       <p className="text-gray-600 dark:text-gray-400 text-sm">
-                        {star.description}
+                        {language === "en" 
+                          ? getStarDescription(area.area, star.name, star.description)
+                          : star.description
+                        }
                       </p>
                     </div>
                   ))}
@@ -108,7 +144,7 @@ const LifeAreasExplanation: React.FC<LifeAreasExplanationProps> = ({ chartData }
       ) : (
         <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg text-center">
           <p className="text-gray-500 dark:text-gray-400">
-            {t("analysis.noAnalysisAvailable") || "No analysis data available"}
+            {t("analysis.noAnalysisAvailable")}
           </p>
         </div>
       )}

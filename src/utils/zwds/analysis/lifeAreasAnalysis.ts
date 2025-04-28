@@ -140,7 +140,6 @@ export function calculateLifeAreaScores(chartData: ChartDataType | null | undefi
         const areaConstants = areasConstants[palaceName];
         
         if (areaConstants && areaConstants[starName]) {
-          console.log(`Found ${starType} star ${starName} in ${palaceName} with score ${areaConstants[starName].score}`);
           const score = areaConstants[starName].score;
           areaScores[palaceName].total += score;
           areaScores[palaceName].count++;

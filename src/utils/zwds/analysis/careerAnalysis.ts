@@ -11,8 +11,6 @@ export function analyzeCareer(chartData: any): string[] {
     return [];
   }
 
-  // Log all palace names to help debug
-  console.log("All palace names:", chartData.palaces.map((p: any) => p.name));
 
   // Find the career palace (官禄宫) by name
   // The palace names are assigned in calculator.ts step 5 based on the Life Palace position
@@ -29,7 +27,6 @@ export function analyzeCareer(chartData: any): string[] {
     return [];
   }
 
-  console.log("Found career palace:", careerPalace.name, "with stars:", careerPalace.stars);
 
   // Get all stars in the career palace - check both stars array and mainStar array
   let allStars: string[] = [];

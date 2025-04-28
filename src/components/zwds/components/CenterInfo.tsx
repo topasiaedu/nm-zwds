@@ -1,6 +1,5 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { HiCalendar } from "react-icons/hi";
 import { ChartData } from "../../../utils/zwds/types";
 import { useLanguage } from "../../../context/LanguageContext";
 import { EARTHLY_BRANCHES } from "../../../utils/zwds/constants";
@@ -45,7 +44,7 @@ const CenterInfo: React.FC<CenterInfoProps> = ({ chartData }) => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}>
-          {input.name || "Chart"}
+          {input.name || t("result.chart")}
         </motion.div>
         
         {/* Compact "LABEL: VALUE" layout */}
@@ -54,29 +53,29 @@ const CenterInfo: React.FC<CenterInfoProps> = ({ chartData }) => {
             {/* Solar Birthday */}
             <div className="flex items-start">
               <span className="text-indigo-700 dark:text-indigo-300 font-medium min-w-[85px] sm:min-w-[95px]">
-                {language === "en" && t("zwds.chart.阳历") ? t("zwds.chart.阳历") : "陽曆生日"}:
+                {t("chartInfo.solarDate")}:
               </span>
               <span className="text-zinc-700 dark:text-zinc-200">
-                {input.year}{language === "en" ? " " : "年 "}{input.month}{language === "en" ? " " : "月 "}{input.day}{language === "en" ? "" : "日"} {input.hour}{language === "en" ? "" : "時"}
+                {input.year} {language === "en" ? t("zwds.chart.年") : "年"} {input.month} {language === "en" ? t("zwds.chart.月") : "月"} {input.day} {language === "en" ? t("zwds.chart.日") : "日"} {input.hour} {language === "en" ? t("zwds.chart.时") : "時"}
               </span>
             </div>
             
             {/* Lunar Birthday */}
             <div className="flex items-start">
               <span className="text-indigo-700 dark:text-indigo-300 font-medium min-w-[85px] sm:min-w-[95px]">
-                {language === "en" && t("zwds.chart.阴历") ? t("zwds.chart.阴历") : "農曆生日"}:
+                {t("chartInfo.lunarDate") || t("zwds.chart.阴历")}:
               </span>
               <span className="text-zinc-700 dark:text-zinc-200 flex flex-wrap items-center">
                 <span className="mr-1">
-                  {language === "en" && t(`zwds.stems.${chartData.heavenlyStem}`) ? t(`zwds.stems.${chartData.heavenlyStem}`) : chartData.heavenlyStem}
+                  {t(`zwds.stems.${chartData.heavenlyStem}`)}
                   {language === "en" ? " " : ""}
-                  {language === "en" && t(`zwds.branches.${chartData.earthlyBranch}`) ? t(`zwds.branches.${chartData.earthlyBranch}`) : chartData.earthlyBranch}
-                  {language === "en" ? " Year" : "年"}
+                  {t(`zwds.branches.${chartData.earthlyBranch}`)}
+                  {" "}{language === "en" ? t("zwds.chart.年") : "年"}
                 </span>
                 <span className="mr-1">
                   {chartData.palaces?.find(p => p.annualFlow?.year === input.year)?.annualFlow?.heavenlyStem ?? ""}
-                  {EARTHLY_BRANCHES[chartData.monthBranch] ?? ""}
-                  {language === "en" ? " Month" : "月"}
+                  {t(`zwds.monthBranches.${EARTHLY_BRANCHES[chartData.monthBranch]}`) || ""}
+                  {" "}{language === "en" ? t("zwds.chart.月") : "月"}
                 </span>
                 <span>
                   {(() => {
@@ -84,14 +83,14 @@ const CenterInfo: React.FC<CenterInfoProps> = ({ chartData }) => {
                     const lunarDayStrings = ["初一", "初二", "初三", "初四", "初五", "初六", "初七", "初八", "初九", "初十", 
                                           "十一", "十二", "十三", "十四", "十五", "十六", "十七", "十八", "十九", "二十", 
                                           "廿一", "廿二", "廿三", "廿四", "廿五", "廿六", "廿七", "廿八", "廿九", "三十"];
-                    return lunarDayStrings[lunarDay - 1];
+                    return t(`zwds.lunarDays.${lunarDayStrings[lunarDay - 1]}`) || lunarDayStrings[lunarDay - 1];
                   })()}
+
+                  {" "}{language === "en" ? t("zwds.chart.日") : "日"}
                 </span>
                 <span className="text-zinc-600 dark:text-zinc-300 ml-1">
-                  {language === "en" && ["子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥"][Math.floor(((input.hour + 1) % 24) / 2)]
-                    ? t(`zwds.branches.${["子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥"][Math.floor(((input.hour + 1) % 24) / 2)]}`)
-                    : ["子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥"][Math.floor(((input.hour + 1) % 24) / 2)]}
-                  {language === "en" ? " Hour" : "時"}
+                  {t(`zwds.dayBranches.${["子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥"][Math.floor(((input.hour + 1) % 24) / 2)]}`)}
+                  {" "}{language === "en" ? t("zwds.chart.时") : "時"}
                 </span>
               </span>
             </div>
@@ -99,54 +98,56 @@ const CenterInfo: React.FC<CenterInfoProps> = ({ chartData }) => {
             {/* Five Elements */}
             <div className="flex items-start">
               <span className="text-indigo-700 dark:text-indigo-300 font-medium min-w-[85px] sm:min-w-[95px]">
-                {language === "en" && t("zwds.chart.五行") ? t("zwds.chart.五行") : "五行"}:
+                {t("chartInfo.fiveElement") || t("zwds.chart.五行")}:
               </span>
               <span className="text-zinc-700 dark:text-zinc-200">
-                {language === "en" && chartData.fiveElements && t(`zwds.fiveElements.${chartData.fiveElements}`) 
-                  ? t(`zwds.fiveElements.${chartData.fiveElements}`) 
-                  : chartData.fiveElements}
+                {chartData.fiveElements ? t(`zwds.fiveElements.${chartData.fiveElements}`) : ""}
               </span>
             </div>
             
             {/* Gender */}
             <div className="flex items-start">
               <span className="text-indigo-700 dark:text-indigo-300 font-medium min-w-[85px] sm:min-w-[95px]">
-                {language === "en" ? "Gender" : "性別"}:
+                {t("chartInfo.gender")}:
               </span>
               <span className="text-zinc-700 dark:text-zinc-200">
                 {language === "en" 
-                  ? (input.gender === "female" ? "Female" : "Male") 
-                  : (chartData.yinYang === "Yin" ? "陰" : "陽") + (input.gender === "female" ? "女" : "男")}
+                  ? t(`myChart.fields.${input.gender === "female" ? "female" : "male"}`)
+                  : (chartData.yinYang === "Yin" ? t("zwds.chart.陰") || "陰" : t("zwds.chart.陽") || "陽") + 
+                    (input.gender === "female" ? t("zwds.chart.女") || "女" : t("zwds.chart.男") || "男")}
               </span>
             </div>
             
             {/* Age */}
             <div className="flex items-start">
               <span className="text-indigo-700 dark:text-indigo-300 font-medium min-w-[85px] sm:min-w-[95px]">
-                {language === "en" ? "Age" : "年齡"}:
+                {t("zwds.chart.age") || (language === "en" ? "Age" : "年齡")}:
               </span>
               <span className="text-zinc-700 dark:text-zinc-200">
-                {new Date().getFullYear() - input.year}{language === "en" ? "" : "歲"}
+                {new Date().getFullYear() - input.year}{language === "en" ? "" : (t("zwds.chart.歲") || "歲")}
               </span>
             </div>
             
             {/* Chinese Zodiac */}
             <div className="flex items-start">
               <span className="text-indigo-700 dark:text-indigo-300 font-medium min-w-[85px] sm:min-w-[95px]">
-                {language === "en" ? "Chinese Zodiac" : "生肖"}:
+                {t("chartInfo.shengXiao") || t("zwds.chart.生肖")}:
               </span>
               <span className="flex items-center text-zinc-700 dark:text-zinc-200">
                 <span className="text-lg mr-1">
                   {["🐭","🐂","🐯","🐰","🐲","🐍","🐴","🐑","🐵","🐔","🐶","🐷"][(input.year - 4) % 12]}
                 </span>
-                {["鼠","牛","虎","兔","龍","蛇","馬","羊","猴","雞","狗","豬"][(input.year - 4) % 12]}
+                {language === "en" 
+                  ? t(`zwds.zodiac.${["rat","ox","tiger","rabbit","dragon","snake","horse","sheep","monkey","rooster","dog","pig"][(input.year - 4) % 12]}`) 
+                  : (t(`zwds.zodiac.${["鼠","牛","虎","兔","龍","蛇","馬","羊","猴","雞","狗","豬"][(input.year - 4) % 12]}`) || 
+                    ["鼠","牛","虎","兔","龍","蛇","馬","羊","猴","雞","狗","豬"][(input.year - 4) % 12])}
               </span>
             </div>
             
             {/* Western Zodiac */}
             <div className="flex items-start">
               <span className="text-indigo-700 dark:text-indigo-300 font-medium min-w-[85px] sm:min-w-[95px]">
-                {language === "en" ? "Western Zodiac" : "星座"}:
+                {t("zwds.chart.westernZodiac") || (language === "en" ? "Western Zodiac" : "星座")}:
               </span>
               <span className="flex items-center text-zinc-700 dark:text-zinc-200">
                 <span className="text-lg mr-1">
@@ -182,30 +183,48 @@ const CenterInfo: React.FC<CenterInfoProps> = ({ chartData }) => {
                 {(() => {
                   const month = input.month;
                   const day = input.day;
-                  
-                  if ((month === 3 && day >= 21) || (month === 4 && day <= 19))
-                    return "白羊座";
-                  if ((month === 4 && day >= 20) || (month === 5 && day <= 20))
-                    return "金牛座";
-                  if ((month === 5 && day >= 21) || (month === 6 && day <= 21))
-                    return "雙子座";
-                  if ((month === 6 && day >= 22) || (month === 7 && day <= 22))
-                    return "巨蟹座";
-                  if ((month === 7 && day >= 23) || (month === 8 && day <= 22))
-                    return "獅子座";
-                  if ((month === 8 && day >= 23) || (month === 9 && day <= 22))
-                    return "處女座";
-                  if ((month === 9 && day >= 23) || (month === 10 && day <= 23))
-                    return "天秤座";
-                  if ((month === 10 && day >= 24) || (month === 11 && day <= 22))
-                    return "天蠍座";
-                  if ((month === 11 && day >= 23) || (month === 12 && day <= 21))
-                    return "射手座";
-                  if ((month === 12 && day >= 22) || (month === 1 && day <= 19))
-                    return "摩羯座";
-                  if ((month === 1 && day >= 20) || (month === 2 && day <= 18))
-                    return "水瓶座";
-                  return "雙魚座"; // Feb 19 - Mar 20
+                  const zodiacKey = (() => {
+                    if ((month === 3 && day >= 21) || (month === 4 && day <= 19))
+                      return "aries";
+                    if ((month === 4 && day >= 20) || (month === 5 && day <= 20))
+                      return "taurus";
+                    if ((month === 5 && day >= 21) || (month === 6 && day <= 21))
+                      return "gemini";
+                    if ((month === 6 && day >= 22) || (month === 7 && day <= 22))
+                      return "cancer";
+                    if ((month === 7 && day >= 23) || (month === 8 && day <= 22))
+                      return "leo";
+                    if ((month === 8 && day >= 23) || (month === 9 && day <= 22))
+                      return "virgo";
+                    if ((month === 9 && day >= 23) || (month === 10 && day <= 23))
+                      return "libra";
+                    if ((month === 10 && day >= 24) || (month === 11 && day <= 22))
+                      return "scorpio";
+                    if ((month === 11 && day >= 23) || (month === 12 && day <= 21))
+                      return "sagittarius";
+                    if ((month === 12 && day >= 22) || (month === 1 && day <= 19))
+                      return "capricorn";
+                    if ((month === 1 && day >= 20) || (month === 2 && day <= 18))
+                      return "aquarius";
+                    return "pisces"; // Feb 19 - Mar 20
+                  })();
+
+                  const zodiacNames = {
+                    "aries": "白羊座",
+                    "taurus": "金牛座",
+                    "gemini": "雙子座",
+                    "cancer": "巨蟹座",
+                    "leo": "獅子座",
+                    "virgo": "處女座",
+                    "libra": "天秤座",
+                    "scorpio": "天蠍座",
+                    "sagittarius": "射手座",
+                    "capricorn": "摩羯座",
+                    "aquarius": "水瓶座",
+                    "pisces": "雙魚座"
+                  };
+
+                  return t(`zwds.westernZodiac.${zodiacKey}`) || zodiacNames[zodiacKey];
                 })()}
               </span>
             </div>

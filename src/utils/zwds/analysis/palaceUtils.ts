@@ -39,8 +39,6 @@ export function getStarsInPalace(chartData: any, palaceName: string): StarPositi
     return [];
   }
 
-  // Log all palace names to help debug
-  console.log("All palace names:", chartData.palaces.map((p: any) => p.name));
 
   // Be more flexible with palace name matching
   let palace: Palace | undefined;
@@ -74,7 +72,6 @@ export function getStarsInPalace(chartData: any, palaceName: string): StarPositi
     return [];
   }
 
-  console.log(`Found palace for ${palaceName}:`, palace.name);
   
   // Collect all stars from various star collections in the palace
   let allStars: StarPosition[] = [];
@@ -124,9 +121,6 @@ export function getStarsInPalace(chartData: any, palaceName: string): StarPositi
   
   if (allStars.length === 0) {
     console.log(`getStarsInPalace: No stars found in palace ${palaceName}`);
-  } else {
-    console.log(`Found ${allStars.length} stars in palace ${palaceName}:`, 
-      allStars.map(s => s.star).join(', '));
   }
   
   return allStars;

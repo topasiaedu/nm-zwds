@@ -237,19 +237,15 @@ const HealthAnalysis: React.FC<HealthAnalysisProps> = ({ chartData }) => {
   useEffect(() => {
     if (chartData) {
       try {
-        console.log("HealthAnalysis: Processing chart data", chartData);
         
         // Get affected body parts
         const bodyParts = analyzeHealth(chartData);
-        console.log("Affected body parts found:", bodyParts);
         
         // Get stars in the health palace
         const stars = getStarsInPalace(chartData, "疾厄");
-        console.log("Stars in health palace:", stars);
         
         // Check if we have any data
         if (bodyParts.length === 0 && stars.length === 0) {
-          console.log("No health data found, using fallback sample data for testing");
           
           // Use sample data for testing if no real data is available
           setAffectedBodyParts([

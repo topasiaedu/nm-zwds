@@ -41,7 +41,6 @@ export class ZWDSCalculator {
    * Initialize the chart data structure
    */
   private initializeChartData(): ChartData {
-    console.log("Initializing chart data with input:", this.input);
 
     // Create a default ChartData structure with properly assigned earthly branches
     // The earthly branches have a fixed position pattern:
@@ -365,7 +364,7 @@ export class ZWDSCalculator {
     // Get the Life Palace position
     const lifePalacePos = this.chartData.lifePalace - 1; // Convert to 0-based index
     const lifePalace = this.chartData.palaces[lifePalacePos];
-    console.log("Life Palace:", lifePalace);
+
     // Get the Heavenly Stem and Earthly Branch of the Life Palace
     const heavenlyStem = lifePalace.heavenlyStem;
     const earthlyBranch = lifePalace.earthlyBranch;
@@ -733,14 +732,12 @@ export class ZWDSCalculator {
       (gender === "male" && yinYang === "Yang") ||
       (gender === "female" && yinYang === "Yin");
 
-      console.log("isClockwise", isClockwise);
 
     // Calculate major limits for each palace
     for (let i = 0; i < 12; i++) {
   // Move backwards manually
   const palaceIndex = (lifePalace - 1 - i + 12) % 12;
   const palace = this.chartData.palaces[palaceIndex];
-  console.log("palaceIndex", palaceIndex);
 
   // Calculate age range
   const ageOffset = i * 10;

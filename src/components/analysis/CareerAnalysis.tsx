@@ -50,19 +50,15 @@ const CareerAnalysis: React.FC<CareerAnalysisProps> = ({ chartData }) => {
   useEffect(() => {
     if (chartData) {
       try {
-        console.log("CareerAnalysis: Processing chart data", chartData);
         
         // Get career aptitudes
         const aptitudes = analyzeCareer(chartData);
-        console.log("Career aptitudes found:", aptitudes);
         
         // Get stars in the career palace
         const stars = getStarsInPalace(chartData, "官禄");
-        console.log("Stars in career palace:", stars);
         
         // Check if we have any data
         if (aptitudes.length === 0 && stars.length === 0) {
-          console.log("No career data found, using fallback sample data for testing");
           
           // Use sample data for testing if no real data is available
           setCareerAptitudes([

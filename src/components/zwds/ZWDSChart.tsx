@@ -46,7 +46,7 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
   const { starRefs, palaceRefs, refsReady, setRefsReady, registerStarRef } = useStarRefs(chartData, selectedPalace);
   const { calculateTransformations, getTargetPalaces } = useTransformations(chartData, selectedPalace);
 
-  console.log("ChartData", chartData);
+  // console.log("ChartData", chartData);
 
   // Update window size when resized
   useEffect(() => {

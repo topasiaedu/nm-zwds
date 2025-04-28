@@ -36,7 +36,6 @@ const StarryBackground: React.FC = () => {
    * Initialize stars with random positions, sizes, directions and speeds
    */
   const initStars = (count: number): Star[] => {
-    console.log("StarryBackground: Initializing", count, "stars");
     const newStars: Star[] = [];
     for (let i = 0; i < count; i++) {
       // Use more subtle opacity values
@@ -149,16 +148,13 @@ const StarryBackground: React.FC = () => {
    */
   const startAnimation = (): void => {
     if (animationPaused.current) {
-      console.log("StarryBackground: Animation is paused, not starting");
       return;
     }
     
     if (animationRef.current) {
-      console.log("StarryBackground: Animation already running, not starting a new one");
       return;
     }
     
-    console.log("StarryBackground: Starting animation");
     isRunning.current = false; // Reset this to ensure animate() will run
     animationRef.current = requestAnimationFrame(animate);
   };
@@ -168,7 +164,6 @@ const StarryBackground: React.FC = () => {
    */
   const stopAnimation = (): void => {
     if (animationRef.current) {
-      console.log("StarryBackground: Stopping animation");
       cancelAnimationFrame(animationRef.current);
       animationRef.current = 0;
     }
@@ -178,7 +173,6 @@ const StarryBackground: React.FC = () => {
    * Pause the animation (when page is not visible)
    */
   const pauseAnimation = (): void => {
-    console.log("StarryBackground: Pausing animation (page hidden)");
     animationPaused.current = true;
     stopAnimation();
   };
@@ -187,7 +181,6 @@ const StarryBackground: React.FC = () => {
    * Resume the animation (when page becomes visible again)
    */
   const resumeAnimation = (): void => {
-    console.log("StarryBackground: Resuming animation (page visible)");
     animationPaused.current = false;
     startAnimation();
   };
@@ -215,7 +208,6 @@ const StarryBackground: React.FC = () => {
     
     const canvas = canvasRef.current;
     if (!canvas) {
-      console.warn("StarryBackground: Canvas reference is null, skipping animation frame");
       isRunning.current = false;
       animationRef.current = requestAnimationFrame(animate);
       return;
@@ -223,7 +215,6 @@ const StarryBackground: React.FC = () => {
     
     const ctx = canvas.getContext("2d");
     if (!ctx) {
-      console.warn("StarryBackground: Could not get 2D context from canvas");
       isRunning.current = false;
       animationRef.current = requestAnimationFrame(animate);
       return;
@@ -231,7 +222,6 @@ const StarryBackground: React.FC = () => {
     
     // Check if canvas dimensions match window (if not, resize it)
     if (canvas.width !== window.innerWidth || canvas.height !== window.innerHeight) {
-      console.log("StarryBackground: Canvas size doesn't match window, resizing");
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
     }
@@ -298,7 +288,6 @@ const StarryBackground: React.FC = () => {
    * Set up canvas and stars, start animation
    */
   useEffect(() => {
-    console.log("StarryBackground: Component mounted");
     
     const canvas = canvasRef.current;
     if (!canvas) {
@@ -316,7 +305,6 @@ const StarryBackground: React.FC = () => {
     
     // Listen for theme changes
     const handleThemeChange = (e: MediaQueryListEvent): void => {
-      console.log("StarryBackground: Theme changed via media query");
       isDarkMode.current = e.matches;
     };
     
@@ -328,7 +316,6 @@ const StarryBackground: React.FC = () => {
         if (mutation.attributeName === "class") {
           const newIsDarkMode = document.documentElement.classList.contains("dark");
           if (isDarkMode.current !== newIsDarkMode) {
-            console.log("StarryBackground: Theme changed via class change");
             isDarkMode.current = newIsDarkMode;
           }
         }
@@ -377,7 +364,6 @@ const StarryBackground: React.FC = () => {
     const handleResize = (): void => {
       if (!canvas) return;
       
-      console.log("StarryBackground: Window resized");
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
       
@@ -406,7 +392,6 @@ const StarryBackground: React.FC = () => {
     // Ensure animation continues even if there's a momentary hiccup
     const intervalCheck = setInterval(() => {
       if (!animationRef.current && !animationPaused.current) {
-        console.log("StarryBackground: Animation not running, restarting");
         startAnimation();
       }
     }, 2000);
@@ -416,12 +401,10 @@ const StarryBackground: React.FC = () => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
           if (animationPaused.current) {
-            console.log("StarryBackground: Canvas back in view, resuming animation");
             resumeAnimation();
           }
         } else {
           if (!animationPaused.current) {
-            console.log("StarryBackground: Canvas out of view, pausing animation");
             pauseAnimation();
           }
         }
@@ -432,7 +415,6 @@ const StarryBackground: React.FC = () => {
     
     // Cleanup function
     return () => {
-      console.log("StarryBackground: Component unmounting");
       stopAnimation();
       
       if (resizeTimeout) {

@@ -351,7 +351,6 @@ const Result: React.FC = () => {
   useEffect(() => {
     if (chartData) {
       try {
-        console.log("Original birthDate:", chartData.birthDate);
 
         // Convert birth time to 24-hour format
         const timeMatch = chartData.birthTime.match(/(\d+):(\d+)\s*(AM|PM)?/i);
@@ -391,7 +390,6 @@ const Result: React.FC = () => {
         const month = dateObj.getMonth() + 1; // JavaScript months are 0-indexed
         const day = dateObj.getDate();
 
-        console.log("Parsed date:", year, month, day);
 
         // Create chart input
         const chartInput: ChartInput = {
@@ -403,7 +401,6 @@ const Result: React.FC = () => {
           name: chartData.name,
         };
 
-        console.log("Chart input:", chartInput);
 
         // Calculate chart
         const calculator = new ZWDSCalculator(chartInput);
@@ -954,7 +951,7 @@ const Result: React.FC = () => {
               <CareerAnalysis chartData={calculatedChartData} />
               
               {/* Health Analysis */}
-              <HealthAnalysis chartData={calculatedChartData} />
+              {/* <HealthAnalysis chartData={calculatedChartData} /> */}
             </div>
           </div>
         )}

@@ -1,17 +1,18 @@
 import fourKeyPalace from "./fourKeyPalace";
-
-// In the future, we can import other analysis-related translations here
-// import career from "./career";
-// import health from "./health";
-// etc.
+import lifeAreas from "./lifeAreas";
+import career from "./career";
+import health from "./health";
 
 const analysis = {
-  title: "Analysis",
-  // Combine all analysis-related translations
-  ...fourKeyPalace,
-  // ...career,
-  // ...health,
-  // etc.
+  analysis: {
+    title: "Analysis",
+    // Combine all analysis-related translations
+    ...fourKeyPalace,
+    ...lifeAreas,
+    ...career,
+    ...health,
+    // etc.
+  },
 };
 
-export default analysis; 
+export default analysis;

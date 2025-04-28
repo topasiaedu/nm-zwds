@@ -147,15 +147,6 @@ const FourKeyPalaceAnalysis: React.FC<FourKeyPalaceAnalysisProps> = ({ chartData
     return tSafe(meaningKey, fallback);
   };
 
-  /**
-   * Get a translated palace keyword if available
-   */
-  const getPalaceKeyword = (palaceName: string): string => {
-    const keywordKey = `analysis.fourKeyPalaceContent.${palaceName}.keyword`;
-    const fallback = getPalaceKeywordFromConstants(palaceName);
-    
-    return tSafe(keywordKey, fallback);
-  };
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden transition-all duration-300">
@@ -239,11 +230,11 @@ const FourKeyPalaceAnalysis: React.FC<FourKeyPalaceAnalysisProps> = ({ chartData
                         <div className="flex flex-col space-y-2">
                           <div className="flex items-center space-x-2">
                             <h3 className="text-xl font-bold text-gray-900 dark:text-white">
-                              {tSafe(`analysis.fourKeyPalaceContent.${palaceName}`, palaceName)}
+                              {tSafe(`analysis.fourKeyPalaceContent.${palaceName}.name`, palaceName)}
                             </h3>
                             
                             <span className={`inline-block px-2.5 py-1 text-xs font-medium rounded-full ${transformationColorClass}`}>
-                              {tSafe(`analysis.fourKeyPalaceContent.${transformationType}`, transformationType)} ({englishTransformation})
+                              {tSafe(`analysis.fourKeyPalaceContent.${transformationType}`, transformationType)} 
                             </span>
                           </div>
                           

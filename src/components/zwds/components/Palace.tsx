@@ -322,7 +322,7 @@ const Palace: React.FC<PalaceProps> = ({
             {palace.mainStar.map((star, starIndex) => (
               <>
                 <div
-                  key={starIndex}
+                  key={starIndex + star.name}
                   className={`mb-0.5 ${
                     isSelected
                       ? "text-white dark:text-white font-semibold"

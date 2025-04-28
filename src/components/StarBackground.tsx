@@ -128,7 +128,6 @@ const StarBackground: React.FC = () => {
   };
 
   useEffect(() => {
-    console.log("StarBackground mounted");
     
     // Initial setup with a short delay to ensure DOM is ready
     setTimeout(() => {
@@ -144,7 +143,6 @@ const StarBackground: React.FC = () => {
 
     // Cleanup
     return () => {
-      console.log("StarBackground unmounted");
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
       }
