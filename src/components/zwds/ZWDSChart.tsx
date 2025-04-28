@@ -8,12 +8,14 @@ import useTransformations from "./hooks/useTransformations";
 import Palace from "./components/Palace";
 import CenterInfo from "./components/CenterInfo";
 import TransformationLines from "./components/TransformationLines";
+import { useLanguage } from "../../context/LanguageContext";
 
 // Breakpoint constants - matching TailwindCSS defaults
 const SCREEN_SM = 640;
 
 // Palace tags in clockwise order starting from the selected palace
 const PALACE_TAGS = ["大命", "大兄", "大夫", "大子", "大财", "大疾", "大迁", "大友", "大官", "大田", "大福", "大父"];
+const PALACE_TAGS_EN = ["Da Ming", "Da Xiong", "Da Fu", "Da Zi", "Da Cai", "Da Ji", "Da Qian", "Da You", "Da Guan", "Da Tian", "Da Fu", "Da Fu"];
 
 interface ZWDSChartProps {
   chartData: ChartData;
@@ -29,6 +31,7 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
 }) => {
   // State to track the selected palace
   const [selectedPalace, setSelectedPalace] = useState<number | null>(null);
+  const { language } = useLanguage();
   
   // Reference to the chart container
   const chartRef = useRef<HTMLDivElement>(null);
@@ -69,18 +72,20 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
   const getPalaceTag = (palaceNumber: number): { tag: string | null; delay: number } => {
     if (!selectedPalace) return { tag: null, delay: 0 };
     
-    // Calculate the index in the PALACE_TAGS array
-    let tagIndex = (palaceNumber - selectedPalace) % 12;
-    // Handle negative indices by adding 12
+    // Calculate the reversed index in the PALACE_TAGS array
+    let tagIndex = (selectedPalace - palaceNumber) % 12;
     if (tagIndex < 0) tagIndex += 12;
+  
+    // Now invert the tagIndex to actually go backwards through PALACE_TAGS
+    const reversedIndex = (12 - tagIndex) % 12;
     
-    // Return tag with delay that increases with distance from the selected palace
-    // This creates a clockwise animation effect
     return { 
-      tag: PALACE_TAGS[tagIndex],
-      delay: tagIndex * 0.05 // 50ms delay between each palace
+      tag: language === "en" ? PALACE_TAGS_EN[reversedIndex] : PALACE_TAGS[reversedIndex],
+      delay: tagIndex * 0.05 // delay still based on distance
     };
   };
+  
+  
 
   /**
    * Animation variants for different elements

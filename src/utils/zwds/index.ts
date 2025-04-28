@@ -8,6 +8,7 @@ export * from "./types";
 export * from "./calculator";
 export * from "./utils";
 export * from "./constants";
+export * from "./analysis";
 
 /**
  * Create a new Zi Wei Dou Shu calculator instance

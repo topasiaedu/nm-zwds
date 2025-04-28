@@ -1,136 +1,31 @@
 import React, { useMemo } from "react";
 import { ResponsiveRadar } from "@nivo/radar";
 import { useLanguage } from "../../context/LanguageContext";
-import { AREAS_OF_LIFE_ANALYSIS_CONSTANTS } from "../../utils/zwds/analysis_constants";
-
-/**
- * Star analysis data structure
- */
-interface StarAnalysis {
-  score: number;
-  description: string;
-}
-
-/**
- * Area analysis data structure with stars
- */
-interface AreaAnalysis {
-  [starName: string]: StarAnalysis;
-}
-
-/**
- * Complete life areas analysis constants structure
- */
-type LifeAreasConstants = {
-  [areaName: string]: AreaAnalysis;
-};
-
-/**
- * Interface for radar chart data point
- * Includes an index signature to allow dynamic property access
- */
-interface RadarDataPoint {
-  area: string;
-  score: number;
-  originalName: string;
-  [key: string]: string | number; // Add index signature for string keys
-}
+import { 
+  calculateLifeAreaScores, 
+  type ChartDataType, 
+  type RadarDataPoint 
+} from "../../utils/zwds/analysis";
 
 /**
  * Interface for props accepted by LifeAreasRadarChart component
  */
 interface LifeAreasRadarChartProps {
-  chartData: any;
+  chartData: ChartDataType;
 }
 
 /**
  * Component that displays a radar chart of life areas analysis scores
- * based on the calculated chart data and AREAS_OF_LIFE_ANALYSIS_CONSTANTS
+ * based on the calculated chart data
  */
 const LifeAreasRadarChart: React.FC<LifeAreasRadarChartProps> = ({ chartData }) => {
   const { t, language } = useLanguage();
 
   /**
-   * Calculate average scores for each life area
-   * by finding the main and minor stars in each palace and getting their scores
+   * Calculate average scores for each life area using the utility function
    */
   const lifeAreaScores = useMemo(() => {
-    if (!chartData || !chartData.palaces) {
-      return [];
-    }
-
-    // Map original palace names to user-friendly names
-    // Both English and simplified Chinese versions for better understanding
-    const palaceNameMap: Record<string, { en: string; zh: string }> = {
-      "财帛": { en: "Wealth", zh: "财运" },
-      "官禄": { en: "Career", zh: "事业" },
-      "疾厄": { en: "Health", zh: "健康" },
-      "夫妻": { en: "Love", zh: "爱情" },
-      "交友": { en: "Friend", zh: "朋友" }
-    };
-
-    // Track scores for each life area
-    const areaScores: Record<string, { total: number; count: number }> = {};
-    
-    // Cast constants to proper type for TypeScript
-    const areasConstants = AREAS_OF_LIFE_ANALYSIS_CONSTANTS as LifeAreasConstants;
-    
-    // Initialize area scores
-    Object.keys(areasConstants).forEach(area => {
-      areaScores[area] = { total: 0, count: 0 };
-    });
-
-    // Process each palace to find stars and their scores
-    chartData.palaces.forEach((palace: any) => {
-      const palaceName = palace.name;
-      
-      // Skip palaces that are not in our analysis constants
-      if (!areasConstants[palaceName]) {
-        return;
-      }
-      
-      // Create a helper function to process stars
-      const processStars = (stars: any[] | undefined, starType: string) => {
-        if (!stars || stars.length === 0) return;
-        
-        stars.forEach((star) => {
-          const starName = star.name;
-          const areaConstants = areasConstants[palaceName];
-          
-          if (areaConstants && areaConstants[starName]) {
-            console.log(`Found ${starType} star ${starName} in ${palaceName} with score ${areaConstants[starName].score}`);
-            const score = areaConstants[starName].score;
-            areaScores[palaceName].total += score;
-            areaScores[palaceName].count++;
-          }
-        });
-      };
-      
-      // Process main stars
-      processStars(palace.mainStar, "main");
-      
-      // Process minor stars
-      processStars(palace.minorStars, "minor");
-    });
-
-    // Calculate average scores and format data for the radar chart
-    return Object.keys(areaScores).map(area => {
-      const { total, count } = areaScores[area];
-      const averageScore = count > 0 ? Math.round(total / count) : 0;
-      
-      // Get the user-friendly name based on language
-      const displayName = language === "zh" 
-        ? palaceNameMap[area]?.zh || area 
-        : palaceNameMap[area]?.en || area;
-      
-      return {
-        area: displayName,
-        score: averageScore,
-        originalName: area,
-        // Add a formatted label that includes the score
-        [`${displayName}`]: averageScore
-      } as RadarDataPoint;
-    });
+    return calculateLifeAreaScores(chartData, language);
   }, [chartData, language]);
 
   /**

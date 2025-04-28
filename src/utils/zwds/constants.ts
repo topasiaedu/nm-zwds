@@ -419,7 +419,7 @@ export const FOUR_TRANSFORMATIONS: {
   };
 } = {
   甲: {
-    祿: "廉貞", // 化科 goes to 廉貞
+    祿: "廉贞", // 化科 goes to 廉贞
     權: "破軍", // 化權 goes to 破軍
     科: "武曲", // 化祿 goes to 武曲
     忌: "太阳", // 化忌 goes to 太阳
@@ -434,7 +434,7 @@ export const FOUR_TRANSFORMATIONS: {
     祿: "天同",
     權: "天机",
     科: "文昌",
-    忌: "廉貞",
+    忌: "廉贞",
   },
   丁: {
     祿: "太阴",
@@ -692,7 +692,7 @@ export const MAIN_STARS_TABLE = {
     卯: ["太阴"],
     辰: ["贪狼"],
     巳: ["巨门"],
-    午: ["天相", "廉貞"],
+    午: ["天相", "廉贞"],
     未: ["天梁"],
     申: ["七杀"],
     酉: ["天同"],
@@ -956,7 +956,7 @@ export const ZIWEI_2025_READING = {
       originalPalace: 4,
       mainStar: [
         {
-          name: "廉貞",
+          name: "廉贞",
           brightness: "bright",
           palace: 4,
           isTransformed: false,

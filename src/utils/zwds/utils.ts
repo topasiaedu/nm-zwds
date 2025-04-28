@@ -1,3 +1,5 @@
+import { solar2lunar } from 'solarlunar';
+
 /**
  * Utility functions for Zi Wei Dou Shu calculations
  */
@@ -135,57 +137,30 @@ export function getHourBranch(hour: number): number {
 }
 
 /**
- * Convert a solar date to lunar day string (e.g., "初七")
- * @param year Solar year
+ * Convert a solar (Gregorian) date to a lunar day string (e.g., "初一", "初二", etc.)
+ * @param year Solar year (e.g., 2024)
  * @param month Solar month (1-12)
  * @param day Solar day
  * @returns Lunar day string (e.g., "初一", "初二", etc.)
  */
 export function getLunarDayFromBirthday(year: number, month: number, day: number): string {
-  console.log(`Converting solar date ${year}-${month}-${day} to lunar day`);
-  
-  // For demonstration, this is a simplified conversion for Dec 1999
-  // In reality, this would require a proper lunar calendar conversion algorithm or API
-  // This is just to handle the specific case mentioned (Dec 14, 1999 -> 初七)
-  
-  // For December 1999 specifically:
-  if (year === 1999 && month === 12) {
-    // December 1999 lunar mapping (simplified example)
-    const decemberMap: Record<number, string> = {
-      8: "初一", // Dec 8, 1999 was lunar 1st day
-      9: "初二",
-      10: "初三",
-      11: "初四",
-      12: "初五",
-      13: "初六",
-      14: "初七", // Dec 14, 1999 was lunar 7th day
-      15: "初八",
-      16: "初九",
-      17: "初十",
-      18: "十一",
-      19: "十二",
-      20: "十三",
-      21: "十四",
-      22: "十五", // Full moon
-      // and so on...
-    };
+  const lunarInfo = solar2lunar(year, month, day);
 
-    const lunarDay = decemberMap[day];
-    if (lunarDay) {
-      console.log(`Solar date ${year}-${month}-${day} corresponds to lunar day ${lunarDay}`);
-      return lunarDay;
-    }
+  if (!lunarInfo || !lunarInfo.lDay) {
+    console.warn(`Failed to convert solar date ${year}-${month}-${day}`);
+    return "未知";
   }
 
-  // For other dates, we would need a more comprehensive solution
-  // For now, we'll use a simplistic approach to get something working
-  
-  // Get a simplified lunar day by using modulo 30 (approximate lunar month length)
-  // Note: This is NOT accurate for real calculations!
-  const simplifiedLunarDay = (day % 30) || 30;
-  
-  // Convert the simplified lunar day to the proper format
-  return getLunarDayString(simplifiedLunarDay);
+  // Lunar day names mapping
+  const lunarDayMap: string[] = [
+    "", "初一", "初二", "初三", "初四", "初五", "初六", "初七", "初八", "初九", "初十",
+    "十一", "十二", "十三", "十四", "十五", "十六", "十七", "十八", "十九", "二十",
+    "廿一", "廿二", "廿三", "廿四", "廿五", "廿六", "廿七", "廿八", "廿九", "三十"
+  ];
+
+  const lunarDay = lunarDayMap[lunarInfo.lDay];
+
+  return lunarDay || "未知";
 }
 
 /**

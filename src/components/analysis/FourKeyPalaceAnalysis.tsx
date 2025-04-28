@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useLanguage } from "../../context/LanguageContext";
-import { FOUR_KEY_PALACE_ANALYSIS_CONSTANTS } from "../../utils/zwds/analysis_constants";
-
-/**
- * Types for accessing the four key palace analysis data
- */
-type PalaceName = keyof typeof FOUR_KEY_PALACE_ANALYSIS_CONSTANTS;
-type TransformationType = "化禄" | "化权" | "化科" | "化忌";
-type TransformationKey = "HuaLu" | "HuaQuan" | "HuaKe" | "HuaJi";
+import {
+  analyzeFourKeyPalaces,
+  getConstantTransformationInfo,
+  getPalaceMeaningFromConstants,
+  getPalaceKeywordFromConstants, transformationTypes,
+  type TransformationType
+} from "../../utils/zwds/analysis";
 
 /**
  * Props interface for the FourKeyPalaceAnalysis component
@@ -30,143 +29,101 @@ const FourKeyPalaceAnalysis: React.FC<FourKeyPalaceAnalysisProps> = ({ chartData
   });
   const [transformationPalaces, setTransformationPalaces] = useState<Record<string, string>>({});
 
-  // The four transformations in Chinese (both simplified and traditional) and their English equivalents
-  const transformationTypes: Record<TransformationType, { key: TransformationKey, english: string }> = {
-    "化禄": { key: "HuaLu", english: "Prosperity" },
-    "化权": { key: "HuaQuan", english: "Power" },
-    "化科": { key: "HuaKe", english: "Achievement" },
-    "化忌": { key: "HuaJi", english: "Obstacle" }
+  // Function to format template strings with placeholders
+  const formatString = (template: string, ...args: string[]): string => {
+    return args.reduce(
+      (result, arg, i) => result.replace(new RegExp(`\\{${i}\\}`, "g"), arg),
+      template
+    );
   };
 
-  // Mapping between traditional and simplified Chinese characters for transformations
-  const traditionToSimplified: Record<string, string> = {
-    "化祿": "化禄",
-    "化權": "化权",
-    "化科": "化科", // Same in both
-    "化忌": "化忌"  // Same in both
+  // Function to safely get a translation with a fallback value
+  const tSafe = (key: string, fallback: string = ""): string => {
+    const translation = t(key);
+    // If the translation key is returned unchanged, it means the translation wasn't found
+    return translation === key ? fallback : translation;
   };
 
-  // Mapping for traditional to simplified Chinese palace names
-  const palaceNameMapping: Record<string, string> = {
-    // Traditional to simplified
-    "命宮": "命宫",
-    "兄弟宮": "兄弟宫",
-    "夫妻宮": "夫妻宫",
-    "子女宮": "子女宫",
-    "財帛宮": "财帛宫",
-    "疾厄宮": "疾厄宫",
-    "遷移宮": "迁移宫",
-    "交友宮": "交友宫",
-    "官祿宮": "官禄宫",
-    "田宅宮": "田宅宫",
-    "福德宮": "福德宫",
-    "父母宮": "父母宫",
-    // Add any other mappings that might be needed
-  };
-
-  // User-friendly names for Chinese palaces
-  const userFriendlyPalaceNames: Record<string, { zh: string, en: string }> = {
-    "命宫": { zh: "命运", en: "Destiny" },
-    "兄弟宫": { zh: "兄弟姐妹", en: "Siblings" },
-    "夫妻宫": { zh: "感情", en: "Love & Marriage" },
-    "子女宫": { zh: "子女", en: "Children" },
-    "财帛宫": { zh: "财富", en: "Financial Prosperity" },
-    "疾厄宫": { zh: "健康", en: "Health & Wellbeing" },
-    "迁移宫": { zh: "旅行与变动", en: "Travel & Changes" },
-    "交友宫": { zh: "人际关系", en: "Social Circle" },
-    "官禄宫": { zh: "事业", en: "Career & Achievement" },
-    "田宅宫": { zh: "住宅", en: "Property" },
-    "福德宫": { zh: "福气", en: "Happiness" },
-    "父母宫": { zh: "父母", en: "Parents" }
+  // Function to get English translation
+  const getEnglishName = (key: string): string => {
+    
+    // Since we don't have a way to set language for a single translation,
+    // we'll just use the key's English part at the end
+    const parts = key.split(".");
+    const lastPart = parts[parts.length - 1];
+    
+    // For specific transformations, return hardcoded English names
+    if (lastPart === "化禄") return "Prosperity";
+    if (lastPart === "化权") return "Power";
+    if (lastPart === "化科") return "Achievement";
+    if (lastPart === "化忌") return "Obstacle";
+    
+    // For palaces, return hardcoded English names
+    if (lastPart === "命宫") return "Destiny Palace";
+    if (lastPart === "兄弟宫") return "Siblings Palace";
+    if (lastPart === "夫妻宫") return "Marriage Palace";
+    if (lastPart === "子女宫") return "Children Palace";
+    if (lastPart === "财帛宫") return "Wealth Palace";
+    if (lastPart === "疾厄宫") return "Health Palace";
+    if (lastPart === "迁移宫") return "Travel Palace";
+    if (lastPart === "交友宫") return "Friends Palace";
+    if (lastPart === "官禄宫") return "Career Palace";
+    if (lastPart === "田宅宫") return "Property Palace";
+    if (lastPart === "福德宫") return "Happiness Palace";
+    if (lastPart === "父母宫") return "Parents Palace";
+    
+    // Default fallback
+    return lastPart;
   };
 
   useEffect(() => {
     if (!chartData) return;
     
-    // Extract transformation data by finding which stars have transformations
-    const transformations: Record<string, string> = {};
-
-    try {
-      // Examine all palaces and stars to find transformations
-      if (chartData.palaces && Array.isArray(chartData.palaces)) {
-        chartData.palaces.forEach((palace: any) => {
-          const rawPalaceName = palace.name;
-          // Convert traditional to simplified if needed
-          const palaceName = palaceNameMapping[rawPalaceName] || rawPalaceName;
-          
-          // Check all star types (mainStar, minorStars, and others)
-          const starTypes = ["mainStar", "minorStars", "auxiliaryStar", "otherStars"];
-          
-          starTypes.forEach(starType => {
-            if (palace[starType] && Array.isArray(palace[starType])) {
-              palace[starType].forEach((star: any) => {
-                // Check for transformations in different possible formats
-                const transformationsArray = star.transformations || star.transformation || [];
-                const transformsToCheck = Array.isArray(transformationsArray) 
-                  ? transformationsArray 
-                  : [transformationsArray];
-                
-                if (transformsToCheck.length > 0) {
-                  transformsToCheck.forEach((transformation: string) => {
-                    if (!transformation) return;
-                    
-                    // Convert traditional to simplified if needed
-                    const simplifiedTransformation = traditionToSimplified[transformation] || transformation;
-                    
-                    if (simplifiedTransformation in transformationTypes) {
-                      transformations[simplifiedTransformation] = palaceName;
-                    }
-                  });
-                }
-              });
-            }
-          });
-        });
-      }
-      
-      setTransformationPalaces(transformations);
-    } catch (error) {
-      console.error("Error processing chart data:", error);
-    }
+    // Use the utility function to analyze transformations
+    const transformations = analyzeFourKeyPalaces(chartData);
+    setTransformationPalaces(transformations);
+    
   }, [chartData]);
 
   /**
-   * Check if a string is a valid palace name in our constants
-   * @param name - The name to check
-   * @returns True if it's a valid palace name
-   */
-  const isValidPalaceName = (name: string): name is PalaceName => {
-    return name in FOUR_KEY_PALACE_ANALYSIS_CONSTANTS;
-  };
-
-  /**
-   * Get transformation information even if palace name isn't in constants
-   * This fallback ensures we can display something even if there's a palace name mismatch
+   * Get transformation information either from translation or constants
    */
   const getTransformationInfo = (transformationType: TransformationType, palaceName: string) => {
-    // Default information if palace isn't found
-    const defaultInfo = {
-      title: `${transformationType} in ${palaceName}`,
-      description: `This transformation is in the ${palaceName} palace.`,
-      quote: "Information not available for this palace."
-    };
+    // Try to get translated information
+    const key = transformationTypes[transformationType].key;
+    const translationKeyBase = `${palaceName}.${key}`;
     
-    try {
-      // Try to get info from constants if palace name is valid
-      if (isValidPalaceName(palaceName)) {
-        const key = transformationTypes[transformationType].key;
-        const info = FOUR_KEY_PALACE_ANALYSIS_CONSTANTS[palaceName][key];
-        
-        // Check if we have valid info
-        if (info && typeof info === "object" && "title" in info) {
-          return info;
-        }
-      }
-    } catch (error) {
-      console.error(`Error getting transformation info for ${transformationType} in palace ${palaceName}:`, error);
+    // Check if we have translations for this palace and transformation
+    const translationTitle = tSafe(`analysis.fourKeyPalaceContent.${translationKeyBase}.title`);
+    const hasTranslation = translationTitle !== "";
+    
+    if (hasTranslation) {
+      return {
+        title: translationTitle,
+        description: tSafe(`analysis.fourKeyPalaceContent.${translationKeyBase}.description`),
+        quote: tSafe(`analysis.fourKeyPalaceContent.${translationKeyBase}.quote`)
+      };
     }
     
-    return defaultInfo;
+    // Fallback to the constants if translation not found
+    const constantInfo = getConstantTransformationInfo(transformationType, palaceName);
+    if (constantInfo) {
+      return constantInfo;
+    }
+    
+    // Default fallback using template strings from translations
+    return {
+      title: formatString(
+        tSafe("analysis.fourKeyPalaceContent.defaultTitle", `${transformationType} in ${palaceName}`),
+        tSafe(`analysis.fourKeyPalaceContent.${transformationType}`, transformationType),
+        tSafe(`analysis.fourKeyPalaceContent.${palaceName}`, palaceName)
+      ),
+      description: formatString(
+        tSafe("analysis.fourKeyPalaceContent.defaultDesc", `This transformation is in the ${palaceName} palace.`),
+        tSafe(`analysis.fourKeyPalaceContent.${palaceName}`, palaceName)
+      ),
+      quote: tSafe("analysis.fourKeyPalaceContent.defaultQuote", "Information not available for this palace.")
+    };
   };
 
   /**
@@ -180,6 +137,26 @@ const FourKeyPalaceAnalysis: React.FC<FourKeyPalaceAnalysisProps> = ({ chartData
     }));
   };
 
+  /**
+   * Get a translated palace meaning if available
+   */
+  const getPalaceMeaning = (palaceName: string): string => {
+    const meaningKey = `analysis.fourKeyPalaceContent.${palaceName}.meaning`;
+    const fallback = getPalaceMeaningFromConstants(palaceName);
+    
+    return tSafe(meaningKey, fallback);
+  };
+
+  /**
+   * Get a translated palace keyword if available
+   */
+  const getPalaceKeyword = (palaceName: string): string => {
+    const keywordKey = `analysis.fourKeyPalaceContent.${palaceName}.keyword`;
+    const fallback = getPalaceKeywordFromConstants(palaceName);
+    
+    return tSafe(keywordKey, fallback);
+  };
+
   return (
     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden transition-all duration-300">
       {/* Analysis Header - non-collapsible */}
@@ -188,7 +165,7 @@ const FourKeyPalaceAnalysis: React.FC<FourKeyPalaceAnalysisProps> = ({ chartData
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
         </svg>
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-          {t("analysis.fourKeyPalace") || "Four Key Palace Analysis"}
+          {t("analysis.fourKeyPalace")}
         </h3>
       </div>
 
@@ -198,13 +175,13 @@ const FourKeyPalaceAnalysis: React.FC<FourKeyPalaceAnalysisProps> = ({ chartData
           {/* Display message if no transformations found */}
           {Object.keys(transformationPalaces).length === 0 && (
             <div className="bg-yellow-50 dark:bg-yellow-900/30 p-4 rounded-lg text-yellow-800 dark:text-yellow-300">
-              No transformations found in the chart data.
+              {tSafe("analysis.fourKeyPalaceContent.noTransformations", "No transformations found in the chart data.")}
             </div>
           )}
           
           {/* Four Transformations Grid - now two columns */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {Object.entries(transformationTypes).map(([chineseName, { key, english }]) => {
+            {Object.entries(transformationTypes).map(([chineseName, { key }]) => {
               const transformationType = chineseName as TransformationType;
               // Get palace name from our processed data
               const palaceName = transformationPalaces[transformationType];
@@ -222,6 +199,7 @@ const FourKeyPalaceAnalysis: React.FC<FourKeyPalaceAnalysisProps> = ({ chartData
               
               const transformationColorClass = getTransformationColor(transformationType);
               const isCardOpen = openCardStates[transformationType];
+              const englishTransformation = getEnglishName(`analysis.fourKeyPalaceContent.${transformationType}`);
               
               if (!palaceName) return (
                 <div 
@@ -230,26 +208,20 @@ const FourKeyPalaceAnalysis: React.FC<FourKeyPalaceAnalysisProps> = ({ chartData
                 >
                   <div className="mb-3">
                     <span className={`inline-block px-3 py-1.5 text-sm font-semibold rounded-full ${transformationColorClass} mr-2`}>
-                      {chineseName} ({english})
+                      {tSafe(`analysis.fourKeyPalaceContent.${transformationType}`, transformationType)} ({englishTransformation})
                     </span>
                     <span className="text-red-500 dark:text-red-400 font-medium">
-                      Not found in chart
+                      {tSafe("analysis.fourKeyPalaceContent.notFound", "Not found in chart")}
                     </span>
                   </div>
                 </div>
               );
               
-              // Get transformation info (with fallback if palace name is invalid)
+              // Get transformation info with translations
               const transformationInfo = getTransformationInfo(transformationType, palaceName);
               
-              // Get keyword and meaning for palace if available
-              let keyword = "";
-              let meaning = "";
-              if (isValidPalaceName(palaceName)) {
-                const keywordValue = FOUR_KEY_PALACE_ANALYSIS_CONSTANTS[palaceName].keyword;
-                keyword = keywordValue !== undefined ? String(keywordValue) : "";
-                meaning = FOUR_KEY_PALACE_ANALYSIS_CONSTANTS[palaceName].meaning || "";
-              }
+              // Get meaning for palace
+              const meaning = getPalaceMeaning(palaceName);
               
               return (
                 <div 
@@ -267,11 +239,11 @@ const FourKeyPalaceAnalysis: React.FC<FourKeyPalaceAnalysisProps> = ({ chartData
                         <div className="flex flex-col space-y-2">
                           <div className="flex items-center space-x-2">
                             <h3 className="text-xl font-bold text-gray-900 dark:text-white">
-                              {t(palaceName)}
+                              {tSafe(`analysis.fourKeyPalaceContent.${palaceName}`, palaceName)}
                             </h3>
                             
                             <span className={`inline-block px-2.5 py-1 text-xs font-medium rounded-full ${transformationColorClass}`}>
-                              {chineseName} ({english})
+                              {tSafe(`analysis.fourKeyPalaceContent.${transformationType}`, transformationType)} ({englishTransformation})
                             </span>
                           </div>
                           
