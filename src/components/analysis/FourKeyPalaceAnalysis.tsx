@@ -254,27 +254,38 @@ const FourKeyPalaceAnalysis: React.FC<FourKeyPalaceAnalysisProps> = ({ chartData
               return (
                 <div 
                   key={chineseName}
-                  className="bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg border border-gray-100 dark:border-gray-700 overflow-hidden"
+                  className="overflow-hidden transition-all duration-300"
                 >
                   {/* Palace name header with transformation tag */}
                   <div 
-                    className={`cursor-pointer transition-colors duration-200 ${isCardOpen ? "bg-gray-50 dark:bg-gray-750" : ""}`}
+                    className="cursor-pointer transition-colors duration-200 p-4 bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg border border-gray-100 dark:border-gray-700"
                     onClick={() => toggleCardState(transformationType)}
                   >
-                    <div className="flex flex-col p-4">
-                      {/* Palace name prominently displayed */}
-                      <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-1">
-                        {t(palaceName)}
-                      </h3>
-                      
-                      {/* Transformation tag - smaller and less prominent */}
+                    <div className="flex flex-col space-y-2">
+                      {/* Palace name and transformation tag on same line */}
                       <div className="flex items-center justify-between">
-                        <span className={`inline-block px-2.5 py-1 text-xs font-medium rounded-full ${transformationColorClass}`}>
-                          {chineseName} ({english})
-                        </span>
-                        
+                        <div className="flex flex-col space-y-2">
+                          <div className="flex items-center space-x-2">
+                            <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+                              {t(palaceName)}
+                            </h3>
+                            
+                            <span className={`inline-block px-2.5 py-1 text-xs font-medium rounded-full ${transformationColorClass}`}>
+                              {chineseName} ({english})
+                            </span>
+                          </div>
+                          
+                          {/* Meaning right below palace name */}
+                          {meaning && (
+                            <div className="text-sm text-gray-600 dark:text-gray-400">
+                              {meaning}
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Toggle icon on right side */}
                         <svg 
-                          className={`w-5 h-5 text-gray-400 transition-transform duration-300 ${isCardOpen ? "transform rotate-180" : ""}`}
+                          className={`w-5 h-5 text-gray-400 transition-transform duration-300 flex-shrink-0 ${isCardOpen ? "transform rotate-180" : ""}`}
                           fill="none" 
                           stroke="currentColor" 
                           viewBox="0 0 24 24" 
@@ -295,12 +306,6 @@ const FourKeyPalaceAnalysis: React.FC<FourKeyPalaceAnalysisProps> = ({ chartData
                     }`}
                   >
                     <div className="p-4 space-y-3 bg-gray-50 dark:bg-gray-750 border-t border-gray-100 dark:border-gray-700">
-                      {meaning && (
-                        <div className="text-sm text-gray-600 dark:text-gray-400 mb-3">
-                          {meaning}
-                        </div>
-                      )}
-                      
                       <h4 className="text-base font-semibold text-gray-800 dark:text-white">
                         {transformationInfo.title}
                       </h4>
