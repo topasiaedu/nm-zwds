@@ -54,4 +54,13 @@ export type {
   ChartDataType,
   LifeAreaResult,
   RadarDataPoint
-} from "./lifeAreasAnalysis"; 
+} from "./lifeAreasAnalysis";
+
+// Export Summary analysis
+export { analyzeSummary } from "./summaryAnalysis";
+
+// Export types from Summary analysis
+export type { SummaryAnalysisResult } from "./summaryAnalysis";
+
+// Export watchout analysis
+export { analyzeWatchouts } from "./watchoutAnalysis"; 

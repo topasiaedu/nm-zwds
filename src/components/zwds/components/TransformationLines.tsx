@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
 // Breakpoint constants - matching TailwindCSS defaults
@@ -17,6 +17,7 @@ interface TransformationLinesProps {
   refsReady: boolean;
   selectedPalace: number | null;
   windowSize: { width: number; height: number };
+  redrawCounter?: number;
 }
 
 /**
@@ -29,8 +30,22 @@ const TransformationLines: React.FC<TransformationLinesProps> = ({
   starRefs,
   refsReady,
   selectedPalace,
-  windowSize
+  windowSize,
+  redrawCounter = 0
 }) => {
+  const [forceUpdate, setForceUpdate] = useState<number>(0);
+
+  // Force rerender when redrawCounter changes
+  useEffect(() => {
+    if (redrawCounter > 0) {
+      // Small delay to ensure refs are updated
+      const timer = setTimeout(() => {
+        setForceUpdate(prev => prev + 1);
+      }, 10);
+      return () => clearTimeout(timer);
+    }
+  }, [redrawCounter]);
+
   if (!selectedPalace || !chartRef.current || !refsReady) {
     return null;
   }
@@ -65,7 +80,7 @@ const TransformationLines: React.FC<TransformationLinesProps> = ({
     
     // Determine line color based on transformation type
     let lineColor;
-    let shadowColor; // Add shadow color
+    let shadowColor;
     switch (transformation.type) {
       case "祿": 
         lineColor = "rgba(16, 185, 129, 0.7)"; // semi-transparent
@@ -103,6 +118,9 @@ const TransformationLines: React.FC<TransformationLinesProps> = ({
       opacity: 0.8, // Additional transparency for all lines
     };
     
+    // Create a unique key incorporating forceUpdate so the SVG elements recreate
+    const lineKey = `${index}-${forceUpdate}-${redrawCounter}`;
+    
     if (isSelfTransformation) {
       // For self-transformations, draw a curved arc or loop
       // Get position relative to the star
@@ -135,7 +153,7 @@ const TransformationLines: React.FC<TransformationLinesProps> = ({
       const arrowAngle = Math.atan2(toY - controlY, toX - controlX);
       
       return (
-        <g key={index} style={lineStyle}>
+        <g key={lineKey} style={lineStyle}>
           <motion.path
             d={`M ${fromX} ${fromY} Q ${controlX} ${controlY} ${toX} ${toY}`}
             fill="none"
@@ -190,7 +208,7 @@ const TransformationLines: React.FC<TransformationLinesProps> = ({
       const dashArray = `${dashLength},${dashLength/2}`;
       
       return (
-        <g key={index} style={lineStyle}>
+        <g key={lineKey} style={lineStyle}>
           <motion.line
             x1={fromX}
             y1={fromY}
@@ -224,8 +242,12 @@ const TransformationLines: React.FC<TransformationLinesProps> = ({
     }
   }).filter(Boolean);
   
+  // Create unique key for the SVG element to force remounting
+  const svgKey = `transformation-lines-${forceUpdate}-${redrawCounter}`;
+  
   return (
     <svg 
+      key={svgKey}
       className="absolute top-0 left-0 w-full h-full pointer-events-none z-5"
       style={{ overflow: "visible" }}
     >

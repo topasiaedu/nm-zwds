@@ -7,6 +7,7 @@ const lifeAreas = {
   lifeAreasExplanation: "Life Areas Analysis",
   noAnalysisAvailable: "No analysis data available",
   lifeAreasOverview: "Life Areas Overview",
+  lifeAreasRadarChart: "Life Areas Radar Chart",
   // Area names and translations
   areas: {
     // 财帛 - Wealth

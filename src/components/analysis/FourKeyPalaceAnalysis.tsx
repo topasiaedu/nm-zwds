@@ -149,19 +149,27 @@ const FourKeyPalaceAnalysis: React.FC<FourKeyPalaceAnalysisProps> = ({ chartData
 
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden transition-all duration-300">
-      {/* Analysis Header - non-collapsible */}
-      <div className="px-4 py-5 sm:px-6 flex items-center">
-        <svg className="w-5 h-5 mr-2 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-        </svg>
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+    <div className="rounded-2xl shadow-lg overflow-hidden bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+      <div className="bg-gradient-to-r from-indigo-500 to-purple-500 px-6 py-4">
+        <h2 className="text-xl font-bold text-white flex items-center">
+          <svg 
+            className="w-6 h-6 mr-2" 
+            fill="none" 
+            stroke="currentColor" 
+            viewBox="0 0 24 24" 
+            xmlns="http://www.w3.org/2000/svg">
+            <path 
+              strokeLinecap="round" 
+              strokeLinejoin="round" 
+              strokeWidth={2} 
+              d="M13 10V3L4 14h7v7l9-11h-7z" 
+            />
+          </svg>
           {t("analysis.fourKeyPalace")}
-        </h3>
+        </h2>
       </div>
 
-      {/* Analysis Content - always visible */}
-      <div className="px-4 py-5 sm:px-6 border-t border-gray-200 dark:border-gray-700">
+      <div className="px-4 py-5 sm:px-6">
         <div className="space-y-6">
           {/* Display message if no transformations found */}
           {Object.keys(transformationPalaces).length === 0 && (
@@ -180,11 +188,11 @@ const FourKeyPalaceAnalysis: React.FC<FourKeyPalaceAnalysisProps> = ({ chartData
               // Get transformation color based on type
               const getTransformationColor = (type: TransformationType) => {
                 switch(type) {
-                  case "化禄": return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300 border-green-400";
-                  case "化权": return "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300 border-blue-400";
-                  case "化科": return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300 border-yellow-400";
-                  case "化忌": return "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300 border-red-400";
-                  default: return "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300 border-purple-400";
+                  case "化禄": return "bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-200 dark:border-green-700 border-green-400";
+                  case "化权": return "bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-200 dark:border-blue-700 border-blue-400";
+                  case "化科": return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-200 dark:border-yellow-700 border-yellow-400";
+                  case "化忌": return "bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-200 dark:border-red-700 border-red-400";
+                  default: return "bg-purple-100 text-purple-800 dark:bg-purple-900/50 dark:text-purple-200 dark:border-purple-700 border-purple-400";
                 }
               };
               
@@ -268,7 +276,7 @@ const FourKeyPalaceAnalysis: React.FC<FourKeyPalaceAnalysisProps> = ({ chartData
                         : "max-h-0 opacity-0 p-0"
                     }`}
                   >
-                    <div className="p-4 space-y-3 bg-gray-50 dark:bg-gray-750 border-t border-gray-100 dark:border-gray-700">
+                    <div className="p-4 space-y-3 bg-gray-50 dark:bg-gray-800/80 border-t border-gray-100 dark:border-gray-700">
                       <h4 className="text-base font-semibold text-gray-800 dark:text-white">
                         {transformationInfo.title}
                       </h4>

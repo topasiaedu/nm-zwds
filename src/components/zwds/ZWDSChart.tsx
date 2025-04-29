@@ -42,6 +42,9 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
     height: window.innerHeight,
   });
 
+  // Track redraw counter for transformation lines
+  const [redrawCounter, setRedrawCounter] = useState<number>(0);
+
   // Use our custom hooks
   const { starRefs, palaceRefs, refsReady, setRefsReady, registerStarRef } = useStarRefs(chartData, selectedPalace);
   const { calculateTransformations, getTargetPalaces } = useTransformations(chartData, selectedPalace);
@@ -55,6 +58,8 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
         width: window.innerWidth,
         height: window.innerHeight,
       });
+      // Force redraw of transformation lines when window is resized
+      setRedrawCounter(prev => prev + 1);
     };
 
     window.addEventListener("resize", handleResize);
@@ -111,6 +116,9 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
     if (!refsReady) {
       setRefsReady(true);
     }
+    
+    // Increment redraw counter to force redrawing of transformation lines
+    setRedrawCounter(prev => prev + 1);
   };
 
   /**
@@ -204,6 +212,7 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
         refsReady={refsReady}
         selectedPalace={selectedPalace}
         windowSize={windowSize}
+        redrawCounter={redrawCounter}
       />
     </motion.div>
   );

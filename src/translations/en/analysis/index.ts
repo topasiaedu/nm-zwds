@@ -2,6 +2,8 @@ import fourKeyPalace from "./fourKeyPalace";
 import lifeAreas from "./lifeAreas";
 import career from "./career";
 import health from "./health";
+import summary from "./summary";
+import watchout from "./watchout";
 
 const analysis = {
   analysis: {
@@ -11,6 +13,8 @@ const analysis = {
     ...lifeAreas,
     ...career,
     ...health,
+    ...summary,
+    ...watchout,
     // etc.
   },
 };

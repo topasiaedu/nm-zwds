@@ -250,11 +250,11 @@ const CareerAnalysis: React.FC<CareerAnalysisProps> = ({ chartData }) => {
   }
 
   return (
-    <div className="backdrop-blur-md bg-white/30 dark:bg-gray-800/40 rounded-2xl border border-gray-200/50 dark:border-gray-700/50 shadow-lg overflow-hidden">
-      <div className="p-6">
-        <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-4 flex items-center">
+    <div className="rounded-2xl shadow-lg overflow-hidden bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+      <div className="bg-gradient-to-r from-indigo-500 to-purple-500 px-6 py-4">
+        <h2 className="text-xl font-bold text-white flex items-center">
           <svg 
-            className="w-6 h-6 mr-2 text-indigo-500 dark:text-indigo-400" 
+            className="w-6 h-6 mr-2" 
             fill="none" 
             stroke="currentColor" 
             viewBox="0 0 24 24" 
@@ -273,7 +273,9 @@ const CareerAnalysis: React.FC<CareerAnalysisProps> = ({ chartData }) => {
             </span>
           )}
         </h2>
+      </div>
 
+      <div className="p-6">
         {careerAptitudes.length > 0 ? (
           <div className="h-96" ref={containerRef}>
             {careerBarData.length > 0 ? (
