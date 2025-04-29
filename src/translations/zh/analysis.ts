@@ -206,7 +206,8 @@ const analysis = {
       title: "健康分析"
     },
     fourKeyPalace: "四化分析",
-    
+    lifeAreasExplanation: "生活领域解释",
+    lifeAreasOverview: "生活领域概览",    
   },
 };
 

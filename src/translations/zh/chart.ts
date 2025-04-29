@@ -6,6 +6,7 @@ const chart = {
     solarDate: "阳历日期",
     shengXiao: "生肖",
     fiveElement: "五行",
+    lunarDate: "农历日期",
   },
   
   myChart: {
