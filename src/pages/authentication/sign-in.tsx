@@ -68,9 +68,9 @@ const SignInPage: React.FC = () => {
             </h2>
             
             {error && (
-              <Alert color="failure">
+              <div className="p-4 mb-4 text-white bg-red-600 dark:bg-red-700 rounded-lg">
                 {error}
-              </Alert>
+              </div>
             )}
             
             <form className="space-y-4" onSubmit={handleSubmit}>
@@ -85,6 +85,13 @@ const SignInPage: React.FC = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
+                  theme={{
+                    field: {
+                      input: {
+                        base: "block w-full border disabled:cursor-not-allowed disabled:opacity-50 bg-gray-50 dark:bg-gray-700 dark:text-white",
+                      }
+                    }
+                  }}
                 />
               </div>
               
@@ -99,6 +106,13 @@ const SignInPage: React.FC = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
+                  theme={{
+                    field: {
+                      input: {
+                        base: "block w-full border disabled:cursor-not-allowed disabled:opacity-50 bg-gray-50 dark:bg-gray-700 dark:text-white",
+                      }
+                    }
+                  }}
                 />
               </div>
               

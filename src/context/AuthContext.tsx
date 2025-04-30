@@ -43,6 +43,15 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [loading, setLoading] = useState<boolean>(true);
   const navigate = useNavigate();
 
+  // TEMP CONSOLE LOG OUT USER ID
+  useEffect(() => {
+    const getUserId = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      console.log(session?.user.id);
+    };
+    getUserId();
+  }, []);
+
   useEffect(() => {
     // Get session from local storage and set states
     const initializeAuth = async () => {
@@ -68,7 +77,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     // Set up auth state listener
     const { data: authListener } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        console.log(`Supabase auth event: ${event}`);
         setSession(session);
         setUser(session?.user ?? null);
         

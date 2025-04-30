@@ -21,6 +21,12 @@ import ResetPasswordPage from "./pages/authentication/reset-password";
 import NotFoundPage from "./pages/404";
 import Calculate from "./pages/calculate";
 import Result from "./pages/result";
+// Import new free test pages
+import FreeTest from "./pages/free-test";
+import FreeResult from "./pages/free-result";
+import FreeTestEnded from "./pages/free-test-ended";
+// Import centralized config
+import FREE_TEST_CONFIG from "./config/freeTestConfig";
 
 /**
  * Authentication route wrapper that redirects authenticated users to dashboard
@@ -35,6 +41,18 @@ const AuthRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   }
 
   return <>{children}</>;
+};
+
+/**
+ * Check if free test feature is active based on config
+ */
+const isFreeTestActive = (): boolean => {
+  if (!FREE_TEST_CONFIG.isEnabled) return false;
+  
+  const today = new Date();
+  const endDate = new Date(`${FREE_TEST_CONFIG.endDate}T23:59:59`);
+  
+  return today <= endDate;
 };
 
 /**
@@ -82,6 +100,24 @@ const App: React.FC = () => {
                           <ResetPasswordPage />
                         </AuthRoute>
                       }
+                    />
+
+                    {/* Public Free Test Routes */}
+                    <Route
+                      path="/free-test"
+                      element={
+                        isFreeTestActive() ? <FreeTest /> : <FreeTestEnded />
+                      }
+                    />
+                    <Route
+                      path="/free-result/:id"
+                      element={
+                        isFreeTestActive() ? <FreeResult /> : <FreeTestEnded />
+                      }
+                    />
+                    <Route
+                      path="/free-test-ended"
+                      element={<FreeTestEnded />}
                     />
 
                     {/* Protected routes */}

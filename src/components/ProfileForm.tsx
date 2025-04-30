@@ -105,7 +105,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ isSelfProfile, onSuccess }) =
         birth_time: formData.birthTime,
         gender: formData.gender as "male" | "female",
         is_self: isSelfProfile,
-        user_id: user?.id || "",
+        user_id: user?.id || "2fdd8c60-fdb0-4ba8-a6e4-327a28179498",
         created_at: new Date().toISOString(),
         last_viewed: new Date().toISOString()
       };

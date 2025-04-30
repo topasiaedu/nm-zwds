@@ -9,6 +9,7 @@ import chart from "./chart";
 import analysis from "./analysis/index";
 import zwds from "./zwds";
 import misc from "./misc";
+import freeTest from "./freeTest";
 
 const zh = {
   ...common,
@@ -22,6 +23,7 @@ const zh = {
   ...analysis,
   ...zwds,
   ...misc,
+  ...freeTest,
 };
 
 export default zh; 

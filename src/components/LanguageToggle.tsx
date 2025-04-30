@@ -77,7 +77,7 @@ const LanguageToggle: React.FC = () => {
       </button>
       
       {dropdownOpen && (
-        <div className="absolute left-0 sm:left-auto sm:right-0 mt-2 z-50 w-48 sm:w-56 rounded-2xl shadow-xl
+        <div className="absolute left-0 mt-2 z-50 w-48 sm:w-56 rounded-2xl shadow-xl
                       border border-white/20
                       backdrop-filter backdrop-blur-lg 
                       bg-white/80 hover:bg-white/90 

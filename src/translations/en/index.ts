@@ -9,6 +9,7 @@ import chart from "./chart";
 import analysis from "./analysis/index";
 import zwds from "./zwds";
 import misc from "./misc";
+import freeTest from "./freeTest";
 
 const en = {
   ...common,
@@ -22,6 +23,7 @@ const en = {
   ...analysis,
   ...zwds,
   ...misc,
+  ...freeTest,
 };
 
 console.log("ENGLISH TRANSLATIONS", en.analysis.fourKeyPalaceContent.田宅);

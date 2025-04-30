@@ -175,17 +175,6 @@ const PrintableReport: React.FC<{
           </div>
         </div>
 
-        {/* Health Analysis */}
-        <div
-          className="mb-10"
-          style={{ pageBreakBefore: "auto", pageBreakInside: "avoid" }}>
-          <h3 className="text-lg font-bold mb-4 text-gray-800">
-            {t("analysis.health.title")}
-          </h3>
-          <div className="health-analysis-container">
-            <HealthAnalysis chartData={calculatedChartData} />
-          </div>
-        </div>
       </div>
 
       {/* Footer */}
