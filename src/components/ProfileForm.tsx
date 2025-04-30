@@ -97,6 +97,8 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ isSelfProfile, onSuccess }) =
    */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    console.log("Form data:", formData);
     
     try {
       const newProfile: ProfileInsert = {
