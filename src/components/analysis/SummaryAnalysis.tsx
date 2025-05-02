@@ -106,9 +106,9 @@ const SummaryAnalysis: React.FC<SummaryAnalysisProps> = ({ chartData }) => {
         </h2>
       </div>
 
-      <div className="p-6">
+      <div className="p-4">
         {summaries.length > 0 ? (
-          <div className="p-4 rounded-lg">
+          <div className="rounded-lg">
             <div className="text-gray-700 dark:text-gray-300">
               {combinedDescription}
             </div>

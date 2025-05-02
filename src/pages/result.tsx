@@ -16,175 +16,9 @@ import {
   SummaryAnalysis,
   WatchoutAnalysis,
 } from "../components/analysis";
-// Import html2pdf.js
-// @ts-ignore
-import html2pdf from "html2pdf.js";
-
-/**
- * Interface for chart data
- */
-interface ChartData {
-  id: string;
-  name: string;
-  birthDate: string;
-  birthTime: string;
-  gender: string;
-  createdAt: string;
-}
-
-/**
- * Printable Report component for exporting the chart results
- */
-const PrintableReport: React.FC<{
-  chartData: ChartData;
-  calculatedChartData: any;
-  formatDate: (date: string) => string;
-}> = ({ chartData, calculatedChartData, formatDate }) => {
-  const { t } = useLanguage();
-
-  return (
-    <div className="print-container p-8 max-w-4xl mx-auto bg-white text-black">
-      {/* Header with logo and title */}
-      <div className="text-center mb-8 border-b pb-6">
-        <h1 className="text-3xl font-bold mb-2">{t("result.exportTitle")}</h1>
-        <p className="text-xl text-gray-700">{chartData.name}</p>
-        <p className="text-sm text-gray-500 mt-2">
-          {t("result.generatedOn")}: {new Date().toLocaleDateString()}
-        </p>
-      </div>
-
-      {/* Profile information */}
-      <div className="mb-8">
-        <h2 className="text-xl font-bold mb-4 text-gray-800 border-b pb-2">
-          {t("result.profileDetails")}
-        </h2>
-
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <p className="mb-2">
-              <span className="font-semibold">{t("myChart.fields.name")}:</span>{" "}
-              {chartData.name}
-            </p>
-            <p className="mb-2">
-              <span className="font-semibold">
-                {t("myChart.fields.birthDate")}:
-              </span>{" "}
-              {formatDate(chartData.birthDate)}
-            </p>
-            <p className="mb-2">
-              <span className="font-semibold">
-                {t("myChart.fields.birthTime")}:
-              </span>{" "}
-              {chartData.birthTime}
-            </p>
-          </div>
-          <div>
-            <p className="mb-2">
-              <span className="font-semibold">
-                {t("myChart.fields.gender")}:
-              </span>{" "}
-              {chartData.gender === "male"
-                ? t("myChart.fields.male")
-                : t("myChart.fields.female")}
-            </p>
-            <p className="mb-2">
-              <span className="font-semibold">
-                {t("result.fields.generated")}:
-              </span>{" "}
-              {formatDate(chartData.createdAt)}
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Chart visualization - on its own page */}
-      <div
-        className="mb-8 chart-page-container"
-        style={{
-          pageBreakAfter: "always",
-          height: "650px",
-          width: "100%",
-          display: "flex",
-          flexDirection: "column",
-        }}>
-        <h2 className="text-xl font-bold mb-4 text-gray-800 border-b pb-2">
-          {t("result.chartVisualization")}
-        </h2>
-
-        <div
-          className="chart-container flex-grow"
-          style={{ minHeight: "580px", overflow: "visible" }}>
-          <ZWDSChart chartData={calculatedChartData} />
-        </div>
-      </div>
-
-      {/* Analysis Section - starts on a new page */}
-      <div className="analysis-section" style={{ pageBreakBefore: "always" }}>
-        <h2 className="text-2xl font-bold mb-6 text-gray-800 border-b pb-2">
-          {t("analysis.title")}
-        </h2>
-
-        {/* Life Areas Radar Chart */}
-        <div className="mb-10 pb-6 border-b border-gray-200">
-          <h3 className="text-lg font-bold mb-4 text-gray-800">
-            {t("analysis.lifeAreasOverview") || "Life Areas Overview"}
-          </h3>
-          <div
-            className="life-areas-chart-container"
-            style={{ height: "400px" }}>
-            <LifeAreasRadarChart chartData={calculatedChartData} />
-          </div>
-        </div>
-
-        {/* Life Areas Explanation */}
-        <div className="mb-10 pb-6 border-b border-gray-200">
-          <div className="life-areas-explanation-container">
-            <LifeAreasExplanation chartData={calculatedChartData} />
-          </div>
-        </div>
-
-        {/* Four Key Palace Analysis */}
-        <div className="mb-10 pb-6 border-b border-gray-200">
-          <h3 className="text-lg font-bold mb-4 text-gray-800">
-            {t("analysis.fourKeyPalace") || "Four Key Palace Analysis"}
-          </h3>
-          <div className="palace-analysis-container">
-            <FourKeyPalaceAnalysis chartData={calculatedChartData} />
-          </div>
-        </div>
-
-        {/* Watchout Analysis */}
-        <div className="mb-10 pb-6 border-b border-gray-200">
-          <h3 className="text-lg font-bold mb-4 text-gray-800">
-            {t("analysis.watchout") || "Watchout Analysis"}
-          </h3>
-          <div className="watchout-analysis-container">
-            <WatchoutAnalysis chartData={calculatedChartData} />
-          </div>
-        </div>
-
-        {/* Career Analysis */}
-        <div
-          className="mb-10 pb-6 border-b border-gray-200"
-          style={{ pageBreakBefore: "auto", pageBreakInside: "avoid" }}>
-          <h3 className="text-lg font-bold mb-4 text-gray-800">
-            {t("analysis.career.title")}
-          </h3>
-          <div className="career-analysis-container">
-            <CareerAnalysis chartData={calculatedChartData} />
-          </div>
-        </div>
-
-      </div>
-
-      {/* Footer */}
-      <div className="mt-8 pt-4 border-t text-center text-gray-500 text-sm">
-        <p>© {new Date().getFullYear()} - 紫微斗数 Analysis</p>
-        <p className="mt-1">{t("result.confidential")}</p>
-      </div>
-    </div>
-  );
-};
+// Import PrintableReport component and PDF export utilities
+import PrintableReport from "../components/PrintableReport";
+import { ChartData, exportChartAsPdf } from "../utils/pdfExport";
 
 /**
  * Result component to display 紫微斗数 chart results
@@ -441,132 +275,20 @@ const Result: React.FC = () => {
    * Handle exporting the chart as a PDF with direct download
    */
   const handleExport = useCallback(() => {
-    // Show export in progress
-    setIsExporting(true);
-
-    // Render the printable view first
-    setIsPrinting(true);
-
-    // Give time for the content to render
-    setTimeout(() => {
-      if (printRef.current) {
-        // Configure pdf options for better chart rendering
-        const options = {
-          margin: 10,
-          filename: `${chartData?.name || "chart"}_zwds_report.pdf`,
-          image: { type: "jpeg", quality: 1.0 },
-          html2canvas: {
-            scale: 2,
-            useCORS: true,
-            logging: false,
-            letterRendering: true,
-            allowTaint: true,
-          },
-          jsPDF: {
-            unit: "mm",
-            format: "a4",
-            orientation: "portrait",
-            compress: true,
-          },
-          pagebreak: {
-            mode: "avoid-all",
-            before: [".analysis-section", ".chart-page-container"],
-            after: [".chart-page-container"],
-          },
-        };
-
-        // Generate and download PDF
-        html2pdf()
-          .from(printRef.current)
-          .set(options)
-          .toPdf() // Convert to PDF
-          .get("pdf")
-          .then((pdf: any) => {
-            // Ensure PDF is fully rendered before saving
-            pdf.setProperties({
-              title: `${chartData?.name} - ZWDS Chart Analysis`,
-              subject: "ZWDS Chart Analysis",
-              creator: "ZWDS Chart Generator",
-            });
-            return pdf;
-          })
-          .save()
-          .then(() => {
-            // Reset states after PDF is generated
-            setTimeout(() => {
-              setIsPrinting(false);
-              setIsExporting(false);
-            }, 500);
-          })
-          .catch((error: any) => {
-            console.error("PDF generation failed:", error);
-            setIsPrinting(false);
-            setIsExporting(false);
-          });
-      } else {
+    exportChartAsPdf(
+      printRef,
+      chartData,
+      language,
+      () => setIsExporting(true),
+      () => {
         setIsPrinting(false);
         setIsExporting(false);
       }
-    }, 1500); // Give more time for the content to render
-  }, [chartData]);
-
-  // Add print styles to the document head
-  useEffect(() => {
-    const style = document.createElement("style");
-    style.innerHTML = `
-      @media print {
-        body * {
-          visibility: hidden;
-        }
-        .print-container, .print-container * {
-          visibility: visible;
-        }
-        .print-container {
-          position: absolute;
-          left: 0;
-          top: 0;
-          width: 100%;
-          padding: 20px;
-        }
-        @page {
-          size: A4;
-          margin: 0.5cm;
-        }
-        .no-print {
-          display: none !important;
-        }
-        .chart-page-container {
-          page-break-after: always;
-          break-after: page;
-          page-break-before: auto;
-          break-before: auto;
-          page-break-inside: avoid;
-          break-inside: avoid;
-        }
-        .analysis-section {
-          page-break-before: always;
-          break-before: page;
-        }
-        .palace-analysis-container {
-          page-break-inside: avoid;
-          break-inside: avoid;
-        }
-        .career-analysis-container {
-          page-break-inside: avoid;
-          break-inside: avoid;
-        }
-        .health-analysis-container {
-          page-break-inside: avoid;
-          break-inside: avoid;
-        }
-      }
-    `;
-    document.head.appendChild(style);
-
-    return () => {
-      document.head.removeChild(style);
-    };
-  }, []);
+    );
+    
+    // Show printable report during export
+    setIsPrinting(true);
+  }, [chartData, language]);
 
   // If loading profiles from context
   if (profilesLoading) {
@@ -892,24 +614,25 @@ const Result: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="mt-6 flex gap-3">
+                  <div className="mt-6">
                     <button
                       onClick={handleExport}
                       disabled={isExporting}
-                      className="flex-1 px-4 py-2 text-white font-medium rounded-lg transition-all 
-                                bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700
-                                focus:ring-4 focus:ring-purple-300 focus:outline-none 
-                                disabled:opacity-70 disabled:cursor-not-allowed
-                                flex items-center justify-center">
+                      className="w-full px-6 py-3 text-white font-medium rounded-lg transition-all 
+                               bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700
+                               focus:ring-4 focus:ring-purple-300 focus:outline-none
+                               shadow-lg hover:shadow-xl
+                               disabled:opacity-70 disabled:cursor-not-allowed
+                               flex items-center justify-center">
                       {isExporting ? (
                         <>
-                          <div className="w-4 h-4 mr-2 border-t-2 border-b-2 border-white rounded-full animate-spin"></div>
-                          {t("common.loading")}
+                          <div className="w-5 h-5 mr-3 border-t-2 border-b-2 border-white rounded-full animate-spin"></div>
+                          {t("result.exporting") || "正在导出..."}
                         </>
                       ) : (
                         <>
                           <svg
-                            className="w-4 h-4 mr-2"
+                            className="w-5 h-5 mr-3"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -921,7 +644,7 @@ const Result: React.FC = () => {
                               d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
                             />
                           </svg>
-                          {t("result.exportPdf")}
+                          {t("result.exportPdf") || "导出专业PDF报告"}
                         </>
                       )}
                     </button>

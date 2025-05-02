@@ -139,8 +139,8 @@ const CenterInfo: React.FC<CenterInfoProps> = ({ chartData }) => {
                 </span>
                 {language === "en" 
                   ? t(`zwds.zodiac.${["rat","ox","tiger","rabbit","dragon","snake","horse","sheep","monkey","rooster","dog","pig"][(input.year - 4) % 12]}`) 
-                  : (t(`zwds.zodiac.${["鼠","牛","虎","兔","龍","蛇","馬","羊","猴","雞","狗","豬"][(input.year - 4) % 12]}`) || 
-                    ["鼠","牛","虎","兔","龍","蛇","馬","羊","猴","雞","狗","豬"][(input.year - 4) % 12])}
+                  : (t(`zwds.zodiac.${["鼠","牛","虎","兔","龍","蛇","馬","羊","猴","雞","狗","猪"][(input.year - 4) % 12]}`) || 
+                    ["鼠","牛","虎","兔","龍","蛇","馬","羊","猴","雞","狗","猪"][(input.year - 4) % 12])}
               </span>
             </div>
             
