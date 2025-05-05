@@ -708,7 +708,7 @@ const Result: React.FC = () => {
               <CareerAnalysis chartData={calculatedChartData} />
 
               {/* Health Analysis */}
-              {/* <HealthAnalysis chartData={calculatedChartData} /> */}
+              <HealthAnalysis chartData={calculatedChartData} />
             </div>
           </div>
         )}

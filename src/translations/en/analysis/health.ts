@@ -1,9 +1,56 @@
 const health = {
   health: {
-    title: "Health",
+    title: "Health Analysis",
     basedOnStars: "Based on your star positions",
     potentialAreas: "Potential areas of focus",
-    disclaimer: "This health analysis is based on astrological interpretations and should not replace professional medical advice."
+    disclaimer:
+      "This health analysis is based on astrological interpretations and should not replace professional medical advice.",
+
+    // Body Parts
+    头: "Head",
+    眼: "Eye",
+    耳: "Ear",
+    左耳: "Left Ear",
+    右耳: "Right Ear",
+    口: "Mouth",
+    鼻: "Nose",
+    心脏: "Heart",
+    肝脏: "Liver",
+    肺: "Lung",
+    胃: "Stomach",
+    肠: "Intestine",
+    肾: "Kidney",
+    膀胱: "Bladder",
+    生殖器: "Genitals",
+    左手: "Left Hand",
+    右手: "Right Hand",
+    手: "Hands",
+    左脚: "Left Foot",
+    右脚: "Right Foot",
+    脚: "Feet",
+    关节: "Joint",
+    神经系统: "Nervous System",
+    膝盖: "Knee",
+
+    // Stars
+    太阳: "Sun",
+    武曲: "Wu Qu",
+    廉贞: "Lian Zhen",
+    天府: "Tian Fu",
+    太阴: "Tai Yin",
+    贪狼: "Tan Lang",
+    巨门: "Ju Meng",
+    天相: "Tian Xiang",
+    天梁: "Tian Liang",
+    七杀: "Qi Sha",
+    天机: "Tian Ji",
+    破军: "Po Jun",
+    紫微: "Zi Wei",
+    天同: "Tian Tong",
+    文曲: "Wen Qu",
+    文昌: "Wen Chang",
+    右弼: "You Bi",
+    左辅: "Zuo Fu",
   },
 };
 

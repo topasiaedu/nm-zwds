@@ -25,6 +25,71 @@ const shouldSplitElement = (element: HTMLElement, pageHeight: number): boolean =
 };
 
 /**
+ * Apply light mode styles to ensure PDF is rendered in light mode regardless of app theme
+ * @param doc - The document to apply styles to
+ */
+const forceLightMode = (doc: Document): void => {
+  // Add inline styles to force light mode for the export
+  const printContainer = doc.querySelector(".print-container");
+  if (printContainer) {
+    // Force light mode colors
+    (printContainer as HTMLElement).style.setProperty("color", "#000", "important");
+    (printContainer as HTMLElement).style.setProperty("background-color", "#fff", "important");
+    
+    // Apply to all child elements
+    const allElements = printContainer.querySelectorAll("*");
+    allElements.forEach(el => {
+      // Skip SVG paths and specific elements that shouldn't inherit text color
+      if (el.tagName.toLowerCase() === "path" || 
+          el.tagName.toLowerCase() === "circle" ||
+          el.tagName.toLowerCase() === "rect") {
+        return;
+      }
+      
+      const element = el as HTMLElement;
+      
+      // Check for dark mode text colors and replace with light mode equivalents
+      const computedStyle = window.getComputedStyle(element);
+      const color = computedStyle.color;
+      const backgroundColor = computedStyle.backgroundColor;
+      
+      // If it's a very dark color (likely text in dark mode), make it black
+      if (color && color.includes("rgba(255,") || color.includes("rgb(255,")) {
+        element.style.setProperty("color", "#000", "important");
+      }
+      
+      // If it's a very dark background, make it white or light
+      if (backgroundColor && 
+          (backgroundColor.includes("rgba(0,") || 
+           backgroundColor.includes("rgb(0,") ||
+           backgroundColor.includes("rgba(17,") || 
+           backgroundColor.includes("rgb(17,"))) {
+        element.style.setProperty("background-color", "#fff", "important");
+      }
+    });
+    
+    // Handle specific elements like headings and text
+    const headings = printContainer.querySelectorAll("h1, h2, h3, h4, h5, h6, strong, .font-bold");
+    headings.forEach(heading => {
+      (heading as HTMLElement).style.setProperty("color", "#000", "important");
+    });
+    
+    // Handle SVG text elements for charts
+    const svgTexts = printContainer.querySelectorAll("svg text, svg .chart-text");
+    svgTexts.forEach(text => {
+      (text as SVGElement).style.setProperty("fill", "#000", "important");
+    });
+    
+    // Content boxes
+    const contentBoxes = printContainer.querySelectorAll(".content-box");
+    contentBoxes.forEach(box => {
+      (box as HTMLElement).style.setProperty("background-color", "#fff", "important");
+      (box as HTMLElement).style.setProperty("border-color", "#e5e7eb", "important");
+    });
+  }
+};
+
+/**
  * Exports the chart data as a PDF
  * @param printRef - Reference to the element to be exported
  * @param chartData - The chart data object
@@ -66,6 +131,9 @@ export const exportChartAsPdf = (
             allowTaint: true,
             onclone: (clonedDoc: Document) => {
               try {
+                // Force light mode for export
+                forceLightMode(clonedDoc);
+                
                 // Define available page height (A4 page height minus margins)
                 const availablePageHeight = 960; // ~297mm (A4 height) - margins in px at 96dpi
                 

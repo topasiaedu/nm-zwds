@@ -3,7 +3,7 @@ import watchout from "./watchout";
 
 // In the future, we can import other analysis-related translations here
 // import career from "./career";
-// import health from "./health";
+import health from "./health";
 // etc.
 
 const analysis = {
@@ -20,7 +20,7 @@ const analysis = {
     // Combine all analysis-related translations
     // ...fourKeyPalace,
     // ...career,
-    // ...health,
+    ...health,
     ...summary,
     ...watchout,
     // etc.

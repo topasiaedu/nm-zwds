@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useLanguage } from "../context/LanguageContext";
 import ZWDSChart from "./ZWDSChart";
 import { ChartData } from "../utils/pdfExport";
@@ -12,6 +12,59 @@ import CareerAnalysis from "./analysis/CareerAnalysis";
 import FourKeyPalaceAnalysis from "./analysis/FourKeyPalaceAnalysis";
 
 /**
+ * CSS styles to ensure light mode for printing
+ */
+const lightModeStyles = `
+  .print-container {
+    color: #000 !important;
+    background-color: #fff !important;
+  }
+  
+  .print-container * {
+    color: inherit !important;
+    background-color: inherit !important;
+    border-color: #e5e7eb !important;
+  }
+  
+  .print-container h1, 
+  .print-container h2, 
+  .print-container h3, 
+  .print-container h4, 
+  .print-container h5, 
+  .print-container h6, 
+  .print-container strong, 
+  .print-container .font-bold {
+    color: #000 !important;
+  }
+  
+  .print-container .text-gray-500, 
+  .print-container .text-gray-600 {
+    color: #6b7280 !important;
+  }
+  
+  .print-container svg text,
+  .print-container svg .chart-text {
+    fill: #000 !important;
+  }
+  
+  .print-container .content-box {
+    background-color: #fff !important;
+    border: 1px solid #e5e7eb !important;
+  }
+  
+  .print-container table, 
+  .print-container td, 
+  .print-container th {
+    border-color: #e5e7eb !important;
+  }
+  
+  .print-container .bg-purple-600,
+  .print-container .bg-purple-500 {
+    background-color: #9333ea !important;
+  }
+`;
+
+/**
  * Printable Report component for exporting the chart results
  */
 const PrintableReport: React.FC<{
@@ -20,6 +73,21 @@ const PrintableReport: React.FC<{
   formatDate: (date: string) => string;
 }> = ({ chartData, calculatedChartData, formatDate }) => {
   const { t, language } = useLanguage();
+  
+  // Add light mode style to head when component mounts, remove on unmount
+  useEffect(() => {
+    const styleEl = document.createElement("style");
+    styleEl.setAttribute("id", "light-mode-print-styles");
+    styleEl.innerHTML = lightModeStyles;
+    document.head.appendChild(styleEl);
+    
+    return () => {
+      const existingStyle = document.getElementById("light-mode-print-styles");
+      if (existingStyle) {
+        existingStyle.remove();
+      }
+    };
+  }, []);
 
   return (
     <div className="print-container bg-white text-black">

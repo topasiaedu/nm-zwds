@@ -203,7 +203,35 @@ const analysis = {
       "衣食住行行业": "Daily Necessities Industry"
     },
     health: {
-      title: "Health Analysis"
+      title: "Health Analysis",
+      demoData: "Demo Data",
+      basedOnStars: "Based on Stars in Health Palace",
+      noData: "No health data available for analysis",
+      // Body parts
+      "头": "Head",
+      "眼": "Eyes",
+      "耳": "Ears",
+      "左耳": "Left Ear",
+      "右耳": "Right Ear",
+      "口": "Mouth",
+      "鼻": "Nose",
+      "心脏": "Heart",
+      "肝脏": "Liver",
+      "肺": "Lungs",
+      "胃": "Stomach",
+      "肠": "Intestines",
+      "肾": "Kidneys",
+      "膀胱": "Bladder",
+      "生殖器": "Reproductive Organs",
+      "左手": "Left Hand",
+      "右手": "Right Hand",
+      "手": "Hands",
+      "左脚": "Left Foot",
+      "右脚": "Right Foot",
+      "脚": "Feet",
+      "关节": "Joints",
+      "神经系统": "Nervous System",
+      "膝盖": "Knees"
     },
     fourKeyPalace: "Four Transformations Analysis",
     // Four Transformations content
