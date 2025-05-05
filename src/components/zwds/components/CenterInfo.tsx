@@ -30,14 +30,25 @@ const CenterInfo: React.FC<CenterInfoProps> = ({ chartData }) => {
 
   return (
     <motion.div 
-      className="col-span-2 row-span-2 border border-indigo-400/40 dark:border-indigo-500/40 bg-white/95 dark:bg-indigo-900/30 flex flex-col h-full w-full rounded-lg shadow-md overflow-hidden"
+      className="col-span-2 row-span-2 border border-indigo-400/40 dark:border-indigo-500/40 bg-white/95 dark:bg-indigo-900/30 flex flex-col h-full w-full rounded-lg shadow-md overflow-hidden relative"
       variants={centerInfoVariants}
       style={{
         boxShadow: "0 4px 16px rgba(79, 70, 229, 0.1)",
       }}>
       
+      {/* Background Logo Watermark */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
+        <div className="flex flex-col items-center">
+          <div className="flex items-center opacity-[0.15] dark:opacity-[0.12] transform scale-150">
+            <span className="text-2xl font-bold px-3 py-1 rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 text-white dark:from-purple-500 dark:to-indigo-500 uppercase tracking-wider">
+              CAE
+            </span>
+          </div>
+        </div>
+      </div>
+      
       {/* Content container */}
-      <div className="flex flex-col h-full">
+      <div className="flex flex-col h-full z-10 relative">
         {/* Name with animation */}
         <motion.div 
           className="text-base sm:text-lg font-medium py-2 px-3 sm:px-4 text-indigo-900 dark:text-indigo-100 text-center bg-gradient-to-r from-indigo-100/90 to-purple-100/90 dark:from-indigo-800/70 dark:to-purple-900/70"

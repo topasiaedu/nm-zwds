@@ -42,29 +42,138 @@ const calculateBorderPoint = (
   // Calculate the angle of the direction
   const angle = Math.atan2(dy, dx);
   
-  // Use a simple rectangular intersection calculation instead of elliptical
-  // This works better with the grid layout and especially corner palaces
-  
-  // Calculate the absolute values of tangent and cotangent
-  const absTan = Math.abs(Math.tan(angle));
-  const absCot = Math.abs(1 / Math.tan(angle));
-  
+  // Determine which of the four sides of the palace we're hitting
   let borderX: number, borderY: number;
   
-  // Check which side of the rectangle we intersect with
-  if (absTan <= height / width) {
-    // Intersect with left or right edge
+  // Check if the palace is in a corner position by examining its position
+  const isPalaceInCorner = (
+    // Top-left corner
+    (fromRect.left < fromRect.width && fromRect.top < fromRect.height) ||
+    // Top-right corner
+    (fromRect.right > document.body.clientWidth - fromRect.width && fromRect.top < fromRect.height) ||
+    // Bottom-left corner
+    (fromRect.left < fromRect.width && fromRect.bottom > document.body.clientHeight - fromRect.height) ||
+    // Bottom-right corner
+    (fromRect.right > document.body.clientWidth - fromRect.width && fromRect.bottom > document.body.clientHeight - fromRect.height)
+  );
+  
+  // For more precise positioning, identify which side we're hitting
+  if (Math.abs(Math.cos(angle)) > Math.abs(Math.sin(angle))) {
+    // Hitting left or right side
     borderX = (dx > 0) ? fromX + width : fromX - width;
-    borderY = fromY + dy * (borderX - fromX) / dx;
+    
+    // For corner palaces, ensure we're starting from the middle of the side
+    if (isPalaceInCorner) {
+      // If angle is closer to horizontal than vertical
+      borderY = fromY; // Center of the left/right side
+    } else {
+      borderY = fromY + dy * (borderX - fromX) / dx;
+    }
   } else {
-    // Intersect with top or bottom edge
+    // Hitting top or bottom side
     borderY = (dy > 0) ? fromY + height : fromY - height;
-    borderX = fromX + dx * (borderY - fromY) / dy;
+    
+    // For corner palaces, ensure we're starting from the middle of the side
+    if (isPalaceInCorner) {
+      // If angle is closer to vertical than horizontal
+      borderX = fromX; // Center of the top/bottom side
+    } else {
+      borderX = fromX + dx * (borderY - fromY) / dy;
+    }
   }
   
   // Apply a small adjustment factor to ensure the point is slightly outside palace
   // This makes the lines start just a bit outside the palace border for visual clarity
-  const adjustmentFactor = 1.05;
+  const adjustmentFactor = 1.02;
+  const adjustedX = fromX + (borderX - fromX) * adjustmentFactor;
+  const adjustedY = fromY + (borderY - fromY) * adjustmentFactor;
+  
+  return { x: adjustedX, y: adjustedY };
+};
+
+/**
+ * Calculate the center point of the border in the direction of the target
+ * This ensures lines start from the center of the palace border
+ */
+const calculateCenteredBorderPoint = (
+  fromRect: DOMRect,
+  fromX: number, 
+  fromY: number, 
+  toX: number, 
+  toY: number,
+  palaceNumber: number
+): { x: number; y: number } => {
+  // Calculate direction vector
+  const dx = toX - fromX;
+  const dy = toY - fromY;
+  
+  // Palace dimensions
+  const width = fromRect.width / 2;
+  const height = fromRect.height / 2;
+  
+  // Calculate the angle of the direction
+  const angle = Math.atan2(dy, dx);
+  
+  // Check if this is a corner palace
+  const isCornerPalace = [1, 4, 7, 10].includes(palaceNumber);
+  
+  // For corner palaces, use the original calculation method
+  if (isCornerPalace) {
+    // Use a simple rectangular intersection calculation for corner palaces
+    if (Math.abs(Math.cos(angle)) > Math.abs(Math.sin(angle))) {
+      // Hitting left or right side
+      const borderX = (dx > 0) ? fromX + width : fromX - width;
+      const borderY = fromY + dy * (borderX - fromX) / dx;
+      
+      // Apply a small adjustment factor
+      const adjustmentFactor = 1.02;
+      const adjustedX = fromX + (borderX - fromX) * adjustmentFactor;
+      const adjustedY = fromY + (borderY - fromY) * adjustmentFactor;
+      
+      return { x: adjustedX, y: adjustedY };
+    } else {
+      // Hitting top or bottom side
+      const borderY = (dy > 0) ? fromY + height : fromY - height;
+      const borderX = fromX + dx * (borderY - fromY) / dy;
+      
+      // Apply a small adjustment factor
+      const adjustmentFactor = 1.02;
+      const adjustedX = fromX + (borderX - fromX) * adjustmentFactor;
+      const adjustedY = fromY + (borderY - fromY) * adjustmentFactor;
+      
+      return { x: adjustedX, y: adjustedY };
+    }
+  }
+  
+  // For non-corner palaces, ensure the line starts from the center of the border
+  let borderX: number, borderY: number;
+  
+  // Check which quadrant the angle falls into to determine the side
+  // Right side: -π/4 to π/4
+  // Bottom side: π/4 to 3π/4
+  // Left side: 3π/4 to -3π/4
+  // Top side: -3π/4 to -π/4
+  
+  if (angle > -Math.PI/4 && angle < Math.PI/4) {
+    // Right side - x is fixed at right edge, y is center
+    borderX = fromX + width;
+    borderY = fromY;
+  } else if (angle >= Math.PI/4 && angle < 3*Math.PI/4) {
+    // Bottom side - y is fixed at bottom edge, x is center
+    borderX = fromX;
+    borderY = fromY + height;
+  } else if ((angle >= 3*Math.PI/4) || (angle <= -3*Math.PI/4)) {
+    // Left side - x is fixed at left edge, y is center
+    borderX = fromX - width;
+    borderY = fromY;
+  } else {
+    // Top side - y is fixed at top edge, x is center
+    borderX = fromX;
+    borderY = fromY - height;
+  }
+  
+  // Apply a small adjustment factor to ensure the point is slightly outside palace
+  const adjustmentFactor = 1.02;
   const adjustedX = fromX + (borderX - fromX) * adjustmentFactor;
   const adjustedY = fromY + (borderY - fromY) * adjustmentFactor;
   
@@ -402,8 +511,8 @@ const TransformationLines: React.FC<TransformationLinesProps> = ({
       // Calculate direction angle with offset for spacing
       const angle = Math.atan2(dy, dx) + baseOffsetAngle;
       
-      // Calculate the point on the palace border
-      const borderPoint = calculateBorderPoint(fromRect, fromX, fromY, toX, toY);
+      // Calculate the point on the palace border - use the centered border point calculation
+      const borderPoint = calculateCenteredBorderPoint(fromRect, fromX, fromY, toX, toY, transformation.fromPalace);
       
       // Calculate endpoints of the shorter line
       const endX = borderPoint.x + lineLength * Math.cos(angle);
@@ -449,7 +558,7 @@ const TransformationLines: React.FC<TransformationLinesProps> = ({
       {regularLines.length > 0 && (
         <svg 
           key={regularSvgKey}
-          className="absolute top-0 left-0 w-full h-full pointer-events-none z-5"
+          className="absolute top-0 left-0 w-full h-full pointer-events-none z-50"
           style={{ overflow: "visible" }}
         >
           {regularLines}
@@ -460,7 +569,7 @@ const TransformationLines: React.FC<TransformationLinesProps> = ({
       {oppositeLines.length > 0 && (
         <svg 
           key={oppositeSvgKey}
-          className="absolute top-0 left-0 w-full h-full pointer-events-none z-5"
+          className="absolute top-0 left-0 w-full h-full pointer-events-none z-50"
           style={{ overflow: "visible" }}
         >
           {oppositeLines}

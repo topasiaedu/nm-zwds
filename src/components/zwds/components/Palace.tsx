@@ -1,12 +1,14 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { Palace as PalaceType, Transformation } from "../../../utils/zwds/types";
+import {
+  Palace as PalaceType,
+  Transformation,
+} from "../../../utils/zwds/types";
 import { useLanguage } from "../../../context/LanguageContext";
 import { translateStarName } from "../utils/helpers";
 import ZodiacIcons from "../icons";
 import ZodiacIconWrapper from "./ZodiacIconWrapper";
 import { FaSyncAlt } from "react-icons/fa";
-
 
 // Map earthly branches to their zodiac animals
 const getZodiacIcon = (earthlyBranch: string): React.ElementType | null => {
@@ -258,7 +260,6 @@ const Palace: React.FC<PalaceProps> = ({
     }
   };
 
-
   return (
     <motion.div
       key={`palace-${palaceNumber}-${selectedPalace}`}
@@ -335,66 +336,12 @@ const Palace: React.FC<PalaceProps> = ({
 
       {/* Top left: Main Stars */}
       <div className="absolute top-0.5 xs:top-1 sm:top-2 left-0.5 xs:left-1 sm:left-2 z-30">
-        {palace.mainStar && palace.mainStar.length > 0 && (
-          <div className="font-medium text-2xs xs:text-xs sm:text-sm">
-            {palace.mainStar.map((star, starIndex) => (
-              <>
-                <div
-                  key={starIndex + star.name}
-                  className={`mb-0.5 flex items-center gap-1 ${
-                    isSelected
-                      ? "text-white dark:text-white font-semibold"
-                      : "text-zinc-800 dark:text-zinc-200 font-semibold"
-                  }`}
-                  ref={(el) => registerStarRef(palaceNumber, star.name, el)}>
-                  {translateStarName(star.name, "mainStars", language, t)}
-                  <span>
-                    {star.selfInfluence && <FaSyncAlt className={`${getTransformationColor(star.selfInfluence[0])}`} />}
-                  </span>
-                </div>
-                <div>
-                  {star.transformations?.map((transformation, idx) => (
-                    <span
-                      key={idx}
-                      className={`text-2xs xs:text-xs sm:text-sm sm:ml-1 ${
-                        isSelected
-                          ? transformation === "化祿"
-                            ? "text-green-300 font-bold bg-green-500/10 rounded-md px-1 py-0.5"
-                            : transformation === "化權"
-                            ? "text-blue-300 font-bold bg-blue-500/10 rounded-md px-1 py-0.5" // Brighter cyan instead of blue
-                            : transformation === "化科"
-                            ? "text-yellow-300 font-bold bg-yellow-500/10 rounded-md px-1 py-0.5"
-                            : transformation === "化忌"
-                            ? "text-red-300 font-bold bg-red-500/10 rounded-md px-1 py-0.5"
-                            : "text-rose-300 font-bold bg-rose-500/10 rounded-md px-1 py-0.5"
-                          : transformation === "化祿"
-                          ? "text-green-500 bg-green-500/10 rounded-md px-1 py-0.5"
-                          : transformation === "化權"
-                          ? "text-blue-500 bg-blue-500/10 rounded-md px-1 py-0.5" // Brighter cyan instead of blue
-                          : transformation === "化科"
-                          ? "text-yellow-500 bg-yellow-500/10 rounded-md px-1 py-0.5"
-                          : transformation === "化忌"
-                          ? "text-red-500 bg-red-500/10 rounded-md px-1 py-0.5"
-                          : "text-rose-500 bg-rose-500/10 rounded-md px-1 py-0.5"
-                      }`}>
-                      {language === "en" &&
-                      t(`zwds.transformations.${transformation}`)
-                        ? t(`zwds.transformations.${transformation}`).split(
-                            " "
-                          )[0]
-                        : transformation}
-                    </span>
-                  ))}
-                </div>
-              </>
-            ))}
-          </div>
-        )}
-        {palace.minorStars.map((star, idx) => (
-          <>
+        <div className="flex flex-row flex-wrap gap-2">
+          {/* Minor Stars */}
+          {palace.minorStars.map((star, idx) => (
             <div
-              key={idx}
-              className={`text-2xs xs:text-xs sm:text-sm mb-0.5 flex items-center gap-1 ${
+              key={`minor-${idx}`}
+              className={`text-2xs xs:text-xs sm:text-sm mb-1.5 flex flex-col items-start ${
                 isSelected
                   ? "font-medium text-white dark:text-white"
                   : star.brightness === "bright"
@@ -402,21 +349,32 @@ const Palace: React.FC<PalaceProps> = ({
                   : "text-zinc-500 dark:text-zinc-400"
               }`}
               ref={(el) => registerStarRef(palaceNumber, star.name, el)}>
-              {translateStarName(star.name, "minorStars", language, t)} 
-              <span>
-                {star.selfInfluence && <FaSyncAlt className={` ${getTransformationColor(star.selfInfluence[0])}`} />}
-              </span>
-            </div>
-            <div>
+              {/* Split star name by spaces and render each word vertically */}
+              {translateStarName(star.name, "minorStars", language, t)
+                .split(" ")
+                .map((word, wordIdx) => (
+                  <span key={`word-${wordIdx}`} className="mb-0.5 leading-tight">
+                    {word}
+                  </span>
+                ))}
+              {star.selfInfluence && (
+                <span className="mb-0.5">
+                  <FaSyncAlt
+                    className={`${getTransformationColor(
+                      star.selfInfluence[0]
+                    )}`}
+                  />
+                </span>
+              )}
               {star.transformations?.map((transformation, tidx) => (
                 <span
                   key={tidx}
-                  className={`text-2xs xs:text-xs sm:text-sm  sm:ml-1 ${
+                  className={`text-2xs xs:text-xs sm:text-sm mb-0.5 ${
                     isSelected
                       ? transformation === "化祿"
                         ? "text-green-300 font-bold bg-green-500/10 rounded-md px-1 py-0.5"
                         : transformation === "化權"
-                        ? "text-blue-300 font-bold bg-blue-500/10 rounded-md px-1 py-0.5" // Brighter cyan instead of blue
+                        ? "text-blue-300 font-bold bg-blue-500/10 rounded-md px-1 py-0.5"
                         : transformation === "化科"
                         ? "text-yellow-300 font-bold bg-yellow-500/10 rounded-md px-1 py-0.5"
                         : transformation === "化忌"
@@ -425,7 +383,7 @@ const Palace: React.FC<PalaceProps> = ({
                       : transformation === "化祿"
                       ? "text-green-500 bg-green-500/10 rounded-md px-1 py-0.5"
                       : transformation === "化權"
-                      ? "text-blue-500 bg-blue-500/10 rounded-md px-1 py-0.5" // Brighter cyan instead of blue
+                      ? "text-blue-500 bg-blue-500/10 rounded-md px-1 py-0.5"
                       : transformation === "化科"
                       ? "text-yellow-500 bg-yellow-500/10 rounded-md px-1 py-0.5"
                       : transformation === "化忌"
@@ -439,8 +397,71 @@ const Palace: React.FC<PalaceProps> = ({
                 </span>
               ))}
             </div>
-          </>
-        ))}
+          ))}
+          
+          {/* Main Stars */}
+          {palace.mainStar && palace.mainStar.length > 0 && 
+            palace.mainStar.map((star, starIndex) => (
+              <div
+                key={`main-${starIndex}`}
+                className={`mb-1.5 flex flex-col items-start font-medium text-2xs xs:text-xs sm:text-sm ${
+                  isSelected
+                    ? "text-white dark:text-white font-semibold"
+                    : "text-zinc-800 dark:text-zinc-200 font-semibold"
+                }`}
+                ref={(el) => registerStarRef(palaceNumber, star.name, el)}>
+                {/* Split star name by spaces and render each word vertically */}
+                {translateStarName(star.name, "mainStars", language, t)
+                  .split(" ")
+                  .map((word, wordIdx) => (
+                    <span key={`word-${wordIdx}`} className="mb-0.5 leading-tight">
+                      {word}
+                    </span>
+                  ))}
+                {star.selfInfluence && (
+                  <span className="mb-0.5">
+                    <FaSyncAlt
+                      className={`${getTransformationColor(
+                        star.selfInfluence[0]
+                      )}`}
+                    />
+                  </span>
+                )}
+                {star.transformations?.map((transformation, idx) => (
+                  <span
+                    key={idx}
+                    className={`text-2xs xs:text-xs sm:text-sm mb-0.5 ${
+                      isSelected
+                        ? transformation === "化祿"
+                          ? "text-green-300 font-bold bg-green-500/10 rounded-md px-1 py-0.5"
+                          : transformation === "化權"
+                          ? "text-blue-300 font-bold bg-blue-500/10 rounded-md px-1 py-0.5"
+                          : transformation === "化科"
+                          ? "text-yellow-300 font-bold bg-yellow-500/10 rounded-md px-1 py-0.5"
+                          : transformation === "化忌"
+                          ? "text-red-300 font-bold bg-red-500/10 rounded-md px-1 py-0.5"
+                          : "text-rose-300 font-bold bg-rose-500/10 rounded-md px-1 py-0.5"
+                        : transformation === "化祿"
+                        ? "text-green-500 bg-green-500/10 rounded-md px-1 py-0.5"
+                        : transformation === "化權"
+                        ? "text-blue-500 bg-blue-500/10 rounded-md px-1 py-0.5"
+                        : transformation === "化科"
+                        ? "text-yellow-500 bg-yellow-500/10 rounded-md px-1 py-0.5"
+                        : transformation === "化忌"
+                        ? "text-red-500 bg-red-500/10 rounded-md px-1 py-0.5"
+                        : "text-rose-500 bg-rose-500/10 rounded-md px-1 py-0.5"
+                    }`}>
+                    {language === "en" &&
+                    t(`zwds.transformations.${transformation}`)
+                      ? t(`zwds.transformations.${transformation}`).split(
+                          " "
+                        )[0]
+                      : transformation}
+                  </span>
+                ))}
+              </div>
+            ))}
+        </div>
       </div>
 
       {/* Bottom section with grid layout */}
