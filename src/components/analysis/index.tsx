@@ -5,6 +5,7 @@ import LifeAreasRadarChart from "./LifeAreasRadarChart";
 import LifeAreasExplanation from "./LifeAreasExplanation";
 import SummaryAnalysis from "./SummaryAnalysis";
 import WatchoutAnalysis from "./WatchoutAnalysis";
+import AnimatedWrapper from "./AnimatedWrapper";
 
 export { 
   CareerAnalysis, 
@@ -13,5 +14,6 @@ export {
   LifeAreasRadarChart, 
   LifeAreasExplanation, 
   SummaryAnalysis,
-  WatchoutAnalysis
+  WatchoutAnalysis,
+  AnimatedWrapper
 }; 

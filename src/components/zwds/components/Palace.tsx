@@ -1,10 +1,12 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { Palace as PalaceType } from "../../../utils/zwds/types";
+import { Palace as PalaceType, Transformation } from "../../../utils/zwds/types";
 import { useLanguage } from "../../../context/LanguageContext";
 import { translateStarName } from "../utils/helpers";
 import ZodiacIcons from "../icons";
 import ZodiacIconWrapper from "./ZodiacIconWrapper";
+import { FaSyncAlt } from "react-icons/fa";
+
 
 // Map earthly branches to their zodiac animals
 const getZodiacIcon = (earthlyBranch: string): React.ElementType | null => {
@@ -241,6 +243,22 @@ const Palace: React.FC<PalaceProps> = ({
     transition: "all 0.3s ease",
   };
 
+  const getTransformationColor = (transformation: Transformation) => {
+    switch (transformation) {
+      case "化科":
+        return "text-yellow-500";
+      case "化權":
+        return "text-blue-500";
+      case "化祿":
+        return "text-green-500";
+      case "化忌":
+        return "text-red-500";
+      default:
+        return "";
+    }
+  };
+
+
   return (
     <motion.div
       key={`palace-${palaceNumber}-${selectedPalace}`}
@@ -323,13 +341,16 @@ const Palace: React.FC<PalaceProps> = ({
               <>
                 <div
                   key={starIndex + star.name}
-                  className={`mb-0.5 ${
+                  className={`mb-0.5 flex items-center gap-1 ${
                     isSelected
                       ? "text-white dark:text-white font-semibold"
                       : "text-zinc-800 dark:text-zinc-200 font-semibold"
                   }`}
                   ref={(el) => registerStarRef(palaceNumber, star.name, el)}>
                   {translateStarName(star.name, "mainStars", language, t)}
+                  <span>
+                    {star.selfInfluence && <FaSyncAlt className={`${getTransformationColor(star.selfInfluence[0])}`} />}
+                  </span>
                 </div>
                 <div>
                   {star.transformations?.map((transformation, idx) => (
@@ -373,7 +394,7 @@ const Palace: React.FC<PalaceProps> = ({
           <>
             <div
               key={idx}
-              className={`text-2xs xs:text-xs sm:text-sm mb-0.5 ${
+              className={`text-2xs xs:text-xs sm:text-sm mb-0.5 flex items-center gap-1 ${
                 isSelected
                   ? "font-medium text-white dark:text-white"
                   : star.brightness === "bright"
@@ -381,7 +402,10 @@ const Palace: React.FC<PalaceProps> = ({
                   : "text-zinc-500 dark:text-zinc-400"
               }`}
               ref={(el) => registerStarRef(palaceNumber, star.name, el)}>
-              {translateStarName(star.name, "minorStars", language, t)}
+              {translateStarName(star.name, "minorStars", language, t)} 
+              <span>
+                {star.selfInfluence && <FaSyncAlt className={` ${getTransformationColor(star.selfInfluence[0])}`} />}
+              </span>
             </div>
             <div>
               {star.transformations?.map((transformation, tidx) => (

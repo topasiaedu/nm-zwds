@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { analyzeHealth, getStarsInPalace } from "../../utils/zwds/analysis";
 import { useLanguage } from "../../context/LanguageContext";
+import AnimatedWrapper from "./AnimatedWrapper";
+import { motion } from "framer-motion";
 
 /**
  * Props interface for the HealthAnalysis component
@@ -24,7 +26,7 @@ const HumanBodySVG: React.FC<{
       xmlns="http://www.w3.org/2000/svg"
     >
       {/* Base human outline - always visible */}
-      <path 
+      <motion.path 
         d="M150,60 C175,60 195,85 195,115 C195,145 175,170 150,170 C125,170 105,145 105,115 C105,85 125,60 150,60 Z
            M150,170 C190,170 220,240 220,320 C220,400 190,450 150,450 C110,450 80,400 80,320 C80,240 110,170 150,170 Z
            M220,220 C240,230 260,270 260,300 C260,330 240,360 220,370
@@ -35,6 +37,9 @@ const HumanBodySVG: React.FC<{
         stroke="currentColor"
         strokeWidth="2"
         className="dark:stroke-gray-200"
+        initial={{ pathLength: 0 }}
+        animate={{ pathLength: 1 }}
+        transition={{ duration: 1.5, ease: "easeInOut" }}
       />
       
       {/* Head - highlight when affected */}
@@ -290,93 +295,13 @@ const HealthAnalysis: React.FC<HealthAnalysisProps> = ({ chartData }) => {
     );
   }
 
-  // Get gender from chart data
-  const gender = chartData?.input?.gender === "female" ? "female" : "male";
-
   return (
-    <div className="rounded-2xl shadow-lg overflow-hidden bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
-      <div className="bg-gradient-to-r from-red-500 to-pink-500 px-6 py-4">
-        <h2 className="text-xl font-bold text-white flex items-center">
-          <svg 
-            className="w-6 h-6 mr-2" 
-            fill="none" 
-            stroke="currentColor" 
-            viewBox="0 0 24 24" 
-            xmlns="http://www.w3.org/2000/svg">
-            <path 
-              strokeLinecap="round" 
-              strokeLinejoin="round" 
-              strokeWidth={2} 
-              d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" 
-            />
-          </svg>
-          {getText("analysis.health.title", "Health Analysis")}
-          {error && (
-            <span className="ml-2 text-xs bg-yellow-400 text-black px-2 py-1 rounded">
-              Demo Data
-            </span>
-          )}
-        </h2>
-      </div>
-
-      <div className="p-6">
-        {affectedBodyParts.length > 0 ? (
-          <>
-            <div className="mb-6">
-              <h3 className="text-lg font-semibold mb-2 text-gray-800 dark:text-white">
-                {getText("analysis.health.basedOnStars", "Based on Stars in Health Palace")}:
-              </h3>
-              <div className="flex flex-wrap gap-2 mb-4">
-                {starsInHealthPalace.map((star, index) => (
-                  <span 
-                    key={index} 
-                    className="px-3 py-1 bg-pink-100 text-pink-800 dark:bg-pink-900/30 dark:text-pink-300 rounded-full text-sm font-medium">
-                    {star}
-                  </span>
-                ))}
-              </div>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
-              {/* Human body visualization - SVG with invisible organs that highlight when affected */}
-              <div className="bg-gray-50 dark:bg-gray-700/30 rounded-lg flex items-center justify-center p-4">
-                <div className="w-60 max-w-full mx-auto">
-                  {/* <HumanBodySVG 
-                    affectedParts={affectedBodyParts} 
-                    gender={gender} 
-                  /> */}
-                </div>
-              </div>
-              
-              {/* Body parts list */}
-              <div>
-                <h3 className="text-lg font-semibold mb-3 text-gray-800 dark:text-white">
-                  {getText("analysis.health.potentialAreas", "Potential Areas of Attention")}:
-                </h3>
-                <div className="space-y-2">
-                  {affectedBodyParts.map((bodyPart, index) => (
-                    <div 
-                      key={index} 
-                      className="flex items-center bg-pink-50 dark:bg-pink-900/20 p-3 rounded-lg">
-                      <span className="w-3 h-3 rounded-full bg-red-500 mr-3 animate-pulse"></span>
-                      <span className="text-gray-800 dark:text-gray-200 font-medium">{bodyPart}</span>
-                    </div>
-                  ))}
-                </div>
-                
-                <div className="mt-6 text-sm text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-700/30 p-4 rounded-lg">
-                  <p>
-                    {getText("analysis.health.disclaimer", 
-                      "This analysis is based on the stars in your health palace (疾厄宫) and provides general guidance only. It is not intended to replace professional medical advice. Always consult with qualified healthcare providers for any health concerns.")}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </>
-        ) : (
-          <div className="text-center py-8">
+    <AnimatedWrapper delay={0.2} threshold={0.25}>
+      <div className="rounded-2xl shadow-lg overflow-hidden bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+        <div className="bg-gradient-to-r from-red-500 to-pink-500 px-6 py-4">
+          <h2 className="text-xl font-bold text-white flex items-center">
             <svg 
-              className="mx-auto h-12 w-12 text-gray-400" 
+              className="w-6 h-6 mr-2" 
               fill="none" 
               stroke="currentColor" 
               viewBox="0 0 24 24" 
@@ -385,16 +310,95 @@ const HealthAnalysis: React.FC<HealthAnalysisProps> = ({ chartData }) => {
                 strokeLinecap="round" 
                 strokeLinejoin="round" 
                 strokeWidth={2} 
-                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" 
+                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" 
               />
             </svg>
-            <p className="mt-2 text-gray-500 dark:text-gray-400">
-              {getText("analysis.health.noData", "No health data available for analysis")}
-            </p>
+            {getText("analysis.health.title", "Health Analysis")}
+            {error && (
+              <span className="ml-2 text-xs bg-yellow-400 text-black px-2 py-1 rounded">
+                Demo Data
+              </span>
+            )}
+          </h2>
+        </div>
+
+        <div className="p-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* Left column - Interactive human body */}
+            <motion.div 
+              className="relative flex items-center justify-center"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5, delay: 0.7 }}
+            >
+              <HumanBodySVG 
+                affectedParts={affectedBodyParts} 
+                gender={chartData?.input?.gender === "female" ? "female" : "male"} 
+              />
+            </motion.div>
+            
+            {/* Right column - Health interpretations */}
+            <div className="flex flex-col space-y-4">
+              {affectedBodyParts.length > 0 ? (
+                <>
+                  <div className="mb-6">
+                    <h3 className="text-lg font-semibold mb-2 text-gray-800 dark:text-white">
+                      {getText("analysis.health.basedOnStars", "Based on Stars in Health Palace")}:
+                    </h3>
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {starsInHealthPalace.map((star, index) => (
+                        <span 
+                          key={index} 
+                          className="px-3 py-1 bg-pink-100 text-pink-800 dark:bg-pink-900/30 dark:text-pink-300 rounded-full text-sm font-medium">
+                          {star}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    {affectedBodyParts.map((bodyPart, index) => (
+                      <div 
+                        key={index} 
+                        className="flex items-center bg-pink-50 dark:bg-pink-900/20 p-3 rounded-lg">
+                        <span className="w-3 h-3 rounded-full bg-red-500 mr-3 animate-pulse"></span>
+                        <span className="text-gray-800 dark:text-gray-200 font-medium">{bodyPart}</span>
+                      </div>
+                    ))}
+                  </div>
+                  
+                  <div className="mt-6 text-sm text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-700/30 p-4 rounded-lg">
+                    <p>
+                      {getText("analysis.health.disclaimer", 
+                        "This analysis is based on the stars in your health palace (疾厄宫) and provides general guidance only. It is not intended to replace professional medical advice. Always consult with qualified healthcare providers for any health concerns.")}
+                    </p>
+                  </div>
+                </>
+              ) : (
+                <div className="text-center py-8">
+                  <svg 
+                    className="mx-auto h-12 w-12 text-gray-400" 
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24" 
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path 
+                      strokeLinecap="round" 
+                      strokeLinejoin="round" 
+                      strokeWidth={2} 
+                      d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" 
+                    />
+                  </svg>
+                  <p className="mt-2 text-gray-500 dark:text-gray-400">
+                    {getText("analysis.health.noData", "No health data available for analysis")}
+                  </p>
+                </div>
+              )}
+            </div>
           </div>
-        )}
+        </div>
       </div>
-    </div>
+    </AnimatedWrapper>
   );
 };
 

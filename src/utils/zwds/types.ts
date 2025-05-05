@@ -39,6 +39,7 @@ export interface Star {
   palace: number;
   isTransformed: boolean;
   transformations?: Transformation[];  // A star can have multiple transformations
+  selfInfluence?: Transformation[];    // Store which transformations are self-influences
 }
 
 /**
@@ -70,6 +71,11 @@ export interface Palace {
     earthlyBranch: EarthlyBranchType;
     heavenlyStem: HeavenlyStemType;
   };
+  oppositePalaceInfluence?: Array<{
+    starName: string;
+    transformation: Transformation;
+    sourcePalace: number;
+  }>;
 }
 
 /**
@@ -127,5 +133,7 @@ export interface ChartData {
     step10: string;
     step11: string;
     step12: string;
+    step13: string;
+    step14: string;
   };
 } 

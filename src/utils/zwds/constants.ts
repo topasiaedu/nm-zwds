@@ -56,7 +56,6 @@ export const HEAVENLY_STEMS = [
   "癸",
 ] as const;
 
-
 /**
  * ZiWei star position lookup table based on lunar day and five elements
  * Format: [lunar_day][five_elements] = earthly branch */
@@ -420,7 +419,7 @@ export const FOUR_TRANSFORMATIONS: {
 } = {
   甲: {
     祿: "廉贞", // 化科 goes to 廉贞
-    權: "破軍", // 化權 goes to 破軍
+    權: "破军", // 化權 goes to 破军
     科: "武曲", // 化祿 goes to 武曲
     忌: "太阳", // 化忌 goes to 太阳
   },
@@ -473,7 +472,7 @@ export const FOUR_TRANSFORMATIONS: {
     忌: "武曲",
   },
   癸: {
-    祿: "破軍",
+    祿: "破军",
     權: "巨门",
     科: "太阴",
     忌: "贪狼",
@@ -845,6 +844,21 @@ export const MAIN_STARS_TABLE = {
   },
 } as const;
 
+export const OPPOSITE_PALACE_INFLUENCE = {
+  命宫: "迁移",
+  迁移: "命宫",
+  父母: "疾厄",
+  疾厄: "父母",
+  福德: "财帛",
+  财帛: "福德",
+  田宅: "子女",
+  子女: "田宅",
+  官禄: "夫妻",
+  夫妻: "官禄",
+  交友: "兄弟",
+  兄弟: "交友",
+} as const;
+
 export const ZIWEI_2025_READING = {
   input: {
     year: 1999,
@@ -1016,7 +1030,7 @@ export const ZIWEI_2025_READING = {
       originalPalace: 6,
       mainStar: [
         {
-          name: "破軍",
+          name: "破军",
           brightness: "bright",
           palace: 6,
           isTransformed: false,
@@ -1292,6 +1306,10 @@ export const ZIWEI_2025_READING = {
       "Major Limits calculated starting from age 4 (金四局), starting at Life Palace 4, moving counter-clockwise for male with Yin polarity",
     step12:
       "Annual Flow calculated for current year 2025. Current year is in palace 1. Base cycle: 2013-2024, repeating every 12 years.",
+    step13:
+      "Self Influence (自化) calculated for all stars based on their palace's Heavenly Stem",
+    step14:
+      "Opposite Palace Influence calculated for all palaces based on opposite palace stars and current palace Heavenly Stem",
   },
   fiveElements: "金四局",
   ziWeiPosition: 10,
@@ -1302,4 +1320,4 @@ export const ZIWEI_2025_READING = {
     huaJi: "文曲",
   },
   mainStar: "七杀",
-}as ChartData;
+} as ChartData;

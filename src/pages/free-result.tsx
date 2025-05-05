@@ -44,11 +44,17 @@ const FreeResult: React.FC = () => {
 
   // WhatsApp link
   const whatsappLink = "https://wa.me/601158639269";
-  
+
   // WhatsApp icon SVG component
   const WhatsAppIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="mr-2" viewBox="0 0 16 16">
-      <path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z"/>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="16"
+      height="16"
+      fill="currentColor"
+      className="mr-2"
+      viewBox="0 0 16 16">
+      <path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z" />
     </svg>
   );
 
@@ -62,16 +68,16 @@ const FreeResult: React.FC = () => {
         setIsEventActive(false);
         return;
       }
-      
+
       // Check if current date is after the configured end date
       const today = new Date();
       const endDate = new Date(`${FREE_TEST_CONFIG.endDate}T23:59:59`);
-      
+
       if (today > endDate) {
         setIsEventActive(false);
       }
     };
-    
+
     checkEventStatus();
   }, []);
 
@@ -94,7 +100,9 @@ const FreeResult: React.FC = () => {
   }, []);
 
   // Find profile in context to display
-  const profileToShow = profiles.find((profile) => String(profile.id) === String(id));
+  const profileToShow = profiles.find(
+    (profile) => String(profile.id) === String(id)
+  );
 
   /**
    * Fetch or prepare chart data on component mount and when profiles change
@@ -139,7 +147,9 @@ const FreeResult: React.FC = () => {
             // If profiles aren't loaded yet, wait a bit and show loading state
             await new Promise((resolve) => setTimeout(resolve, 800));
             if (isMounted) {
-              setError("Unable to find the requested profile. It may have expired or been removed.");
+              setError(
+                "Unable to find the requested profile. It may have expired or been removed."
+              );
               setLoading(false);
             }
           }
@@ -242,7 +252,10 @@ const FreeResult: React.FC = () => {
   }, [chartData]);
 
   // Prepare the limited time offer text
-  const limitedTimeText = t("freeTest.limitedTime").replace("{{date}}", FREE_TEST_CONFIG.endDate);
+  const limitedTimeText = t("freeTest.limitedTime").replace(
+    "{{date}}",
+    FREE_TEST_CONFIG.endDate
+  );
 
   // If loading profiles from context
   if (profilesLoading) {
@@ -306,13 +319,13 @@ const FreeResult: React.FC = () => {
               )}
             </h1>
           </div>
-          
+
           {!loading && chartData && (
             <p className="text-gray-600 dark:text-gray-400">
               {t("freeTest.resultSubtitle")}
             </p>
           )}
-          
+
           {/* Limited time offer badge */}
           <div className="mt-4 inline-block bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-4 py-2 rounded-full text-sm font-bold">
             {limitedTimeText}
@@ -454,7 +467,8 @@ const FreeResult: React.FC = () => {
                   </div>
 
                   {/* Sign up CTA */}
-                  <div className="mt-8 rounded-2xl shadow-2xl overflow-hidden
+                  <div
+                    className="mt-8 rounded-2xl shadow-2xl overflow-hidden
                             border border-white/10
                             backdrop-filter backdrop-blur-2xl 
                             bg-gradient-to-r from-green-600 to-green-800 text-white
@@ -471,12 +485,11 @@ const FreeResult: React.FC = () => {
                           href={whatsappLink}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="px-6 py-3 bg-white text-green-700 rounded-lg font-medium hover:bg-green-50 transition-colors inline-flex items-center"
-                        >
+                          className="px-6 py-3 bg-white text-green-700 rounded-lg font-medium hover:bg-green-50 transition-colors inline-flex items-center">
                           <WhatsAppIcon />
                           {t("freeTest.createAccount")}
                         </a>
-                      </div>                    
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -503,65 +516,49 @@ const FreeResult: React.FC = () => {
                 />
               </svg>
               {t("analysis.title")}
-              <span className="ml-3 text-sm bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300 px-3 py-1 rounded-full">
-                {t("freeTest.previewVersion")}
-              </span>
             </h2>
 
-            {/* Limited Analysis Notice */}
-            <div className="rounded-2xl shadow-2xl overflow-hidden
-                          border border-white/10
+            {/* Blur Analysis with WhatsApp Overlay */}
+            <div
+              className="relative rounded-2xl overflow-hidden
                           backdrop-filter backdrop-blur-2xl 
                           bg-white/10 dark:bg-black/10
                           transition-all duration-300 p-6 mb-6">
-              <h2 className="text-xl font-bold mb-2 dark:text-white flex items-center">
-                {t("freeTest.limitedAnalysis")}
-              </h2>
-              <p className="text-gray-600 dark:text-gray-400 mb-4">
-                {t("freeTest.limitedAnalysisDesc")}
-              </p>
-              <a
-                href={whatsappLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-6 py-2 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition-colors inline-flex items-center"
-              >
-                <WhatsAppIcon />
-                {t("freeTest.unlockFull")}
-              </a>
-            </div>
+              {/* Main Analysis Content - Slightly Blurred */}
+              <div className="relative filter blur-[3px] pointer-events-none opacity-70">
+                <div className="space-y-8">
+                  {/* Summary Analysis */}
+                  <SummaryAnalysis chartData={calculatedChartData} />
 
-            <div className="space-y-8">
-              {/* Summary Analysis */}
-              <SummaryAnalysis chartData={calculatedChartData} />
+                  {/* Life Areas Radar Chart */}
+                  <LifeAreasRadarChart chartData={calculatedChartData} />
 
-              {/* Life Areas Radar Chart */}
-              <LifeAreasRadarChart chartData={calculatedChartData} />
+                  {/* Life Areas Explanation */}
+                  <LifeAreasExplanation chartData={calculatedChartData} />
+                </div>
+              </div>
 
-              {/* Life Areas Explanation */}
-              <LifeAreasExplanation chartData={calculatedChartData} />
-              
-              {/* Full Analysis Teaser */}
-              <div className="mt-8 rounded-2xl shadow-2xl overflow-hidden
-                            border border-white/10
-                            backdrop-filter backdrop-blur-2xl 
-                            bg-gradient-to-r from-green-600 to-green-800 text-white
-                            transition-all duration-300 p-6">
-                <h2 className="text-2xl font-bold mb-2">
-                  {t("freeTest.moreAvailable")}
-                </h2>
-                <p className="text-green-100 mb-4">
-                  {t("freeTest.moreAnalysisDesc")}
-                </p>
-                <a
-                  href={whatsappLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="px-6 py-3 bg-white text-green-700 rounded-lg font-medium hover:bg-green-50 transition-colors inline-flex items-center"
-                >
-                  <WhatsAppIcon />
-                  {t("freeTest.createAccountCta")}
-                </a>
+              {/* Overlay with WhatsApp CTA */}
+              <div
+                className="absolute inset-0 flex flex-col items-center justify-center backdrop-blur-sm 
+                          bg-white/80 dark:bg-gray-900/80 
+                          text-gray-800 dark:text-white p-6">
+                <div className="max-w-md bg-white/90 dark:bg-gray-800/90 rounded-xl p-6 shadow-lg border border-gray-200 dark:border-gray-700">
+                  <h2 className="text-2xl font-bold mb-4 text-center text-gray-900 dark:text-white">
+                    {t("freeTest.moreAvailable")}
+                  </h2>
+                  <p className="text-base text-center mb-6 text-gray-700 dark:text-gray-300">
+                    {t("freeTest.limitedAnalysisDesc")}
+                  </p>
+                  <a
+                    href={whatsappLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium transition-all duration-300 inline-flex items-center justify-center shadow-md">
+                    <WhatsAppIcon />
+                    {t("freeTest.unlockFull")}
+                  </a>
+                </div>
               </div>
             </div>
           </div>
@@ -571,4 +568,4 @@ const FreeResult: React.FC = () => {
   );
 };
 
-export default FreeResult; 
+export default FreeResult;

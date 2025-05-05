@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { analyzeSummary, SummaryAnalysisResult } from "../../utils/zwds/analysis";
 import { useLanguage } from "../../context/LanguageContext";
 import { SUMMARY_ANALYSIS_CONSTANTS } from "../../utils/zwds/analysis_constants/summary_analysis";
+import AnimatedWrapper from "./AnimatedWrapper";
+import { motion } from "framer-motion";
 
 /**
  * Props interface for the SummaryAnalysis component
@@ -84,39 +86,25 @@ const SummaryAnalysis: React.FC<SummaryAnalysisProps> = ({ chartData }) => {
     .map(summary => summary.description.replace(/\n/g, " "))
     .join(" ");
 
-  return (
-    <div className="rounded-2xl shadow-lg overflow-hidden bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
-      <div className="bg-gradient-to-r from-indigo-500 to-purple-500 px-6 py-4">
-        <h2 className="text-xl font-bold text-white flex items-center">
-          <svg 
-            className="w-6 h-6 mr-2" 
-            fill="none" 
-            stroke="currentColor" 
-            viewBox="0 0 24 24" 
-            xmlns="http://www.w3.org/2000/svg">
-            <path 
-              strokeLinecap="round" 
-              strokeLinejoin="round" 
-              strokeWidth={2} 
-              d="M13 10V3L4 14h7v7l9-11h-7z" 
-            />
-          </svg>
-          {getText("analysis.summary.title", "Personality Summary")}
-       
-        </h2>
-      </div>
+  // Animation variants for text
+  const textVariants = {
+    hidden: { opacity: 0 },
+    visible: { 
+      opacity: 1,
+      transition: { 
+        duration: 0.8,
+        ease: "easeOut"
+      } 
+    }
+  };
 
-      <div className="p-4">
-        {summaries.length > 0 ? (
-          <div className="rounded-lg">
-            <div className="text-gray-700 dark:text-gray-300">
-              {combinedDescription}
-            </div>
-          </div>
-        ) : (
-          <div className="text-center py-8">
+  return (
+    <AnimatedWrapper delay={0.2} threshold={0.3}>
+      <div className="rounded-2xl shadow-lg overflow-hidden bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+        <div className="bg-gradient-to-r from-indigo-500 to-purple-500 px-6 py-4">
+          <h2 className="text-xl font-bold text-white flex items-center">
             <svg 
-              className="mx-auto h-12 w-12 text-gray-400" 
+              className="w-6 h-6 mr-2" 
               fill="none" 
               stroke="currentColor" 
               viewBox="0 0 24 24" 
@@ -125,16 +113,48 @@ const SummaryAnalysis: React.FC<SummaryAnalysisProps> = ({ chartData }) => {
                 strokeLinecap="round" 
                 strokeLinejoin="round" 
                 strokeWidth={2} 
-                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" 
+                d="M13 10V3L4 14h7v7l9-11h-7z" 
               />
             </svg>
-            <p className="mt-2 text-gray-500 dark:text-gray-400">
-              {getText("analysis.summary.noData", "No summary data available for analysis")}
-            </p>
-          </div>
-        )}
+            {getText("analysis.summary.title", "Personality Summary")}
+          </h2>
+        </div>
+
+        <div className="p-4">
+          {summaries.length > 0 ? (
+            <div className="rounded-lg">
+              <motion.div 
+                className="text-gray-700 dark:text-gray-300"
+                variants={textVariants}
+                initial="hidden"
+                animate="visible"
+              >
+                {combinedDescription}
+              </motion.div>
+            </div>
+          ) : (
+            <div className="text-center py-8">
+              <svg 
+                className="mx-auto h-12 w-12 text-gray-400" 
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24" 
+                xmlns="http://www.w3.org/2000/svg">
+                <path 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round" 
+                  strokeWidth={2} 
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" 
+                />
+              </svg>
+              <p className="mt-2 text-gray-500 dark:text-gray-400">
+                {getText("analysis.summary.noData", "No summary data available for analysis")}
+              </p>
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+    </AnimatedWrapper>
   );
 };
 

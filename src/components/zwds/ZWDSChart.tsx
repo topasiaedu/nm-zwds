@@ -47,9 +47,9 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
 
   // Use our custom hooks
   const { starRefs, palaceRefs, refsReady, setRefsReady, registerStarRef } = useStarRefs(chartData, selectedPalace);
-  const { calculateTransformations, getTargetPalaces } = useTransformations(chartData, selectedPalace);
+  const { calculateTransformations, getTargetPalaces, calculateOppositePalaceInfluences } = useTransformations(chartData, selectedPalace);
 
-  // console.log("ChartData", chartData);
+  console.log("ChartData", chartData);
 
   // Update window size when resized
   useEffect(() => {
@@ -69,6 +69,34 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
       window.removeEventListener("resize", handleResize);
     };
   }, []);
+
+  /**
+   * Calculate all transformation lines to draw, including opposite palace influences
+   */
+  const getAllTransformations = () => {
+    // Get regular transformations when a palace is selected
+    const regularTransformations = selectedPalace ? calculateTransformations() : [];
+    
+    // Get opposite palace influences for all palaces
+    let oppositeInfluences: Array<{
+      type: "祿" | "權" | "科" | "忌";
+      fromPalace: number;
+      toPalace: number;
+      starName: string;
+      isOppositeInfluence: true;
+    }> = [];
+    
+    // Loop through all palaces to find all opposite palace influences
+    for (let i = 1; i <= 12; i++) {
+      const palaceInfluences = calculateOppositePalaceInfluences(i);
+      if (palaceInfluences.length > 0) {
+        oppositeInfluences = [...oppositeInfluences, ...palaceInfluences];
+      }
+    }
+    
+    // Combine regular transformations and opposite palace influences
+    return [...regularTransformations, ...oppositeInfluences];
+  };
 
   /**
    * Calculate palace tag for a given palace based on the selected palace
@@ -205,7 +233,7 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
       
       {/* Render transformation lines as overlay */}
       <TransformationLines 
-        transformations={calculateTransformations()}
+        transformations={getAllTransformations()}
         chartRef={chartRef}
         palaceRefs={palaceRefs}
         starRefs={starRefs}

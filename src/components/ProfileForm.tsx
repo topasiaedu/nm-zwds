@@ -5,7 +5,6 @@ import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useAlertContext } from "../context/AlertContext";
 import { Database } from "../../database.types";
-import { Datepicker } from "flowbite-react";
 
 type ProfileInsert = Database["public"]["Tables"]["profiles"]["Insert"];
 
@@ -62,36 +61,6 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ isSelfProfile, onSuccess }) =
   };
   
   /**
-   * Handle date selection from the datepicker
-   * @param date - The selected date object or null if cleared
-   */
-  const handleDateChange = (date: Date | null) => {
-    if (date) {
-      // Fix timezone offset issue by creating a new date with only the date components
-      const year = date.getFullYear();
-      const month = date.getMonth();
-      const day = date.getDate();
-      
-      // Create a new date to avoid timezone offset issues
-      const adjustedDate = new Date(year, month, day, 12); // Use noon to avoid daylight saving issues
-      
-      // Format the date as YYYY-MM-DD for storage
-      const formattedDate = adjustedDate.toISOString().split("T")[0];
-      
-      setFormData({
-        ...formData,
-        birthDate: formattedDate
-      });
-    } else {
-      // Clear the date if null is received
-      setFormData({
-        ...formData,
-        birthDate: ""
-      });
-    }
-  };
-  
-  /**
    * Handle form submission to create a profile
    * @param e - Submit event from form
    */
@@ -134,40 +103,13 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ isSelfProfile, onSuccess }) =
     }
   };
   
-  // Custom theme for datepicker to match the design
-  const datepickerTheme = {
-    root: {
-      base: "relative flex justify-center",
-    },
-    views: {
-      days: {
-        items: {
-          base: "grid w-64 grid-cols-7",
-          item: {
-            base: "block flex-1 cursor-pointer rounded-lg border-0 text-center text-sm font-semibold leading-9 text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-600",
-            selected: "bg-purple-600 text-white hover:bg-purple-700 dark:bg-purple-600 dark:hover:bg-purple-700"
-          }
-        }
-      }
-    }
-  };
-  
-  // Convert string date to Date object for the datepicker
-  const selectedDate = formData.birthDate ? (function() {
-    // Parse the stored date string
-    const [year, month, day] = formData.birthDate.split("-").map(Number);
-    // Create a new date at noon to avoid timezone issues
-    return new Date(year, month - 1, day, 12);
-  })() : undefined;
-  
   return (
     <div className="max-w-3xl mx-auto">
-      <div className="rounded-2xl shadow-2xl overflow-hidden
+      <div className="rounded-2xl shadow-xl overflow-hidden
                     border border-white/10
                     backdrop-filter backdrop-blur-2xl 
-                    bg-white/10 hover:bg-white/15 
-                    dark:bg-black/10 dark:hover:bg-black/20 
-                    transition-all duration-300 p-6">
+                    bg-white/10 dark:bg-gray-800/90
+                    transition-all duration-300 p-8">
         <h2 className="text-2xl font-bold mb-4 dark:text-white">
           {isSelfProfile 
             ? t("profile.createSelfTitle") 
@@ -179,8 +121,8 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ isSelfProfile, onSuccess }) =
             : t("profile.createOtherDesc")}
         </p>
         
-        <form onSubmit={handleSubmit}>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label htmlFor="name" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                 {t("form.name")}
@@ -191,7 +133,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ isSelfProfile, onSuccess }) =
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                className="bg-gray-50/50 border border-gray-300/50 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700/50 dark:border-gray-600/50 dark:placeholder-gray-400 dark:text-white"
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                 placeholder={isSelfProfile ? t("form.yourNamePlaceholder") : t("form.theirNamePlaceholder")}
                 required
               />
@@ -206,7 +148,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ isSelfProfile, onSuccess }) =
                 name="gender"
                 value={formData.gender}
                 onChange={handleChange}
-                className="bg-gray-50/50 border border-gray-300/50 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700/50 dark:border-gray-600/50 dark:placeholder-gray-400 dark:text-white"
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                 required
               >
                 <option value="">{t("form.selectGender")}</option>
@@ -214,64 +156,56 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ isSelfProfile, onSuccess }) =
                 <option value="female">{t("form.female")}</option>
               </select>
             </div>
+          </div>
             
-            <div className="col-span-1 md:col-span-2">
-              <label htmlFor="birthDate" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                {t("form.birthDate")}
-              </label>
-              <div className="w-full bg-gray-50/50 dark:bg-gray-700/50 border border-gray-300/50 dark:border-gray-600/50 rounded-lg p-4 flex justify-center">
-                <div className="max-w-full">
-                  <Datepicker
-                    id="birthDate"
-                    inline
-                    value={selectedDate}
-                    onChange={handleDateChange}
-                    theme={datepickerTheme}
-                    required
-                  />
-                </div>
-              </div>
-              {formData.birthDate && (
-                <div className="mt-2 text-center text-sm text-gray-700 dark:text-gray-300">
-                  {t("form.selectedDate")}: {new Date(formData.birthDate).toLocaleDateString()}
-                </div>
-              )}
-            </div>
+          <div>
+            <label htmlFor="birthDate" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+              {t("form.birthDate")}
+            </label>
+            <input
+              type="date"
+              id="birthDate"
+              name="birthDate"
+              value={formData.birthDate}
+              onChange={handleChange}
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+              required
+            />
+          </div>
             
-            <div className="col-span-1 md:col-span-2">
-              <label htmlFor="birthTime" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                {t("form.birthTime")}
-              </label>
-              <select
-                id="birthTime"
-                name="birthTime"
-                value={formData.birthTime}
-                onChange={handleChange}
-                className="bg-gray-50/50 border border-gray-300/50 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700/50 dark:border-gray-600/50 dark:placeholder-gray-400 dark:text-white"
-                required
-              >
-                <option value="">{t("form.selectTime") || "Select time"}</option>
-                {EarthlyBranches.map((branch, i) => {
-                  const startHour = (23 + (i * 2)) % 24;
-                  const endHour = (startHour + 2) % 24;
-                  const formattedStartHour = startHour.toString().padStart(2, "0");
-                  const formattedEndHour = endHour.toString().padStart(2, "0");
-                  const timeLabel = `${branch}【${formattedStartHour}:00~${formattedEndHour}:00】`;
-                  return (
-                    <option key={branch} value={`${formattedStartHour}:00`}>
-                      {timeLabel}
-                    </option>
-                  );
-                })}
-              </select>
-            </div>
+          <div>
+            <label htmlFor="birthTime" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+              {t("form.birthTime")}
+            </label>
+            <select
+              id="birthTime"
+              name="birthTime"
+              value={formData.birthTime}
+              onChange={handleChange}
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+              required
+            >
+              <option value="">{t("form.selectTime") || "Select time"}</option>
+              {EarthlyBranches.map((branch, i) => {
+                const startHour = (23 + (i * 2)) % 24;
+                const endHour = (startHour + 2) % 24;
+                const formattedStartHour = startHour.toString().padStart(2, "0");
+                const formattedEndHour = endHour.toString().padStart(2, "0");
+                const timeLabel = `${branch}【${formattedStartHour}:00~${formattedEndHour}:00】`;
+                return (
+                  <option key={branch} value={`${formattedStartHour}:00`}>
+                    {timeLabel}
+                  </option>
+                );
+              })}
+            </select>
           </div>
           
-          <div className="flex gap-4">
+          <div className="flex gap-4 pt-4">
             <button
               type="button"
               onClick={() => navigate(-1)}
-              className="flex-1 px-4 py-2 text-gray-700 dark:text-gray-300 font-medium rounded-lg transition-all 
+              className="flex-1 px-5 py-3 text-gray-700 dark:text-gray-300 font-medium rounded-lg transition-all 
                        bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700
                        focus:ring-4 focus:ring-gray-300 focus:outline-none"
             >
@@ -279,7 +213,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ isSelfProfile, onSuccess }) =
             </button>
             <button
               type="submit"
-              className="flex-1 px-4 py-2 text-white font-medium rounded-lg transition-all 
+              className="flex-1 px-5 py-3 text-white font-medium rounded-lg transition-all 
                        bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700
                        focus:ring-4 focus:ring-purple-300 focus:outline-none"
             >

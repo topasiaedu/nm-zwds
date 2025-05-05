@@ -1,6 +1,6 @@
 const career = {
   career: {
-    title: "Career",
+    title: "Career that suits you",
     visionaries: "Visionaries",
     lifekeepers: "Lifekeepers",
     educators: "Educators",

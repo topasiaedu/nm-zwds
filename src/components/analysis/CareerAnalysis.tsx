@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo, useRef } from "react";
 import { analyzeCareer, getStarsInPalace } from "../../utils/zwds/analysis";
 import { useLanguage } from "../../context/LanguageContext";
 import { ResponsiveBar } from "@nivo/bar";
+import AnimatedWrapper from "./AnimatedWrapper";
 
 /**
  * Interface for custom tick renderer props
@@ -250,185 +251,12 @@ const CareerAnalysis: React.FC<CareerAnalysisProps> = ({ chartData }) => {
   }
 
   return (
-    <div className="rounded-2xl shadow-lg overflow-hidden bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
-      <div className="bg-gradient-to-r from-indigo-500 to-purple-500 px-6 py-4">
-        <h2 className="text-xl font-bold text-white flex items-center">
-          <svg 
-            className="w-6 h-6 mr-2" 
-            fill="none" 
-            stroke="currentColor" 
-            viewBox="0 0 24 24" 
-            xmlns="http://www.w3.org/2000/svg">
-            <path 
-              strokeLinecap="round" 
-              strokeLinejoin="round" 
-              strokeWidth={2} 
-              d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" 
-            />
-          </svg>
-          {t("analysis.career.title")}
-          {error && (
-            <span className="ml-2 text-xs bg-yellow-400/70 text-black px-2 py-1 rounded backdrop-blur-sm">
-              {t("analysis.career.demoData")}
-            </span>
-          )}
-        </h2>
-      </div>
-
-      <div className="p-6">
-        {careerAptitudes.length > 0 ? (
-          <div className="h-96" ref={containerRef}>
-            {careerBarData.length > 0 ? (
-              <ResponsiveBar
-                data={careerBarData}
-                keys={["value"]}
-                indexBy="category"
-                margin={{
-                  top: 10,
-                  right: 20,
-                  bottom: 40,
-                  left: containerWidth < 500 ? 80 : 120,
-                }}
-                padding={0.3}
-                layout="horizontal"
-                valueScale={{ type: "linear" }}
-                indexScale={{ type: "band", round: true }}
-                colors={({ data }) => data.color}
-                borderRadius={4}
-                borderColor={{ from: "color", modifiers: [["darker", 1.6]] }}
-                axisTop={null}
-                axisRight={null}
-                axisBottom={{
-                  tickSize: 5,
-                  tickPadding: 5,
-                  tickRotation: 0,
-                  legend: t("analysis.career.careerCount"),
-                  legendPosition: "middle",
-                  legendOffset: 32,
-                }}
-                axisLeft={{
-                  tickSize: 5,
-                  tickPadding: 5,
-                  tickRotation: 0,
-                  truncateTickAt: containerWidth < 600 ? 15 : undefined,
-                  renderTick: containerWidth < 500 ? 
-                    (props: TickProps) => {
-                      const { x, y, value } = props;
-                      return (
-                        <g transform={`translate(${x},${y})`}>
-                          <text
-                            textAnchor="end"
-                            dominantBaseline="middle"
-                            style={{
-                              fill: "#718096",
-                              fontSize: "11px",
-                            }}
-                            x={-10}
-                            y={0}
-                          >
-                            {typeof value === "string" && value.length > 12 
-                              ? `${value.substring(0, 11)}...` 
-                              : value}
-                          </text>
-                        </g>
-                      );
-                    } : undefined,
-                }}
-                enableGridX={true}
-                enableGridY={false}
-                labelSkipWidth={12}
-                labelSkipHeight={12}
-                labelTextColor={{ from: "color", modifiers: [["darker", 1.6]] }}
-                animate={true}
-                tooltip={({ id, value, color, indexValue, data }) => {
-                  const englishCategory = data.englishCategory || "";
-                  
-                  const careersInThisCategory = englishCategory === "其他" 
-                    ? careerAptitudes.filter(career => {
-                        for (const [cat, careerList] of Object.entries(categories)) {
-                          if (careerList.includes(career)) {
-                            return false;
-                          }
-                        }
-                        return true;
-                      })
-                    : careersInCategories[englishCategory] || [];
-
-                  // Get display category name based on current language
-                  const displayCategory = englishCategory === "其他" 
-                    ? (language === "en" ? "Others" : "其他")
-                    : (language === "en" 
-                      ? englishCategory.split(" ")[0]  // English part
-                      : englishCategory.split(" ")[1]  // Chinese part
-                    );
-
-                  return (
-                    <div className="backdrop-blur-md bg-gray-800/80 text-white p-3 rounded-md shadow-lg text-sm max-w-xs border border-gray-700/50">
-                      <div className="font-bold border-b border-gray-600/50 pb-1 mb-2">
-                        <div className="flex items-center mb-1.5">
-                          <span className="w-3 h-3 rounded-full mr-2" style={{ backgroundColor: color }}></span>
-                          <span>{displayCategory}</span>
-                          <span className="ml-auto">
-                            {value} {value > 1 ? (language === "en" ? "options" : "选项") : (language === "en" ? "option" : "选项")}
-                          </span>
-                        </div>
-                      </div>
-                      <div className="grid grid-cols-1 gap-1 mt-1">
-                        {careersInThisCategory.map((career, i) => {
-                          // Get the translated career name
-                          const translatedCareer = translateCareer(career);
-                          
-                          return (
-                            <div key={i} className="flex items-center">
-                              <span className="w-1.5 h-1.5 rounded-full mr-1.5" style={{ backgroundColor: color }}></span>
-                              <span>{language === "en" ? translatedCareer : career}</span>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  );
-                }}
-                theme={{
-                  tooltip: {
-                    container: {
-                      background: "transparent",
-                      boxShadow: "none",
-                      padding: 0
-                    }
-                  },
-                  axis: {
-                    ticks: {
-                      text: {
-                        fill: "#718096", // text-gray-500
-                        fontSize: containerWidth < 500 ? 10 : 12,
-                      },
-                    },
-                    legend: {
-                      text: {
-                        fill: "#4a5568", // text-gray-700
-                        fontSize: containerWidth < 500 ? 10 : 12,
-                      },
-                    },
-                  },
-                  grid: {
-                    line: {
-                      stroke: "#e2e8f0", // text-gray-200
-                      strokeWidth: 1,
-                    },
-                  },
-                }}
-              />
-            ) : (
-              <div className="flex items-center justify-center h-full text-gray-500">
-                {t("analysis.career.noData")}
-              </div>
-            )}
-          </div>
-        ) : (
-          <div className="text-center py-8">
+    <AnimatedWrapper threshold={0.1}>
+      <div className="rounded-2xl shadow-lg overflow-hidden bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700" ref={containerRef}>
+        <div className="bg-gradient-to-r from-indigo-500 to-purple-500 px-6 py-4">
+          <h2 className="text-xl font-bold text-white flex items-center">
             <svg 
-              className="mx-auto h-12 w-12 text-gray-400" 
+              className="w-6 h-6 mr-2" 
               fill="none" 
               stroke="currentColor" 
               viewBox="0 0 24 24" 
@@ -437,16 +265,191 @@ const CareerAnalysis: React.FC<CareerAnalysisProps> = ({ chartData }) => {
                 strokeLinecap="round" 
                 strokeLinejoin="round" 
                 strokeWidth={2} 
-                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" 
+                d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" 
               />
             </svg>
-            <p className="mt-2 text-gray-500 dark:text-gray-400">
-              {t("analysis.career.noData")}
-            </p>
-          </div>
-        )}
+            {t("analysis.career.title")}
+            {error && (
+              <span className="ml-2 text-xs bg-yellow-400/70 text-black px-2 py-1 rounded backdrop-blur-sm">
+                {t("analysis.career.demoData")}
+              </span>
+            )}
+          </h2>
+        </div>
+
+        <div className="p-6">
+          {careerAptitudes.length > 0 ? (
+            <div className="h-96">
+              {careerBarData.length > 0 ? (
+                <ResponsiveBar
+                  data={careerBarData}
+                  keys={["value"]}
+                  indexBy="category"
+                  margin={{
+                    top: 10,
+                    right: 20,
+                    bottom: 40,
+                    left: containerWidth < 500 ? 80 : 120,
+                  }}
+                  padding={0.3}
+                  layout="horizontal"
+                  valueScale={{ type: "linear" }}
+                  indexScale={{ type: "band", round: true }}
+                  colors={({ data }) => data.color}
+                  borderRadius={4}
+                  borderColor={{ from: "color", modifiers: [["darker", 1.6]] }}
+                  axisTop={null}
+                  axisRight={null}
+                  axisBottom={{
+                    tickSize: 5,
+                    tickPadding: 5,
+                    tickRotation: 0,
+                    legend: t("analysis.career.careerCount"),
+                    legendPosition: "middle",
+                    legendOffset: 32,
+                  }}
+                  axisLeft={{
+                    tickSize: 5,
+                    tickPadding: 5,
+                    tickRotation: 0,
+                    truncateTickAt: containerWidth < 600 ? 15 : undefined,
+                    renderTick: containerWidth < 500 ? 
+                      (props: TickProps) => {
+                        const { x, y, value } = props;
+                        return (
+                          <g transform={`translate(${x},${y})`}>
+                            <text
+                              textAnchor="end"
+                              dominantBaseline="middle"
+                              style={{
+                                fill: "#718096",
+                                fontSize: "11px",
+                              }}
+                              x={-10}
+                              y={0}
+                            >
+                              {typeof value === "string" && value.length > 12 
+                                ? `${value.substring(0, 11)}...` 
+                                : value}
+                            </text>
+                          </g>
+                        );
+                      } : undefined,
+                  }}
+                  enableGridX={true}
+                  enableGridY={false}
+                  labelSkipWidth={12}
+                  labelSkipHeight={12}
+                  labelTextColor={{ from: "color", modifiers: [["darker", 1.6]] }}
+                  animate={true}
+                  tooltip={({ id, value, color, indexValue, data }) => {
+                    const englishCategory = data.englishCategory || "";
+                    
+                    const careersInThisCategory = englishCategory === "其他" 
+                      ? careerAptitudes.filter(career => {
+                          for (const [cat, careerList] of Object.entries(categories)) {
+                            if (careerList.includes(career)) {
+                              return false;
+                            }
+                          }
+                          return true;
+                        })
+                      : careersInCategories[englishCategory] || [];
+
+                    // Get display category name based on current language
+                    const displayCategory = englishCategory === "其他" 
+                      ? (language === "en" ? "Others" : "其他")
+                      : (language === "en" 
+                        ? englishCategory.split(" ")[0]  // English part
+                        : englishCategory.split(" ")[1]  // Chinese part
+                      );
+
+                    return (
+                      <div className="backdrop-blur-md bg-gray-800/80 text-white p-3 rounded-md shadow-lg text-sm max-w-xs border border-gray-700/50">
+                        <div className="font-bold border-b border-gray-600/50 pb-1 mb-2">
+                          <div className="flex items-center mb-1.5">
+                            <span className="w-3 h-3 rounded-full mr-2" style={{ backgroundColor: color }}></span>
+                            <span>{displayCategory}</span>
+                            <span className="ml-auto">
+                              {value} {value > 1 ? (language === "en" ? "options" : "选项") : (language === "en" ? "option" : "选项")}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-1 gap-1 mt-1">
+                          {careersInThisCategory.map((career, i) => {
+                            // Get the translated career name
+                            const translatedCareer = translateCareer(career);
+                            
+                            return (
+                              <div key={i} className="flex items-center">
+                                <span className="w-1.5 h-1.5 rounded-full mr-1.5" style={{ backgroundColor: color }}></span>
+                                <span>{language === "en" ? translatedCareer : career}</span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    );
+                  }}
+                  theme={{
+                    tooltip: {
+                      container: {
+                        background: "transparent",
+                        boxShadow: "none",
+                        padding: 0
+                      }
+                    },
+                    axis: {
+                      ticks: {
+                        text: {
+                          fill: "#718096", // text-gray-500
+                          fontSize: containerWidth < 500 ? 10 : 12,
+                        },
+                      },
+                      legend: {
+                        text: {
+                          fill: "#4a5568", // text-gray-700
+                          fontSize: containerWidth < 500 ? 10 : 12,
+                        },
+                      },
+                    },
+                    grid: {
+                      line: {
+                        stroke: "#e2e8f0", // text-gray-200
+                        strokeWidth: 1,
+                      },
+                    },
+                  }}
+                />
+              ) : (
+                <div className="flex items-center justify-center h-full text-gray-500">
+                  {t("analysis.career.noData")}
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="text-center py-8">
+              <svg 
+                className="mx-auto h-12 w-12 text-gray-400" 
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24" 
+                xmlns="http://www.w3.org/2000/svg">
+                <path 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round" 
+                  strokeWidth={2} 
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" 
+                />
+              </svg>
+              <p className="mt-2 text-gray-500 dark:text-gray-400">
+                {t("analysis.career.noData")}
+              </p>
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+    </AnimatedWrapper>
   );
 };
 

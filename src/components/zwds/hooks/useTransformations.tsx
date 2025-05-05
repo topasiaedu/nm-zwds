@@ -11,6 +11,7 @@ interface UseTransformationsReturn {
   calculateTransformations: () => TransformationResult[];
   getTargetPalaces: () => Record<number, { type: string; starName: string }>;
   hasSelfTransformation: (palaceNumber: number, starName: string) => { has: boolean; type?: "祿" | "權" | "科" | "忌" };
+  calculateOppositePalaceInfluences: (palaceNumber: number) => OppositeInfluenceResult[];
 }
 
 interface TransformationResult {
@@ -18,6 +19,14 @@ interface TransformationResult {
   fromPalace: number;
   toPalace: number;
   starName: string;
+}
+
+interface OppositeInfluenceResult {
+  type: "祿" | "權" | "科" | "忌";
+  fromPalace: number;
+  toPalace: number;
+  starName: string;
+  isOppositeInfluence: true;
 }
 
 const useTransformations = (chartData: ChartData, selectedPalace: number | null): UseTransformationsReturn => {
@@ -221,11 +230,45 @@ const useTransformations = (chartData: ChartData, selectedPalace: number | null)
     return { has: false };
   };
 
+  /**
+   * Calculate opposite palace influences for a specified palace
+   */
+  const calculateOppositePalaceInfluences = (palaceNumber: number): OppositeInfluenceResult[] => {
+    if (!palaceNumber) return [];
+    
+    const palace = chartData.palaces[palaceNumber - 1];
+    if (!palace || !palace.oppositePalaceInfluence || palace.oppositePalaceInfluence.length === 0) {
+      return [];
+    }
+    
+    const results: OppositeInfluenceResult[] = [];
+    
+    // Map each influence to a transformation result
+    palace.oppositePalaceInfluence.forEach(influence => {
+      // Get the type of transformation from the influence
+      const transformationType = influence.transformation.replace("化", "") as "祿" | "權" | "科" | "忌";
+      
+      // Find the opposite palace number
+      const sourcePalace = influence.sourcePalace;
+      
+      results.push({
+        type: transformationType,
+        fromPalace: palaceNumber,
+        toPalace: sourcePalace,
+        starName: influence.starName,
+        isOppositeInfluence: true
+      });
+    });
+    
+    return results;
+  };
+
   return {
     findStarByName,
     calculateTransformations,
     getTargetPalaces,
-    hasSelfTransformation
+    hasSelfTransformation,
+    calculateOppositePalaceInfluences
   };
 };
 

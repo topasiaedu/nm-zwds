@@ -10,6 +10,7 @@ export interface SummaryAnalysisResult {
 
 /**
  * Analyzes personality summary based on stars in the Life Palace (命宫)
+ * If no stars are found in Life Palace, falls back to Migration Palace (迁移)
  * @param chartData - The calculated ZWDS chart data
  * @returns Array of summary analysis results containing star names and descriptions
  */
@@ -34,39 +35,68 @@ export function analyzeSummary(chartData: any): SummaryAnalysisResult[] {
   }
 
   // Find all stars in the Life Palace (both main and minor)
-  const stars: Set<string> = new Set();
+  let stars: Set<string> = new Set();
+  let currentPalace = lifePalace;
   
-  // Add main stars if available
-  if (lifePalace.mainStar && Array.isArray(lifePalace.mainStar)) {
-    const mainStarNames = lifePalace.mainStar.map((star: any) => star.name);
-    mainStarNames.forEach((star: string) => {
-      // Ensure we only use the main star name (some might have suffixes)
-      const mainStarName = star.split("_")[0].trim();
-      stars.add(mainStarName);
-    });
-  }
+  // Function to collect stars from a palace
+  const collectStarsFromPalace = (palace: any): Set<string> => {
+    const palaceStars: Set<string> = new Set();
+    
+    // Add main stars if available
+    if (palace.mainStar && Array.isArray(palace.mainStar)) {
+      const mainStarNames = palace.mainStar.map((star: any) => star.name);
+      mainStarNames.forEach((star: string) => {
+        // Ensure we only use the main star name (some might have suffixes)
+        const mainStarName = star.split("_")[0].trim();
+        palaceStars.add(mainStarName);
+      });
+    }
+    
+    // Add minor stars if available
+    if (palace.minorStars && Array.isArray(palace.minorStars)) {
+      const minorStarNames = palace.minorStars.map((star: any) => star.name);
+      minorStarNames.forEach((star: string) => {
+        // Ensure we only use the star name (some might have suffixes)
+        const starName = star.split("_")[0].trim();
+        palaceStars.add(starName);
+      });
+    }
+    
+    // Add auxiliary stars if available
+    if (palace.auxiliaryStars && Array.isArray(palace.auxiliaryStars)) {
+      const auxStarNames = palace.auxiliaryStars.map((star: any) => star.name);
+      auxStarNames.forEach((star: string) => {
+        const starName = star.split("_")[0].trim();
+        palaceStars.add(starName);
+      });
+    }
+    
+    return palaceStars;
+  };
   
-  // Add minor stars if available
-  if (lifePalace.minorStars && Array.isArray(lifePalace.minorStars)) {
-    const minorStarNames = lifePalace.minorStars.map((star: any) => star.name);
-    minorStarNames.forEach((star: string) => {
-      // Ensure we only use the star name (some might have suffixes)
-      const starName = star.split("_")[0].trim();
-      stars.add(starName);
-    });
-  }
+  // Get stars from Life Palace
+  stars = collectStarsFromPalace(lifePalace);
   
-  // Add auxiliary stars if available
-  if (lifePalace.auxiliaryStars && Array.isArray(lifePalace.auxiliaryStars)) {
-    const auxStarNames = lifePalace.auxiliaryStars.map((star: any) => star.name);
-    auxStarNames.forEach((star: string) => {
-      const starName = star.split("_")[0].trim();
-      stars.add(starName);
-    });
+  // If no stars found in Life Palace, check Migration Palace (迁移)
+  if (stars.size === 0) {
+    console.log("Summary analysis: No stars found in Life Palace, checking Migration Palace");
+    // Find Migration Palace
+    const migrationPalace = chartData.palaces.find((palace: any) => palace.name === "迁移");
+    
+    if (migrationPalace) {
+      stars = collectStarsFromPalace(migrationPalace);
+      if (stars.size > 0) {
+        console.log("Summary analysis: Found stars in Migration Palace");
+      } else {
+        console.log("Summary analysis: No stars found in Migration Palace either");
+      }
+    } else {
+      console.log("Summary analysis: Migration Palace not found");
+    }
   }
   
   if (stars.size === 0) {
-    console.log("Summary analysis: No stars found in Life Palace");
+    console.log("Summary analysis: No stars found in relevant palaces");
     return [];
   }
   
