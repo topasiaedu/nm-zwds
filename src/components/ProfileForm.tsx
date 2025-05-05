@@ -43,7 +43,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ isSelfProfile, onSuccess }) =
   
   const [formData, setFormData] = useState({
     name: "",
-    birthDate: "",
+    birthDate: new Date().toISOString().split("T")[0],
     birthTime: "",
     gender: ""
   });
