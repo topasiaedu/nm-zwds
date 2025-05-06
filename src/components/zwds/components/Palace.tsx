@@ -263,7 +263,7 @@ const Palace: React.FC<PalaceProps> = ({
   return (
     <motion.div
       key={`palace-${palaceNumber}-${selectedPalace}`}
-      className={`relative border border-gray-100 dark:border-gray-700 p-0.5 xs:p-1 sm:p-2 md:p-3 min-h-[70px] xs:min-h-[80px] sm:min-h-[100px] md:min-h-[150px] ${
+      className={`relative border border-gray-100 dark:border-gray-700 p-0.5 xs:p-1 sm:p-2 md:p-3 min-h-[200px] xs:min-h-[80px] sm:min-h-[100px] md:min-h-[150px] ${
         isSelected
           ? "bg-indigo-50/80 dark:bg-indigo-900/30 text-white"
           : "bg-white dark:bg-gray-800"
@@ -284,7 +284,7 @@ const Palace: React.FC<PalaceProps> = ({
       ref={(el) => (palaceRefs.current[palaceNumber - 1] = el)}>
       {/* Zodiac icon background */}
       {ZodiacIcon && (
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.07] dark:opacity-[0.15] z-10">
+        <div className="absolute inset-0 flex sm:items-center sm:justify-center pointer-events-none opacity-[0.07] dark:opacity-[0.15] z-10">
           <ZodiacIconWrapper
             Icon={ZodiacIcon}
             className="w-[85%] h-[85%] xs:w-[80%] xs:h-[80%] sm:w-[75%] sm:h-[75%]"
@@ -465,7 +465,7 @@ const Palace: React.FC<PalaceProps> = ({
       </div>
 
       {/* Bottom section with grid layout */}
-      <div className="absolute bottom-0 left-0 right-0 grid grid-cols-3 w-full text-3xs xs:text-2xs sm:text-xs text-zinc-800 dark:text-zinc-200 border-t border-gray-200 dark:border-gray-700 z-20">
+      <div className="absolute bottom-0 left-0 right-0 grid grid-cols-1 sm:grid-cols-3 w-full text-3xs xs:text-2xs sm:text-xs text-zinc-800 dark:text-zinc-200 border-t border-gray-200 dark:border-gray-700 z-20">
         {/* Bottom left: Earthly Branch and Heavenly Stem */}
         <div
           className={`flex flex-col items-center justify-center py-0.5 xs:py-1 sm:py-1.5 border-r border-gray-200 dark:border-gray-700 ${

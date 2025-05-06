@@ -196,7 +196,7 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
       variants={containerVariants}
       ref={chartRef}
       style={{
-        minHeight: windowSize.width < SCREEN_SM ? 'calc(100vh - 280px)' : undefined,
+        minHeight: windowSize.width < SCREEN_SM ? 'calc(100vh - 50px)' : undefined,
         height: windowSize.width < SCREEN_SM ? 'calc(100vh - 260px)' : undefined,
         maxHeight: '800px'
       }}>

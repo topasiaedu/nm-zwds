@@ -275,10 +275,10 @@ const FreeResult: React.FC = () => {
 
   return (
     <PageTransition>
-      <div className="container mx-auto px-0 xs:px-1 sm:px-2 md:px-4 py-2 sm:py-4 md:py-8">
+      <div className="container mx-auto px-0 xs:px-1 sm:px-2 md:px-4 py-2 sm:py-8 md:py-8">
         <div className="mb-8">
           <div className="flex items-center mb-4">
-            <h1 className="text-3xl font-bold dark:text-white flex items-center">
+            <h1 className="text-3xl font-bold dark:text-white flex items-center sm:pt-8">
               {loading ? (
                 t("result.loading")
               ) : (

@@ -45,16 +45,16 @@ const Navbar: React.FC = () => {
   }, []);
   
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 h-14 bg-transparent border-gray-200 px-4 border-b border-white/10 dark:border-gray-800/50 backdrop-blur-md">
+    <nav className="fixed top-0 left-0 right-0 z-50 h-14 bg-transparent border-gray-200 px-2 sm:px-4 border-b border-white/10 dark:border-gray-800/50 backdrop-blur-md">
       <div className="h-full max-w-screen-xl flex flex-wrap items-center justify-between mx-auto">
-        <div className="flex items-center">
+        <div className="flex items-center space-x-1 sm:space-x-3">
           {/* Language toggle */}
-          <div className="flex items-center mr-3">
+          <div className="flex items-center">
             <LanguageToggle />
           </div>
           
           {/* Theme toggle */}
-          <div className="flex items-center mr-3">
+          <div className="flex items-center">
             <ThemeToggle />
           </div>
           
@@ -67,9 +67,9 @@ const Navbar: React.FC = () => {
                 onClick={() => setDropdownOpen(!dropdownOpen)}
               >
                 <span className="sr-only">Open user menu</span>
-                <div className="relative w-8 h-8 overflow-hidden bg-gradient-to-r from-purple-500 to-indigo-500 rounded-full shadow ring-2 ring-white/20 dark:ring-gray-800/70">
+                <div className="relative w-7 h-7 sm:w-8 sm:h-8 overflow-hidden bg-gradient-to-r from-purple-500 to-indigo-500 rounded-full shadow ring-2 ring-white/20 dark:ring-gray-800/70">
                   <svg
-                    className="absolute w-10 h-10 text-white/70 -left-1 -top-1"
+                    className="absolute w-9 h-9 sm:w-10 sm:h-10 text-white/70 -left-1 -top-1"
                     fill="currentColor"
                     viewBox="0 0 20 20"
                     xmlns="http://www.w3.org/2000/svg"
@@ -133,10 +133,10 @@ const Navbar: React.FC = () => {
         <Link to="/" className="flex items-center">
           <div className="flex flex-col items-center leading-tight">
             <div className="flex items-center">
-              <span className="text-3xl font-bold whitespace-nowrap bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent dark:from-purple-400 dark:to-indigo-400">
+              <span className="text-xl sm:text-2xl md:text-3xl font-bold whitespace-nowrap bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent dark:from-purple-400 dark:to-indigo-400">
                 紫微斗数
               </span>
-              <span className="ml-1 text-sm font-bold px-2 py-0.5 rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 text-white dark:from-purple-500 dark:to-indigo-500 uppercase tracking-wider">
+              <span className="ml-1 text-xs sm:text-sm font-bold px-1 sm:px-2 py-0.5 rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 text-white dark:from-purple-500 dark:to-indigo-500 uppercase tracking-wider">
                 CAE
               </span>
             </div>
@@ -144,16 +144,16 @@ const Navbar: React.FC = () => {
         </Link>
         
         {!user && (
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-1 sm:space-x-3">
             <Link
               to="/authentication/sign-in"
-              className="text-purple-600 dark:text-purple-400 hover:underline font-medium"
+              className="text-purple-600 dark:text-purple-400 hover:underline font-medium text-sm sm:text-base"
             >
               {t("navbar.signIn")}
             </Link>
             <Link
               to="/authentication/sign-up"
-              className="px-4 py-2 text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 rounded-lg font-medium"
+              className="px-2 sm:px-4 py-1 sm:py-2 text-white text-sm sm:text-base bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 rounded-lg font-medium"
             >
               {t("navbar.signUp")}
             </Link>
