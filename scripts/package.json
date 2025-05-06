@@ -1,0 +1,20 @@
+{
+  "name": "profile-simulator-scripts",
+  "version": "1.0.0",
+  "description": "Scripts to simulate large numbers of profile creations",
+  "main": "quick-test.js",
+  "scripts": {
+    "test": "node quick-test.js",
+    "simulate": "node simulate-signups.js",
+    "concurrent": "node concurrent-test.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.40.0",
+    "dotenv": "^16.3.1",
+    "profile-simulator-scripts": "file:"
+  },
+  "devDependencies": {
+    "commander": "^11.1.0",
+    "faker": "^5.5.3"
+  }
+}

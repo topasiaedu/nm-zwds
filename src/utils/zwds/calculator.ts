@@ -197,9 +197,11 @@ export class ZWDSCalculator {
     const year = this.input.year - 1900 - 23;
     const yearBranch = year % 12;
     const yearStem = year % 10;
-
-    this.chartData.earthlyBranch = EARTHLY_BRANCHES[yearBranch - 1];
-    this.chartData.heavenlyStem = HEAVENLY_STEMS[yearStem - 1];
+   
+    // Fix index calculation to handle when yearBranch or yearStem is 0
+    // Use modulo to ensure we wrap around to the end of the arrays
+    this.chartData.earthlyBranch = EARTHLY_BRANCHES[(yearBranch - 1 + 12) % 12];
+    this.chartData.heavenlyStem = HEAVENLY_STEMS[(yearStem - 1 + 10) % 10];
 
     // Record the calculation step
     this.chartData.calculationSteps.step1 = `Earthly Branch and Heavenly Stem calculated`;

@@ -37,6 +37,8 @@ const Result: React.FC = () => {
   const [isPrinting, setIsPrinting] = useState<boolean>(false);
   const [isExporting, setIsExporting] = useState<boolean>(false);
 
+  console.log("chartData", chartData);
+
   // Add a ref to keep track of the loaded chart data
   const loadedChartDataRef = useRef<{ id: string; data: ChartData } | null>(
     null
