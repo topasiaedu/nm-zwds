@@ -9,6 +9,9 @@ import { useLanguage } from "../../context/LanguageContext";
  * Sign up page with frosted glass design
  */
 const SignUpPage: React.FC = () => {
+  // Registration availability control - set to true to enable registration
+  const isRegistrationOpen = false;
+
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
@@ -23,6 +26,12 @@ const SignUpPage: React.FC = () => {
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!isRegistrationOpen) {
+      setError("Registration is currently closed. Please check back later.");
+      return;
+    }
+    
     setError(null);
     
     // Form validation
@@ -85,6 +94,12 @@ const SignUpPage: React.FC = () => {
               {t("auth.signup.title")}
             </h2>
             
+            {!isRegistrationOpen && (
+              <div className="p-4 mb-4 text-white bg-blue-600 dark:bg-blue-700 rounded-lg">
+                We are currently not open for registration. Please check back later.
+              </div>
+            )}
+            
             {error && (
               <div className="p-4 mb-4 text-white bg-red-600 dark:bg-red-700 rounded-lg">
                 {error}
@@ -109,6 +124,7 @@ const SignUpPage: React.FC = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
+                  disabled={!isRegistrationOpen}
                   theme={{
                     field: {
                       input: {
@@ -130,6 +146,7 @@ const SignUpPage: React.FC = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
+                  disabled={!isRegistrationOpen}
                   theme={{
                     field: {
                       input: {
@@ -151,6 +168,7 @@ const SignUpPage: React.FC = () => {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
+                  disabled={!isRegistrationOpen}
                   theme={{
                     field: {
                       input: {
@@ -166,6 +184,7 @@ const SignUpPage: React.FC = () => {
                   id="terms"
                   checked={acceptTerms}
                   onChange={() => setAcceptTerms(!acceptTerms)}
+                  disabled={!isRegistrationOpen}
                 />
                 <Label htmlFor="terms" className="dark:text-white">
                   {t("auth.signup.terms")}
@@ -174,7 +193,7 @@ const SignUpPage: React.FC = () => {
               
               <button
                 type="submit"
-                disabled={isSubmitting}
+                disabled={isSubmitting || !isRegistrationOpen}
                 className="w-full px-4 py-2 text-white font-medium rounded-lg transition-all 
                          bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700
                          focus:ring-4 focus:ring-purple-300 focus:outline-none

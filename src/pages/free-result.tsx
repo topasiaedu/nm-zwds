@@ -26,6 +26,11 @@ interface ChartData {
 }
 
 /**
+ * Constant for minimum loading time in milliseconds
+ */
+const MIN_LOADING_TIME = 3000;
+
+/**
  * FreeResult component to display 紫微斗数 chart results for free test users
  * A simplified version of the Result component without requiring authentication
  */
@@ -106,10 +111,12 @@ const FreeResult: React.FC = () => {
 
   /**
    * Fetch or prepare chart data on component mount and when profiles change
+   * Ensures loading state lasts for at least the minimum loading time
    */
   useEffect(() => {
     // Track if component is mounted to prevent state updates after unmount
     let isMounted = true;
+    const startTime = Date.now();
 
     const fetchData = async () => {
       try {
@@ -131,7 +138,16 @@ const FreeResult: React.FC = () => {
 
           if (isMounted) {
             setChartData(chartData);
-            setLoading(false);
+            
+            // Calculate elapsed time and set a timeout for the remaining time
+            const elapsedTime = Date.now() - startTime;
+            const remainingTime = Math.max(0, MIN_LOADING_TIME - elapsedTime);
+            
+            setTimeout(() => {
+              if (isMounted) {
+                setLoading(false);
+              }
+            }, remainingTime);
           }
           return;
         }
@@ -141,7 +157,16 @@ const FreeResult: React.FC = () => {
           if (profiles.length > 0) {
             if (isMounted) {
               setError(`Profile with ID ${id} not found.`);
-              setLoading(false);
+              
+              // Ensure minimum loading time even for error states
+              const elapsedTime = Date.now() - startTime;
+              const remainingTime = Math.max(0, MIN_LOADING_TIME - elapsedTime);
+              
+              setTimeout(() => {
+                if (isMounted) {
+                  setLoading(false);
+                }
+              }, remainingTime);
             }
           } else {
             // If profiles aren't loaded yet, wait a bit and show loading state
@@ -150,14 +175,32 @@ const FreeResult: React.FC = () => {
               setError(
                 "Unable to find the requested profile. It may have expired or been removed."
               );
-              setLoading(false);
+              
+              // Ensure minimum loading time even for error states
+              const elapsedTime = Date.now() - startTime;
+              const remainingTime = Math.max(0, MIN_LOADING_TIME - elapsedTime);
+              
+              setTimeout(() => {
+                if (isMounted) {
+                  setLoading(false);
+                }
+              }, remainingTime);
             }
           }
         }
       } catch (err) {
         if (isMounted) {
           setError("Failed to load chart data");
-          setLoading(false);
+          
+          // Ensure minimum loading time even for error states
+          const elapsedTime = Date.now() - startTime;
+          const remainingTime = Math.max(0, MIN_LOADING_TIME - elapsedTime);
+          
+          setTimeout(() => {
+            if (isMounted) {
+              setLoading(false);
+            }
+          }, remainingTime);
         }
       }
     };
@@ -188,10 +231,13 @@ const FreeResult: React.FC = () => {
 
   /**
    * Calculate the Zi Wei Dou Shu chart data
+   * Also applies the minimum loading time to the chart calculation
    */
   useEffect(() => {
     if (chartData) {
       try {
+        const startTime = Date.now();
+        
         // Convert birth time to 24-hour format
         const timeMatch = chartData.birthTime.match(/(\d+):(\d+)\s*(AM|PM)?/i);
         let hour = timeMatch ? parseInt(timeMatch[1]) : 12;
@@ -243,7 +289,14 @@ const FreeResult: React.FC = () => {
         // Calculate chart
         const calculator = new ZWDSCalculator(chartInput);
         const calculatedData = calculator.calculate();
-        setCalculatedChartData(calculatedData);
+        
+        // Apply minimum loading time to chart calculation
+        const elapsedTime = Date.now() - startTime;
+        const remainingTime = Math.max(0, MIN_LOADING_TIME - elapsedTime);
+        
+        setTimeout(() => {
+          setCalculatedChartData(calculatedData);
+        }, remainingTime);
       } catch (error) {
         console.error("Error calculating chart:", error);
         setError(`Failed to calculate chart data: ${error}`);
@@ -278,7 +331,7 @@ const FreeResult: React.FC = () => {
       <div className="container mx-auto px-0 xs:px-1 sm:px-2 md:px-4 py-2 sm:py-8 md:py-8">
         <div className="mb-8">
           <div className="flex items-center mb-4">
-            <h1 className="text-3xl font-bold dark:text-white flex items-center sm:pt-8">
+            <h1 className="text-3xl font-bold dark:text-white flex items-center pt-8 sm:pt-0">
               {loading ? (
                 t("result.loading")
               ) : (
