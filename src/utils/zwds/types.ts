@@ -96,6 +96,7 @@ export interface ChartInput {
 export interface ChartData {
   input: ChartInput;
   palaces: Palace[];
+  lunarDate: LunarDate;
   lifePalace: number;
   bodyPalace: number;
   originalPalace: number;
@@ -136,4 +137,12 @@ export interface ChartData {
     step13: string;
     step14: string;
   };
-} 
+}
+
+export interface LunarDate {
+  year: number;
+  month: number;
+  day: number;
+  isLeap: boolean;
+}
+

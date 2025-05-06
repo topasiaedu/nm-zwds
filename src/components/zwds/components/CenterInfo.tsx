@@ -85,16 +85,15 @@ const CenterInfo: React.FC<CenterInfoProps> = ({ chartData }) => {
                 </span>
                 <span className="mr-1">
                   {chartData.palaces?.find(p => p.annualFlow?.year === input.year)?.annualFlow?.heavenlyStem ?? ""}
-                  {t(`zwds.monthBranches.${EARTHLY_BRANCHES[chartData.monthBranch]}`) || ""}
+                  {t(`zwds.monthBranches.${EARTHLY_BRANCHES[chartData.lunarDate.month - 1]}`) || ""}
                   {" "}{language === "en" ? t("zwds.chart.月") : "月"}
                 </span>
                 <span>
                   {(() => {
-                    const lunarDay = Math.max(1, (input.day % 30) || 30);
                     const lunarDayStrings = ["初一", "初二", "初三", "初四", "初五", "初六", "初七", "初八", "初九", "初十", 
                                           "十一", "十二", "十三", "十四", "十五", "十六", "十七", "十八", "十九", "二十", 
                                           "廿一", "廿二", "廿三", "廿四", "廿五", "廿六", "廿七", "廿八", "廿九", "三十"];
-                    return t(`zwds.lunarDays.${lunarDayStrings[lunarDay - 1]}`) || lunarDayStrings[lunarDay - 1];
+                    return t(`zwds.lunarDays.${lunarDayStrings[chartData.lunarDate.day - 1]}`) || lunarDayStrings[chartData.lunarDate.day - 1];
                   })()}
 
                   {" "}{language === "en" ? t("zwds.chart.日") : "日"}
@@ -150,8 +149,8 @@ const CenterInfo: React.FC<CenterInfoProps> = ({ chartData }) => {
                 </span>
                 {language === "en" 
                   ? t(`zwds.zodiac.${["rat","ox","tiger","rabbit","dragon","snake","horse","sheep","monkey","rooster","dog","pig"][(input.year - 4) % 12]}`) 
-                  : (t(`zwds.zodiac.${["鼠","牛","虎","兔","龍","蛇","馬","羊","猴","雞","狗","猪"][(input.year - 4) % 12]}`) || 
-                    ["鼠","牛","虎","兔","龍","蛇","馬","羊","猴","雞","狗","猪"][(input.year - 4) % 12])}
+                  : (t(`zwds.zodiac.${["鼠","牛","虎","兔","龙","蛇","马","羊","猴","鸡","狗","猪"][(input.year - 4) % 12]}`) || 
+                    ["鼠","牛","虎","兔","龙","蛇","马","羊","猴","鸡","狗","猪"][(input.year - 4) % 12])}
               </span>
             </div>
             

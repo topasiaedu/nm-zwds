@@ -868,6 +868,12 @@ export const ZIWEI_2025_READING = {
     gender: "male",
     name: "Stanley Testing",
   },
+  lunarDate: {
+    year: 1999,
+    month: 12,
+    day: 14,
+    isLeap: false
+  },
   earthlyBranch: "卯",
   heavenlyStem: "己",
   yinYang: "Yin",

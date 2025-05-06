@@ -56,6 +56,12 @@ export class ZWDSCalculator {
       earthlyBranch: EARTHLY_BRANCHES[0],
       heavenlyStem: HEAVENLY_STEMS[0],
       yinYang: "Yang",
+      lunarDate: {
+        year: 0,
+        month: 0,
+        day: 0,
+        isLeap: false
+      },
       palaces: Array.from({ length: 12 }, (_, i) => {
         const palaceNumber = i + 1;
         return {
@@ -298,6 +304,14 @@ export class ZWDSCalculator {
     // Convert hour to Earthly Branch position (0-11)
     const hourBranch = getHourBranch(hour);
     const hourBranchName = EARTHLY_BRANCHES[hourBranch];
+
+    // Store the lunar date in the chart data
+    this.chartData.lunarDate = {
+      year: lunarDate.year,
+      month: lunarDate.month,
+      day: lunarDate.day,
+      isLeap: lunarDate.isLeap
+    };
 
     // LIFE_PALACE_TABLE is organized as:
     // [month-1][hourBranch] = earthly branch name for life palace
