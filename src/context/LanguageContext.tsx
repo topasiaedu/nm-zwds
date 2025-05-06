@@ -47,10 +47,9 @@ interface LanguageProviderProps {
  * Provider component for language context
  */
 export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) => {
-  // Get saved language from localStorage or use browser language or default to English
+  // Always return English as the default language
   const getBrowserLanguage = (): Language => {
-    const browserLang = navigator.language.split("-")[0];
-    return (browserLang === "zh") ? "zh" : "en";
+    return "en";
   };
 
   const [language, setLanguage] = useState<Language>(

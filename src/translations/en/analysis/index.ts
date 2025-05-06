@@ -7,7 +7,7 @@ import watchout from "./watchout";
 
 const analysis = {
   analysis: {
-    title: "Analysis",
+    title: "Your Personalized Report",
     // Combine all analysis-related translations
     ...fourKeyPalace,
     ...lifeAreas,

@@ -1,5 +1,6 @@
 const health = {
   health: {
+    areasOfConcern: "Areas of Concern",
     title: "Health Analysis",
     basedOnStars: "Based on your star positions",
     potentialAreas: "Potential areas of focus",

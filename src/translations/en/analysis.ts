@@ -1,6 +1,6 @@
 const analysis = {
   analysis: {
-    title: "Analysis",
+    title: "Your Personalized Report",
     career: {
       title: "Career Analysis",
       demoData: "Demo Data",

@@ -19,6 +19,14 @@ import {
 // Import PrintableReport component and PDF export utilities
 import PrintableReport from "../components/PrintableReport";
 import { ChartData, exportChartAsPdf } from "../utils/pdfExport";
+import {
+  Overview,
+  Career,
+  FourKeyPalace,
+  Health,
+  DestinyCompass,
+  AreasOfLife,
+} from "../components/analysis_v2";
 
 /**
  * Result component to display 紫微斗数 chart results
@@ -287,7 +295,7 @@ const Result: React.FC = () => {
         setIsExporting(false);
       }
     );
-    
+
     // Show printable report during export
     setIsPrinting(true);
   }, [chartData, language]);
@@ -673,8 +681,9 @@ const Result: React.FC = () => {
         {/* Analysis Section */}
         {calculatedChartData && !loading && !error && (
           <div className="mt-8">
-            <h2 className="text-2xl font-bold mb-6 dark:text-white flex items-center">
-              <svg
+            <div className="flex justify-center">
+              <h2 className="text-2xl font-bold mb-6 dark:text-white flex items-center text-center pt-4">
+                {/* <svg
                 className="w-6 h-6 mr-2 text-indigo-500"
                 fill="none"
                 stroke="currentColor"
@@ -686,31 +695,39 @@ const Result: React.FC = () => {
                   strokeWidth={2}
                   d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
                 />
-              </svg>
-              {t("analysis.title") || "Chart Analysis"}
-            </h2>
+              </svg> */}
+                {t("analysis.title") || "Chart Analysis"}
+              </h2>
+            </div>
 
             <div className="space-y-8">
+              <Overview />
+              <Career />
+              <Health chartData={calculatedChartData} />
+              <AreasOfLife chartData={calculatedChartData} />
+              <FourKeyPalace />
+              <DestinyCompass />
+
               {/* Summary Analysis */}
-              <SummaryAnalysis chartData={calculatedChartData} />
+              {/* <SummaryAnalysis chartData={calculatedChartData} /> */}
 
               {/* Life Areas Radar Chart */}
-              <LifeAreasRadarChart chartData={calculatedChartData} />
+              {/* <LifeAreasRadarChart chartData={calculatedChartData} /> */}
 
               {/* Life Areas Explanation */}
-              <LifeAreasExplanation chartData={calculatedChartData} />
+              {/* <LifeAreasExplanation chartData={calculatedChartData} /> */}
 
               {/* Four Key Palace Analysis */}
-              <FourKeyPalaceAnalysis chartData={calculatedChartData} />
+              {/* <FourKeyPalaceAnalysis chartData={calculatedChartData} /> */}
 
               {/* Watchout Analysis */}
-              <WatchoutAnalysis chartData={calculatedChartData} />
+              {/* <WatchoutAnalysis chartData={calculatedChartData} /> */}
 
               {/* Career Analysis */}
-              <CareerAnalysis chartData={calculatedChartData} />
+              {/* <CareerAnalysis chartData={calculatedChartData} /> */}
 
               {/* Health Analysis */}
-              <HealthAnalysis chartData={calculatedChartData} />
+              {/* <HealthAnalysis chartData={calculatedChartData} /> */}
             </div>
           </div>
         )}

@@ -259,18 +259,18 @@ export function analyzeLifeAreas(chartData: ChartDataType | null | undefined, la
  */
 export function getScoreBadgeClasses(score: number): string {
   if (score >= 90) {
-    return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300";
+    return "text-green-800 dark:text-green-300";
   }
   if (score >= 80) {
-    return "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300";
+    return "text-blue-800 dark:text-blue-300";
   }
   if (score >= 70) {
-    return "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300";
+    return "text-purple-800 dark:text-purple-300";
   }
   if (score >= 60) {
-    return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300";
+    return "text-yellow-800 dark:text-yellow-300";
   }
-  return "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300";
+  return "text-red-800 dark:text-red-300";
 }
 
 /**

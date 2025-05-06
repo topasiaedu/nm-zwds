@@ -250,6 +250,14 @@ const CareerAnalysis: React.FC<CareerAnalysisProps> = ({ chartData }) => {
     );
   }
 
+  console.log("careerAptitudes for those in vanguards", careerAptitudes.filter(career => {
+    if (categories["Vanguards 先锋者"].includes(career)) {
+      return career;
+    }}
+
+  ))
+
+
   return (
     <AnimatedWrapper threshold={0.1}>
       <div className="rounded-2xl shadow-lg overflow-hidden bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700" ref={containerRef}>
