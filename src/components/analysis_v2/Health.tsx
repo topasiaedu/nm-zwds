@@ -185,20 +185,23 @@ const Health: React.FC<HealthAnalysisProps> = ({ chartData }) => {
   useEffect(() => {
     if (chartData) {
       try {
+        // TEMPORARILY HARDCODED
         // Get affected body parts
-        const bodyParts = analyzeHealth(chartData);
-
+        // const bodyParts = analyzeHealth(chartData);
+        
         // Get stars in the health palace
         const stars = getStarsInPalace(chartData, "疾厄");
 
         // Check if we have any data
-        if (bodyParts.length === 0 && stars.length === 0) {
+        if (stars.length === 0) {
           // Use sample data for testing if no real data is available
-          setAffectedBodyParts(["头", "眼", "心脏", "肝脏", "神经系统"]);
+          // setAffectedBodyParts(["头", "眼", "心脏", "肝脏", "神经系统"]);
+          setAffectedBodyParts(["胃", "膝盖"]);
           setStarsInHealthPalace(["太阳", "武曲", "廉贞"]);
           setError(true);
         } else {
-          setAffectedBodyParts(bodyParts);
+          // setAffectedBodyParts(bodyParts);
+          setAffectedBodyParts(["胃", "膝盖"]);
           setStarsInHealthPalace(stars.map((star) => star.star));
           setError(false);
         }
@@ -208,7 +211,8 @@ const Health: React.FC<HealthAnalysisProps> = ({ chartData }) => {
         console.error("Error analyzing health data:", error);
 
         // Use sample data in case of error
-        setAffectedBodyParts(["头", "眼", "心脏", "肝脏", "神经系统"]);
+        // setAffectedBodyParts(["头", "眼", "心脏", "肝脏", "神经系统"]);
+        setAffectedBodyParts(["胃", "膝盖"]);
         setStarsInHealthPalace(["太阳", "武曲", "廉贞"]);
         setError(true);
         setLoading(false);
@@ -236,7 +240,7 @@ const Health: React.FC<HealthAnalysisProps> = ({ chartData }) => {
 
       {/* Subtitle */}
       <p className="text-lg mb-6 dark:text-white text-center italic">
-        Decode your body’s energetic blueprint — where vitality flows and where
+        Decode your body&apos;s energetic blueprint — where vitality flows and where
         it breaks down.
       </p>
       <div className="p-6 dark:bg-gray-900">
@@ -250,7 +254,8 @@ const Health: React.FC<HealthAnalysisProps> = ({ chartData }) => {
                     {t("analysis.health.areasOfConcern") ||
                       "Areas of Health Concern"}
                   </h3>
-                  {/* {affectedBodyParts.map((bodyPart, index) => (
+                  {/* Commented out dynamic rendering from affectedBodyParts
+                  {affectedBodyParts.map((bodyPart, index) => (
                     <div
                       key={index}
                       className="flex items-center p-3 rounded-lg border-l-4 border-red-500 bg-red-50 dark:bg-red-900/10">
@@ -261,6 +266,19 @@ const Health: React.FC<HealthAnalysisProps> = ({ chartData }) => {
                     </div>
                   ))} */}
 
+                  {/* Temporarily hardcoded to stomach and knees */}
+                  {affectedBodyParts.map((bodyPart, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center p-3 rounded-lg border-l-4 border-red-500 bg-red-50 dark:bg-red-900/10">
+                      <span className="w-3 h-3 rounded-full bg-red-500 mr-3 animate-pulse"></span>
+                      <span className="text-gray-800 dark:text-gray-200 font-medium">
+                        {bodyPart === "胃" ? "Stomach" : bodyPart === "膝盖" ? "Knee" : t(`analysis.health.${bodyPart}`)}
+                      </span>
+                    </div>
+                  ))}
+
+                  {/* Hardcoded examples - commented out
                   <div className="flex items-center p-3 rounded-lg border-l-4 border-red-500 bg-red-50 dark:bg-red-900/10">
                     <span className="w-3 h-3 rounded-full bg-red-500 mr-3 animate-pulse"></span>
                     <span className="text-gray-800 dark:text-gray-200 font-medium">
@@ -273,6 +291,7 @@ const Health: React.FC<HealthAnalysisProps> = ({ chartData }) => {
                       Knee
                     </span>
                   </div>
+                  */}
                 </div>
 
                 {/* Modified Tips Section with individual See More functionality */}
