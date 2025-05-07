@@ -122,12 +122,12 @@ const FourKeyPalace: React.FC = () => {
       <div className="w-full border-t border-gray-200 dark:border-gray-700 mb-6"></div>
 
       {/* Title */}
-      <h2 className="text-2xl  dark:text-white text-center font-bold">
+      <h2 className="text-3xl mb-2 dark:text-white text-center font-bold">
       DESTINY ALERT MAP
       </h2>
 
       {/* Subtitle */}
-      <p className="text-lg mb-6 dark:text-white text-center">
+      <p className="text-lg mb-6 dark:text-white text-center italic">
         Where your life force is thriving — and where it&apos;s sending
         warning signals.
       </p>

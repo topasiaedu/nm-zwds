@@ -102,12 +102,12 @@ const AreasOfLife: React.FC<{ chartData: ChartDataType }> = ({ chartData }) => {
       <div className="w-full border-t border-gray-200 dark:border-gray-700 mb-6"></div>
 
       {/* Title */}
-      <h2 className="text-2xl  dark:text-white text-center font-bold">
+      <h2 className="text-3xl mb-2 dark:text-white text-center font-bold">
       DESTINY SCOREBOARD
       </h2>
 
       {/* Subtitle */}
-      <p className="text-lg mb-6 dark:text-white text-center">
+      <p className="text-lg mb-6 dark:text-white text-center italic">
         Your personal scorecard across the 5 destiny pillars.
       </p>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
