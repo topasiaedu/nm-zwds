@@ -87,6 +87,10 @@ const FourKeyPalace: React.FC = () => {
 
   return (
     <div className="p-6 dark:bg-gray-900">
+
+      {/* Divider */}
+      <div className="w-full border-t border-gray-200 dark:border-gray-700 mb-6"></div>
+
       {/* Title */}
       <h2 className="text-2xl mb-6 dark:text-white text-center italic">
         What Your Four Key Palaces Say About You

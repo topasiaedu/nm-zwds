@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 /**
  * Properties for individual stars in the starry background
@@ -18,6 +18,7 @@ interface Star {
 
 /**
  * Component that renders a subtle starry background with animated stars and constellations
+ * with parallax scrolling effect
  */
 const StarryBackground: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -27,6 +28,7 @@ const StarryBackground: React.FC = () => {
   const lastFrameTime = useRef<number>(0);
   const isPageVisible = useRef<boolean>(true);
   const animationPaused = useRef<boolean>(false);
+  const scrollY = useRef<number>(0);
   const isDarkMode = useRef<boolean>(
     document.documentElement.classList.contains("dark") ||
     (!localStorage.getItem("theme") && window.matchMedia("(prefers-color-scheme: dark)").matches)
@@ -37,16 +39,20 @@ const StarryBackground: React.FC = () => {
    */
   const initStars = (count: number): Star[] => {
     const newStars: Star[] = [];
+    // Create a canvas area larger than viewport to accommodate parallax scrolling
+    const areaWidth = window.innerWidth;
+    const areaHeight = window.innerHeight * 2; // Extend vertically for scrolling
+    
     for (let i = 0; i < count; i++) {
       // Use more subtle opacity values
-      const baseOpacity = Math.random() * 0.4 + 0.1;
+      const baseOpacity = isDarkMode.current ? (Math.random() * 0.4 + 0.1) : (Math.random() * 0.5 + 0.3); // Higher opacity in light mode
       
       // Random angle for direction
       const angle = Math.random() * Math.PI * 2;
       
       newStars.push({
-        x: Math.random() * window.innerWidth,
-        y: Math.random() * window.innerHeight,
+        x: Math.random() * areaWidth,
+        y: Math.random() * areaHeight, // Distribute stars over extended area
         radius: Math.random() * 1.2 + 0.3, // Smaller stars for subtlety
         opacity: baseOpacity,
         baseOpacity: baseOpacity, // Store base opacity for flickering
@@ -74,7 +80,7 @@ const StarryBackground: React.FC = () => {
     
     // Create a radial gradient for the star's glow
     const gradient = ctx.createRadialGradient(x, y, 0, x, y, glow);
-    const starColor = isDarkMode.current ? "255, 255, 255" : "30, 30, 60";
+    const starColor = isDarkMode.current ? "255, 255, 255" : "120, 80, 180"; // Darker purple for better visibility in light mode
     
     gradient.addColorStop(0, `rgba(${starColor}, ${opacity})`);
     gradient.addColorStop(1, `rgba(${starColor}, 0)`);
@@ -101,30 +107,42 @@ const StarryBackground: React.FC = () => {
   /**
    * Draw connections between nearby stars to form constellations
    */
-  const drawConstellations = (ctx: CanvasRenderingContext2D, stars: Star[]): void => {
+  const drawConstellations = (ctx: CanvasRenderingContext2D, stars: Star[], parallaxOffset: number): void => {
     const threshold = 120; // Maximum distance to connect stars (reduced for subtlety)
     const maxConnections = 2; // Maximum connections per star (reduced for fewer lines)
     
     ctx.beginPath();
     
-    const starColor = isDarkMode.current ? "255, 255, 255" : "30, 30, 60";
+    const starColor = isDarkMode.current ? "255, 255, 255" : "120, 80, 180"; // Darker purple for better visibility in light mode
     
     for (let i = 0; i < stars.length; i++) {
       let connections = 0;
       
+      // Apply parallax transformation for star positions during constellation drawing
+      const starY1 = stars[i].y - parallaxOffset;
+      
+      // Skip stars that are out of view
+      if (starY1 < -50 || starY1 > window.innerHeight + 50) continue;
+      
       for (let j = 0; j < stars.length; j++) {
         if (i === j) continue;
         
+        // Apply parallax transformation for comparison star
+        const starY2 = stars[j].y - parallaxOffset;
+        
+        // Skip stars that are out of view
+        if (starY2 < -50 || starY2 > window.innerHeight + 50) continue;
+        
         const distance = calculateDistance(
           stars[i].x,
-          stars[i].y,
+          starY1,
           stars[j].x,
-          stars[j].y
+          starY2
         );
         
         if (distance < threshold && connections < maxConnections) {
           // Increased opacity for better visibility while still maintaining subtlety
-          const lineOpacity = isDarkMode.current ? 0.15 : 0.08;
+          const lineOpacity = isDarkMode.current ? 0.15 : 0.2; // Higher opacity for light mode
           
           ctx.strokeStyle = isDarkMode.current 
             ? `rgba(${starColor}, ${lineOpacity})` 
@@ -133,8 +151,8 @@ const StarryBackground: React.FC = () => {
           ctx.lineWidth = 0.4; // Slightly thicker lines for better visibility
           
           ctx.beginPath();
-          ctx.moveTo(stars[i].x, stars[i].y);
-          ctx.lineTo(stars[j].x, stars[j].y);
+          ctx.moveTo(stars[i].x, starY1);
+          ctx.lineTo(stars[j].x, starY2);
           ctx.stroke();
           
           connections++;
@@ -186,7 +204,7 @@ const StarryBackground: React.FC = () => {
   };
   
   /**
-   * Animate the stars with random movement and very slow flickering
+   * Animate the stars with random movement, very slow flickering, and parallax scrolling
    */
   const animate = (timestamp: number): void => {
     // Skip if paused or already running
@@ -226,6 +244,10 @@ const StarryBackground: React.FC = () => {
       canvas.height = window.innerHeight;
     }
     
+    // Calculate parallax effect based on scroll position
+    // Use a factor of 0.4 to make the stars move slower than the content (parallax effect)
+    const parallaxOffset = scrollY.current * 0.4;
+    
     // Only clear if we have stars to draw
     if (stars.current.length > 0) {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -238,11 +260,11 @@ const StarryBackground: React.FC = () => {
         star.x += star.directionX * star.speed * speedFactor;
         star.y += star.directionY * star.speed * speedFactor;
         
-        // Wrap around edges
+        // Wrap around edges with extended vertical boundaries for scrolling
         if (star.x < 0) star.x = canvas.width;
         if (star.x > canvas.width) star.x = 0;
-        if (star.y < 0) star.y = canvas.height;
-        if (star.y > canvas.height) star.y = 0;
+        if (star.y < 0) star.y = window.innerHeight * 2;
+        if (star.y > window.innerHeight * 2) star.y = 0;
         
         // Add extremely slow twinkling effect adjusted by deltaTime
         star.opacity = Math.max(
@@ -262,11 +284,17 @@ const StarryBackground: React.FC = () => {
       });
       
       // Draw constellation lines first (so stars appear on top)
-      drawConstellations(ctx, stars.current);
+      drawConstellations(ctx, stars.current, parallaxOffset);
       
-      // Draw each star
+      // Draw each star with parallax effect
       stars.current.forEach((star) => {
-        drawStar(ctx, star.x, star.y, star.radius, star.opacity);
+        // Apply parallax to y-position
+        const parallaxY = star.y - parallaxOffset;
+        
+        // Only draw stars that are in or near the viewport
+        if (parallaxY >= -50 && parallaxY <= window.innerHeight + 50) {
+          drawStar(ctx, star.x, parallaxY, star.radius, star.opacity);
+        }
       });
     } else {
       console.warn("StarryBackground: No stars to animate, reinitializing");
@@ -324,9 +352,18 @@ const StarryBackground: React.FC = () => {
     
     observer.observe(document.documentElement, { attributes: true });
     
-    // Initialize fewer stars for subtlety
-    const starCount = isDarkMode.current ? 80 : 60;
+    // Initialize fewer stars for subtlety but more to cover the extended area
+    const starCount = isDarkMode.current ? 120 : 100;
     stars.current = initStars(starCount);
+    
+    // Track scroll position for parallax effect
+    const handleScroll = (): void => {
+      scrollY.current = window.scrollY;
+    };
+    
+    window.addEventListener("scroll", handleScroll);
+    // Initialize with current scroll position
+    scrollY.current = window.scrollY;
     
     // Page visibility detection for performance optimization
     const handleVisibilityChange = (): void => {
@@ -373,7 +410,7 @@ const StarryBackground: React.FC = () => {
           return {
             ...star,
             x: Math.random() * window.innerWidth,
-            y: Math.random() * window.innerHeight,
+            y: Math.random() * window.innerHeight * 2, // Account for extended area
           };
         }
         return star;
@@ -423,6 +460,7 @@ const StarryBackground: React.FC = () => {
       
       clearInterval(intervalCheck);
       
+      window.removeEventListener("scroll", handleScroll);
       darkModeMediaQuery.removeEventListener("change", handleThemeChange);
       document.removeEventListener("visibilitychange", handleVisibilityChange);
       window.removeEventListener("focus", resumeAnimation);
@@ -436,7 +474,7 @@ const StarryBackground: React.FC = () => {
   return (
     <canvas
       ref={canvasRef}
-      className="absolute inset-0 h-full w-full"
+      className="fixed inset-0 h-screen w-full"
       style={{ 
         pointerEvents: "none",
         zIndex: 0 

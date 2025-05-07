@@ -465,7 +465,7 @@ const Palace: React.FC<PalaceProps> = ({
       </div>
 
       {/* Bottom section with grid layout */}
-      <div className="absolute bottom-0 left-0 right-0 grid grid-cols-1 sm:grid-cols-3 w-full text-3xs xs:text-2xs sm:text-xs text-zinc-800 dark:text-zinc-200 border-t border-gray-200 dark:border-gray-700 z-20">
+      <div className="absolute bottom-0 left-0 right-0 grid grid-cols-1 sm:grid-cols-3 w-full text-3xs xs:text-2xs sm:text-xs text-zinc-800 dark:text-zinc-200 border-t border-gray-200 dark:border-gray-700 z-20 min-h-[80px]">
         {/* First column (mobile and desktop) */}
         <div
           className={`flex flex-col items-start sm:items-center justify-center py-0.5 xs:py-1 sm:py-1.5 border-r border-gray-200 dark:border-gray-700 ${
