@@ -235,9 +235,14 @@ const DestinyCompass: React.FC = () => {
       </style>
       {/* Divider */}
       <div className="w-full border-t border-gray-200 dark:border-gray-700 mb-6"></div>
-      <h2 className="text-2xl font-bold mb-6 text-center text-gray-800 dark:text-white">
-        Destiny Compass
+      <h2 className="text-2xl font-bold text-center text-gray-800 dark:text-white">
+        DESTINY COMPASS
       </h2>
+
+      {/* Subtitle */}
+      <p className="text-lg mb-6 dark:text-white text-center">
+      Navigate your life path with clarity — see how your chart shifts across different years.
+      </p>
 
       {/* Year Navigation Controls */}
       <div className="flex items-center justify-center mb-6">

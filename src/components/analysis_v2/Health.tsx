@@ -176,9 +176,9 @@ const Health: React.FC<HealthAnalysisProps> = ({ chartData }) => {
   const [expandedTips, setExpandedTips] = useState<Record<number, boolean>>({});
 
   const toggleTip = (index: number) => {
-    setExpandedTips(prev => ({
+    setExpandedTips((prev) => ({
       ...prev,
-      [index]: !prev[index]
+      [index]: !prev[index],
     }));
   };
 
@@ -230,9 +230,15 @@ const Health: React.FC<HealthAnalysisProps> = ({ chartData }) => {
       <div className="w-full border-t border-gray-200 dark:border-gray-700 mb-6"></div>
 
       {/* Title */}
-      <h2 className="text-2xl mb-6 dark:text-white text-center font-bold">
-        Your Health Report
+      <h2 className="text-2xl dark:text-white text-center font-bold">
+        HEALTH CODE SCAN
       </h2>
+
+      {/* Subtitle */}
+      <p className="text-lg mb-6 dark:text-white text-center">
+        Decode your body’s energetic blueprint — where vitality flows and where
+        it breaks down.
+      </p>
       <div className="p-6 dark:bg-gray-900">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Left column - Health interpretations (swapped from right) */}
@@ -244,7 +250,7 @@ const Health: React.FC<HealthAnalysisProps> = ({ chartData }) => {
                     {t("analysis.health.areasOfConcern") ||
                       "Areas of Health Concern"}
                   </h3>
-                  {affectedBodyParts.map((bodyPart, index) => (
+                  {/* {affectedBodyParts.map((bodyPart, index) => (
                     <div
                       key={index}
                       className="flex items-center p-3 rounded-lg border-l-4 border-red-500 bg-red-50 dark:bg-red-900/10">
@@ -253,7 +259,20 @@ const Health: React.FC<HealthAnalysisProps> = ({ chartData }) => {
                         {t(`analysis.health.${bodyPart}`)}
                       </span>
                     </div>
-                  ))}
+                  ))} */}
+
+                  <div className="flex items-center p-3 rounded-lg border-l-4 border-red-500 bg-red-50 dark:bg-red-900/10">
+                    <span className="w-3 h-3 rounded-full bg-red-500 mr-3 animate-pulse"></span>
+                    <span className="text-gray-800 dark:text-gray-200 font-medium">
+                      Stomach
+                    </span>
+                  </div>
+                  <div className="flex items-center p-3 rounded-lg border-l-4 border-red-500 bg-red-50 dark:bg-red-900/10">
+                    <span className="w-3 h-3 rounded-full bg-red-500 mr-3 animate-pulse"></span>
+                    <span className="text-gray-800 dark:text-gray-200 font-medium">
+                      Knee
+                    </span>
+                  </div>
                 </div>
 
                 {/* Modified Tips Section with individual See More functionality */}
@@ -263,47 +282,47 @@ const Health: React.FC<HealthAnalysisProps> = ({ chartData }) => {
                   </h3>
                   <div className="space-y-4">
                     <div className="p-4 border-l-4 border-green-500 bg-green-50 dark:bg-green-900/10 rounded-r">
-                      <div className={`${!expandedTips[0] ? "line-clamp-4" : ""}`}>
+                      <div
+                        className={`${!expandedTips[0] ? "line-clamp-4" : ""}`}>
                         <p className="text-gray-700 dark:text-gray-300">
                           The stomach is where you digest not just food, but the
                           pace of life and external pressure. The more you
                           suppress your emotions, the more likely your stomach
                           will protest—bloating, acid, and pain are often not
-                          caused by what you eat, but by what&apos;s weighing on your
-                          heart. Yes, regular meals and mindful chewing matter,
-                          but what matters more is learning to express discomfort,
-                          handle stress, and stop forcing yourself to swallow too
-                          much. When you start honoring your own rhythm, your
-                          stomach will settle too—helping you face the world with
-                          greater strength.
+                          caused by what you eat, but by what&apos;s weighing on
+                          your heart. Yes, regular meals and mindful chewing
+                          matter, but what matters more is learning to express
+                          discomfort, handle stress, and stop forcing yourself
+                          to swallow too much. When you start honoring your own
+                          rhythm, your stomach will settle too—helping you face
+                          the world with greater strength.
                         </p>
                       </div>
                       <button
                         onClick={() => toggleTip(0)}
-                        className="mt-2 text-sm font-medium text-purple-600 hover:text-purple-700 dark:text-purple-400 dark:hover:text-purple-300 transition-colors duration-200"
-                      >
+                        className="mt-2 text-sm font-medium text-purple-600 hover:text-purple-700 dark:text-purple-400 dark:hover:text-purple-300 transition-colors duration-200">
                         {expandedTips[0] ? "Show Less" : "See More"}
                       </button>
                     </div>
                     <div className="p-4 border-l-4 border-blue-500 bg-blue-50 dark:bg-blue-900/10 rounded-r">
-                      <div className={`${!expandedTips[1] ? "line-clamp-4" : ""}`}>
+                      <div
+                        className={`${!expandedTips[1] ? "line-clamp-4" : ""}`}>
                         <p className="text-gray-700 dark:text-gray-300">
-                          Your knees carry your direction and drive—they symbolize
-                          your willingness to move forward. When you feel
-                          hesitant, fear change, or silently endure pressure
-                          without asking for help, your knees are likely to show
-                          signs of strain. Stop forcing yourself to push through
-                          everything alone. Taking proper rest, strengthening your
-                          lower body, and keeping warm can help you walk farther
-                          and more steadily. True support comes from allowing
-                          yourself to soften, not from constantly pretending to be
-                          strong.
+                          Your knees carry your direction and drive—they
+                          symbolize your willingness to move forward. When you
+                          feel hesitant, fear change, or silently endure
+                          pressure without asking for help, your knees are
+                          likely to show signs of strain. Stop forcing yourself
+                          to push through everything alone. Taking proper rest,
+                          strengthening your lower body, and keeping warm can
+                          help you walk farther and more steadily. True support
+                          comes from allowing yourself to soften, not from
+                          constantly pretending to be strong.
                         </p>
                       </div>
                       <button
                         onClick={() => toggleTip(1)}
-                        className="mt-2 text-sm font-medium text-purple-600 hover:text-purple-700 dark:text-purple-400 dark:hover:text-purple-300 transition-colors duration-200"
-                      >
+                        className="mt-2 text-sm font-medium text-purple-600 hover:text-purple-700 dark:text-purple-400 dark:hover:text-purple-300 transition-colors duration-200">
                         {expandedTips[1] ? "Show Less" : "See More"}
                       </button>
                     </div>

@@ -60,14 +60,20 @@ const Career: React.FC = () => {
 
   return (
     <>
-      {/* Divider */}
-      <div className="w-full border-t border-gray-200 dark:border-gray-700 mb-6"></div>
-
-      {/* Title */}
-      <h2 className="text-2xl mb-6 dark:text-white text-center font-bold">
-        Your Wealth Report
-      </h2>
       <div className="p-6 dark:bg-gray-900">
+        {/* Divider */}
+        <div className="w-full border-t border-gray-200 dark:border-gray-700 mb-6"></div>
+
+        {/* Title */}
+        <h2 className="text-2xl dark:text-white text-center font-bold">
+          WEALTH STRATEGY PANEL
+        </h2>
+
+        {/* Subtitle */}
+        <p className="text-lg mb-6 dark:text-white text-center">
+          Uncover how you’re wired to earn, invest, and build long-term
+          financial power.
+        </p>
         <div className="flex flex-col md:flex-row">
           {/* Left Column - Image with Tilt Effect */}
           <div className="md:w-[30%] p-4 flex justify-center">

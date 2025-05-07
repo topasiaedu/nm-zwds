@@ -7,7 +7,8 @@ import watchout from "./watchout";
 
 const analysis = {
   analysis: {
-    title: "Your Personalized Report",
+    title: "PERSONALIZED LIFE REPORT",
+    subtitle: "A custom breakdown of your chart’s strengths, patterns, and strategic focus areas.",
     // Combine all analysis-related translations
     ...fourKeyPalace,
     ...lifeAreas,

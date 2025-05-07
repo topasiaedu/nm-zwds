@@ -681,8 +681,8 @@ const Result: React.FC = () => {
         {/* Analysis Section */}
         {calculatedChartData && !loading && !error && (
           <div className="mt-8">
-            <div className="flex justify-center">
-              <h2 className="text-2xl font-bold mb-6 dark:text-white flex items-center text-center pt-4">
+            <div className="flex flex-col justify-center items-center">
+              <h2 className="text-2xl font-bold dark:text-white flex items-center text-center pt-4">
                 {/* <svg
                 className="w-6 h-6 mr-2 text-indigo-500"
                 fill="none"
@@ -698,6 +698,11 @@ const Result: React.FC = () => {
               </svg> */}
                 {t("analysis.title") || "Chart Analysis"}
               </h2>
+
+              {/* Subtitle */}
+              <p className="text-lg mb-6 dark:text-white text-center">
+                {t("analysis.subtitle") || "A custom breakdown of your chart’s strengths, patterns, and strategic focus areas."}
+              </p>
             </div>
 
             <div className="space-y-8">
