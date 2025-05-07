@@ -4,13 +4,13 @@
 const freeTest = {
   freeTest: {
     // Free test page
-    title: "Free 紫微斗数 Chart Test",
-    subtitle: "Try our 紫微斗数 (Zi Wei Dou Shu) chart for free for a limited time only!",
+    title: "Free Purple Star Astrology Chart Visualization",
+    subtitle: "Try our Purple Star Astrology chart for free for a limited time only!",
     limitedTime: "Limited time offer - Available until {{date}}",
     aboutTitle: "About This Free Test",
-    aboutDescription: "This free test allows you to experience the power of 紫微斗数 (Zi Wei Dou Shu) chart analysis without creating an account.",
+    aboutDescription: "This free test allows you to experience the power of Purple Star Astrology chart analysis without creating an account.",
     whatYouGet: "What You'll Get",
-    feature1: "Full 紫微斗数 chart visualization",
+    feature1: "Full Purple Star Astrology chart visualization",
     feature2: "Basic personality analysis",
     feature3: "Life areas overview",
     fullFeatures: "Want Full Features?",
@@ -20,7 +20,7 @@ const freeTest = {
     
     // Free result page
     resultTitle: "Free Chart Results",
-    resultSubtitle: "紫微斗数 (Zi Wei Dou Shu) chart free test results",
+    resultSubtitle: "Purple Star Astrology chart free test results",
     upgradeTitle: "Unlock Full Analysis",
     upgradeBenefits: "Contact us on WhatsApp for full personalized analysis, consultation, and more!",
     createAccount: "Contact on WhatsApp",

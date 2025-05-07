@@ -1,18 +1,18 @@
 const calculate = {
   calculate: {
     title: "Calculate for Others",
-    subtitle: "Generate 紫微斗数 (Zi Wei Dou Shu) charts for friends, family, or clients",
+    subtitle: "Generate Purple Star Astrology charts for friends, family, or clients",
     savedProfiles: "Saved Profiles",
     noProfiles: "No saved profiles yet",
     newCalculation: "New Calculation",
-    enterDetails: "Enter the person's details to generate their 紫微斗数 chart",
+    enterDetails: "Enter the person's details to generate their Purple Star Astrology chart",
     generateChart: "Generate Chart",
-    aboutZiWei: "About 紫微斗数 (Zi Wei Dou Shu)",
-    whatIsZiWei: "What is 紫微斗数?",
+    aboutZiWei: "About Purple Star Astrology",
+    whatIsZiWei: "What is Purple Star Astrology?",
     requiredInfo: "Required Information",
     interpretation: "Interpretation",
-    whatIsDescription: "紫微斗数 (Zi Wei Dou Shu) is an ancient Chinese astrology system that creates a chart based on a person's birth date and time. It analyzes the positions of celestial bodies to provide insights into personality, relationships, career, and life path.",
-    requiredInfoDescription: "To create an accurate 紫微斗数 chart, you'll need the person's exact birth date, time, and location. The more precise this information, the more accurate the chart will be.",
+    whatIsDescription: "Purple Star Astrology is an ancient Chinese astrology system that creates a chart based on a person's birth date and time. It analyzes the positions of celestial bodies to provide insights into personality, relationships, career, and life path.",
+    requiredInfoDescription: "To create an accurate Purple Star Astrology chart, you'll need the person's exact birth date, time, and location. The more precise this information, the more accurate the chart will be.",
     interpretationDescription: "The chart analysis provides insights into various aspects of life including career, relationships, health, and personal development. The interpretation combines both traditional wisdom and modern psychological understanding."
   },
   
