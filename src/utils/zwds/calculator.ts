@@ -746,6 +746,7 @@ export class ZWDSCalculator {
       throw new Error(`Invalid Five Elements: ${fiveElements}`);
     }
 
+
     // Determine direction based on gender and yin/yang
     // Clockwise: Yang Male or Yin Female
     // Counter-clockwise: Yin Male or Yang Female

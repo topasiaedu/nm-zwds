@@ -140,16 +140,7 @@ const FreeResult: React.FC = () => {
 
           if (isMounted) {
             setChartData(chartData);
-            
-            // Calculate elapsed time and set a timeout for the remaining time
-            const elapsedTime = Date.now() - startTime;
-            const remainingTime = Math.max(0, MIN_LOADING_TIME - elapsedTime);
-            
-            setTimeout(() => {
-              if (isMounted) {
-                setLoading(false);
-              }
-            }, remainingTime);
+            // Don't set loading to false here, it's handled by the calculation useEffect
           }
           return;
         }
@@ -239,6 +230,7 @@ const FreeResult: React.FC = () => {
     if (chartData) {
       try {
         const startTime = Date.now();
+        setLoading(true); // Keep loading true while calculating
         
         // Convert birth time to 24-hour format
         const timeMatch = chartData.birthTime.match(/(\d+):(\d+)\s*(AM|PM)?/i);
@@ -298,10 +290,12 @@ const FreeResult: React.FC = () => {
         
         setTimeout(() => {
           setCalculatedChartData(calculatedData);
+          setLoading(false); // Set loading to false AFTER setting calculated data
         }, remainingTime);
       } catch (error) {
         console.error("Error calculating chart:", error);
         setError(`Failed to calculate chart data: ${error}`);
+        setLoading(false); // Also set loading to false on error
       }
     }
   }, [chartData]);
