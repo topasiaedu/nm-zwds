@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { ResponsiveRadar } from "@nivo/radar";
 import { useLanguage } from "../../context/LanguageContext";
 import {
@@ -27,6 +27,14 @@ const normalizeStarName = (name: string): string => {
  */
 const AreasOfLife: React.FC<{ chartData: ChartDataType }> = ({ chartData }) => {
   const { t, language } = useLanguage();
+  const [expandedAreas, setExpandedAreas] = useState<Record<string, boolean>>({});
+
+  const toggleArea = (areaId: string) => {
+    setExpandedAreas(prev => ({
+      ...prev,
+      [areaId]: !prev[areaId]
+    }));
+  };
 
   // Calculate scores for radar chart
   const lifeAreaScores = useMemo(() => {
@@ -113,7 +121,7 @@ const AreasOfLife: React.FC<{ chartData: ChartDataType }> = ({ chartData }) => {
                   dotSize={10}
                   dotColor={{ theme: "background" }}
                   dotBorderWidth={2}
-                  colors={["#60a5fa"]}
+                  colors={["#2563eb"]}
                   fillOpacity={0.6}
                   borderColor={{ from: "color" }}
                   gridShape="circular"
@@ -122,7 +130,7 @@ const AreasOfLife: React.FC<{ chartData: ChartDataType }> = ({ chartData }) => {
                   theme={{
                     text: {
                       fontSize: 12,
-                      fill: "#94a3b8",
+                      fill: "#475569",
                     },
                     axis: {
                       domain: {
@@ -191,10 +199,28 @@ const AreasOfLife: React.FC<{ chartData: ChartDataType }> = ({ chartData }) => {
                           <h4 className="font-semibold text-lg text-gray-800 dark:text-white">
                             {area.displayName}
                           </h4>
+
+                          {/* Score Badge */}
+                          <span
+                            className={`text-lg font-bold ${getScoreBadgeClasses(
+                              area.score
+                            )}`}>
+                            {area.score}
+                          </span>
                         </div>
-                        <p className="text-gray-600 dark:text-gray-400">
-                          {getCombinedDescription(area)}
-                        </p>
+                        <div className="space-y-2">
+                          <div className={`${!expandedAreas[area.area] ? "line-clamp-4" : ""}`}>
+                            <p className="text-gray-600 dark:text-gray-400">
+                              {getCombinedDescription(area)}
+                            </p>
+                          </div>
+                          <button
+                            onClick={() => toggleArea(area.area)}
+                            className="text-sm font-medium text-purple-600 hover:text-purple-700 dark:text-purple-400 dark:hover:text-purple-300 transition-colors duration-200"
+                          >
+                            {expandedAreas[area.area] ? "Show Less" : "See More"}
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>

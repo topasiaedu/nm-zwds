@@ -46,7 +46,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   return (
     <div className="relative min-h-screen w-full overflow-hidden bg-gray-50 dark:bg-gray-900 transition-colors duration-500">
       {/* Background animation */}
-      <StarryBackground />
+      {/* <StarryBackground /> */}
       
       {/* Navbar with circular buttons */}
       <Navbar />

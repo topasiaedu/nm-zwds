@@ -173,6 +173,14 @@ const Health: React.FC<HealthAnalysisProps> = ({ chartData }) => {
   const [starsInHealthPalace, setStarsInHealthPalace] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<boolean>(false);
+  const [expandedTips, setExpandedTips] = useState<Record<number, boolean>>({});
+
+  const toggleTip = (index: number) => {
+    setExpandedTips(prev => ({
+      ...prev,
+      [index]: !prev[index]
+    }));
+  };
 
   useEffect(() => {
     if (chartData) {
@@ -248,40 +256,56 @@ const Health: React.FC<HealthAnalysisProps> = ({ chartData }) => {
                   ))}
                 </div>
 
-                {/* New Tips Section */}
+                {/* Modified Tips Section with individual See More functionality */}
                 <div className="mt-8">
                   <h3 className="text-xl font-semibold mb-4 text-gray-800 dark:text-white">
                     Health Tips
                   </h3>
                   <div className="space-y-4">
                     <div className="p-4 border-l-4 border-green-500 bg-green-50 dark:bg-green-900/10 rounded-r">
-                      <p className="text-gray-700 dark:text-gray-300">
-                        The stomach is where you digest not just food, but the
-                        pace of life and external pressure. The more you
-                        suppress your emotions, the more likely your stomach
-                        will protest—bloating, acid, and pain are often not
-                        caused by what you eat, but by what’s weighing on your
-                        heart. Yes, regular meals and mindful chewing matter,
-                        but what matters more is learning to express discomfort,
-                        handle stress, and stop forcing yourself to swallow too
-                        much. When you start honoring your own rhythm, your
-                        stomach will settle too—helping you face the world with
-                        greater strength.
-                      </p>
+                      <div className={`${!expandedTips[0] ? "line-clamp-4" : ""}`}>
+                        <p className="text-gray-700 dark:text-gray-300">
+                          The stomach is where you digest not just food, but the
+                          pace of life and external pressure. The more you
+                          suppress your emotions, the more likely your stomach
+                          will protest—bloating, acid, and pain are often not
+                          caused by what you eat, but by what&apos;s weighing on your
+                          heart. Yes, regular meals and mindful chewing matter,
+                          but what matters more is learning to express discomfort,
+                          handle stress, and stop forcing yourself to swallow too
+                          much. When you start honoring your own rhythm, your
+                          stomach will settle too—helping you face the world with
+                          greater strength.
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => toggleTip(0)}
+                        className="mt-2 text-sm font-medium text-purple-600 hover:text-purple-700 dark:text-purple-400 dark:hover:text-purple-300 transition-colors duration-200"
+                      >
+                        {expandedTips[0] ? "Show Less" : "See More"}
+                      </button>
                     </div>
                     <div className="p-4 border-l-4 border-blue-500 bg-blue-50 dark:bg-blue-900/10 rounded-r">
-                      <p className="text-gray-700 dark:text-gray-300">
-                        Your knees carry your direction and drive—they symbolize
-                        your willingness to move forward. When you feel
-                        hesitant, fear change, or silently endure pressure
-                        without asking for help, your knees are likely to show
-                        signs of strain. Stop forcing yourself to push through
-                        everything alone. Taking proper rest, strengthening your
-                        lower body, and keeping warm can help you walk farther
-                        and more steadily. True support comes from allowing
-                        yourself to soften, not from constantly pretending to be
-                        strong.
-                      </p>
+                      <div className={`${!expandedTips[1] ? "line-clamp-4" : ""}`}>
+                        <p className="text-gray-700 dark:text-gray-300">
+                          Your knees carry your direction and drive—they symbolize
+                          your willingness to move forward. When you feel
+                          hesitant, fear change, or silently endure pressure
+                          without asking for help, your knees are likely to show
+                          signs of strain. Stop forcing yourself to push through
+                          everything alone. Taking proper rest, strengthening your
+                          lower body, and keeping warm can help you walk farther
+                          and more steadily. True support comes from allowing
+                          yourself to soften, not from constantly pretending to be
+                          strong.
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => toggleTip(1)}
+                        className="mt-2 text-sm font-medium text-purple-600 hover:text-purple-700 dark:text-purple-400 dark:hover:text-purple-300 transition-colors duration-200"
+                      >
+                        {expandedTips[1] ? "Show Less" : "See More"}
+                      </button>
                     </div>
                   </div>
                 </div>
