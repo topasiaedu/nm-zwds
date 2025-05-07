@@ -466,48 +466,85 @@ const Palace: React.FC<PalaceProps> = ({
 
       {/* Bottom section with grid layout */}
       <div className="absolute bottom-0 left-0 right-0 grid grid-cols-1 sm:grid-cols-3 w-full text-3xs xs:text-2xs sm:text-xs text-zinc-800 dark:text-zinc-200 border-t border-gray-200 dark:border-gray-700 z-20">
-        {/* Bottom left: Earthly Branch and Heavenly Stem */}
+        {/* First column (mobile and desktop) */}
         <div
-          className={`flex flex-col items-center justify-center py-0.5 xs:py-1 sm:py-1.5 border-r border-gray-200 dark:border-gray-700 ${
+          className={`flex flex-col items-start sm:items-center justify-center py-0.5 xs:py-1 sm:py-1.5 border-r border-gray-200 dark:border-gray-700 ${
             isSelected ? "text-white/90 dark:text-white/90" : ""
           }`}>
-          <div>
+          {/* Mobile view: Heavenly Stem and Earthly Branch on one line */}
+          <div className="flex items-center gap-1 sm:hidden">
+            <span>
+              {language === "en" && t(`zwds.stems.${palace.heavenlyStem}`)
+                ? t(`zwds.stems.${palace.heavenlyStem}`)
+                : palace.heavenlyStem}
+            </span>
+            <span>&nbsp;</span>
+            <span>
+              {language === "en" && t(`zwds.branches.${palace.earthlyBranch}`)
+                ? t(`zwds.branches.${palace.earthlyBranch}`)
+                : palace.earthlyBranch}
+            </span>
+          </div>
+          {/* Desktop view: Heavenly Stem */}
+          <div className="hidden sm:block">
             {language === "en" && t(`zwds.stems.${palace.heavenlyStem}`)
               ? t(`zwds.stems.${palace.heavenlyStem}`)
               : palace.heavenlyStem}
           </div>
-          <div>
+          {/* Desktop view: Earthly Branch */}
+          <div className="hidden sm:block">
             {language === "en" && t(`zwds.branches.${palace.earthlyBranch}`)
               ? t(`zwds.branches.${palace.earthlyBranch}`)
               : palace.earthlyBranch}
           </div>
-        </div>
-
-        {/* Bottom middle: Palace Name and Age Range */}
-        <div
-          className={`flex flex-col items-center justify-center py-0.5 xs:py-1 sm:py-1.5 border-r border-gray-200 dark:border-gray-700 font-medium ${
+          {/* Mobile view: Palace Name */}
+          <div className={`font-medium sm:hidden ${
             isSelected ? "text-white dark:text-white" : ""
           }`}>
-          <div>
+            {language === "en" && t(`zwds.palaces.${palace.name}`)
+              ? t(`zwds.palaces.${palace.name}`)
+              : palace.name}
+          </div>
+          {/* Mobile view: Major Limit */}
+          {palace.majorLimit && (
+            <div className="sm:hidden text-zinc-500 dark:text-zinc-400">
+              {palace.majorLimit.startAge}-{palace.majorLimit.endAge}
+            </div>
+          )}
+          {/* Mobile view: Year and Age */}
+          <div className={`flex items-center gap-1 sm:hidden ${
+            showAnnualFlow
+              ? isSelected
+                ? "text-red-300"
+                : "text-red-600 dark:text-red-400"
+              : ""
+          } font-medium`}>
+            <span>{palaceYear}</span>
+            <span>/</span>
+            <span>({getAgeAtYear(palaceYear)})</span>
+          </div>
+        </div>
+
+        {/* Second column (desktop only) */}
+        <div
+          className={`hidden sm:flex flex-col items-center justify-center py-0.5 xs:py-1 sm:py-1.5 border-r border-gray-200 dark:border-gray-700 ${
+            isSelected ? "text-white dark:text-white" : ""
+          }`}>
+          <div className="font-medium">
             {language === "en" && t(`zwds.palaces.${palace.name}`)
               ? t(`zwds.palaces.${palace.name}`)
               : palace.name}
           </div>
           {palace.majorLimit && (
-            <div
-              className={`${
-                isSelected
-                  ? "text-white/80 dark:text-white/80"
-                  : "text-zinc-500 dark:text-zinc-400"
-              }`}>
+            <div className="text-zinc-500 dark:text-zinc-400">
               {palace.majorLimit.startAge}-{palace.majorLimit.endAge}
             </div>
           )}
         </div>
 
-        {/* Bottom right: Year and Age Indicator */}
+        {/* Third column (desktop only) */}
         <div
-          className={`flex flex-col items-center justify-center py-0.5 xs:py-1 sm:py-1.5 ${
+          className={`hidden sm:flex flex-col items-center justify-center py-0.5 xs:py-1 sm:py-1.5 ${
             isSelected
               ? "text-white/80 dark:text-white/80"
               : "text-zinc-500 dark:text-zinc-400"

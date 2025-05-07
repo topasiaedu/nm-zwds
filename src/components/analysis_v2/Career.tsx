@@ -1,5 +1,6 @@
 import React from "react";
 import { Badge } from "flowbite-react";
+import { Tilt } from "react-tilt";
 
 /**
  * Type definition for a career item to be displayed as a badge
@@ -7,6 +8,17 @@ import { Badge } from "flowbite-react";
 type CareerItem = {
   id: string;
   label: string;
+};
+
+/**
+ * Type definition for Tilt options
+ */
+type TiltOptions = {
+  scale: number;
+  speed: number;
+  max: number;
+  glare: boolean;
+  "max-glare": number;
 };
 
 /**
@@ -25,6 +37,15 @@ const Career: React.FC = () => {
     { id: "career-8", label: "Media and public relations" },
     { id: "career-9", label: "Marketing and communications" },
   ];
+
+  // Tilt options for the image
+  const tiltOptions: TiltOptions = {
+    scale: 1.05,
+    speed: 1000,
+    max: 10,
+    glare: true,
+    "max-glare": 0.5,
+  };
 
   /**
    * Renders career items as styled badges
@@ -48,13 +69,18 @@ const Career: React.FC = () => {
 
     <div className="p-6 dark:bg-gray-900">
       <div className="flex flex-col md:flex-row">
-        {/* Left Column - Image */}
+        {/* Left Column - Image with Tilt Effect */}
         <div className="md:w-[30%] p-4 flex justify-center">
-          <img 
-            src="/assets/visionaries.png" 
-            alt="Visionaries" 
-            className="rounded-lg shadow-md max-h-[500px] object-contain"
-          />
+          <Tilt
+            options={tiltOptions}
+            className="w-full h-full"
+          >
+            <img 
+              src="/assets/visionaries.png" 
+              alt="Visionaries" 
+              className="rounded-lg shadow-md max-h-[500px] object-contain w-full"
+            />
+          </Tilt>
         </div>
 
         {/* Right Column - Description and Career Options */}

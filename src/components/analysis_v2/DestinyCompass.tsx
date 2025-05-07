@@ -46,7 +46,7 @@ const DestinyCompass: React.FC = () => {
   // Badge options
   const badgeOptions = [
     { text: "Parents", color: "success" },  // Green
-    { text: "Life", color: "info" },        // Blue
+    { text: "Life", color: "blue" },        // Blue
     { text: "Children", color: "warning" }, // Yellow
     { text: "Travel", color: "failure" }    // Red
   ];
@@ -129,36 +129,6 @@ const DestinyCompass: React.FC = () => {
     setCurrentIndex(newIndex);
   };
 
-  // Handlers for mouse/touch dragging
-  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
-    setIsDragging(true);
-    setStartX(e.pageX - (carouselRef.current?.offsetLeft || 0));
-    setScrollLeft(carouselRef.current?.scrollLeft || 0);
-  };
-
-  const handleMouseUp = () => {
-    if (isDragging) {
-      setIsDragging(false);
-      // Snap to nearest card
-      if (carouselRef.current) {
-        const cardWidth = carouselRef.current.offsetWidth;
-        const scrollPosition = carouselRef.current.scrollLeft;
-        const newIndex = Math.round(scrollPosition / cardWidth);
-        setPreviousIndex(currentIndex);
-        setCurrentIndex(Math.min(Math.max(0, newIndex), years.length - 1));
-      }
-    }
-  };
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!isDragging) return;
-    e.preventDefault();
-    const x = e.pageX - (carouselRef.current?.offsetLeft || 0);
-    const walk = (x - startX) * 2; // Scroll speed multiplier
-    if (carouselRef.current) {
-      carouselRef.current.scrollLeft = scrollLeft - walk;
-    }
-  };
 
   // Navigate to previous year
   const goToPrevious = () => {

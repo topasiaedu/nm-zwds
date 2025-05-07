@@ -1,4 +1,5 @@
 import React from "react";
+import { Tilt } from "react-tilt";
 
 /**
  * Type definition for a palace item data
@@ -11,9 +12,29 @@ type PalaceItem = {
 };
 
 /**
+ * Type definition for Tilt options
+ */
+type TiltOptions = {
+  scale: number;
+  speed: number;
+  max: number;
+  glare: boolean;
+  "max-glare": number;
+};
+
+/**
  * FourKeyPalace component displaying four palace cards with transformation data
  */
 const FourKeyPalace: React.FC = () => {
+  // Tilt options for the cards
+  const tiltOptions: TiltOptions = {
+    scale: 1.05,
+    speed: 1000,
+    max: 10,
+    glare: true,
+    "max-glare": 0.5,
+  };
+
   // Data for the four palace cards
   const palaceData: PalaceItem[] = [
     {
@@ -74,48 +95,53 @@ const FourKeyPalace: React.FC = () => {
       {/* Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {palaceData.map((item, index) => (
-          <div 
-            key={index} 
-            className="relative rounded-lg shadow-md overflow-hidden bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 min-h-[300px]"
+          <Tilt
+            key={index}
+            options={tiltOptions}
+            className="w-full h-full"
           >
-            {/* Background transformation character */}
-            <div className="absolute inset-0 pointer-events-none z-0">
-              <div className="flex items-end justify-end h-full">
-                <div className="opacity-[0.08] dark:opacity-[0.05] transform scale-[3] mr-2 mb-2">
-                  <span className={`text-6xl font-bold ${getTransformationColor(item.transformation)}`}>
-                    {getTransformationChar(item.transformation)}
-                  </span>
+            <div 
+              className="relative rounded-lg shadow-md overflow-hidden bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 min-h-[300px]"
+            >
+              {/* Background transformation character */}
+              <div className="absolute inset-0 pointer-events-none z-0">
+                <div className="flex items-end justify-end h-full">
+                  <div className="opacity-[0.08] dark:opacity-[0.05] transform scale-[3] mr-2 mb-2">
+                    <span className={`text-6xl font-bold ${getTransformationColor(item.transformation)}`}>
+                      {getTransformationChar(item.transformation)}
+                    </span>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div className="p-5 relative z-10">
-              {/* Palace name header */}
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-xl font-bold text-gray-800 dark:text-white">
-                  {item.palace}
-                </h3>
+              <div className="p-5 relative z-10">
+                {/* Palace name header */}
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="text-xl font-bold text-gray-800 dark:text-white">
+                    {item.palace}
+                  </h3>
+                </div>
+
+                {/* Quote with strong emphasis */}
+                <blockquote className="text-xl italic font-semibold text-gray-700 dark:text-gray-300 pl-4 py-2 mb-4 text-center relative">
+                  <span className="absolute top-0 left-0 text-5xl text-purple-400/30 dark:text-purple-500/20 leading-none font-serif">
+                    &ldquo;
+                  </span>
+                  <span className="relative z-10">
+                    {item.quote}
+                  </span>
+                  <span className="absolute bottom-0 right-4 text-5xl text-purple-400/30 dark:text-purple-500/20 leading-none font-serif">
+                    &rdquo;
+                  </span>
+                </blockquote>
+
+                {/* Description */}
+                <p className="text-gray-600 dark:text-gray-400 text-sm">
+                  {item.description}
+                </p>
               </div>
-
-              {/* Quote with strong emphasis */}
-              <blockquote className="text-xl italic font-semibold text-gray-700 dark:text-gray-300 pl-4 py-2 mb-4 text-center relative">
-                <span className="absolute top-0 left-0 text-5xl text-purple-400/30 dark:text-purple-500/20 leading-none font-serif">
-                  &ldquo;
-                </span>
-                <span className="relative z-10">
-                  {item.quote}
-                </span>
-                <span className="absolute bottom-0 right-4 text-5xl text-purple-400/30 dark:text-purple-500/20 leading-none font-serif">
-                  &rdquo;
-                </span>
-              </blockquote>
-
-              {/* Description */}
-              <p className="text-gray-600 dark:text-gray-400 text-sm">
-                {item.description}
-              </p>
             </div>
-          </div>
+          </Tilt>
         ))}
       </div>
     </div>

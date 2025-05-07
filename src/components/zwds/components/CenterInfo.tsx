@@ -60,23 +60,23 @@ const CenterInfo: React.FC<CenterInfoProps> = ({ chartData }) => {
         
         {/* Compact "LABEL: VALUE" layout */}
         <div className="flex-grow overflow-auto p-2 sm:p-3 bg-gradient-to-br from-white to-indigo-50/30 dark:from-indigo-900/10 dark:to-purple-900/20">
-          <div className="flex flex-col space-y-2 text-sm">
+          <div className="flex flex-col space-y-2 text-sm text-xs sm:text-sm">
             {/* Solar Birthday */}
-            <div className="flex items-start">
-              <span className="text-indigo-700 dark:text-indigo-300 font-medium min-w-[85px] sm:min-w-[95px]">
+            <div className="flex flex-col xs:flex-row items-start">
+              <span className="text-indigo-700 dark:text-indigo-300 font-medium w-full xs:w-auto xs:min-w-[85px] sm:min-w-[95px] mb-0.5 xs:mb-0">
                 {t("chartInfo.solarDate")}:
               </span>
-              <span className="text-zinc-700 dark:text-zinc-200">
+              <span className="text-zinc-700 dark:text-zinc-200 pl-2 xs:pl-0">
                 {input.year} {language === "en" ? t("zwds.chart.年") : "年"} {input.month} {language === "en" ? t("zwds.chart.月") : "月"} {input.day} {language === "en" ? t("zwds.chart.日") : "日"} {input.hour} {language === "en" ? t("zwds.chart.时") : "時"}
               </span>
             </div>
             
             {/* Lunar Birthday */}
-            <div className="flex items-start">
-              <span className="text-indigo-700 dark:text-indigo-300 font-medium min-w-[85px] sm:min-w-[95px]">
+            <div className="flex flex-col xs:flex-row items-start">
+              <span className="text-indigo-700 dark:text-indigo-300 font-medium w-full xs:w-auto xs:min-w-[85px] sm:min-w-[95px] mb-0.5 xs:mb-0">
                 {t("chartInfo.lunarDate") || t("zwds.chart.阴历")}:
               </span>
-              <span className="text-zinc-700 dark:text-zinc-200 flex flex-wrap items-center">
+              <span className="text-zinc-700 dark:text-zinc-200 flex flex-wrap items-center pl-2 xs:pl-0">
                 <span className="mr-1">
                   {t(`zwds.stems.${chartData.heavenlyStem}`)}
                   {language === "en" ? " " : ""}
@@ -106,21 +106,21 @@ const CenterInfo: React.FC<CenterInfoProps> = ({ chartData }) => {
             </div>
 
             {/* Five Elements */}
-            <div className="flex items-start">
-              <span className="text-indigo-700 dark:text-indigo-300 font-medium min-w-[85px] sm:min-w-[95px]">
+            <div className="flex flex-col xs:flex-row items-start">
+              <span className="text-indigo-700 dark:text-indigo-300 font-medium w-full xs:w-auto xs:min-w-[85px] sm:min-w-[95px] mb-0.5 xs:mb-0">
                 {t("chartInfo.fiveElement") || t("zwds.chart.五行")}:
               </span>
-              <span className="text-zinc-700 dark:text-zinc-200">
+              <span className="text-zinc-700 dark:text-zinc-200 pl-2 xs:pl-0">
                 {chartData.fiveElements ? t(`zwds.fiveElements.${chartData.fiveElements}`) : ""}
               </span>
             </div>
             
             {/* Gender */}
-            <div className="flex items-start">
-              <span className="text-indigo-700 dark:text-indigo-300 font-medium min-w-[85px] sm:min-w-[95px]">
+            <div className="flex flex-col xs:flex-row items-start">
+              <span className="text-indigo-700 dark:text-indigo-300 font-medium w-full xs:w-auto xs:min-w-[85px] sm:min-w-[95px] mb-0.5 xs:mb-0">
                 {t("chartInfo.gender")}:
               </span>
-              <span className="text-zinc-700 dark:text-zinc-200">
+              <span className="text-zinc-700 dark:text-zinc-200 pl-2 xs:pl-0">
                 {language === "en" 
                   ? t(`myChart.fields.${input.gender === "female" ? "female" : "male"}`)
                   : (chartData.yinYang === "Yin" ? t("zwds.chart.陰") || "陰" : t("zwds.chart.陽") || "陽") + 
@@ -129,21 +129,21 @@ const CenterInfo: React.FC<CenterInfoProps> = ({ chartData }) => {
             </div>
             
             {/* Age */}
-            <div className="flex items-start">
-              <span className="text-indigo-700 dark:text-indigo-300 font-medium min-w-[85px] sm:min-w-[95px]">
+            <div className="flex flex-col xs:flex-row items-start">
+              <span className="text-indigo-700 dark:text-indigo-300 font-medium w-full xs:w-auto xs:min-w-[85px] sm:min-w-[95px] mb-0.5 xs:mb-0">
                 {t("zwds.chart.age") || (language === "en" ? "Age" : "年齡")}:
               </span>
-              <span className="text-zinc-700 dark:text-zinc-200">
+              <span className="text-zinc-700 dark:text-zinc-200 pl-2 xs:pl-0">
                 {new Date().getFullYear() - input.year}{language === "en" ? "" : (t("zwds.chart.歲") || "歲")}
               </span>
             </div>
             
             {/* Chinese Zodiac */}
-            <div className="flex items-start">
-              <span className="text-indigo-700 dark:text-indigo-300 font-medium min-w-[85px] sm:min-w-[95px]">
+            <div className="flex flex-col xs:flex-row items-start">
+              <span className="text-indigo-700 dark:text-indigo-300 font-medium w-full xs:w-auto xs:min-w-[85px] sm:min-w-[95px] mb-0.5 xs:mb-0">
                 {t("chartInfo.shengXiao") || t("zwds.chart.生肖")}:
               </span>
-              <span className="flex items-center text-zinc-700 dark:text-zinc-200">
+              <span className="flex items-center text-zinc-700 dark:text-zinc-200 pl-2 xs:pl-0">
                 <span className="text-lg mr-1">
                   {["🐭","🐂","🐯","🐰","🐲","🐍","🐴","🐑","🐵","🐔","🐶","🐷"][(input.year - 4) % 12]}
                 </span>
@@ -155,11 +155,11 @@ const CenterInfo: React.FC<CenterInfoProps> = ({ chartData }) => {
             </div>
             
             {/* Western Zodiac */}
-            <div className="flex items-start">
-              <span className="text-indigo-700 dark:text-indigo-300 font-medium min-w-[85px] sm:min-w-[95px]">
+            <div className="flex flex-col xs:flex-row items-start">
+              <span className="text-indigo-700 dark:text-indigo-300 font-medium w-full xs:w-auto xs:min-w-[85px] sm:min-w-[95px] mb-0.5 xs:mb-0">
                 {t("zwds.chart.westernZodiac") || (language === "en" ? "Western Zodiac" : "星座")}:
               </span>
-              <span className="flex items-center text-zinc-700 dark:text-zinc-200">
+              <span className="flex items-center text-zinc-700 dark:text-zinc-200 pl-2 xs:pl-0">
                 <span className="text-lg mr-1">
                   {(() => {
                     const month = input.month;
