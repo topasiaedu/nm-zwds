@@ -145,7 +145,7 @@ const Navbar: React.FC = () => {
         
         {!user && (
           <div className="flex items-center space-x-1 sm:space-x-3">
-            <Link
+            {/* <Link
               to="/authentication/sign-in"
               className="text-purple-600 dark:text-purple-400 hover:underline font-medium text-sm sm:text-base"
             >
@@ -156,7 +156,7 @@ const Navbar: React.FC = () => {
               className="px-2 sm:px-4 py-1 sm:py-2 text-white text-sm sm:text-base bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 rounded-lg font-medium"
             >
               {t("navbar.signUp")}
-            </Link>
+            </Link> */}
           </div>
         )}
       </div>
