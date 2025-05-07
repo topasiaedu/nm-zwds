@@ -682,7 +682,7 @@ const Result: React.FC = () => {
         {calculatedChartData && !loading && !error && (
           <div className="mt-8">
             <div className="flex flex-col justify-center items-center">
-              <h2 className="text-3xl mb-2 font-bold dark:text-white flex items-center text-center pt-4">
+              <h2 className="text-4xl mb-2 font-bold dark:text-white flex items-center text-center pt-4">
                 {/* <svg
                 className="w-6 h-6 mr-2 text-indigo-500"
                 fill="none"

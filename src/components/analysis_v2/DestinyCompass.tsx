@@ -235,7 +235,7 @@ const DestinyCompass: React.FC = () => {
       </style>
       {/* Divider */}
       <div className="w-full border-t border-gray-200 dark:border-gray-700 mb-6"></div>
-      <h2 className="text-3xl mb-2 font-bold text-center text-gray-800 dark:text-white">
+      <h2 className="text-4xl mb-2 font-bold text-center text-gray-800 dark:text-white">
         DESTINY COMPASS
       </h2>
 
