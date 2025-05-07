@@ -201,7 +201,7 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
         maxHeight: '900px' // Increased from 800px to give more room
       }}>
       <motion.div 
-        className="grid grid-cols-4 grid-rows-4 gap-1.5 xs:gap-2 sm:gap-3 md:gap-4 p-1 xs:p-1.5 sm:p-2 md:p-4 h-full rounded-xl"
+        className="grid grid-cols-4 grid-rows-4 gap-1.5 xs:gap-2 sm:gap-1.5 md:gap-1 p-1 xs:p-1.5 sm:p-1 md:p-1 h-full rounded-xl"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}>
