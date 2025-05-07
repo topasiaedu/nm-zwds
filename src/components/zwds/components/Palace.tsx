@@ -263,7 +263,7 @@ const Palace: React.FC<PalaceProps> = ({
   return (
     <motion.div
       key={`palace-${palaceNumber}-${selectedPalace}`}
-      className={`relative border border-gray-100 dark:border-gray-700 p-0.5 xs:p-1 sm:p-2 md:p-3 min-h-[200px] xs:min-h-[80px] sm:min-h-[100px] md:min-h-[150px] ${
+      className={`relative border border-gray-100 dark:border-gray-700 p-0.5 xs:p-1 sm:p-2 md:p-3 h-full overflow-hidden min-h-[160px] xs:min-h-[180px] sm:min-h-[210px] md:min-h-[240px] ${
         isSelected
           ? "bg-indigo-50/80 dark:bg-indigo-900/30 text-white"
           : "bg-white dark:bg-gray-800"
@@ -276,7 +276,6 @@ const Palace: React.FC<PalaceProps> = ({
       }`}
       variants={palaceVariants}
       whileHover="hover"
-      // Apply the appropriate animation variant based on palace state
       animate={isSelected ? "pulse" : isTargetPalace ? "target" : "visible"}
       initial="hidden"
       style={combinedStyle}
@@ -287,7 +286,7 @@ const Palace: React.FC<PalaceProps> = ({
         <div className="absolute inset-0 flex sm:items-center sm:justify-center pointer-events-none opacity-[0.07] dark:opacity-[0.15] z-10">
           <ZodiacIconWrapper
             Icon={ZodiacIcon}
-            className="w-[85%] h-[85%] xs:w-[80%] xs:h-[80%] sm:w-[75%] sm:h-[75%]"
+            className="w-[70%] h-[70%] xs:w-[65%] xs:h-[65%] sm:w-[60%] sm:h-[60%]"
           />
         </div>
       )}
@@ -334,14 +333,14 @@ const Palace: React.FC<PalaceProps> = ({
         </div>
       )}
 
-      {/* Top left: Main Stars */}
-      <div className="absolute top-0.5 xs:top-1 sm:top-2 left-0.5 xs:left-1 sm:left-2 z-30">
-        <div className="flex flex-row flex-wrap gap-2">
-          {/* Minor Stars */}
+      {/* Top left: Stars section - with max-height limiting */}
+      <div className="absolute top-0.5 xs:top-1 sm:top-2 left-0.5 xs:left-1 sm:left-2 z-30 max-h-[60%] overflow-y-auto hide-scrollbar">
+        <div className="flex flex-row flex-wrap gap-1 xs:gap-1.5 sm:gap-2 pr-1">
+          {/* Minor Stars - with smaller font and tighter spacing */}
           {palace.minorStars.map((star, idx) => (
             <div
               key={`minor-${idx}`}
-              className={`text-2xs xs:text-xs sm:text-sm mb-1.5 flex flex-col items-start ${
+              className={`text-3xs xs:text-2xs sm:text-xs mb-1 flex flex-col items-start ${
                 isSelected
                   ? "font-medium text-white dark:text-white"
                   : star.brightness === "bright"
@@ -353,7 +352,7 @@ const Palace: React.FC<PalaceProps> = ({
               {translateStarName(star.name, "minorStars", language, t)
                 .split(" ")
                 .map((word, wordIdx) => (
-                  <span key={`word-${wordIdx}`} className="mb-0.5 leading-tight">
+                  <span key={`word-${wordIdx}`} className="mb-0.5 leading-none">
                     {word}
                   </span>
                 ))}
@@ -362,32 +361,32 @@ const Palace: React.FC<PalaceProps> = ({
                   <FaSyncAlt
                     className={`${getTransformationColor(
                       star.selfInfluence[0]
-                    )}`}
+                    )} text-3xs xs:text-2xs sm:text-xs`}
                   />
                 </span>
               )}
               {star.transformations?.map((transformation, tidx) => (
                 <span
                   key={tidx}
-                  className={`text-2xs xs:text-xs sm:text-sm mb-0.5 ${
+                  className={`text-3xs xs:text-2xs sm:text-xs mb-0.5 ${
                     isSelected
                       ? transformation === "化祿"
-                        ? "text-green-300 font-bold bg-green-500/10 rounded-md px-1 py-0.5"
+                        ? "text-green-300 font-bold bg-green-500/10 rounded-md px-0.5 py-0.5"
                         : transformation === "化權"
-                        ? "text-blue-300 font-bold bg-blue-500/10 rounded-md px-1 py-0.5"
+                        ? "text-blue-300 font-bold bg-blue-500/10 rounded-md px-0.5 py-0.5"
                         : transformation === "化科"
-                        ? "text-yellow-300 font-bold bg-yellow-500/10 rounded-md px-1 py-0.5"
+                        ? "text-yellow-300 font-bold bg-yellow-500/10 rounded-md px-0.5 py-0.5"
                         : transformation === "化忌"
-                        ? "text-red-300 font-bold bg-red-500/10 rounded-md px-1 py-0.5"
+                        ? "text-red-300 font-bold bg-red-500/10 rounded-md px-0.5 py-0.5"
                         : "text-rose-300 font-bold"
                       : transformation === "化祿"
-                      ? "text-green-500 bg-green-500/10 rounded-md px-1 py-0.5"
+                      ? "text-green-500 bg-green-500/10 rounded-md px-0.5 py-0.5"
                       : transformation === "化權"
-                      ? "text-blue-500 bg-blue-500/10 rounded-md px-1 py-0.5"
+                      ? "text-blue-500 bg-blue-500/10 rounded-md px-0.5 py-0.5"
                       : transformation === "化科"
-                      ? "text-yellow-500 bg-yellow-500/10 rounded-md px-1 py-0.5"
+                      ? "text-yellow-500 bg-yellow-500/10 rounded-md px-0.5 py-0.5"
                       : transformation === "化忌"
-                      ? "text-red-500 bg-red-500/10 rounded-md px-1 py-0.5"
+                      ? "text-red-500 bg-red-500/10 rounded-md px-0.5 py-0.5"
                       : "text-rose-500"
                   }`}>
                   {language === "en" &&
@@ -398,13 +397,14 @@ const Palace: React.FC<PalaceProps> = ({
               ))}
             </div>
           ))}
-          
-          {/* Main Stars */}
-          {palace.mainStar && palace.mainStar.length > 0 && 
+
+          {/* Main Stars - with tighter spacing but still prominent */}
+          {palace.mainStar &&
+            palace.mainStar.length > 0 &&
             palace.mainStar.map((star, starIndex) => (
               <div
                 key={`main-${starIndex}`}
-                className={`mb-1.5 flex flex-col items-start font-medium text-2xs xs:text-xs sm:text-sm ${
+                className={`mb-1 flex flex-col items-start font-medium text-3xs xs:text-2xs sm:text-xs ${
                   isSelected
                     ? "text-white dark:text-white font-semibold"
                     : "text-zinc-800 dark:text-zinc-200 font-semibold"
@@ -414,7 +414,9 @@ const Palace: React.FC<PalaceProps> = ({
                 {translateStarName(star.name, "mainStars", language, t)
                   .split(" ")
                   .map((word, wordIdx) => (
-                    <span key={`word-${wordIdx}`} className="mb-0.5 leading-tight">
+                    <span
+                      key={`word-${wordIdx}`}
+                      className="mb-0.5 leading-none">
                       {word}
                     </span>
                   ))}
@@ -423,33 +425,33 @@ const Palace: React.FC<PalaceProps> = ({
                     <FaSyncAlt
                       className={`${getTransformationColor(
                         star.selfInfluence[0]
-                      )}`}
+                      )} text-3xs xs:text-2xs sm:text-xs`}
                     />
                   </span>
                 )}
                 {star.transformations?.map((transformation, idx) => (
                   <span
                     key={idx}
-                    className={`text-2xs xs:text-xs sm:text-sm mb-0.5 ${
+                    className={`text-3xs xs:text-2xs sm:text-xs mb-0.5 ${
                       isSelected
                         ? transformation === "化祿"
-                          ? "text-green-300 font-bold bg-green-500/10 rounded-md px-1 py-0.5"
+                          ? "text-green-300 font-bold bg-green-500/10 rounded-md px-0.5 py-0.5"
                           : transformation === "化權"
-                          ? "text-blue-300 font-bold bg-blue-500/10 rounded-md px-1 py-0.5"
+                          ? "text-blue-300 font-bold bg-blue-500/10 rounded-md px-0.5 py-0.5"
                           : transformation === "化科"
-                          ? "text-yellow-300 font-bold bg-yellow-500/10 rounded-md px-1 py-0.5"
+                          ? "text-yellow-300 font-bold bg-yellow-500/10 rounded-md px-0.5 py-0.5"
                           : transformation === "化忌"
-                          ? "text-red-300 font-bold bg-red-500/10 rounded-md px-1 py-0.5"
-                          : "text-rose-300 font-bold bg-rose-500/10 rounded-md px-1 py-0.5"
+                          ? "text-red-300 font-bold bg-red-500/10 rounded-md px-0.5 py-0.5"
+                          : "text-rose-300 font-bold bg-rose-500/10 rounded-md px-0.5 py-0.5"
                         : transformation === "化祿"
-                        ? "text-green-500 bg-green-500/10 rounded-md px-1 py-0.5"
+                        ? "text-green-500 bg-green-500/10 rounded-md px-0.5 py-0.5"
                         : transformation === "化權"
-                        ? "text-blue-500 bg-blue-500/10 rounded-md px-1 py-0.5"
+                        ? "text-blue-500 bg-blue-500/10 rounded-md px-0.5 py-0.5"
                         : transformation === "化科"
-                        ? "text-yellow-500 bg-yellow-500/10 rounded-md px-1 py-0.5"
+                        ? "text-yellow-500 bg-yellow-500/10 rounded-md px-0.5 py-0.5"
                         : transformation === "化忌"
-                        ? "text-red-500 bg-red-500/10 rounded-md px-1 py-0.5"
-                        : "text-rose-500 bg-rose-500/10 rounded-md px-1 py-0.5"
+                        ? "text-red-500 bg-red-500/10 rounded-md px-0.5 py-0.5"
+                        : "text-rose-500 bg-rose-500/10 rounded-md px-0.5 py-0.5"
                     }`}>
                     {language === "en" &&
                     t(`zwds.transformations.${transformation}`)
@@ -464,8 +466,8 @@ const Palace: React.FC<PalaceProps> = ({
         </div>
       </div>
 
-      {/* Bottom section with grid layout */}
-      <div className="absolute bottom-0 left-0 right-0 grid grid-cols-1 sm:grid-cols-3 w-full text-3xs xs:text-2xs sm:text-xs text-zinc-800 dark:text-zinc-200 border-t border-gray-200 dark:border-gray-700 z-20 min-h-[80px]">
+      {/* Bottom section with grid layout - positioned absolute at bottom */}
+      <div className="absolute bottom-0 left-0 right-0 grid grid-cols-2 sm:grid-cols-3 w-full text-3xs xs:text-2xs sm:text-xs text-zinc-800 dark:text-zinc-200 border-t border-gray-200 dark:border-gray-700 z-20">
         {/* First column (mobile and desktop) */}
         <div
           className={`flex flex-col items-start sm:items-center justify-center py-0.5 xs:py-1 sm:py-1.5 border-r border-gray-200 dark:border-gray-700 ${
@@ -478,7 +480,6 @@ const Palace: React.FC<PalaceProps> = ({
                 ? t(`zwds.stems.${palace.heavenlyStem}`)
                 : palace.heavenlyStem}
             </span>
-            <span>&nbsp;</span>
             <span>
               {language === "en" && t(`zwds.branches.${palace.earthlyBranch}`)
                 ? t(`zwds.branches.${palace.earthlyBranch}`)
@@ -498,31 +499,28 @@ const Palace: React.FC<PalaceProps> = ({
               : palace.earthlyBranch}
           </div>
           {/* Mobile view: Palace Name */}
-          <div className={`font-medium sm:hidden ${
-            isSelected ? "text-white dark:text-white" : ""
-          }`}>
-            {language === "en" && t(`zwds.palaces.${palace.name}`)
-              ? t(`zwds.palaces.${palace.name}`)
-              : palace.name}
-          </div>
-          {/* Mobile view: Major Limit */}
-          {palace.majorLimit && (
-            <div className="sm:hidden text-zinc-500 dark:text-zinc-400">
-              {palace.majorLimit.startAge}-{palace.majorLimit.endAge}
+          {palace.name === "福德" ? (
+            <div
+            style={{
+              fontSize: "0.4rem"
+            }}
+              className={` sm:hidden ${
+                isSelected ? "text-white dark:text-white" : ""
+              }`}>
+              {language === "en" && t(`zwds.palaces.${palace.name}`)
+                ? t(`zwds.palaces.${palace.name}`)
+                : palace.name}
+            </div>
+          ) : (
+            <div
+              className={`sm:hidden ${
+                isSelected ? "text-white dark:text-white" : ""
+              }`}>
+              {language === "en" && t(`zwds.palaces.${palace.name}`)
+                ? t(`zwds.palaces.${palace.name}`)
+                : palace.name}
             </div>
           )}
-          {/* Mobile view: Year and Age */}
-          <div className={`flex items-center gap-1 sm:hidden ${
-            showAnnualFlow
-              ? isSelected
-                ? "text-red-300"
-                : "text-red-600 dark:text-red-400"
-              : ""
-          } font-medium`}>
-            <span>{palaceYear}</span>
-            <span>/</span>
-            <span>({getAgeAtYear(palaceYear)})</span>
-          </div>
         </div>
 
         {/* Second column (desktop only) */}
@@ -544,7 +542,7 @@ const Palace: React.FC<PalaceProps> = ({
 
         {/* Third column (desktop only) */}
         <div
-          className={`hidden sm:flex flex-col items-center justify-center py-0.5 xs:py-1 sm:py-1.5 ${
+          className={`flex-col items-center justify-center py-0.5 xs:py-1 sm:py-1.5 ${
             isSelected
               ? "text-white/80 dark:text-white/80"
               : "text-zinc-500 dark:text-zinc-400"
@@ -556,10 +554,32 @@ const Palace: React.FC<PalaceProps> = ({
                   ? "text-red-300"
                   : "text-red-600 dark:text-red-400"
                 : ""
-            } font-medium`}>
+            } font-medium hidden sm:block`}>
             {palaceYear}
           </div>
-          <div className="text-2xs xs:text-2xs">{getAgeAtYear(palaceYear)}</div>
+          <div className="text-2xs xs:text-2xs hidden sm:block">
+            {getAgeAtYear(palaceYear)}
+          </div>
+
+          {/* Mobile view: Major Limit */}
+          {palace.majorLimit && (
+            <div className="sm:hidden text-zinc-500 dark:text-zinc-400">
+              {palace.majorLimit.startAge}-{palace.majorLimit.endAge}
+            </div>
+          )}
+          {/* Mobile view: Year and Age */}
+          <div
+            className={`flex items-center gap-1 sm:hidden ${
+              showAnnualFlow
+                ? isSelected
+                  ? "text-red-300"
+                  : "text-red-600 dark:text-red-400"
+                : ""
+            } font-medium`}>
+            <span>
+              {palaceYear}/{getAgeAtYear(palaceYear)}
+            </span>
+          </div>
         </div>
       </div>
     </motion.div>

@@ -12,6 +12,8 @@ import {
   SummaryAnalysis,
 } from "../components/analysis";
 import FREE_TEST_CONFIG from "../config/freeTestConfig";
+import { FourKeyPalace, Overview } from "../components/analysis_v2";
+import { Career } from "../components/analysis_v2";
 
 /**
  * Interface for chart data
@@ -562,14 +564,9 @@ const FreeResult: React.FC = () => {
               {/* Main Analysis Content - Slightly Blurred */}
               <div className="relative filter blur-[3px] pointer-events-none opacity-70">
                 <div className="space-y-8">
-                  {/* Summary Analysis */}
-                  <SummaryAnalysis chartData={calculatedChartData} />
-
-                  {/* Life Areas Radar Chart */}
-                  <LifeAreasRadarChart chartData={calculatedChartData} />
-
-                  {/* Life Areas Explanation */}
-                  <LifeAreasExplanation chartData={calculatedChartData} />
+                <Overview />
+                <Career />
+                <FourKeyPalace />
                 </div>
               </div>
 

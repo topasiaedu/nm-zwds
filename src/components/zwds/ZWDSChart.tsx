@@ -198,10 +198,10 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
       style={{
         minHeight: windowSize.width < SCREEN_SM ? 'calc(100vh - 50px)' : undefined,
         height: windowSize.width < SCREEN_SM ? 'calc(100vh - 260px)' : undefined,
-        maxHeight: '800px'
+        maxHeight: '900px' // Increased from 800px to give more room
       }}>
       <motion.div 
-        className="grid grid-cols-4 grid-rows-4 gap-0.5 xs:gap-1 sm:gap-2 p-0 xs:p-0.5 sm:p-1 md:p-3 h-full rounded-xl"
+        className="grid grid-cols-4 grid-rows-4 gap-1.5 xs:gap-2 sm:gap-3 md:gap-4 p-1 xs:p-1.5 sm:p-2 md:p-4 h-full rounded-xl"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}>
