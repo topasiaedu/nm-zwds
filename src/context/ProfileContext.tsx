@@ -35,16 +35,21 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
 
+
+    // TODO: Make Some Profiles Public
     
     const fetchProfiles = async () => {
       const { data: profiles, error } = await supabase
         .from("profiles")
         .select("*")
+        
 
       if (error) {
         console.error("Error fetching profiles:", error);
         return;
       }
+
+      console.log("Profiles Amount:", profiles?.length);
 
       setProfiles((prev) => {
         if (isEqual(prev, profiles)) {
