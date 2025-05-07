@@ -27,12 +27,14 @@ const normalizeStarName = (name: string): string => {
  */
 const AreasOfLife: React.FC<{ chartData: ChartDataType }> = ({ chartData }) => {
   const { t, language } = useLanguage();
-  const [expandedAreas, setExpandedAreas] = useState<Record<string, boolean>>({});
+  const [expandedAreas, setExpandedAreas] = useState<Record<string, boolean>>(
+    {}
+  );
 
   const toggleArea = (areaId: string) => {
-    setExpandedAreas(prev => ({
+    setExpandedAreas((prev) => ({
       ...prev,
-      [areaId]: !prev[areaId]
+      [areaId]: !prev[areaId],
     }));
   };
 
@@ -100,9 +102,14 @@ const AreasOfLife: React.FC<{ chartData: ChartDataType }> = ({ chartData }) => {
       <div className="w-full border-t border-gray-200 dark:border-gray-700 mb-6"></div>
 
       {/* Title */}
-      <h2 className="text-2xl mb-6 dark:text-white text-center italic">
-        Five Pillars of Your Life
+      <h2 className="text-2xl dark:text-white text-center font-bold">
+        Destiny Scoreboard
       </h2>
+
+      {/* Subtitle */}
+      <p className="text-lg mb-6 dark:text-white text-center">
+        Your personal scorecard across the 5 destiny pillars.
+      </p>
 
       <div className="p-6 dark:bg-gray-900">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -209,16 +216,20 @@ const AreasOfLife: React.FC<{ chartData: ChartDataType }> = ({ chartData }) => {
                           </span>
                         </div>
                         <div className="space-y-2">
-                          <div className={`${!expandedAreas[area.area] ? "line-clamp-4" : ""}`}>
+                          <div
+                            className={`${
+                              !expandedAreas[area.area] ? "line-clamp-4" : ""
+                            }`}>
                             <p className="text-gray-600 dark:text-gray-400">
                               {getCombinedDescription(area)}
                             </p>
                           </div>
                           <button
                             onClick={() => toggleArea(area.area)}
-                            className="text-sm font-medium text-purple-600 hover:text-purple-700 dark:text-purple-400 dark:hover:text-purple-300 transition-colors duration-200"
-                          >
-                            {expandedAreas[area.area] ? "Show Less" : "See More"}
+                            className="text-sm font-medium text-purple-600 hover:text-purple-700 dark:text-purple-400 dark:hover:text-purple-300 transition-colors duration-200">
+                            {expandedAreas[area.area]
+                              ? "Show Less"
+                              : "See More"}
                           </button>
                         </div>
                       </div>

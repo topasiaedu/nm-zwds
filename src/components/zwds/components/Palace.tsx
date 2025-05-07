@@ -352,7 +352,9 @@ const Palace: React.FC<PalaceProps> = ({
               {translateStarName(star.name, "minorStars", language, t)
                 .split(" ")
                 .map((word, wordIdx) => (
-                  <span key={`word-${wordIdx}`} className="mb-0.5 leading-none sm:leading-tight">
+                  <span
+                    key={`word-${wordIdx}`}
+                    className="mb-0.5 leading-none sm:leading-tight">
                     {word}
                   </span>
                 ))}
@@ -467,7 +469,7 @@ const Palace: React.FC<PalaceProps> = ({
       </div>
 
       {/* Bottom section with grid layout - positioned absolute at bottom */}
-      <div className="absolute bottom-0 left-0 right-0 grid grid-cols-2 sm:grid-cols-3 w-full text-3xs xs:text-2xs sm:text-xs text-zinc-800 dark:text-zinc-200 border-t border-gray-200 dark:border-gray-700 z-20">
+      <div className="absolute bottom-0 left-0 right-0 grid grid-cols-1 sm:grid-cols-3 w-full text-3xs xs:text-2xs sm:text-xs text-zinc-800 dark:text-zinc-200 border-t border-gray-200 dark:border-gray-700 z-20">
         {/* First column (mobile and desktop) */}
         <div
           className={`flex flex-col items-start sm:items-center justify-center py-0.5 xs:py-1 sm:py-1.5 border-r border-gray-200 dark:border-gray-700 ${
@@ -499,30 +501,15 @@ const Palace: React.FC<PalaceProps> = ({
               : palace.earthlyBranch}
           </div>
           {/* Mobile view: Palace Name */}
-          {palace.name === "福德" ? (
-            <div
-            style={{
-              fontSize: "0.4rem"
-            }}
-              className={` sm:hidden ${
-                isSelected ? "text-white dark:text-white" : ""
-              }`}>
-              {language === "en" && t(`zwds.palaces.${palace.name}`)
-                ? t(`zwds.palaces.${palace.name}`)
-                : palace.name}
-            </div>
-          ) : (
-            <div
-              className={`sm:hidden ${
-                isSelected ? "text-white dark:text-white" : ""
-              }`}>
-              {language === "en" && t(`zwds.palaces.${palace.name}`)
-                ? t(`zwds.palaces.${palace.name}`)
-                : palace.name}
-            </div>
-          )}
+          <div
+            className={`sm:hidden ${
+              isSelected ? "text-white dark:text-white" : ""
+            }`}>
+            {language === "en" && t(`zwds.palaces.${palace.name}`)
+              ? t(`zwds.palaces.${palace.name}`)
+              : palace.name}
+          </div>
 
-          
           {/* Mobile view: Major Limit */}
           {palace.majorLimit && (
             <div className="sm:hidden text-zinc-500 dark:text-zinc-400">
@@ -581,7 +568,6 @@ const Palace: React.FC<PalaceProps> = ({
           <div className="text-2xs xs:text-2xs hidden sm:block">
             {getAgeAtYear(palaceYear)}
           </div>
-
         </div>
       </div>
     </motion.div>

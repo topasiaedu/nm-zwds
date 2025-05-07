@@ -52,11 +52,7 @@ const Career: React.FC = () => {
    */
   const renderCareerItems = (items: CareerItem[]): JSX.Element[] => {
     return items.map((item) => (
-      <Badge 
-        key={item.id} 
-        color="purple" 
-        className="mr-2 mb-2"
-      >
+      <Badge key={item.id} color="purple" className="mr-2 mb-2">
         {item.label}
       </Badge>
     ));
@@ -64,64 +60,68 @@ const Career: React.FC = () => {
 
   return (
     <>
-    {/* Divider */}
-    <div className="w-full border-t border-gray-200 dark:border-gray-700 mb-6"></div>
+      {/* Divider */}
+      <div className="w-full border-t border-gray-200 dark:border-gray-700 mb-6"></div>
 
-    <div className="p-6 dark:bg-gray-900">
-      <div className="flex flex-col md:flex-row">
-        {/* Left Column - Image with Tilt Effect */}
-        <div className="md:w-[30%] p-4 flex justify-center">
-          <Tilt
-            options={tiltOptions}
-            className="w-full h-full"
-          >
-            <img 
-              src="/assets/visionaries.png" 
-              alt="Visionaries" 
-              className="rounded-lg shadow-md max-h-[500px] object-contain w-full"
-            />
-          </Tilt>
-        </div>
+      {/* Title */}
+      <h2 className="text-2xl mb-6 dark:text-white text-center font-bold">
+        Your Wealth Report
+      </h2>
+      <div className="p-6 dark:bg-gray-900">
+        <div className="flex flex-col md:flex-row">
+          {/* Left Column - Image with Tilt Effect */}
+          <div className="md:w-[30%] p-4 flex justify-center">
+            <Tilt options={tiltOptions} className="w-full h-full">
+              <img
+                src="/assets/visionaries.png"
+                alt="Visionaries"
+                className="rounded-lg shadow-md max-h-[500px] object-contain w-full"
+              />
+            </Tilt>
+          </div>
 
-        {/* Right Column - Description and Career Options */}
-        <div className="md:w-[70%] p-4">
-          <div className="rounded-lg shadow-sm">
-            <div className="space-y-6">
-              {/* Title */}
-              <h2 className="text-2xl font-bold text-gray-800 dark:text-white italic">
-              Your Visionary Path
-              </h2>
+          {/* Right Column - Description and Career Options */}
+          <div className="md:w-[70%] p-4">
+            <div className="rounded-lg shadow-sm">
+              <div className="space-y-6">
+                {/* Title */}
+                <h2 className="text-2xl font-bold text-gray-800 dark:text-white italic">
+                  Your Visionary Path
+                </h2>
 
-              {/* Description */}
-              <div>
-                <p className="mb-4 text-gray-700 dark:text-gray-300">
-                  You possess an unparalleled imagination and a unique aesthetic perspective, 
-                  always able to find the extraordinary in the ordinary. You have a natural 
-                  sensitivity to art, culture, and creativity, and you&apos;re skilled at 
-                  transforming inspiration into emotional experiences through color, sound, 
-                  words, or space. You are a born creator and a pioneer of ideas. Your work 
-                  is not just an expression, but an awakening; your creativity not only 
-                  resonates—it helps shape the evolution of aesthetic values in our time.
-                </p>
-                <p className="text-gray-700 dark:text-gray-300 italic font-medium">
-                  You are the hands that make the world warmer and deeper, and a builder of the human spirit.
-                </p>
-              </div>
-              
-              {/* Career Options */}
-              <div className="mt-6">
-                <h5 className="text-lg font-bold mb-4 dark:text-white">
-                  Careers that suit you
-                </h5>
-                <div className="flex flex-wrap">
-                  {renderCareerItems(careerOptions)}
+                {/* Description */}
+                <div>
+                  <p className="mb-4 text-gray-700 dark:text-gray-300">
+                    You possess an unparalleled imagination and a unique
+                    aesthetic perspective, always able to find the extraordinary
+                    in the ordinary. You have a natural sensitivity to art,
+                    culture, and creativity, and you&apos;re skilled at
+                    transforming inspiration into emotional experiences through
+                    color, sound, words, or space. You are a born creator and a
+                    pioneer of ideas. Your work is not just an expression, but
+                    an awakening; your creativity not only resonates—it helps
+                    shape the evolution of aesthetic values in our time.
+                  </p>
+                  <p className="text-gray-700 dark:text-gray-300 italic font-medium">
+                    You are the hands that make the world warmer and deeper, and
+                    a builder of the human spirit.
+                  </p>
+                </div>
+
+                {/* Career Options */}
+                <div className="mt-6">
+                  <h5 className="text-lg font-bold mb-4 dark:text-white">
+                    Careers that suit you
+                  </h5>
+                  <div className="flex flex-wrap">
+                    {renderCareerItems(careerOptions)}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
     </>
   );
 };

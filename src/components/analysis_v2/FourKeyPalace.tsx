@@ -92,7 +92,7 @@ const FourKeyPalace: React.FC = () => {
       <div className="w-full border-t border-gray-200 dark:border-gray-700 mb-6"></div>
 
       {/* Title */}
-      <h2 className="text-2xl mb-6 dark:text-white text-center italic">
+      <h2 className="text-2xl mb-6 dark:text-white text-center font-bold">
         What Your Four Key Palaces Say About You
       </h2>
 
