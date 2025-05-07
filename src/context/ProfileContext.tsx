@@ -34,13 +34,12 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuthContext();
 
   useEffect(() => {
-    const fetchProfiles = async () => {
-      if (!user) return;
 
+    
+    const fetchProfiles = async () => {
       const { data: profiles, error } = await supabase
         .from("profiles")
         .select("*")
-        .eq("user_id", user.id);
 
       if (error) {
         console.error("Error fetching profiles:", error);
@@ -54,6 +53,7 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
 
         return profiles!;
       });
+
     };
 
     fetchProfiles();
@@ -112,6 +112,9 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
       console.error("Error adding contact:", error);
       return null;
     }
+
+    // We add to the array of Profiles
+    setProfiles((prev) => [...prev, data?.[0]]);
     setLoading(false);
     return data?.[0] || null;
   }, []);

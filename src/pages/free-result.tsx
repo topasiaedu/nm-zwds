@@ -28,11 +28,6 @@ interface ChartData {
 }
 
 /**
- * Constant for minimum loading time in milliseconds
- */
-const MIN_LOADING_TIME = 3000;
-
-/**
  * FreeResult component to display 紫微斗数 chart results for free test users
  * A simplified version of the Result component without requiring authentication
  */
@@ -113,12 +108,10 @@ const FreeResult: React.FC = () => {
 
   /**
    * Fetch or prepare chart data on component mount and when profiles change
-   * Ensures loading state lasts for at least the minimum loading time
    */
   useEffect(() => {
     // Track if component is mounted to prevent state updates after unmount
     let isMounted = true;
-    const startTime = Date.now();
 
     const fetchData = async () => {
       try {
@@ -146,20 +139,11 @@ const FreeResult: React.FC = () => {
         }
 
         // If id specified but profile not found in context
-        if (id && !profileToShow) {
+        if (id) {
           if (profiles.length > 0) {
             if (isMounted) {
               setError(`Profile with ID ${id} not found.`);
-              
-              // Ensure minimum loading time even for error states
-              const elapsedTime = Date.now() - startTime;
-              const remainingTime = Math.max(0, MIN_LOADING_TIME - elapsedTime);
-              
-              setTimeout(() => {
-                if (isMounted) {
-                  setLoading(false);
-                }
-              }, remainingTime);
+              setLoading(false);
             }
           } else {
             // If profiles aren't loaded yet, wait a bit and show loading state
@@ -168,32 +152,14 @@ const FreeResult: React.FC = () => {
               setError(
                 "Unable to find the requested profile. It may have expired or been removed."
               );
-              
-              // Ensure minimum loading time even for error states
-              const elapsedTime = Date.now() - startTime;
-              const remainingTime = Math.max(0, MIN_LOADING_TIME - elapsedTime);
-              
-              setTimeout(() => {
-                if (isMounted) {
-                  setLoading(false);
-                }
-              }, remainingTime);
+              setLoading(false);
             }
           }
         }
       } catch (err) {
         if (isMounted) {
           setError("Failed to load chart data");
-          
-          // Ensure minimum loading time even for error states
-          const elapsedTime = Date.now() - startTime;
-          const remainingTime = Math.max(0, MIN_LOADING_TIME - elapsedTime);
-          
-          setTimeout(() => {
-            if (isMounted) {
-              setLoading(false);
-            }
-          }, remainingTime);
+          setLoading(false);
         }
       }
     };
@@ -224,12 +190,10 @@ const FreeResult: React.FC = () => {
 
   /**
    * Calculate the Zi Wei Dou Shu chart data
-   * Also applies the minimum loading time to the chart calculation
    */
   useEffect(() => {
     if (chartData) {
       try {
-        const startTime = Date.now();
         setLoading(true); // Keep loading true while calculating
         
         // Convert birth time to 24-hour format
@@ -284,14 +248,8 @@ const FreeResult: React.FC = () => {
         const calculator = new ZWDSCalculator(chartInput);
         const calculatedData = calculator.calculate();
         
-        // Apply minimum loading time to chart calculation
-        const elapsedTime = Date.now() - startTime;
-        const remainingTime = Math.max(0, MIN_LOADING_TIME - elapsedTime);
-        
-        setTimeout(() => {
-          setCalculatedChartData(calculatedData);
-          setLoading(false); // Set loading to false AFTER setting calculated data
-        }, remainingTime);
+        setCalculatedChartData(calculatedData);
+        setLoading(false); // Set loading to false after setting calculated data
       } catch (error) {
         console.error("Error calculating chart:", error);
         setError(`Failed to calculate chart data: ${error}`);
