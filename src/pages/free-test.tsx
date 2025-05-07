@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useLanguage } from "../context/LanguageContext";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import PageTransition from "../components/PageTransition";
 import ProfileForm from "../components/ProfileForm";
 import FREE_TEST_CONFIG from "../config/freeTestConfig";
@@ -51,7 +51,10 @@ const FreeTest: React.FC = () => {
   const handleProfileSuccess = (profileId?: string) => {
     console.log("Free test profile created:", profileId);
     if (profileId) {
-      navigate(`/free-result/${profileId}`);
+      // Add a small delay before navigation to ensure the profile is fully saved in context
+      setTimeout(() => {
+        navigate(`/free-result/${profileId}`);
+      }, 300);
     }
   };
 
