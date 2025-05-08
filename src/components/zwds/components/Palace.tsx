@@ -85,6 +85,14 @@ const Palace: React.FC<PalaceProps> = ({
     return year - birthYear + 1;
   };
 
+  // Calculate current age
+  const currentAge = getAgeAtYear(new Date().getFullYear());
+
+  // Check if current age falls within this palace's Major Limit (da xian) range
+  const isCurrentDaXian = palace.majorLimit && 
+    palace.majorLimit.startAge <= currentAge && 
+    palace.majorLimit.endAge >= currentAge;
+
   // Calculate the year to display for this palace
   const calculateYearForPalace = (): number => {
     // If this is the starting palace (with annual flow), return the target year
@@ -149,6 +157,15 @@ const Palace: React.FC<PalaceProps> = ({
     target: {
       opacity: 1,
       scale: 1,
+      transition: {
+        duration: 0.3,
+        ease: "easeOut",
+      },
+    },
+    daxian: {
+      opacity: 1,
+      scale: 1,
+      boxShadow: "0 0 0 2px rgba(124, 58, 237, 0.7)",
       transition: {
         duration: 0.3,
         ease: "easeOut",
@@ -234,9 +251,16 @@ const Palace: React.FC<PalaceProps> = ({
     };
   }
 
+  // Fixed purple border style for current da xian that won't be affected by animations
+  const daXianStyle = isCurrentDaXian && !isSelected ? {
+    borderColor: "rgb(147, 51, 234)", // Purple-600
+    borderWidth: "2px"
+  } : {};
+
   // Combine all style properties with proper reset handling
   const combinedStyle = {
     ...selectedStyle,
+    ...daXianStyle,
     ...(isSelected
       ? { boxShadow: "0 0 15px rgba(79, 70, 229, 0.25)" }
       : isTargetPalace
@@ -272,6 +296,8 @@ const Palace: React.FC<PalaceProps> = ({
           ? "ring-1 sm:ring-2 ring-indigo-500"
           : isTargetPalace
           ? `ring-1 sm:ring-1 ${transformationBorderColor}`
+          : isCurrentDaXian && !isTargetPalace
+          ? "ring-0 sm:ring-0" // Remove default ring since we're using border
           : ""
       }`}
       variants={palaceVariants}
@@ -512,7 +538,9 @@ const Palace: React.FC<PalaceProps> = ({
 
           {/* Mobile view: Major Limit */}
           {palace.majorLimit && (
-            <div className="sm:hidden text-zinc-500 dark:text-zinc-400">
+            <div className={`sm:hidden text-zinc-500 dark:text-zinc-400 ${
+              isCurrentDaXian ? "text-purple-600 dark:text-purple-400 font-medium" : ""
+            }`}>
               {palace.majorLimit.startAge}-{palace.majorLimit.endAge}
             </div>
           )}
@@ -542,7 +570,9 @@ const Palace: React.FC<PalaceProps> = ({
               : palace.name}
           </div>
           {palace.majorLimit && (
-            <div className="text-zinc-500 dark:text-zinc-400">
+            <div className={`text-zinc-500 dark:text-zinc-400 ${
+              isCurrentDaXian ? "text-purple-600 dark:text-purple-400 font-medium" : ""
+            }`}>
               {palace.majorLimit.startAge}-{palace.majorLimit.endAge}
             </div>
           )}

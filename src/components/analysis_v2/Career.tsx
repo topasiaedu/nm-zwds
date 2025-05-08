@@ -38,6 +38,20 @@ const Career: React.FC = () => {
     { id: "career-9", label: "Marketing and communications" },
   ];
 
+  const nonIdealCareerOptions: CareerItem[] = [
+    { id: "career-10", label: "Sales" },
+    { id: "career-11", label: "Marketing" },
+    { id: "career-12", label: "Public relations" },
+    { id: "career-13", label: "Media" },
+    { id: "career-14", label: "Advertising" },
+    { id: "career-15", label: "Sales" },
+    { id: "career-16", label: "Marketing" },
+    { id: "career-17", label: "Public relations" },
+    { id: "career-18", label: "Media" },
+    { id: "career-19", label: "Advertising" },
+    
+  ];
+
   // Tilt options for the image
   const tiltOptions: TiltOptions = {
     scale: 1.05,
@@ -53,6 +67,14 @@ const Career: React.FC = () => {
   const renderCareerItems = (items: CareerItem[]): JSX.Element[] => {
     return items.map((item) => (
       <Badge key={item.id} color="purple" className="mr-2 mb-2">
+        {item.label}
+      </Badge>
+    ));
+  };
+
+  const renderNonIdealCareerItems = (items: CareerItem[]): JSX.Element[] => {
+    return items.map((item) => (
+      <Badge key={item.id} color="red" className="mr-2 mb-2">
         {item.label}
       </Badge>
     ));
@@ -98,15 +120,10 @@ const Career: React.FC = () => {
                 {/* Description */}
                 <div>
                   <p className="mb-4 text-gray-700 dark:text-gray-300">
-                    You possess an unparalleled imagination and a unique
-                    aesthetic perspective, always able to find the extraordinary
-                    in the ordinary. You have a natural sensitivity to art,
-                    culture, and creativity, and you&apos;re skilled at
-                    transforming inspiration into emotional experiences through
-                    color, sound, words, or space. You are a born creator and a
-                    pioneer of ideas. Your work is not just an expression, but
-                    an awakening; your creativity not only resonates—it helps
-                    shape the evolution of aesthetic values in our time.
+                  You possess an unparalleled imagination and a singular aesthetic sensibility, effortlessly uncovering the extraordinary hidden within the ordinary. Whether observing the world through a lens of wonder or analyzing the subtle details others might overlook, you bring a depth of perception that transforms the mundane into the magnificent. Your natural sensitivity to art, culture, and creativity allows you to draw connections between ideas, mediums, and emotions with graceful intuition. Whether it&apos;s through color, sound, words, or spatial design, your work becomes a conduit for meaning—an emotional bridge between inspiration and impact.
+                  </p>
+                  <p className="mb-4 text-gray-700 dark:text-gray-300">
+                    More than just a creator, you are a visionary and a catalyst for artistic evolution. Your ideas often transcend trends, breathing new life into established forms while also breaking boundaries with bold originality. There&apos;s an innate power in your expression—one that awakens the senses and stirs the soul. Through your creative voice, you don&apos;t merely reflect the world around you; you shape its future, challenging others to see, feel, and think more deeply. Your artistry resonates on both a personal and collective level, helping to define and expand the aesthetic values of our time.
                   </p>
                   <p className="text-gray-700 dark:text-gray-300 italic font-medium">
                     You are the hands that make the world warmer and deeper, and
@@ -117,10 +134,20 @@ const Career: React.FC = () => {
                 {/* Career Options */}
                 <div className="mt-6">
                   <h5 className="text-lg font-bold mb-4 dark:text-white">
-                    Careers that suit you
+                    Ideal Careers
                   </h5>
                   <div className="flex flex-wrap">
                     {renderCareerItems(careerOptions)}
+                  </div>
+                </div>
+
+                {/* Non Ideal Careers */}
+                <div className="mt-6">
+                  <h5 className="text-lg font-bold mb-4 dark:text-white">
+                    Non Ideal Careers
+                  </h5>
+                  <div className="flex flex-wrap">
+                    {renderNonIdealCareerItems(nonIdealCareerOptions)}
                   </div>
                 </div>
               </div>

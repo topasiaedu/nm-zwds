@@ -51,13 +51,19 @@ const DestinyCompass: React.FC = () => {
     { text: "Travel", color: "failure" }, // Red
   ];
 
-  // Description paragraphs
   const baseDescriptionText = [
-    "You're beginning to truly enjoy life, not just survive it. Your desire to live with purpose is growing stronger, and you're no longer willing to settle. ",
+    "You're beginning to truly enjoy life, not just survive it. Your desire to live with purpose is growing stronger, and you're no longer willing to settle.",
     "You're starting to crave mastery over your emotions, mindset, and spiritual state. You no longer want to be someone pushed around by your feelings—you want to direct your own energy flow.",
     'Your expertise, ideas, and self-expression are gaining visibility and recognition in your circles. You\'re no longer just "someone\'s friend"—you\'re becoming "a brand worth collaborating with."',
     "You may go through relationship turbulence—cut-offs, conflicts, fallouts, or disconnections. But this isn't misfortune—it's fate helping you \"cut the cords\" that no longer serve you.",
+    "You're reclaiming your time, energy, and attention—and pouring it into people, places, and pursuits that feel nourishing, not draining.",
+    "You're finding clarity in the chaos, learning that confusion often precedes breakthroughs. You're not lost—you're becoming more aligned with your truth.",
+    "You're stepping into rooms that once intimidated you—and now, you realize you belong there. Confidence is no longer a costume, but a core part of your presence.",
+    "You're noticing synchronicities more often, trusting that the universe is nudging you toward your purpose—and you're finally listening.",
+    "You're learning to pause before reacting, to reflect before speaking. Emotional intelligence is becoming one of your sharpest tools.",
+    "You're attracting opportunities that reflect your growth—not your past. You’re not repeating cycles anymore—you’re writing a new chapter."
   ];
+  
 
   // Generate randomized data for each year card
   const yearCards: YearCardData[] = useMemo(() => {
