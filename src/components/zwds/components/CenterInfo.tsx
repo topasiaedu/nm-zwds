@@ -204,7 +204,7 @@ const CenterInfo: React.FC<CenterInfoProps> = ({ chartData }) => {
                 {t("zwds.chart.age") || (language === "en" ? "Age" : "年齡")}:
               </span>
               <span className="text-zinc-700 dark:text-zinc-200 pl-2 xs:pl-0">
-                {new Date().getFullYear() - input.year}
+                {new Date().getFullYear() - chartData.lunarDate.year + 1}
                 {language === "en" ? "" : t("zwds.chart.歲") || "歲"}
               </span>
             </div>

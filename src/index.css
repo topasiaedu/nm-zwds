@@ -111,7 +111,7 @@ html, body, #root {
 
 /* Transparent background minimalist scrollbar with rounded ends */
 ::-webkit-scrollbar {
-  width: 12px;
+  width: 8px;
 }
 
 ::-webkit-scrollbar-track {
@@ -125,12 +125,53 @@ html, body, #root {
 
 ::-webkit-scrollbar-thumb:hover {
   background: #9ca3af;
-  scale: 1.1;
+}
+
+/* Dark mode scrollbar styles */
+.dark ::-webkit-scrollbar-thumb {
+  background: #4b5563;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #6b7280;
+}
+
+/* Custom scrollbar styles for our app */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #d1d5db transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+.dark .custom-scrollbar {
+  scrollbar-color: #4b5563 transparent;
+}
+
+.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #4b5563;
+}
+
+.dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #6b7280;
 }
 
 /* Custom scrollbar for Firefox */
-
-/* width */
 * {
   scrollbar-width: thin;
 }
@@ -141,7 +182,11 @@ html, body, #root {
 }
 
 /* Handle on hover */
-
 * {
   scrollbar-color: #9ca3af transparent;
+}
+
+/* Dark mode Firefox scrollbar */
+.dark * {
+  scrollbar-color: #4b5563 transparent;
 }

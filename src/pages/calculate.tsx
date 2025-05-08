@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useLanguage } from "../context/LanguageContext";
 import { useProfileContext } from "../context/ProfileContext";
 import { Link, useNavigate } from "react-router-dom";
@@ -12,6 +12,7 @@ const Calculate: React.FC = () => {
   const { t } = useLanguage();
   const { profiles, loading } = useProfileContext();
   const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState("");
   
   /**
    * Handle successful profile creation
@@ -25,7 +26,19 @@ const Calculate: React.FC = () => {
   };
   
   // Filter out self profiles - we only want to show profiles of others
-  const otherProfiles = profiles.filter(profile => !profile.is_self);
+  const otherProfiles = profiles
+    .filter(profile => !profile.is_self)
+    .sort((a, b) => {
+      const dateA = new Date(a.last_viewed || a.created_at).getTime();
+      const dateB = new Date(b.last_viewed || b.created_at).getTime();
+      return dateB - dateA; // Sort by most recent first
+    });
+    
+  // Filter profiles based on search query
+  const filteredProfiles = searchQuery.trim() 
+    ? otherProfiles.filter(profile => 
+        profile.name.toLowerCase().includes(searchQuery.toLowerCase()))
+    : otherProfiles;
   
   return (
     <PageTransition>
@@ -63,6 +76,27 @@ const Calculate: React.FC = () => {
                 {t("calculate.savedProfiles")}
               </h2>
               
+              {/* Search input */}
+              <div className="relative mb-4">
+                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                  <svg className="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                    <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+                  </svg>
+                </div>
+                <input 
+                  type="search" 
+                  className="block w-full p-2 pl-10 pr-4 text-sm rounded-lg 
+                          bg-white/20 dark:bg-gray-800/20
+                          border border-white/10 dark:border-gray-700/30
+                          text-gray-700 dark:text-gray-300
+                          placeholder-gray-500 dark:placeholder-gray-400
+                          focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  placeholder={t("general.search") || "Search profiles..."}
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+              </div>
+              
               {loading ? (
                 <div className="text-center py-6">
                   <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-600 mx-auto"></div>
@@ -71,27 +105,36 @@ const Calculate: React.FC = () => {
                   </p>
                 </div>
               ) : otherProfiles.length > 0 ? (
-                <div className="space-y-3">
-                  {otherProfiles.map((profile) => (
-                    <Link 
-                      key={profile.id}
-                      to={`/result/${profile.id}`}
-                      className="block p-3 rounded-lg bg-white/20 dark:bg-gray-800/20 hover:bg-white/30 dark:hover:bg-gray-800/30 transition-all"
-                    >
-                      <div className="flex justify-between items-center">
-                        <div>
-                          <h3 className="text-sm font-medium dark:text-white">{profile.name}</h3>
-                          <p className="text-xs text-gray-500 dark:text-gray-400">
-                            {t("dashboard.table.other")} • {new Date(profile.birthday).toLocaleDateString()}
-                          </p>
+                <>
+                  <div className="space-y-3 max-h-96 overflow-y-auto custom-scrollbar pr-2">
+                    {filteredProfiles.map((profile) => (
+                      <Link 
+                        key={profile.id}
+                        to={`/result/${profile.id}`}
+                        className="block p-3 rounded-lg bg-white/20 dark:bg-gray-800/20 hover:bg-white/30 dark:hover:bg-gray-800/30 transition-all"
+                      >
+                        <div className="flex justify-between items-center">
+                          <div>
+                            <h3 className="text-sm font-medium dark:text-white">{profile.name}</h3>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">
+                              {t("dashboard.table.other")} • {new Date(profile.birthday).toLocaleDateString()}
+                            </p>
+                          </div>
+                          <span className="text-xs text-gray-500 dark:text-gray-400">
+                            {new Date(profile.last_viewed || profile.created_at).toLocaleDateString()}
+                          </span>
                         </div>
-                        <span className="text-xs text-gray-500 dark:text-gray-400">
-                          {new Date(profile.last_viewed || profile.created_at).toLocaleDateString()}
-                        </span>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
+                      </Link>
+                    ))}
+                  </div>
+                  {filteredProfiles.length === 0 && (
+                    <div className="text-center py-4">
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        {t("general.noSearchResults") || "No profiles match your search"}
+                      </p>
+                    </div>
+                  )}
+                </>
               ) : (
                 <div className="text-center py-6">
                   <svg className="mx-auto h-10 w-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
