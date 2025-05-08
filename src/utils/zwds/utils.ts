@@ -123,12 +123,14 @@ export function getHourBranch(hour: number): number {
   // Hour 1-3 = Branch 2 (丑) 
   // and so on...
   
+
+  console.log("hour", hour);
   // Calculate the branch based on 2-hour periods
   let branch = Math.floor(hour / 2) + 1;
   
   // Special case for 23:00 - 00:59 (should be branch 1)
   if (hour >= 23 || hour < 1) {
-    branch = 1;
+    branch = 0;
   }
   
   return branch;

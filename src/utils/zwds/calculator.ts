@@ -334,6 +334,7 @@ export class ZWDSCalculator {
     const lifePalaceEarthlyBranch =
       LIFE_PALACE_TABLE[lunarMonth - 1][hourBranch];
 
+
     if (!lifePalaceEarthlyBranch) {
       console.error(
         "Invalid Life Palace earthly branch:",
