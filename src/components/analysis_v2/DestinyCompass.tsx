@@ -45,11 +45,17 @@ const DestinyCompass: React.FC = () => {
 
   // Badge options
   const badgeOptions = [
-    { text: "Parents", color: "success" }, // Green
-    { text: "Life", color: "blue" }, // Blue
-    { text: "Children", color: "warning" }, // Yellow
-    { text: "Travel", color: "failure" }, // Red
+    { text: "Parents" },
+    { text: "Life" },
+    { text: "Children" },
+    { text: "Travel" },
+    { text: "Career" },
+    { text: "Wealth" },
+    { text: "Wealthbeing" },
+    { text: "Property" },
   ];
+
+  const colorOptions = ["success", "blue", "warning", "failure"];
 
   const baseDescriptionText = [
     "You're beginning to truly enjoy life, not just survive it. Your desire to live with purpose is growing stronger, and you're no longer willing to settle.",
@@ -61,9 +67,8 @@ const DestinyCompass: React.FC = () => {
     "You're stepping into rooms that once intimidated you—and now, you realize you belong there. Confidence is no longer a costume, but a core part of your presence.",
     "You're noticing synchronicities more often, trusting that the universe is nudging you toward your purpose—and you're finally listening.",
     "You're learning to pause before reacting, to reflect before speaking. Emotional intelligence is becoming one of your sharpest tools.",
-    "You're attracting opportunities that reflect your growth—not your past. You’re not repeating cycles anymore—you’re writing a new chapter."
+    "You're attracting opportunities that reflect your growth—not your past. You’re not repeating cycles anymore—you’re writing a new chapter.",
   ];
-  
 
   // Generate randomized data for each year card
   const yearCards: YearCardData[] = useMemo(() => {
@@ -73,6 +78,11 @@ const DestinyCompass: React.FC = () => {
 
       // Shuffle badges (with seed)
       const shuffledBadges = shuffleArray([...badgeOptions]);
+      const shuffledColors = shuffleArray([...colorOptions]);
+
+      // We pick four sets of badges and colors
+      const selectedBadges = shuffledBadges.slice(0, 4);
+      const selectedColors = shuffledColors.slice(0, 4);
 
       // Slightly modify descriptions for each year
       const modifiedDescriptions = baseDescriptionText.map((text) => {
@@ -103,18 +113,21 @@ const DestinyCompass: React.FC = () => {
       });
 
       // Sometimes shuffle the order of descriptions
-      const finalDescriptions =
-        year % 3 === 0
-          ? shuffleArray([...modifiedDescriptions])
-          : modifiedDescriptions;
+      const finalDescriptions = shuffleArray([...modifiedDescriptions]);
+
+      // We pick only 4 descriptions
+      const selectedDescriptions = finalDescriptions.slice(0, 4);
 
       return {
         year,
-        badges: shuffledBadges,
-        description: finalDescriptions,
+        badges: selectedBadges.map((badge, index) => ({
+          text: badge.text,
+          color: selectedColors[index],
+        })),
+        description: selectedDescriptions,
       };
     });
-  }, [years]);
+  }, [years, badgeOptions, colorOptions, baseDescriptionText]);
 
   // Effect to handle animation when currentIndex changes
   useEffect(() => {
@@ -247,7 +260,8 @@ const DestinyCompass: React.FC = () => {
 
       {/* Subtitle */}
       <p className="text-lg mb-6 dark:text-white text-center italic">
-      Navigate your life path with clarity — see how your chart shifts across different years.
+        Navigate your life path with clarity — see how your chart shifts across
+        different years.
       </p>
 
       {/* Year Navigation Controls */}
