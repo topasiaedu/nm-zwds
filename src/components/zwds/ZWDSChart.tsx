@@ -110,10 +110,10 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
     if (tagIndex < 0) tagIndex += 12;
   
     // Now invert the tagIndex to actually go backwards through PALACE_TAGS
-    const reversedIndex = (12 - tagIndex) % 12;
-    
+    // const reversedIndex = (12 - tagIndex) % 12;
+
     return { 
-      tag: language === "en" ? PALACE_TAGS_EN[reversedIndex] : PALACE_TAGS[reversedIndex],
+      tag: language === "en" ? PALACE_TAGS_EN[tagIndex] : PALACE_TAGS[tagIndex],
       delay: tagIndex * 0.05 // delay still based on distance
     };
   };
