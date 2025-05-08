@@ -253,8 +253,8 @@ const Palace: React.FC<PalaceProps> = ({
 
   // Fixed purple border style for current da xian that won't be affected by animations
   const daXianStyle = isCurrentDaXian && !isSelected ? {
-    borderColor: "rgb(147, 51, 234)", // Purple-600
-    borderWidth: "2px"
+    backgroundImage: "linear-gradient(135deg, rgba(250, 204, 21, 0.5), rgba(251, 191, 36, 0.45))",
+    boxShadow: "0 0 12px rgba(251, 191, 36, 0.4)"
   } : {};
 
   // Combine all style properties with proper reset handling
@@ -265,6 +265,8 @@ const Palace: React.FC<PalaceProps> = ({
       ? { boxShadow: "0 0 15px rgba(79, 70, 229, 0.25)" }
       : isTargetPalace
       ? targetHighlightStyle
+      : isCurrentDaXian 
+      ? { /* boxShadow already set in daXianStyle */ }
       : { boxShadow: "none" }), // Explicitly reset boxShadow when not selected or target
     transition: "all 0.3s ease",
   };
@@ -290,14 +292,16 @@ const Palace: React.FC<PalaceProps> = ({
       className={`relative border border-gray-100 dark:border-gray-700 p-0.5 xs:p-1 sm:p-2 md:p-3 h-full overflow-hidden min-h-[140px] xs:min-h-[180px] sm:min-h-[130px] md:min-h-[150px] ${
         isSelected
           ? "bg-indigo-50/80 dark:bg-indigo-900/30 text-white"
+          : isCurrentDaXian && !isSelected
+          ? "bg-gradient-to-br from-yellow-300/80 to-amber-300/70 dark:from-yellow-500/40 dark:to-amber-500/30"
           : "bg-white dark:bg-gray-800"
       } flex flex-col rounded-lg shadow-sm cursor-pointer ${
         isSelected
           ? "ring-1 sm:ring-2 ring-indigo-500"
           : isTargetPalace
           ? `ring-1 sm:ring-1 ${transformationBorderColor}`
-          : isCurrentDaXian && !isTargetPalace
-          ? "ring-0 sm:ring-0" // Remove default ring since we're using border
+          : isCurrentDaXian && !isSelected
+          ? "ring-1 ring-amber-400 dark:ring-amber-500"
           : ""
       }`}
       variants={palaceVariants}
@@ -539,7 +543,7 @@ const Palace: React.FC<PalaceProps> = ({
           {/* Mobile view: Major Limit */}
           {palace.majorLimit && (
             <div className={`sm:hidden text-zinc-500 dark:text-zinc-400 ${
-              isCurrentDaXian ? "text-purple-600 dark:text-purple-400 font-medium" : ""
+              isCurrentDaXian ? "text-amber-800 dark:text-amber-300 font-semibold" : ""
             }`}>
               {palace.majorLimit.startAge}-{palace.majorLimit.endAge}
             </div>
@@ -571,7 +575,7 @@ const Palace: React.FC<PalaceProps> = ({
           </div>
           {palace.majorLimit && (
             <div className={`text-zinc-500 dark:text-zinc-400 ${
-              isCurrentDaXian ? "text-purple-600 dark:text-purple-400 font-medium" : ""
+              isCurrentDaXian ? "text-amber-800 dark:text-amber-300 font-semibold" : ""
             }`}>
               {palace.majorLimit.startAge}-{palace.majorLimit.endAge}
             </div>
