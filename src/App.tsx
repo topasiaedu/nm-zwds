@@ -27,6 +27,7 @@ import FreeResult from "./pages/free-result";
 import FreeTestEnded from "./pages/free-test-ended";
 // Import centralized config
 import FREE_TEST_CONFIG from "./config/freeTestConfig";
+import { Analytics } from "@vercel/analytics/react"
 
 /**
  * Authentication route wrapper that redirects authenticated users to dashboard
@@ -61,6 +62,7 @@ const isFreeTestActive = (): boolean => {
 const App: React.FC = () => {
   return (
     <Router>
+      <Analytics />
       <AlertProvider>
         <AuthProvider>
           <ProfileProvider>
