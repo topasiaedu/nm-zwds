@@ -89,8 +89,9 @@ const Palace: React.FC<PalaceProps> = ({
   const currentAge = getAgeAtYear(new Date().getFullYear());
 
   // Check if current age falls within this palace's Major Limit (da xian) range
-  const isCurrentDaXian = palace.majorLimit && 
-    palace.majorLimit.startAge <= currentAge && 
+  const isCurrentDaXian =
+    palace.majorLimit &&
+    palace.majorLimit.startAge <= currentAge &&
     palace.majorLimit.endAge >= currentAge;
 
   // Calculate the year to display for this palace
@@ -152,6 +153,25 @@ const Palace: React.FC<PalaceProps> = ({
         repeat: Infinity,
         ease: "easeInOut",
         opacity: { duration: 0 },
+      },
+    },
+    daxianGlow: {
+      opacity: 1,
+      scale: 1,
+      boxShadow: [
+        "0 0 15px rgba(251, 191, 36, 0.6)",
+        "0 0 20px rgba(251, 191, 36, 0.8)",
+        "0 0 15px rgba(251, 191, 36, 0.6)",
+      ],
+      transition: {
+        boxShadow: {
+          duration: 2,
+          repeat: Infinity,
+          ease: "easeInOut",
+        },
+        // Keep other properties stable
+        opacity: { duration: 0 },
+        scale: { duration: 0 },
       },
     },
     target: {
@@ -251,11 +271,15 @@ const Palace: React.FC<PalaceProps> = ({
     };
   }
 
-  // Fixed purple border style for current da xian that won't be affected by animations
-  const daXianStyle = isCurrentDaXian && !isSelected ? {
-    backgroundImage: "linear-gradient(135deg, rgba(250, 204, 21, 0.5), rgba(251, 191, 36, 0.45))",
-    boxShadow: "0 0 12px rgba(251, 191, 36, 0.4)"
-  } : {};
+  // Fixed style for current da xian with glow effect
+  const daXianStyle =
+    isCurrentDaXian && !isSelected
+      ? {
+          backgroundImage:
+            "linear-gradient(135deg, rgba(252, 211, 77, 0.7), rgba(251, 191, 36, 0.65))",
+          // Don't set the box-shadow here, as it will be controlled by the animation
+        }
+      : {};
 
   // Combine all style properties with proper reset handling
   const combinedStyle = {
@@ -265,8 +289,10 @@ const Palace: React.FC<PalaceProps> = ({
       ? { boxShadow: "0 0 15px rgba(79, 70, 229, 0.25)" }
       : isTargetPalace
       ? targetHighlightStyle
-      : isCurrentDaXian 
-      ? { /* boxShadow already set in daXianStyle */ }
+      : isCurrentDaXian
+      ? {
+          /* boxShadow already set in daXianStyle */
+        }
       : { boxShadow: "none" }), // Explicitly reset boxShadow when not selected or target
     transition: "all 0.3s ease",
   };
@@ -289,11 +315,11 @@ const Palace: React.FC<PalaceProps> = ({
   return (
     <motion.div
       key={`palace-${palaceNumber}-${selectedPalace}`}
-      className={`relative border border-gray-100 dark:border-gray-700 p-0.5 xs:p-1 sm:p-2 md:p-3 h-full overflow-hidden min-h-[140px] xs:min-h-[180px] sm:min-h-[130px] md:min-h-[150px] ${
+      className={`relative border ${isCurrentDaXian ? "pulse-button" : ""} border-gray-100 dark:border-gray-700 p-0.5 xs:p-1 sm:p-2 md:p-3 h-full overflow-hidden min-h-[140px] xs:min-h-[180px] sm:min-h-[130px] md:min-h-[150px] ${
         isSelected
           ? "bg-indigo-50/80 dark:bg-indigo-900/30 text-white"
           : isCurrentDaXian && !isSelected
-          ? "bg-gradient-to-br from-yellow-300/80 to-amber-300/70 dark:from-yellow-500/40 dark:to-amber-500/30"
+          ? "bg-gradient-to-br from-yellow-100 to-amber-300 dark:from-yellow-400/70 dark:to-amber-400/60"
           : "bg-white dark:bg-gray-800"
       } flex flex-col rounded-lg shadow-sm cursor-pointer ${
         isSelected
@@ -301,7 +327,7 @@ const Palace: React.FC<PalaceProps> = ({
           : isTargetPalace
           ? `ring-1 sm:ring-1 ${transformationBorderColor}`
           : isCurrentDaXian && !isSelected
-          ? "ring-1 ring-amber-400 dark:ring-amber-500"
+          ? "ring-2 ring-amber-400/80 dark:ring-amber-400/80"
           : ""
       }`}
       variants={palaceVariants}
@@ -320,6 +346,26 @@ const Palace: React.FC<PalaceProps> = ({
           />
         </div>
       )}
+
+      <style>
+        {`
+          .pulse-button {
+            animation: pulse 2s infinite;
+          }
+
+          @keyframes pulse {
+            0% {
+              box-shadow: 0 0 0 0 rgba(252, 211, 77, 0.7);
+            }
+            70% {
+              box-shadow: 0 0 0 20px rgba(252, 211, 77, 0);
+            }
+            100% {
+              box-shadow: 0 0 0 0 rgba(252, 211, 77, 0);
+            }
+          }
+        `}
+      </style>
 
       {/* Palace Tag (only shown when a palace is selected) */}
       {palaceTag && (
@@ -542,9 +588,12 @@ const Palace: React.FC<PalaceProps> = ({
 
           {/* Mobile view: Major Limit */}
           {palace.majorLimit && (
-            <div className={`sm:hidden text-zinc-500 dark:text-zinc-400 ${
-              isCurrentDaXian ? "text-amber-800 dark:text-amber-300 font-semibold" : ""
-            }`}>
+            <div
+              className={`sm:hidden text-zinc-500 dark:text-zinc-400 ${
+                isCurrentDaXian
+                  ? "text-amber-900 dark:text-amber-200 font-bold"
+                  : ""
+              }`}>
               {palace.majorLimit.startAge}-{palace.majorLimit.endAge}
             </div>
           )}
@@ -574,9 +623,12 @@ const Palace: React.FC<PalaceProps> = ({
               : palace.name}
           </div>
           {palace.majorLimit && (
-            <div className={`text-zinc-500 dark:text-zinc-400 ${
-              isCurrentDaXian ? "text-amber-800 dark:text-amber-300 font-semibold" : ""
-            }`}>
+            <div
+              className={`text-zinc-500 dark:text-zinc-400 ${
+                isCurrentDaXian
+                  ? "text-amber-900 dark:text-amber-200 font-bold"
+                  : ""
+              }`}>
               {palace.majorLimit.startAge}-{palace.majorLimit.endAge}
             </div>
           )}
