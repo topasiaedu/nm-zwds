@@ -230,7 +230,7 @@ const CenterInfo: React.FC<CenterInfoProps> = ({ chartData }) => {
                       "🐔",
                       "🐶",
                       "🐷",
-                    ][(input.year - 4) % 12]
+                    ][(chartData.lunarDate.year - 4) % 12]
                   }
                 </span>
                 {language === "en"
@@ -249,7 +249,7 @@ const CenterInfo: React.FC<CenterInfoProps> = ({ chartData }) => {
                           "rooster",
                           "dog",
                           "pig",
-                        ][(input.year - 4) % 12]
+                        ][(chartData.lunarDate.year - 4) % 12]
                       }`
                     )
                   : t(
@@ -267,7 +267,7 @@ const CenterInfo: React.FC<CenterInfoProps> = ({ chartData }) => {
                           "鸡",
                           "狗",
                           "猪",
-                        ][(input.year - 4) % 12]
+                        ][(chartData.lunarDate.year - 4) % 12]
                       }`
                     ) ||
                     [
@@ -283,7 +283,7 @@ const CenterInfo: React.FC<CenterInfoProps> = ({ chartData }) => {
                       "鸡",
                       "狗",
                       "猪",
-                    ][(input.year - 4) % 12]}
+                    ][(chartData.lunarDate.year - 4) % 12]}
               </span>
             </div>
 
