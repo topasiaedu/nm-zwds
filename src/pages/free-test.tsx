@@ -51,10 +51,10 @@ const FreeTest: React.FC = () => {
   const handleProfileSuccess = (profileId?: string) => {
     console.log("Free test profile created:", profileId);
     if (profileId) {
-      // Add a small delay before navigation to ensure the profile is fully saved in context
+      // Increase delay before navigation to ensure the profile is fully saved in context
       setTimeout(() => {
         navigate(`/free-result/${profileId}`);
-      }, 300);
+      }, 1000);
     }
   };
 

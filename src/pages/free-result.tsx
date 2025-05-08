@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useLanguage } from "../context/LanguageContext";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import PageTransition from "../components/PageTransition";
@@ -36,6 +36,7 @@ const FreeResult: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { profiles, loading: profilesLoading } = useProfileContext();
+  const profileLoadAttempts = useRef<number>(0);
 
   // State for chart data
   const [chartData, setChartData] = useState<ChartData | null>(null);
@@ -142,13 +143,41 @@ const FreeResult: React.FC = () => {
         if (id) {
           if (profiles.length > 0) {
             if (isMounted) {
+              // Check if we've waited long enough before showing error
+              if (!profileLoadAttempts.current) {
+                profileLoadAttempts.current = 1;
+                // Try again after a delay - profiles might still be updating in context
+                setTimeout(() => {
+                  if (isMounted) fetchData();
+                }, 1000);
+                return;
+              }
               setError(`Profile with ID ${id} not found.`);
               setLoading(false);
             }
           } else {
-            // If profiles aren't loaded yet, wait a bit and show loading state
-            await new Promise((resolve) => setTimeout(resolve, 800));
+            // If profiles aren't loaded yet, wait longer and show loading state
+            await new Promise((resolve) => setTimeout(resolve, 1500));
             if (isMounted) {
+              // Check one more time if profile is now available
+              const retryProfileCheck = profiles.find(
+                (profile) => String(profile.id) === String(id)
+              );
+              
+              if (retryProfileCheck) {
+                const profile = retryProfileCheck;
+                const chartData: ChartData = {
+                  id: profile.id,
+                  name: profile.name,
+                  birthDate: profile.birthday,
+                  birthTime: formatBirthTime(profile.birth_time),
+                  gender: profile.gender,
+                  createdAt: profile.created_at,
+                };
+                setChartData(chartData);
+                return;
+              }
+              
               setError(
                 "Unable to find the requested profile. It may have expired or been removed."
               );
