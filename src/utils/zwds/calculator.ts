@@ -199,8 +199,9 @@ export class ZWDSCalculator {
   private step1(): void {
     // Calculates Earthly Branch and Heavenly Stem for the year
     // DONE THIS IS CORRECT ALREADY
+    const lunarDate = lunar.convertSolarToLunar(this.input.year, this.input.month, this.input.day);
 
-    const year = this.input.year - 1900 - 23;
+    const year = lunarDate.year - 1900 - 23;
     const yearBranch = year % 12;
     const yearStem = year % 10;
    
@@ -220,9 +221,10 @@ export class ZWDSCalculator {
    */
   private step2(): void {
     // Calculates Yin Yang for the year
-    // DONE THIS IS CORRECT ALREADY
 
-    const year = this.input.year - 1900;
+    // Convert to lunar first 
+    const lunarDate = lunar.convertSolarToLunar(this.input.year, this.input.month, this.input.day);
+    const year = lunarDate.year;
     const yearStem = year % 10;
 
     this.chartData.yinYang = yearStem % 2 === 1 ? "Yin" : "Yang";

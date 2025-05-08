@@ -80,9 +80,9 @@ const CenterInfo: React.FC<CenterInfoProps> = ({ chartData }) => {
               </span>
               <span className="text-zinc-700 dark:text-zinc-200 flex flex-wrap items-center pl-2 xs:pl-0">
                 <span className="mr-1">
-                  {/* {t(`zwds.stems.${chartData.heavenlyStem}`)}
+                  {t(`zwds.stems.${chartData.heavenlyStem}`)}
                   {language === "en" ? " " : ""}
-                  {t(`zwds.branches.${chartData.earthlyBranch}`)} */}
+                  {t(`zwds.branches.${chartData.earthlyBranch}`)}
                   {chartData.lunarDate.year}{" "}
                   {language === "en" ? t("zwds.chart.年") : "年"}
                 </span>
