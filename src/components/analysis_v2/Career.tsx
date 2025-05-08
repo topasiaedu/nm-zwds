@@ -27,30 +27,32 @@ type TiltOptions = {
 const Career: React.FC = () => {
   // Career data for badges
   const careerOptions: CareerItem[] = [
-    { id: "career-1", label: "Rental business" },
-    { id: "career-2", label: "Luxury cars" },
-    { id: "career-3", label: "Women's products" },
-    { id: "career-4", label: "Cosmetics" },
-    { id: "career-5", label: "Bedding sales" },
-    { id: "career-6", label: "Brand-name sales" },
-    { id: "career-7", label: "International trade" },
-    { id: "career-8", label: "Media and public relations" },
-    { id: "career-9", label: "Marketing and communications" },
+    { id: "career-1", label: "Creative Direction" },
+    { id: "career-2", label: "Boutique Brand Creation" },
+    { id: "career-3", label: "Holistic Design (interior, fashion, UX)" },
+    { id: "career-4", label: "Storytelling & Content Creation" },
+    { id: "career-5", label: "Spiritual or Mindfulness-Based Business" },
+    { id: "career-6", label: "Art Therapy or Healing Arts" },
+    { id: "career-7", label: "Curated Retail (lifestyle, beauty, wellness)" },
+    { id: "career-8", label: "Visual Arts & Installations" },
+    { id: "career-9", label: "Ethical Product Development" },
+    { id: "career-10", label: "Experience Design (events, spaces, brand worlds)" }
   ];
+  
 
   const nonIdealCareerOptions: CareerItem[] = [
-    { id: "career-10", label: "Sales" },
-    { id: "career-11", label: "Marketing" },
-    { id: "career-12", label: "Public relations" },
-    { id: "career-13", label: "Media" },
-    { id: "career-14", label: "Advertising" },
-    { id: "career-15", label: "Sales" },
-    { id: "career-16", label: "Marketing" },
-    { id: "career-17", label: "Public relations" },
-    { id: "career-18", label: "Media" },
-    { id: "career-19", label: "Advertising" },
-    
+    { id: "career-11", label: "Cold-Call Sales or Commission-Based Roles" },
+    { id: "career-12", label: "Corporate Advertising Strategy" },
+    { id: "career-13", label: "High-Volume Social Media Management" },
+    { id: "career-14", label: "Political PR or Image Consulting" },
+    { id: "career-15", label: "Data-Heavy Market Research" },
+    { id: "career-16", label: "Real Estate Sales" },
+    { id: "career-17", label: "Corporate Consulting or Business Analysis" },
+    { id: "career-18", label: "Standardized Test Prep or Traditional Teaching" },
+    { id: "career-19", label: "Call Center or Customer Service Roles" },
+    { id: "career-20", label: "Mass-Produced Product Sales" }
   ];
+  
 
   // Tilt options for the image
   const tiltOptions: TiltOptions = {
