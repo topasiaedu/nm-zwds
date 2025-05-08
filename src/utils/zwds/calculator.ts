@@ -1,22 +1,31 @@
 import {
   ChartInput,
   ChartData,
-  Star, FiveElementType, Transformation
+  Star,
+  FiveElementType,
+  Transformation,
 } from "./types";
 import {
   EARTHLY_BRANCHES,
   HEAVENLY_STEMS,
   PALACE_NAMES,
-  ZIWEI_POSITIONS, LEFT_SUPPORT_POSITIONS,
+  ZIWEI_POSITIONS,
+  LEFT_SUPPORT_POSITIONS,
   RIGHT_SUPPORT_POSITIONS,
   WEN_CHANG_POSITIONS,
   WEN_QU_POSITIONS,
   FOUR_TRANSFORMATIONS,
   LIFE_PALACE_TABLE,
-  FIVE_ELEMENTS_TABLE, MAJOR_LIMIT_STARTING_AGES, MAIN_STARS_TABLE,
-  OPPOSITE_PALACE_INFLUENCE
+  FIVE_ELEMENTS_TABLE,
+  MAJOR_LIMIT_STARTING_AGES,
+  MAIN_STARS_TABLE,
+  OPPOSITE_PALACE_INFLUENCE,
 } from "./constants";
-import { getHourBranch, findStarByName, getLunarDayFromBirthday } from "./utils";
+import {
+  getHourBranch,
+  findStarByName,
+  getLunarDayFromBirthday,
+} from "./utils";
 import { lunar } from "../lunar";
 
 /**
@@ -42,14 +51,12 @@ export class ZWDSCalculator {
    * Initialize the chart data structure
    */
   private initializeChartData(): ChartData {
-
     // Create a default ChartData structure with properly assigned earthly branches
     // The earthly branches have a fixed position pattern:
     // [巳午未申]
     // [辰  酉]
     // [卯  戌]
     // [寅丑子亥]
-
 
     return {
       input: this.input,
@@ -60,7 +67,7 @@ export class ZWDSCalculator {
         year: 0,
         month: 0,
         day: 0,
-        isLeap: false
+        isLeap: false,
       },
       palaces: Array.from({ length: 12 }, (_, i) => {
         const palaceNumber = i + 1;
@@ -132,9 +139,9 @@ export class ZWDSCalculator {
     let huaQuan = "";
     let huaKe = "";
     let huaJi = "";
-    
+
     // Go through all palaces to find stars with transformations
-    this.chartData.palaces.forEach(palace => {
+    this.chartData.palaces.forEach((palace) => {
       // Check main stars and all other star arrays
       const allStars = [
         ...(palace.mainStar || []),
@@ -147,9 +154,9 @@ export class ZWDSCalculator {
         ...palace.hourStars,
         ...(palace.lifeStar ? [palace.lifeStar] : []),
       ];
-      
+
       // Check for transformations
-      allStars.forEach(star => {
+      allStars.forEach((star) => {
         if (star.transformations) {
           if (star.transformations.includes("化祿")) {
             huaLu = star.name;
@@ -174,22 +181,21 @@ export class ZWDSCalculator {
       mainStar = lifePalace.mainStar[0].name;
     }
 
-  
     // Create a properly formatted transformation object
     const transformationObject = {
       huaLu,
-      huaQuan, 
+      huaQuan,
       huaKe,
-      huaJi
+      huaJi,
     };
-    
+
     // Return calculated data with transformations and mainStar
     const result: ChartData = {
       ...this.chartData,
       transformations: transformationObject,
-      mainStar
+      mainStar,
     };
-    
+
     return result;
   }
 
@@ -199,12 +205,16 @@ export class ZWDSCalculator {
   private step1(): void {
     // Calculates Earthly Branch and Heavenly Stem for the year
     // DONE THIS IS CORRECT ALREADY
-    const lunarDate = lunar.convertSolarToLunar(this.input.year, this.input.month, this.input.day);
+    const lunarDate = lunar.convertSolarToLunar(
+      this.input.year,
+      this.input.month,
+      this.input.day
+    );
 
     const year = lunarDate.year - 1900 - 23;
     const yearBranch = year % 12;
     const yearStem = year % 10;
-   
+
     // Fix index calculation to handle when yearBranch or yearStem is 0
     // Use modulo to ensure we wrap around to the end of the arrays
     this.chartData.earthlyBranch = EARTHLY_BRANCHES[(yearBranch - 1 + 12) % 12];
@@ -222,13 +232,16 @@ export class ZWDSCalculator {
   private step2(): void {
     // Calculates Yin Yang for the year
 
-    // Convert to lunar first 
-    const lunarDate = lunar.convertSolarToLunar(this.input.year, this.input.month, this.input.day);
+    // Convert to lunar first
+    const lunarDate = lunar.convertSolarToLunar(
+      this.input.year,
+      this.input.month,
+      this.input.day
+    );
     const year = lunarDate.year;
     const yearStem = year % 10;
 
     this.chartData.yinYang = yearStem % 2 === 1 ? "Yin" : "Yang";
-
   }
 
   /**
@@ -271,7 +284,6 @@ export class ZWDSCalculator {
       throw new Error(`Unexpected stem group: ${stemGroup}`);
     }
 
-
     // Assign Heavenly Stems to each palace, starting from Palace 10 and going clockwise
     for (let i = 0; i < 12; i++) {
       // Palace order: 10, 11, 12, 1, 2, ..., 9
@@ -312,20 +324,26 @@ export class ZWDSCalculator {
       year: lunarDate.year,
       month: lunarDate.month,
       day: lunarDate.day,
-      isLeap: lunarDate.isLeap
+      isLeap: lunarDate.isLeap,
     };
 
     // LIFE_PALACE_TABLE is organized as:
     // [month-1][hourBranch] = earthly branch name for life palace
     // We need to subtract 1 from lunarMonth because arrays are 0-indexed
-    const lifePalaceEarthlyBranch = LIFE_PALACE_TABLE[lunarMonth - 1][hourBranch];
-    
+    const lifePalaceEarthlyBranch =
+      LIFE_PALACE_TABLE[lunarMonth - 1][hourBranch];
+
     if (!lifePalaceEarthlyBranch) {
-      console.error("Invalid Life Palace earthly branch:", lifePalaceEarthlyBranch);
+      console.error(
+        "Invalid Life Palace earthly branch:",
+        lifePalaceEarthlyBranch
+      );
       console.error("Lunar Month:", lunarMonth, "Hour Branch:", hourBranch);
-      throw new Error(`Invalid Life Palace earthly branch: ${lifePalaceEarthlyBranch} for lunar month ${lunarMonth} and hour branch ${hourBranch}`);
+      throw new Error(
+        `Invalid Life Palace earthly branch: ${lifePalaceEarthlyBranch} for lunar month ${lunarMonth} and hour branch ${hourBranch}`
+      );
     }
-    
+
     let lifePalace = 0;
     for (let i = 0; i < this.chartData.palaces.length; i++) {
       if (this.chartData.palaces[i].earthlyBranch === lifePalaceEarthlyBranch) {
@@ -333,17 +351,22 @@ export class ZWDSCalculator {
         break;
       }
     }
-    
+
     if (lifePalace < 1 || lifePalace > 12) {
-      console.error("Could not find palace with earthly branch:", lifePalaceEarthlyBranch);
-      throw new Error(`Could not find palace with earthly branch: ${lifePalaceEarthlyBranch}`);
+      console.error(
+        "Could not find palace with earthly branch:",
+        lifePalaceEarthlyBranch
+      );
+      throw new Error(
+        `Could not find palace with earthly branch: ${lifePalaceEarthlyBranch}`
+      );
     }
 
     // Set the Life Palace position
     this.chartData.lifePalace = lifePalace;
 
     // Record the calculation step
-    this.chartData.calculationSteps.step4 = 
+    this.chartData.calculationSteps.step4 =
       `Life Palace calculation: Lunar Month ${lunarMonth} (row), ` +
       `Hour Branch ${hourBranchName} (column), ` +
       `Found earthly branch ${lifePalaceEarthlyBranch}, ` +
@@ -357,17 +380,15 @@ export class ZWDSCalculator {
    * 迁移 -> 仆役 -> 官禄 -> 田宅 -> 福德 -> 父母
    */
   private step5(): void {
-
     // DONE THIS IS CORRECT ALREADY
     const lifePalace = this.chartData.lifePalace;
-
 
     // Populate palace names starting from Life Palace position
     for (let i = 0; i < 12; i++) {
       // Calculate the actual palace position (1-12) for each name
       // We subtract 1 from lifePalace because array is 0-based
       // We use modulo 12 to wrap around when we exceed 12
-      const palacePosition = ((lifePalace - 1 - i + 12) % 12);
+      const palacePosition = (lifePalace - 1 - i + 12) % 12;
 
       // Set the palace name
       this.chartData.palaces[palacePosition].name = PALACE_NAMES[i];
@@ -420,12 +441,18 @@ export class ZWDSCalculator {
     }
 
     // Convert day number to lunar day string
-    const lunarDay = getLunarDayFromBirthday(this.input.year, this.input.month, this.input.day);
-
+    const lunarDay = getLunarDayFromBirthday(
+      this.input.year,
+      this.input.month,
+      this.input.day
+    );
 
     // Get ZiWei earthly branch from lookup table
-    const ziWeiEarthlyBranch = ZIWEI_POSITIONS[lunarDay as keyof typeof ZIWEI_POSITIONS]?.[fiveElements as keyof typeof ZIWEI_POSITIONS[keyof typeof ZIWEI_POSITIONS]];
-    
+    const ziWeiEarthlyBranch =
+      ZIWEI_POSITIONS[lunarDay as keyof typeof ZIWEI_POSITIONS]?.[
+        fiveElements as keyof (typeof ZIWEI_POSITIONS)[keyof typeof ZIWEI_POSITIONS]
+      ];
+
     if (!ziWeiEarthlyBranch) {
       throw new Error(
         `Invalid lunar day or five elements: ${String(
@@ -439,20 +466,24 @@ export class ZWDSCalculator {
     for (let i = 0; i < this.chartData.palaces.length; i++) {
       if (this.chartData.palaces[i].earthlyBranch === ziWeiEarthlyBranch) {
         ziWeiPosition = i + 1; // Found ZiWei's palace position (1-12)
-        
+
         // Initialize mainStar as an array and place the ZiWei star in this palace
-        this.chartData.palaces[i].mainStar = [{
-          name: "紫微",
-          brightness: "bright",
-          palace: ziWeiPosition,
-          isTransformed: false
-        }];
+        this.chartData.palaces[i].mainStar = [
+          {
+            name: "紫微",
+            brightness: "bright",
+            palace: ziWeiPosition,
+            isTransformed: false,
+          },
+        ];
         break;
       }
     }
 
     if (ziWeiPosition === 0) {
-      throw new Error(`Could not find palace with earthly branch ${ziWeiEarthlyBranch} for ZiWei star`);
+      throw new Error(
+        `Could not find palace with earthly branch ${ziWeiEarthlyBranch} for ZiWei star`
+      );
     }
 
     // Set the ZiWei position in the chart data
@@ -466,7 +497,6 @@ export class ZWDSCalculator {
    * Step 8: Place the remaining main stars based on ZiWei's position
    */
   private step8(): void {
-
     // DONE THIS IS CORRECT ALREADY
     const ziWeiPosition = this.chartData.ziWeiPosition;
 
@@ -477,19 +507,21 @@ export class ZWDSCalculator {
     }
 
     // Populate the other main stars based on ZiWei's position
-    const earthlyBranch = this.chartData.palaces[ziWeiPosition - 1].earthlyBranch;
+    const earthlyBranch =
+      this.chartData.palaces[ziWeiPosition - 1].earthlyBranch;
     const mainStars = MAIN_STARS_TABLE[earthlyBranch];
-    
+
     // Initialize mainStar arrays for all palaces if not already initialized
     for (let i = 0; i < this.chartData.palaces.length; i++) {
-      this.chartData.palaces[i].mainStar = this.chartData.palaces[i].mainStar || [];
+      this.chartData.palaces[i].mainStar =
+        this.chartData.palaces[i].mainStar || [];
     }
-    
+
     // Populate main stars for each palace
     for (let i = 0; i < this.chartData.palaces.length; i++) {
       const palace = this.chartData.palaces[i];
       const stars = mainStars[palace.earthlyBranch] as readonly string[];
-      
+
       if (!stars || stars.length === 0) {
         continue;
       }
@@ -499,7 +531,7 @@ export class ZWDSCalculator {
         if (stars[j] === "紫微" && i === ziWeiPosition - 1) {
           continue;
         }
-        
+
         if (palace.mainStar) {
           palace.mainStar.push({
             name: stars[j],
@@ -521,7 +553,6 @@ export class ZWDSCalculator {
    * Wen Chang (文昌) and Wen Qu (文曲) based on birth hour
    */
   private step9(): void {
-
     // DONE THIS IS CORRECT ALREADY
     const { year, month, day, hour } = this.input;
 
@@ -534,7 +565,9 @@ export class ZWDSCalculator {
     const rightSupportEarthlyBranch = RIGHT_SUPPORT_POSITIONS[lunarMonth];
 
     if (!leftSupportEarthlyBranch || !rightSupportEarthlyBranch) {
-      throw new Error(`Invalid lunar month ${lunarMonth} for support stars calculation`);
+      throw new Error(
+        `Invalid lunar month ${lunarMonth} for support stars calculation`
+      );
     }
 
     // Get earthly branches for Wen Chang and Wen Qu based on hour
@@ -556,26 +589,31 @@ export class ZWDSCalculator {
     // Find the palace positions by comparing earthly branches
     for (let i = 0; i < this.chartData.palaces.length; i++) {
       const palaceEarthlyBranch = this.chartData.palaces[i].earthlyBranch;
-      
+
       if (palaceEarthlyBranch === leftSupportEarthlyBranch) {
         leftSupportPosition = i + 1;
       }
-      
+
       if (palaceEarthlyBranch === rightSupportEarthlyBranch) {
         rightSupportPosition = i + 1;
       }
-      
+
       if (palaceEarthlyBranch === wenChangEarthlyBranch) {
         wenChangPosition = i + 1;
       }
-      
+
       if (palaceEarthlyBranch === wenQuEarthlyBranch) {
         wenQuPosition = i + 1;
       }
     }
 
     // Verify all positions were found
-    if (!leftSupportPosition || !rightSupportPosition || !wenChangPosition || !wenQuPosition) {
+    if (
+      !leftSupportPosition ||
+      !rightSupportPosition ||
+      !wenChangPosition ||
+      !wenQuPosition
+    ) {
       console.error("Could not find all support star positions", {
         leftSupportEarthlyBranch,
         rightSupportEarthlyBranch,
@@ -584,7 +622,7 @@ export class ZWDSCalculator {
         leftSupportPosition,
         rightSupportPosition,
         wenChangPosition,
-        wenQuPosition
+        wenQuPosition,
       });
       throw new Error("Failed to find all support star positions");
     }
@@ -638,10 +676,9 @@ export class ZWDSCalculator {
    * Step 10: Add Four Transformations (四化星) based on birth year's Heavenly Stem
    */
   private step10(): void {
-
     // DONE THIS IS CORRECT ALREADY
     // Get birth year's Heavenly Stem
-    const yearStem = this.chartData      .heavenlyStem ;
+    const yearStem = this.chartData.heavenlyStem;
 
     if (!yearStem) {
       throw new Error(
@@ -748,7 +785,6 @@ export class ZWDSCalculator {
       throw new Error(`Invalid Five Elements: ${fiveElements}`);
     }
 
-
     // Determine direction based on gender and yin/yang
     // Clockwise: Yang Male or Yin Female
     // Counter-clockwise: Yin Male or Yang Female
@@ -756,21 +792,29 @@ export class ZWDSCalculator {
       (gender === "male" && yinYang === "Yang") ||
       (gender === "female" && yinYang === "Yin");
 
-
-    // Calculate major limits for each palace
-    for (let i = 0; i < 12; i++) {
-  // Move backwards manually
-  const palaceIndex = (lifePalace - 1 - i + 12) % 12;
-  const palace = this.chartData.palaces[palaceIndex];
-
-  // Calculate age range
-  const ageOffset = i * 10;
-  palace.majorLimit = {
-    startAge: startingAge + ageOffset,
-    endAge: startingAge + ageOffset + 9,
-  };
-}
-
+      for (let i = 0; i < 12; i++) {
+        let palaceIndex;
+      
+        if (isClockwise) {
+          // Clockwise: move forward
+          palaceIndex = (lifePalace - 1 + i) % 12;
+        } else {
+          // Counterclockwise: move backward
+          palaceIndex = (lifePalace - 1 - i + 12) % 12;
+        }
+      
+        const palace = this.chartData.palaces[palaceIndex];
+      
+        console.log("palaceIndex", palaceIndex);
+      
+        // Calculate age range
+        const ageOffset = i * 10;
+        palace.majorLimit = {
+          startAge: startingAge + ageOffset,
+          endAge: startingAge + ageOffset + 9,
+        };
+      }
+      
     // Record the calculation step
     this.chartData.calculationSteps.step11 =
       `Major Limits calculated starting from age ${startingAge} (${fiveElements}), ` +
@@ -823,7 +867,6 @@ export class ZWDSCalculator {
       (palace) => palace.annualFlow?.year === currentYear
     );
 
-
     // Record the calculation step
     this.chartData.calculationSteps.step12 =
       `Annual Flow calculated for current year ${currentYear}. ` +
@@ -838,43 +881,44 @@ export class ZWDSCalculator {
     for (let i = 0; i < this.chartData.palaces.length; i++) {
       const palace = this.chartData.palaces[i];
       const heavenlyStem = palace.heavenlyStem;
-      
+
       // Get transformation rules for this palace's heavenly stem
       const transformations = FOUR_TRANSFORMATIONS[heavenlyStem];
-      
+
       if (!transformations) {
         continue; // Skip if no transformation rules for this heavenly stem
       }
-      
+
       // Create a map of transformation types to star names
       const transformationMap: Record<string, string> = {
-        "化科": transformations.科,
-        "化權": transformations.權,
-        "化祿": transformations.祿,
-        "化忌": transformations.忌
+        化科: transformations.科,
+        化權: transformations.權,
+        化祿: transformations.祿,
+        化忌: transformations.忌,
       };
-      
+
       // Check all stars in this palace
       const processStars = (stars: Star[] | undefined) => {
         if (!stars) return;
-        
-        stars.forEach(star => {
+
+        stars.forEach((star) => {
           // Check each transformation type
-          for (const [transformationType, starName] of Object.entries(transformationMap)) {
+          for (const [transformationType, starName] of Object.entries(
+            transformationMap
+          )) {
             if (star.name === starName) {
               // Initialize selfInfluence array if it doesn't exist
               if (!star.selfInfluence) {
                 star.selfInfluence = [];
               }
-              
+
               // Add the specific transformation type to selfInfluence
               star.selfInfluence.push(transformationType as Transformation);
-
             }
           }
         });
       };
-      
+
       // Process all types of stars in the palace
       processStars(palace.mainStar);
       if (palace.bodyStar) processStars([palace.bodyStar]);
@@ -886,13 +930,13 @@ export class ZWDSCalculator {
       processStars(palace.dayStars);
       processStars(palace.hourStars);
     }
-    
+
     // Record the calculation step
-    this.chartData.calculationSteps.step13 = 
+    this.chartData.calculationSteps.step13 =
       "Self Influence (自化) calculated for all stars based on their palace's Heavenly Stem";
   }
 
-  // Step 14: Calculate Opposite Palace Influence 
+  // Step 14: Calculate Opposite Palace Influence
   // For each palace, find the opposite palace by checking the OPPOSITE_PALACE_INFLUENCE object, then check if that palace has a star that matches against this palace's heavenly stem in FOUR_TRANSFORMATIONS, if so add to oppositePalaceInfluence array
   private step14(): void {
     // Process each palace
@@ -900,69 +944,81 @@ export class ZWDSCalculator {
       const palace = this.chartData.palaces[i];
       const palaceName = palace.name;
       const heavenlyStem = palace.heavenlyStem;
-      
+
       // Get the opposite palace name
-      const oppositePalaceName = OPPOSITE_PALACE_INFLUENCE[palaceName as keyof typeof OPPOSITE_PALACE_INFLUENCE];
+      const oppositePalaceName =
+        OPPOSITE_PALACE_INFLUENCE[
+          palaceName as keyof typeof OPPOSITE_PALACE_INFLUENCE
+        ];
 
       console.log("oppositePalaceName", oppositePalaceName);
       console.log("palaceName", palaceName);
-      
+
       if (!oppositePalaceName) {
         continue; // Skip if no opposite palace defined
       }
-      
+
       // Find the opposite palace by name
-      const oppositePalace = this.chartData.palaces.find(p => p.name === oppositePalaceName);
-      
+      const oppositePalace = this.chartData.palaces.find(
+        (p) => p.name === oppositePalaceName
+      );
+
       if (!oppositePalace) {
         continue; // Skip if opposite palace not found
       }
-      
+
       // Get transformation rules for this palace's heavenly stem
       const transformations = FOUR_TRANSFORMATIONS[heavenlyStem];
-      
+
       console.log("transformations", transformations);
-      
+
       if (!transformations) {
         continue; // Skip if no transformation rules for this heavenly stem
       }
-      
+
       // Create a map of transformation types to star names
       const transformationMap: Record<string, string> = {
-        "化科": transformations.科,
-        "化權": transformations.權,
-        "化祿": transformations.祿,
-        "化忌": transformations.忌
+        化科: transformations.科,
+        化權: transformations.權,
+        化祿: transformations.祿,
+        化忌: transformations.忌,
       };
-      
+
       // Check all stars in the opposite palace
-      const processStars = (stars: Star[] | undefined, sourcePalace: number) => {
+      const processStars = (
+        stars: Star[] | undefined,
+        sourcePalace: number
+      ) => {
         if (!stars) return;
-        
-        stars.forEach(star => {
+
+        stars.forEach((star) => {
           // Check each transformation type
-          for (const [transformationType, starName] of Object.entries(transformationMap)) {
+          for (const [transformationType, starName] of Object.entries(
+            transformationMap
+          )) {
             if (star.name === starName) {
               // Initialize oppositePalaceInfluence array if it doesn't exist
               if (!palace.oppositePalaceInfluence) {
                 palace.oppositePalaceInfluence = [];
               }
-              
+
               // Add the influence to the current palace
               palace.oppositePalaceInfluence.push({
                 starName: star.name,
                 transformation: transformationType as Transformation,
-                sourcePalace: sourcePalace
+                sourcePalace: sourcePalace,
               });
             }
           }
         });
       };
-      
+
       // Process all types of stars in the opposite palace
       processStars(oppositePalace.mainStar, oppositePalace.number);
-      if (oppositePalace.bodyStar) processStars([oppositePalace.bodyStar], oppositePalace.number);
-      if (oppositePalace.lifeStar) processStars([oppositePalace.lifeStar], oppositePalace.number);
+      if (oppositePalace.bodyStar)
+        processStars([oppositePalace.bodyStar], oppositePalace.number);
+      if (oppositePalace.lifeStar)
+        processStars([oppositePalace.lifeStar], oppositePalace.number);
       processStars(oppositePalace.minorStars, oppositePalace.number);
       processStars(oppositePalace.auxiliaryStars, oppositePalace.number);
       processStars(oppositePalace.yearStars, oppositePalace.number);
@@ -970,9 +1026,9 @@ export class ZWDSCalculator {
       processStars(oppositePalace.dayStars, oppositePalace.number);
       processStars(oppositePalace.hourStars, oppositePalace.number);
     }
-    
+
     // Record the calculation step
-    this.chartData.calculationSteps.step14 = 
+    this.chartData.calculationSteps.step14 =
       "Opposite Palace Influence calculated for all palaces based on opposite palace stars and current palace Heavenly Stem";
   }
 }
