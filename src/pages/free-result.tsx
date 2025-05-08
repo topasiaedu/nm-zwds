@@ -456,7 +456,7 @@ const FreeResult: React.FC = () => {
                   </div>
 
                   {/* Sign up CTA */}
-                  <div
+                  {/* <div
                     className="mt-8 rounded-2xl shadow-2xl overflow-hidden
                             border border-white/10
                             backdrop-filter backdrop-blur-2xl 
@@ -480,73 +480,14 @@ const FreeResult: React.FC = () => {
                         </a>
                       </div>
                     </div>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </div>
           )
         )}
 
-        {/* Analysis Section - Limited for free test */}
-        {calculatedChartData && !loading && !error && (
-          <div className="mt-8">
-            <h2 className="text-2xl font-bold mb-6 dark:text-white flex items-center">
-              <svg
-                className="w-6 h-6 mr-2 text-indigo-500"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                />
-              </svg>
-              {t("analysis.title")}
-            </h2>
-
-            {/* Blur Analysis with WhatsApp Overlay */}
-            <div
-              className="relative rounded-2xl overflow-hidden
-                          backdrop-filter backdrop-blur-2xl 
-                          bg-white/10 dark:bg-black/10
-                          transition-all duration-300 p-6 mb-6">
-              {/* Main Analysis Content - Slightly Blurred */}
-              <div className="relative filter blur-[3px] pointer-events-none opacity-70">
-                <div className="space-y-8">
-                <Overview />
-                <Career />
-                <FourKeyPalace />
-                </div>
-              </div>
-
-              {/* Overlay with WhatsApp CTA */}
-              <div
-                className="absolute inset-0 flex flex-col items-center justify-center backdrop-blur-sm 
-                          bg-white/80 dark:bg-gray-900/80 
-                          text-gray-800 dark:text-white p-6">
-                <div className="max-w-md bg-white/90 dark:bg-gray-800/90 rounded-xl p-6 shadow-lg border border-gray-200 dark:border-gray-700">
-                  <h2 className="text-2xl font-bold mb-4 text-center text-gray-900 dark:text-white">
-                    {t("freeTest.moreAvailable")}
-                  </h2>
-                  <p className="text-base text-center mb-6 text-gray-700 dark:text-gray-300">
-                    {t("freeTest.limitedAnalysisDesc")}
-                  </p>
-                  <a
-                    href={whatsappLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium transition-all duration-300 inline-flex items-center justify-center shadow-md">
-                    <WhatsAppIcon />
-                    {t("freeTest.unlockFull")}
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
+        
       </div>
     </PageTransition>
   );
