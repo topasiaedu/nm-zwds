@@ -17,6 +17,41 @@ const SCREEN_SM = 640;
 const PALACE_TAGS = ["大命", "大兄", "大夫", "大子", "大财", "大疾", "大迁", "大友", "大官", "大田", "大福", "大父"];
 const PALACE_TAGS_EN = ["Da Ming", "Da Xiong", "Da Fu", "Da Zi", "Da Cai", "Da Ji", "Da Qian", "Da You", "Da Guan", "Da Tian", "Da Fu", "Da Fu"];
 
+// Month mapping to palace names - this is used to determine the starting month
+const PALACE_TO_MONTH_MAPPING = {
+  "命宫": "Jan",
+  "兄弟": "Feb",
+  "夫妻": "Mar",
+  "子女": "Apr",
+  "财帛": "May",
+  "疾厄": "Jun",
+  "迁移": "Jul",
+  "交友": "Aug",
+  "官禄": "Sep",
+  "田宅": "Oct",
+  "福德": "Nov",
+  "父母": "Dec",
+} as const;
+
+const PALACE_TO_MONTH_MAPPING_EN = {
+  "命宫": "January",
+  "兄弟": "February",
+  "夫妻": "March",
+  "子女": "April",
+  "财帛": "May",
+  "疾厄": "June",
+  "迁移": "July",
+  "交友": "August",
+  "官禄": "September",
+  "田宅": "October",
+  "福德": "November",
+  "父母": "December",
+} as const;
+
+// Array of months in order for easy cycling
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const MONTHS_EN = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
 interface ZWDSChartProps {
   chartData: ChartData;
   targetYear?: number; // Optional prop to specify which year's annual flow to display
@@ -29,8 +64,13 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
   chartData,
   targetYear = new Date().getFullYear(),
 }) => {
-  // State to track the selected palace
+  // State to track the selected palace for transformations
   const [selectedPalace, setSelectedPalace] = useState<number | null>(null);
+  // State to track the selected Da Xian for palace tags
+  const [selectedDaXian, setSelectedDaXian] = useState<number | null>(null);
+  // State to track whether to show months instead of years
+  const [showMonths, setShowMonths] = useState<number | null>(null);
+  
   const { language } = useLanguage();
   
   // Reference to the chart container
@@ -99,26 +139,21 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
   };
 
   /**
-   * Calculate palace tag for a given palace based on the selected palace
+   * Calculate palace tag for a given palace based on the selected Da Xian
    * Tags are assigned clockwise starting from the selected palace
    */
   const getPalaceTag = (palaceNumber: number): { tag: string | null; delay: number } => {
-    if (!selectedPalace) return { tag: null, delay: 0 };
+    if (!selectedDaXian) return { tag: null, delay: 0 };
     
     // Calculate the reversed index in the PALACE_TAGS array
-    let tagIndex = (selectedPalace - palaceNumber) % 12;
+    let tagIndex = (selectedDaXian - palaceNumber) % 12;
     if (tagIndex < 0) tagIndex += 12;
   
-    // Now invert the tagIndex to actually go backwards through PALACE_TAGS
-    // const reversedIndex = (12 - tagIndex) % 12;
-
     return { 
       tag: language === "en" ? PALACE_TAGS_EN[tagIndex] : PALACE_TAGS[tagIndex],
       delay: tagIndex * 0.05 // delay still based on distance
     };
   };
-  
-  
 
   /**
    * Animation variants for different elements
@@ -150,6 +185,56 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
   };
 
   /**
+   * Handle Da Xian click
+   */
+  const handleDaXianClick = (palaceNumber: number) => {
+    setSelectedDaXian(selectedDaXian === palaceNumber ? null : palaceNumber);
+  };
+
+  /**
+   * Handle year or age click to toggle month display
+   */
+  const handleYearClick = (palaceNumber: number, e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent palace click from triggering
+    setShowMonths(showMonths === palaceNumber ? null : palaceNumber);
+  };
+
+  /**
+   * Get month for a palace based on the clicked palace number
+   */
+  const getMonthForPalace = (clickedPalaceNumber: number, currentPalaceNumber: number): string | null => {
+    if (!showMonths) return null;
+
+    // Get the bottom right palace (palace number 10)
+    const bottomRightPalace = chartData.palaces[9];
+    if (!bottomRightPalace) return null;
+
+
+    console.log("Bottom right palace", bottomRightPalace.name);
+    // Get the starting month based on the bottom right palace's name
+    const monthMapping = language === "en" ? PALACE_TO_MONTH_MAPPING_EN : PALACE_TO_MONTH_MAPPING;
+    const startingMonth = monthMapping[bottomRightPalace.name as keyof typeof monthMapping];
+    if (!startingMonth) return null;
+
+    console.log("Starting month", startingMonth);
+
+    // Find the index of the starting month
+    const months = language === "en" ? MONTHS_EN : MONTHS;
+    const startingMonthIndex = months.indexOf(startingMonth);
+    if (startingMonthIndex === -1) return null;
+
+    // Calculate how many positions to move from the clicked palace
+    let distance = currentPalaceNumber - clickedPalaceNumber;
+    if (distance < 0) {
+      distance += 12; // Wrap around for negative distances
+    }
+
+    // Calculate the final month index
+    const monthIndex = (startingMonthIndex + distance) % 12;
+    return months[monthIndex];
+  };
+
+  /**
    * Render a single palace in the chart
    */
   const renderPalace = (palaceNumber: number) => {
@@ -165,8 +250,17 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
     const isTargetPalace = Boolean(selectedPalace && targetPalaces[palaceNumber]);
     const transformationType = isTargetPalace ? targetPalaces[palaceNumber]?.type : null;
     
-    // Get the palace tag if a palace is selected
+    // Get the palace tag if a Da Xian is selected
     const { tag: palaceTag, delay } = getPalaceTag(palaceNumber);
+
+    // Get month display if a palace year was clicked
+    let monthDisplay = null;
+    if (showMonths !== null) {
+      const clickedPalace = chartData.palaces[showMonths - 1];
+      if (clickedPalace) {
+        monthDisplay = getMonthForPalace(showMonths, palaceNumber);
+      }
+    }
 
     return (
       <Palace 
@@ -182,6 +276,10 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
         palaceTag={palaceTag}
         registerStarRef={registerStarRef}
         handlePalaceClick={handlePalaceClick}
+        handleDaXianClick={handleDaXianClick}
+        handleYearClick={handleYearClick}
+        monthDisplay={monthDisplay}
+        showMonths={showMonths}
         palaceRefs={palaceRefs}
         delay={delay}
       />

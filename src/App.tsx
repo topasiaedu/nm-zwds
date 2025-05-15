@@ -28,6 +28,7 @@ import FreeTestEnded from "./pages/free-test-ended";
 // Import centralized config
 import FREE_TEST_CONFIG from "./config/freeTestConfig";
 import { Analytics } from "@vercel/analytics/react"
+import { SpeedInsights } from "@vercel/speed-insights/react"
 
 /**
  * Authentication route wrapper that redirects authenticated users to dashboard
@@ -63,6 +64,7 @@ const App: React.FC = () => {
   return (
     <Router>
       <Analytics />
+      <SpeedInsights />
       <AlertProvider>
         <AuthProvider>
           <ProfileProvider>

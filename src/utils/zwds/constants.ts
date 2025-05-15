@@ -22,6 +22,8 @@ export const PALACE_NAMES = [
   "父母",
 ] as const;
 
+
+
 /**
  * Earthly Branch names in Chinese
  */

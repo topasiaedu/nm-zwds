@@ -43,12 +43,16 @@ interface PalaceProps {
   startingPalaceNumber?: number; // Palace number where annual flow starts
   palaceTag?: string | null; // Tag to display at top right corner
   delay?: number; // Animation delay for staggered entrance
+  monthDisplay?: string | null; // Month to display instead of year
+  showMonths?: number | null; // Palace number that was clicked to show months
   registerStarRef: (
     palaceNumber: number,
     starName: string,
     element: HTMLDivElement | null
   ) => void;
   handlePalaceClick: (palaceNumber: number) => void;
+  handleDaXianClick: (palaceNumber: number) => void;
+  handleYearClick: (palaceNumber: number, e: React.MouseEvent) => void;
   palaceRefs: React.MutableRefObject<(HTMLDivElement | null)[]>;
 }
 
@@ -67,8 +71,12 @@ const Palace: React.FC<PalaceProps> = ({
   startingPalaceNumber = 1, // Default to palace 1 if not provided
   palaceTag,
   delay = 0,
+  monthDisplay,
+  showMonths,
   registerStarRef,
   handlePalaceClick,
+  handleDaXianClick,
+  handleYearClick,
   palaceRefs,
 }) => {
   const { t, language } = useLanguage();
@@ -312,6 +320,64 @@ const Palace: React.FC<PalaceProps> = ({
     }
   };
 
+  // Handle click on the Major Limit (Da Xian) section
+  const handleMajorLimitClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent the palace click from triggering
+    if (palace.majorLimit) {
+      handleDaXianClick(palaceNumber);
+    }
+  };
+
+  // Desktop year display section
+  const renderYearOrMonth = () => {
+    const isShowingMonth = showMonths === palaceNumber;
+    const yearClassName = `${
+      showAnnualFlow
+        ? isSelected
+          ? "text-red-300"
+          : "text-red-600 dark:text-red-400"
+        : ""
+    } font-medium hidden sm:flex cursor-pointer hover:opacity-80`;
+
+    return (
+      <div className="flex flex-col items-center">
+        <div
+          className={yearClassName}
+          onClick={(e) => handleYearClick(palaceNumber, e)}>
+          {monthDisplay || palaceYear}
+        </div>
+        {!monthDisplay && (
+          <div 
+            className="text-2xs xs:text-2xs hidden sm:block cursor-pointer hover:opacity-80"
+            onClick={(e) => handleYearClick(palaceNumber, e)}>
+            {getAgeAtYear(palaceYear)}
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  // Mobile year display section
+  const renderMobileYearOrMonth = () => {
+    const yearClassName = `flex items-center gap-1 sm:hidden ${
+      showAnnualFlow
+        ? isSelected
+          ? "text-red-300"
+          : "text-red-600 dark:text-red-400"
+        : ""
+    } font-medium cursor-pointer hover:opacity-80`;
+
+    return (
+      <div
+        className={yearClassName}
+        onClick={(e) => handleYearClick(palaceNumber, e)}>
+        <span>
+          {monthDisplay || `${palaceYear}/${getAgeAtYear(palaceYear)}`}
+        </span>
+      </div>
+    );
+  };
+
   return (
     <motion.div
       key={`palace-${palaceNumber}-${selectedPalace}`}
@@ -544,6 +610,19 @@ const Palace: React.FC<PalaceProps> = ({
         </div>
       </div>
 
+      {/* Annual Year Tag */}
+      {showAnnualFlow && (
+        <div className="absolute bottom-[55px] xs:bottom-[53px] sm:bottom-[51px] right-1 xs:right-2 sm:right-3 z-20">
+          <div className={`text-2xs xs:text-xs font-semibold px-1.5 py-0.5 rounded-md ${
+            isSelected
+              ? "bg-red-400/20 text-red-200"
+              : "bg-red-100 dark:bg-red-900/40 text-red-600 dark:text-red-300"
+          }`}>
+            {language === "en" ? "Liu Nian" : "流年"}
+          </div>
+        </div>
+      )}
+
       {/* Bottom section with grid layout - positioned absolute at bottom */}
       <div className="absolute bottom-0 left-0 right-0 grid grid-cols-1 sm:grid-cols-3 w-full text-3xs xs:text-2xs sm:text-xs text-zinc-800 dark:text-zinc-200 border-t border-gray-200 dark:border-gray-700 z-20">
         {/* First column (mobile and desktop) */}
@@ -591,25 +670,15 @@ const Palace: React.FC<PalaceProps> = ({
             <div
               className={`sm:hidden text-zinc-500 dark:text-zinc-400 ${
                 isCurrentDaXian
-                  ? "text-amber-900 dark:text-amber-200 font-bold"
-                  : ""
-              }`}>
+                  ? "text-amber-900 dark:text-amber-200 font-bold cursor-pointer"
+                  : "cursor-pointer hover:text-amber-600 dark:hover:text-amber-400"
+              }`}
+              onClick={handleMajorLimitClick}>
               {palace.majorLimit.startAge}-{palace.majorLimit.endAge}
             </div>
           )}
-          {/* Mobile view: Year and Age */}
-          <div
-            className={`flex items-center gap-1 sm:hidden ${
-              showAnnualFlow
-                ? isSelected
-                  ? "text-red-300"
-                  : "text-red-600 dark:text-red-400"
-                : ""
-            } font-medium`}>
-            <span>
-              {palaceYear}/{getAgeAtYear(palaceYear)}
-            </span>
-          </div>
+          {/* Mobile view: Year and Age - Modified to use renderMobileYearOrMonth */}
+          {renderMobileYearOrMonth()}
         </div>
 
         {/* Second column (desktop only) */}
@@ -626,34 +695,23 @@ const Palace: React.FC<PalaceProps> = ({
             <div
               className={`text-zinc-500 dark:text-zinc-400 ${
                 isCurrentDaXian
-                  ? "text-amber-900 dark:text-amber-200 font-bold"
-                  : ""
-              }`}>
+                  ? "text-amber-900 dark:text-amber-200 font-bold cursor-pointer"
+                  : "cursor-pointer hover:text-amber-600 dark:hover:text-amber-400"
+              }`}
+              onClick={handleMajorLimitClick}>
               {palace.majorLimit.startAge}-{palace.majorLimit.endAge}
             </div>
           )}
         </div>
 
-        {/* Third column (desktop only) */}
+        {/* Third column (desktop only) - Modified to use renderYearOrMonth */}
         <div
           className={`hidden sm:flex flex-col items-center justify-center py-0.5 xs:py-1 sm:py-1.5 ${
             isSelected
               ? "text-white/80 dark:text-white/80"
               : "text-zinc-500 dark:text-zinc-400"
           }`}>
-          <div
-            className={`${
-              showAnnualFlow
-                ? isSelected
-                  ? "text-red-300"
-                  : "text-red-600 dark:text-red-400"
-                : ""
-            } font-medium hidden sm:flex`}>
-            {palaceYear}
-          </div>
-          <div className="text-2xs xs:text-2xs hidden sm:block">
-            {getAgeAtYear(palaceYear)}
-          </div>
+          {renderYearOrMonth()}
         </div>
       </div>
     </motion.div>
