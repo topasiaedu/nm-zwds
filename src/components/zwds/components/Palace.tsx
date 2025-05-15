@@ -330,7 +330,6 @@ const Palace: React.FC<PalaceProps> = ({
 
   // Desktop year display section
   const renderYearOrMonth = () => {
-    const isShowingMonth = showMonths === palaceNumber;
     const yearClassName = `${
       showAnnualFlow
         ? isSelected
@@ -341,18 +340,16 @@ const Palace: React.FC<PalaceProps> = ({
 
     return (
       <div className="flex flex-col items-center">
-        <div
+        <div 
           className={yearClassName}
           onClick={(e) => handleYearClick(palaceNumber, e)}>
-          {monthDisplay || palaceYear}
+          {palaceYear}
         </div>
-        {!monthDisplay && (
-          <div 
-            className="text-2xs xs:text-2xs hidden sm:block cursor-pointer hover:opacity-80"
-            onClick={(e) => handleYearClick(palaceNumber, e)}>
-            {getAgeAtYear(palaceYear)}
-          </div>
-        )}
+        <div 
+          className="text-2xs xs:text-2xs hidden sm:block cursor-pointer hover:opacity-80"
+          onClick={(e) => handleYearClick(palaceNumber, e)}>
+          {monthDisplay || getAgeAtYear(palaceYear)}
+        </div>
       </div>
     );
   };
@@ -368,11 +365,14 @@ const Palace: React.FC<PalaceProps> = ({
     } font-medium cursor-pointer hover:opacity-80`;
 
     return (
-      <div
+      <div 
         className={yearClassName}
         onClick={(e) => handleYearClick(palaceNumber, e)}>
         <span>
-          {monthDisplay || `${palaceYear}/${getAgeAtYear(palaceYear)}`}
+          {palaceYear}/
+        </span>
+        <span>
+          {monthDisplay || getAgeAtYear(palaceYear)}
         </span>
       </div>
     );
@@ -610,9 +610,9 @@ const Palace: React.FC<PalaceProps> = ({
         </div>
       </div>
 
-      {/* Annual Year Tag */}
-      {showAnnualFlow && (
-        <div className="absolute bottom-[55px] xs:bottom-[53px] sm:bottom-[51px] right-1 xs:right-2 sm:right-3 z-20">
+      {/* Annual Year Tag and Da Yun Tag Container */}
+      <div className="absolute bottom-[55px] xs:bottom-[53px] sm:bottom-[51px] right-1 xs:right-2 sm:right-3 z-20 flex gap-1">
+        {showAnnualFlow && (
           <div className={`text-2xs xs:text-xs font-semibold px-1.5 py-0.5 rounded-md ${
             isSelected
               ? "bg-red-400/20 text-red-200"
@@ -620,8 +620,17 @@ const Palace: React.FC<PalaceProps> = ({
           }`}>
             {language === "en" ? "Liu Nian" : "流年"}
           </div>
-        </div>
-      )}
+        )}
+        {isCurrentDaXian && (
+          <div className={`text-2xs xs:text-xs font-semibold px-1.5 py-0.5 rounded-md ${
+            isSelected
+              ? "bg-amber-400/20 text-amber-200"
+              : "bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-300"
+          }`}>
+            {language === "en" ? "Da Yun" : "大運"}
+          </div>
+        )}
+      </div>
 
       {/* Bottom section with grid layout - positioned absolute at bottom */}
       <div className="absolute bottom-0 left-0 right-0 grid grid-cols-1 sm:grid-cols-3 w-full text-3xs xs:text-2xs sm:text-xs text-zinc-800 dark:text-zinc-200 border-t border-gray-200 dark:border-gray-700 z-20">
