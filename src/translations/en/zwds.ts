@@ -12,7 +12,7 @@ const zwds = {
       交友: "Friends",
       官禄: "Career",
       田宅: "Property",
-      福德: "Wealthbeing",
+      福德: "Wellbeing",
       父母: "Parents",
     },
 

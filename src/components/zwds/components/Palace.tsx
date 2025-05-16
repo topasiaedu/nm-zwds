@@ -420,10 +420,10 @@ const Palace: React.FC<PalaceProps> = ({
       {/* Secondary palace name - centered but at Liu Nian height */}
       {secondaryPalaceName && (
         <div className="absolute bottom-[75px] xs:bottom-[53px] sm:bottom-[51px] left-0 right-0 flex justify-center items-center z-20">
-          <div className={`text-2xs xs:text-xs font-medium ${
+          <div className={`text-2xs xs:text-xs font-bold ${
             isSelected
-              ? "text-indigo-200 bg-indigo-500/10 rounded-md px-1 py-0.5"
-              : "text-indigo-600 dark:text-indigo-300 bg-indigo-500/10 rounded-md px-1 py-0.5"
+              ? "text-black dark:text-white"
+              : "text-black dark:text-white"
           }`}>
             {language === "en" && t(`zwds.palaces.${secondaryPalaceName}`)
               ? t(`zwds.palaces.${secondaryPalaceName}`)
@@ -499,8 +499,8 @@ const Palace: React.FC<PalaceProps> = ({
         {showAnnualFlow && (
           <div className={`text-2xs xs:text-xs font-semibold px-1.5 py-0.5 rounded-md ${
             isSelected
-              ? "bg-gray-400/20 "
-              : "bg-gray-100 dark:bg-gray-900/40 "
+              ? "bg-orange-400/20"
+              : "bg-orange-100 dark:bg-orange-900/40 "
           }`}>
             {language === "en" ? "Liu Nian" : "流年"}
           </div>
@@ -508,8 +508,8 @@ const Palace: React.FC<PalaceProps> = ({
         {isCurrentDaXian && (
           <div className={`text-2xs xs:text-xs font-semibold px-1.5 py-0.5 rounded-md ${
             isSelected
-              ? "bg-amber-400/20 text-amber-200"
-              : "bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-300"
+              ? "bg-orange-400/20 text-amber-200"
+              : "bg-orange-100 dark:bg-orange-900/40 text-amber-600 dark:text-amber-300"
           }`}>
             {language === "en" ? "Da Yun" : "大運"}
           </div>

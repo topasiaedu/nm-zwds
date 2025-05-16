@@ -4,7 +4,7 @@ const chart = {
     gender: "Gender",
     birthDate: "Birth Date",
     solarDate: "Solar Date",
-    shengXiao: "Sheng Xiao",
+    shengXiao: "Chinese Zodiac",
     fiveElement: "Five Element",
     lunarDate: "Lunar Date",
   },
