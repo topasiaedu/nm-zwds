@@ -34,15 +34,10 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuthContext();
 
   useEffect(() => {
-
-
-    // TODO: Make Some Profiles Public
-    
-    const fetchProfiles = async () => {
+    const fetchProfileWithoutUser = async () => {
       const { data: profiles, error } = await supabase
         .from("profiles")
         .select("*")
-        
 
       if (error) {
         console.error("Error fetching profiles:", error);
@@ -58,10 +53,36 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
 
         return profiles!;
       });
-
+      
     };
 
-    fetchProfiles();
+    const fetchProfiles = async () => {
+      const { data: profiles, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("user_id", user?.id);
+
+      if (error) {
+        console.error("Error fetching profiles:", error);
+        return;
+      }
+
+      console.log("Profiles Amount:", profiles?.length);
+
+      setProfiles((prev) => {
+        if (isEqual(prev, profiles)) {
+          return prev;
+        }
+
+        return profiles!;
+      });
+    };
+
+    if (user) {
+      fetchProfiles();
+    } else {
+      fetchProfileWithoutUser();
+    }
 
     const handleChanges = (payload: any) => {
       if (payload.eventType === "INSERT") {
@@ -149,13 +170,16 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  const setCurrentProfileById = useCallback((profileId: string) => {
-    const profile = profiles.find((profile) => profile.id === profileId);
-    console.log("Setting current profile by ID:", profileId, profile);
-    if (profile) {
-      setCurrentProfile(profile);
-    }
-  }, [profiles]);
+  const setCurrentProfileById = useCallback(
+    (profileId: string) => {
+      const profile = profiles.find((profile) => profile.id === profileId);
+      console.log("Setting current profile by ID:", profileId, profile);
+      if (profile) {
+        setCurrentProfile(profile);
+      }
+    },
+    [profiles]
+  );
 
   const contextValue = useMemo(
     () => ({

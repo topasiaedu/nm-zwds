@@ -25,6 +25,7 @@ const common = {
     error: "Error",
     loadingText: "Loading...",
     retry: "Retry",
+    search: "Search",
   },
 };
 

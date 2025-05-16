@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  ReactNode,
+} from "react";
 import { supabase } from "../utils/supabase-client";
 import { Session, User, AuthError } from "@supabase/supabase-js";
 import { useNavigate } from "react-router-dom";
@@ -22,10 +28,17 @@ interface AuthContextType {
   session: Session | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<AuthResponse>;
-  signUp: (email: string, password: string) => Promise<AuthResponse>;
+  signUp: (
+    email: string,
+    password: string,
+    referralCode: string
+  ) => Promise<AuthResponse>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<{ error: AuthError | null }>;
-  completePasswordReset: (token: string, newPassword: string) => Promise<{ error: AuthError | null }>;
+  completePasswordReset: (
+    token: string,
+    newPassword: string
+  ) => Promise<{ error: AuthError | null }>;
 }
 
 /**
@@ -37,7 +50,9 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
  * Provider component that wraps the app and makes auth object available
  * to any child component that calls useAuth().
  */
-export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -46,7 +61,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   // TEMP CONSOLE LOG OUT USER ID
   useEffect(() => {
     const getUserId = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       console.log(session?.user.id);
     };
     getUserId();
@@ -56,11 +73,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     // Get session from local storage and set states
     const initializeAuth = async () => {
       setLoading(true);
-      
+
       try {
         // Get current session
-        const { data: { session } } = await supabase.auth.getSession();
-        
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+
         if (session) {
           setSession(session);
           setUser(session.user);
@@ -79,7 +98,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       async (event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
-        
+
         if (event === "SIGNED_OUT") {
           navigate("/authentication/sign-in");
         }
@@ -95,7 +114,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   /**
    * Sign in with email and password
    */
-  const signIn = async (email: string, password: string): Promise<AuthResponse> => {
+  const signIn = async (
+    email: string,
+    password: string
+  ): Promise<AuthResponse> => {
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
@@ -119,10 +141,22 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   /**
-   * Sign up with email and password
+   * Sign up with email, password and referral code
    */
-  const signUp = async (email: string, password: string): Promise<AuthResponse> => {
+  const signUp = async (
+    email: string,
+    password: string,
+    referralCode: string
+  ): Promise<AuthResponse> => {
     try {
+      // Check referral code
+      if (referralCode !== "DYD2025") {
+        return {
+          data: { user: null, session: null },
+          error: { message: "Invalid referral code", status: 400 } as AuthError,
+        };
+      }
+
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -158,7 +192,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   /**
    * Reset password (send reset email)
    */
-  const resetPassword = async (email: string): Promise<{ error: AuthError | null }> => {
+  const resetPassword = async (
+    email: string
+  ): Promise<{ error: AuthError | null }> => {
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: window.location.origin + "/authentication/reset-password",
@@ -202,9 +238,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   return (
     <AuthContext.Provider value={value}>
-      {!loading ? children : <div className="flex items-center justify-center h-screen w-screen">
-        <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500"></div>
-      </div>}
+      {!loading ? (
+        children
+      ) : (
+        <div className="flex items-center justify-center h-screen w-screen">
+          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500"></div>
+        </div>
+      )}
     </AuthContext.Provider>
   );
 };
@@ -214,11 +254,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
  */
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
-  
+
   if (context === undefined) {
     throw new Error("useAuth must be used within an AuthProvider");
   }
-  
+
   return context;
 };
 

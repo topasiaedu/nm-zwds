@@ -35,7 +35,7 @@ const dashboard = {
     actions: {
       myChart: {
         title: "My Chart",
-        description: "View your personal 紫微斗数 chart"
+        description: "View your personal Purple Star Astrology chart"
       },
       calculate: {
         title: "Calculate",

@@ -10,11 +10,12 @@ import { useLanguage } from "../../context/LanguageContext";
  */
 const SignUpPage: React.FC = () => {
   // Registration availability control - set to true to enable registration
-  const isRegistrationOpen = false;
+  const isRegistrationOpen = true;
 
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
+  const [referralCode, setReferralCode] = useState<string>("");
   const [acceptTerms, setAcceptTerms] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -35,7 +36,7 @@ const SignUpPage: React.FC = () => {
     setError(null);
     
     // Form validation
-    if (!email || !password || !confirmPassword) {
+    if (!email || !password || !confirmPassword || !referralCode) {
       setError(t("validation.required"));
       return;
     }
@@ -57,7 +58,7 @@ const SignUpPage: React.FC = () => {
     
     try {
       setIsSubmitting(true);
-      const response = await signUp(email, password);
+      const response = await signUp(email, password, referralCode);
       
       if (response.error) {
         setError(response.error.message);
@@ -65,12 +66,12 @@ const SignUpPage: React.FC = () => {
       }
       
       if (response.data?.user) {
-        setSuccess("Account created successfully! Check your email to confirm your account.");
+        setSuccess("Account created successfully! You can now sign in.");
         setTimeout(() => {
           navigate("/authentication/sign-in");
-        }, 3000);
+        }, 2000);
       } else {
-        setSuccess("Account created! Please check your email to confirm your registration.");
+        setError("Failed to create account. Please try again.");
       }
     } catch (err) {
       setError("An unexpected error occurred. Please try again.");
@@ -167,6 +168,28 @@ const SignUpPage: React.FC = () => {
                   placeholder="••••••••"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
+                  disabled={!isRegistrationOpen}
+                  theme={{
+                    field: {
+                      input: {
+                        base: "block w-full border disabled:cursor-not-allowed disabled:opacity-50 bg-gray-50 dark:bg-gray-700 dark:text-white",
+                      }
+                    }
+                  }}
+                />
+              </div>
+
+              <div>
+                <div className="mb-2 block">
+                  <Label htmlFor="referralCode" value="Referral Code" className="dark:text-white" />
+                </div>
+                <TextInput
+                  id="referralCode"
+                  type="text"
+                  placeholder="Enter your referral code"
+                  value={referralCode}
+                  onChange={(e) => setReferralCode(e.target.value)}
                   required
                   disabled={!isRegistrationOpen}
                   theme={{

@@ -7,7 +7,7 @@ const profile = {
     updateProfile: "Update Profile",
     createSelfTitle: "Create Your Profile",
     createOtherTitle: "Create New Profile",
-    createSelfDesc: "To generate your personal 紫微斗数 chart, please provide your birth information.",
+    createSelfDesc: "To generate your personal Purple Star Astrology chart, please provide your birth information.",
     createOtherDesc: "Enter the details of the person you're creating a chart for.",
     createSelfSuccess: "Your profile has been created successfully!",
     createOtherSuccess: "The profile has been created successfully!",
