@@ -422,8 +422,8 @@ const Palace: React.FC<PalaceProps> = ({
         <div className="absolute bottom-[55px] xs:bottom-[53px] sm:bottom-[51px] left-0 right-0 flex justify-center items-center z-20">
           <div className={`text-2xs xs:text-xs font-medium ${
             isSelected
-              ? "text-indigo-200"
-              : "text-indigo-600 dark:text-indigo-300"
+              ? "text-indigo-200 bg-indigo-500/10 rounded-md px-1 py-0.5"
+              : "text-indigo-600 dark:text-indigo-300 bg-indigo-500/10 rounded-md px-1 py-0.5"
           }`}>
             {language === "en" && t(`zwds.palaces.${secondaryPalaceName}`)
               ? t(`zwds.palaces.${secondaryPalaceName}`)
@@ -452,13 +452,55 @@ const Palace: React.FC<PalaceProps> = ({
         `}
       </style>
 
+      {/* Palace Tag (Da Ming) - only shown when a palace is selected for Da Xian */}
+      {palaceTag && (
+        <div className="absolute top-0.5 xs:top-1 sm:top-2 right-0.5 xs:right-1 sm:right-2 z-30">
+          <motion.div
+            key={`palace-tag-${selectedPalace}-${palaceNumber}`}
+            className={`text-2xs xs:text-xs sm:text-sm font-semibold px-1 py-0.5 rounded-md ${
+              isSelected
+                ? "bg-white/20 text-white"
+                : "bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300"
+            }`}
+            initial={{ opacity: 0, scale: 0.8, y: -5 }}
+            animate={{
+              opacity: 1,
+              scale: 1,
+              y: 0,
+              boxShadow: isSelected
+                ? [
+                    "0 0 0px rgba(255, 255, 255, 0.5)",
+                    "0 0 8px rgba(255, 255, 255, 0.3)",
+                    "0 0 0px rgba(255, 255, 255, 0.5)",
+                  ]
+                : [
+                    "0 0 0px rgba(79, 70, 229, 0.3)",
+                    "0 0 6px rgba(79, 70, 229, 0.2)",
+                    "0 0 0px rgba(79, 70, 229, 0.3)",
+                  ],
+            }}
+            transition={{
+              duration: 0.5,
+              ease: "easeOut",
+              delay: delay,
+              boxShadow: {
+                repeat: Infinity,
+                duration: 2,
+                ease: "easeInOut",
+              },
+            }}>
+            {palaceTag}
+          </motion.div>
+        </div>
+      )}
+
       {/* Annual Year Tag and Da Yun Tag Container */}
       <div className="absolute bottom-[55px] xs:bottom-[53px] sm:bottom-[51px] right-1 xs:right-2 sm:right-3 z-20 flex gap-1">
         {showAnnualFlow && (
           <div className={`text-2xs xs:text-xs font-semibold px-1.5 py-0.5 rounded-md ${
             isSelected
-              ? "bg-red-400/20 text-red-200"
-              : "bg-red-100 dark:bg-red-900/40 text-red-600 dark:text-red-300"
+              ? "bg-gray-400/20 "
+              : "bg-gray-100 dark:bg-gray-900/40 "
           }`}>
             {language === "en" ? "Liu Nian" : "流年"}
           </div>
