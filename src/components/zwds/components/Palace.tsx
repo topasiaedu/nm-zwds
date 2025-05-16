@@ -419,7 +419,7 @@ const Palace: React.FC<PalaceProps> = ({
 
       {/* Secondary palace name - centered but at Liu Nian height */}
       {secondaryPalaceName && (
-        <div className="absolute bottom-[75px] xs:bottom-[53px] sm:bottom-[51px] left-0 right-0 flex justify-center items-center z-20">
+        <div className={`absolute  xs:bottom-[53px] ${showAnnualFlow && isCurrentDaXian ? "bottom-[90px] sm:bottom-[75px]" : "bottom-[75px] sm:bottom-[51px]"} left-0 right-0 flex justify-center items-center z-20`}>
           <div className={`text-2xs xs:text-xs font-bold ${
             isSelected
               ? "text-black dark:text-white"
