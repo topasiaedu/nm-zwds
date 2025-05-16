@@ -45,6 +45,7 @@ interface PalaceProps {
   delay?: number; // Animation delay for staggered entrance
   monthDisplay?: string | null; // Month to display instead of year
   showMonths?: number | null; // Palace number that was clicked to show months
+  secondaryPalaceName?: string | null;
   registerStarRef: (
     palaceNumber: number,
     starName: string,
@@ -53,6 +54,7 @@ interface PalaceProps {
   handlePalaceClick: (palaceNumber: number) => void;
   handleDaXianClick: (palaceNumber: number) => void;
   handleYearClick: (palaceNumber: number, e: React.MouseEvent) => void;
+  handlePalaceNameClick: (palaceNumber: number, e: React.MouseEvent) => void;
   palaceRefs: React.MutableRefObject<(HTMLDivElement | null)[]>;
 }
 
@@ -73,10 +75,12 @@ const Palace: React.FC<PalaceProps> = ({
   delay = 0,
   monthDisplay,
   showMonths,
+  secondaryPalaceName,
   registerStarRef,
   handlePalaceClick,
   handleDaXianClick,
   handleYearClick,
+  handlePalaceNameClick,
   palaceRefs,
 }) => {
   const { t, language } = useLanguage();
@@ -413,6 +417,21 @@ const Palace: React.FC<PalaceProps> = ({
         </div>
       )}
 
+      {/* Secondary palace name - centered but at Liu Nian height */}
+      {secondaryPalaceName && (
+        <div className="absolute bottom-[55px] xs:bottom-[53px] sm:bottom-[51px] left-0 right-0 flex justify-center items-center z-20">
+          <div className={`text-2xs xs:text-xs font-medium ${
+            isSelected
+              ? "text-indigo-200"
+              : "text-indigo-600 dark:text-indigo-300"
+          }`}>
+            {language === "en" && t(`zwds.palaces.${secondaryPalaceName}`)
+              ? t(`zwds.palaces.${secondaryPalaceName}`)
+              : secondaryPalaceName}
+          </div>
+        </div>
+      )}
+
       <style>
         {`
           .pulse-button {
@@ -433,47 +452,27 @@ const Palace: React.FC<PalaceProps> = ({
         `}
       </style>
 
-      {/* Palace Tag (only shown when a palace is selected) */}
-      {palaceTag && (
-        <div className="absolute top-0.5 xs:top-1 sm:top-2 right-0.5 xs:right-1 sm:right-2 z-30">
-          <motion.div
-            key={`palace-tag-${selectedPalace}-${palaceNumber}`}
-            className={`text-2xs xs:text-xs sm:text-sm font-semibold px-1 py-0.5 rounded-md ${
-              isSelected
-                ? "bg-white/20 text-white"
-                : "bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300"
-            }`}
-            initial={{ opacity: 0, scale: 0.8, y: -5 }}
-            animate={{
-              opacity: 1,
-              scale: 1,
-              y: 0,
-              boxShadow: isSelected
-                ? [
-                    "0 0 0px rgba(255, 255, 255, 0.5)",
-                    "0 0 8px rgba(255, 255, 255, 0.3)",
-                    "0 0 0px rgba(255, 255, 255, 0.5)",
-                  ]
-                : [
-                    "0 0 0px rgba(79, 70, 229, 0.3)",
-                    "0 0 6px rgba(79, 70, 229, 0.2)",
-                    "0 0 0px rgba(79, 70, 229, 0.3)",
-                  ],
-            }}
-            transition={{
-              duration: 0.5,
-              ease: "easeOut",
-              delay: delay,
-              boxShadow: {
-                repeat: Infinity,
-                duration: 2,
-                ease: "easeInOut",
-              },
-            }}>
-            {palaceTag}
-          </motion.div>
-        </div>
-      )}
+      {/* Annual Year Tag and Da Yun Tag Container */}
+      <div className="absolute bottom-[55px] xs:bottom-[53px] sm:bottom-[51px] right-1 xs:right-2 sm:right-3 z-20 flex gap-1">
+        {showAnnualFlow && (
+          <div className={`text-2xs xs:text-xs font-semibold px-1.5 py-0.5 rounded-md ${
+            isSelected
+              ? "bg-red-400/20 text-red-200"
+              : "bg-red-100 dark:bg-red-900/40 text-red-600 dark:text-red-300"
+          }`}>
+            {language === "en" ? "Liu Nian" : "流年"}
+          </div>
+        )}
+        {isCurrentDaXian && (
+          <div className={`text-2xs xs:text-xs font-semibold px-1.5 py-0.5 rounded-md ${
+            isSelected
+              ? "bg-amber-400/20 text-amber-200"
+              : "bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-300"
+          }`}>
+            {language === "en" ? "Da Yun" : "大運"}
+          </div>
+        )}
+      </div>
 
       {/* Top left: Stars section - with max-height limiting */}
       <div className="absolute top-0.5 xs:top-1 sm:top-2 left-0.5 xs:left-1 sm:left-2 z-30 max-h-[60%] sm:max-h-[75%] overflow-y-auto hide-scrollbar">
@@ -610,28 +609,6 @@ const Palace: React.FC<PalaceProps> = ({
         </div>
       </div>
 
-      {/* Annual Year Tag and Da Yun Tag Container */}
-      <div className="absolute bottom-[55px] xs:bottom-[53px] sm:bottom-[51px] right-1 xs:right-2 sm:right-3 z-20 flex gap-1">
-        {showAnnualFlow && (
-          <div className={`text-2xs xs:text-xs font-semibold px-1.5 py-0.5 rounded-md ${
-            isSelected
-              ? "bg-red-400/20 text-red-200"
-              : "bg-red-100 dark:bg-red-900/40 text-red-600 dark:text-red-300"
-          }`}>
-            {language === "en" ? "Liu Nian" : "流年"}
-          </div>
-        )}
-        {isCurrentDaXian && (
-          <div className={`text-2xs xs:text-xs font-semibold px-1.5 py-0.5 rounded-md ${
-            isSelected
-              ? "bg-amber-400/20 text-amber-200"
-              : "bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-300"
-          }`}>
-            {language === "en" ? "Da Yun" : "大運"}
-          </div>
-        )}
-      </div>
-
       {/* Bottom section with grid layout - positioned absolute at bottom */}
       <div className="absolute bottom-0 left-0 right-0 grid grid-cols-1 sm:grid-cols-3 w-full text-3xs xs:text-2xs sm:text-xs text-zinc-800 dark:text-zinc-200 border-t border-gray-200 dark:border-gray-700 z-20">
         {/* First column (mobile and desktop) */}
@@ -664,11 +641,12 @@ const Palace: React.FC<PalaceProps> = ({
               ? t(`zwds.branches.${palace.earthlyBranch}`)
               : palace.earthlyBranch}
           </div>
-          {/* Mobile view: Palace Name */}
+          {/* Mobile view: Palace Name - Updated with click handler */}
           <div
             className={`sm:hidden ${
               isSelected ? "text-white dark:text-white" : ""
-            }`}>
+            } cursor-pointer hover:opacity-80`}
+            onClick={(e) => handlePalaceNameClick(palaceNumber, e)}>
             {language === "en" && t(`zwds.palaces.${palace.name}`)
               ? t(`zwds.palaces.${palace.name}`)
               : palace.name}
@@ -690,12 +668,14 @@ const Palace: React.FC<PalaceProps> = ({
           {renderMobileYearOrMonth()}
         </div>
 
-        {/* Second column (desktop only) */}
+        {/* Second column (desktop only) - Updated with click handler */}
         <div
           className={`hidden sm:flex flex-col items-center justify-center py-0.5 xs:py-1 sm:py-1.5 border-r border-gray-200 dark:border-gray-700 ${
             isSelected ? "text-white dark:text-white" : ""
           }`}>
-          <div className="font-medium">
+          <div 
+            className="font-medium cursor-pointer hover:opacity-80"
+            onClick={(e) => handlePalaceNameClick(palaceNumber, e)}>
             {language === "en" && t(`zwds.palaces.${palace.name}`)
               ? t(`zwds.palaces.${palace.name}`)
               : palace.name}

@@ -9,6 +9,7 @@ import Palace from "./components/Palace";
 import CenterInfo from "./components/CenterInfo";
 import TransformationLines from "./components/TransformationLines";
 import { useLanguage } from "../../context/LanguageContext";
+import { PALACE_NAMES } from "../../utils/zwds/constants";
 
 // Breakpoint constants - matching TailwindCSS defaults
 const SCREEN_SM = 640;
@@ -70,6 +71,8 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
   const [selectedDaXian, setSelectedDaXian] = useState<number | null>(null);
   // State to track whether to show months instead of years
   const [showMonths, setShowMonths] = useState<number | null>(null);
+  // State to track clicked palace name for secondary palace names
+  const [selectedPalaceName, setSelectedPalaceName] = useState<number | null>(null);
   
   const { language } = useLanguage();
   
@@ -200,6 +203,14 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
   };
 
   /**
+   * Handle palace name click
+   */
+  const handlePalaceNameClick = (palaceNumber: number, e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent palace click from triggering
+    setSelectedPalaceName(selectedPalaceName === palaceNumber ? null : palaceNumber);
+  };
+
+  /**
    * Get month for a palace based on the clicked palace number
    */
   const getMonthForPalace = (clickedPalaceNumber: number, currentPalaceNumber: number): string | null => {
@@ -235,6 +246,22 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
   };
 
   /**
+   * Get secondary palace name based on clicked palace
+   */
+  const getSecondaryPalaceName = (currentPalaceNumber: number): string | null => {
+    if (!selectedPalaceName) return null;
+
+    // Calculate how many positions to move from the clicked palace
+    let distance = currentPalaceNumber - selectedPalaceName;
+    if (distance < 0) {
+      distance += 12; // Wrap around for negative distances
+    }
+
+    // Return the palace name at this position
+    return PALACE_NAMES[distance];
+  };
+
+  /**
    * Render a single palace in the chart
    */
   const renderPalace = (palaceNumber: number) => {
@@ -262,6 +289,9 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
       }
     }
 
+    // Get the secondary palace name if a palace was clicked
+    const secondaryPalaceName = getSecondaryPalaceName(palaceNumber);
+
     return (
       <Palace 
         key={palaceNumber}
@@ -278,10 +308,12 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
         handlePalaceClick={handlePalaceClick}
         handleDaXianClick={handleDaXianClick}
         handleYearClick={handleYearClick}
+        handlePalaceNameClick={handlePalaceNameClick}
         monthDisplay={monthDisplay}
         showMonths={showMonths}
         palaceRefs={palaceRefs}
         delay={delay}
+        secondaryPalaceName={secondaryPalaceName}
       />
     );
   };
