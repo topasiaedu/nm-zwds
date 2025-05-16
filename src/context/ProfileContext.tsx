@@ -86,7 +86,10 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
 
     const handleChanges = (payload: any) => {
       if (payload.eventType === "INSERT") {
-        setProfiles((prev) => [...prev, payload.new]);
+        // Check if the profile is for the current user
+        if (payload.new.user_id === user?.id) {
+          setProfiles((prev) => [...prev, payload.new]);
+        }
       } else if (payload.eventType === "UPDATE") {
         const updatedProfiles = profiles.map((profile) =>
           profile.id === payload.new.id ? payload.new : profile
