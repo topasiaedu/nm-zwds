@@ -7,15 +7,7 @@ import ProfileForm from "../components/ProfileForm";
 import ZWDSChart from "../components/ZWDSChart";
 import { ZWDSCalculator } from "../utils/zwds/calculator";
 import { ChartInput } from "../utils/zwds/types";
-import CareerAnalysis from "../components/analysis/CareerAnalysis";
-import HealthAnalysis from "../components/analysis/HealthAnalysis";
-import FourKeyPalaceAnalysis from "../components/analysis/FourKeyPalaceAnalysis";
-import {
-  LifeAreasRadarChart,
-  LifeAreasExplanation,
-  SummaryAnalysis,
-  WatchoutAnalysis,
-} from "../components/analysis";
+
 // Import PrintableReport component and PDF export utilities
 import PrintableReport from "../components/PrintableReport";
 import { ChartData, exportChartAsPdf } from "../utils/pdfExport";
