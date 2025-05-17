@@ -698,12 +698,12 @@ const Result: React.FC = () => {
             </div>
 
             <div className="space-y-8">
-              <Overview />
+              {/* <Overview />
               <Career />
               <Health chartData={calculatedChartData} />
               <AreasOfLife chartData={calculatedChartData} />
               <FourKeyPalace />
-              <DestinyCompass />
+              <DestinyCompass /> */}
 
               {/* Summary Analysis */}
               {/* <SummaryAnalysis chartData={calculatedChartData} /> */}
