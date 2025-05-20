@@ -274,8 +274,8 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ isSelfProfile, onSuccess }) =
                 const startHour = (23 + (i * 2)) % 24;
                 const endHour = (startHour + 2) % 24;
                 const formattedStartHour = startHour.toString().padStart(2, "0");
-                const formattedEndHour = endHour.toString().padStart(2, "0");
-                const timeLabel = `${branch}【${formattedStartHour}:00~${formattedEndHour}:00】`;
+                const formattedEndHour = (endHour -1).toString().padStart(2, "0");
+                const timeLabel = `${branch}【${formattedStartHour}:00~${formattedEndHour}:59】`;
                 return (
                   <option key={branch} value={`${formattedStartHour}:00`}>
                     {timeLabel}
