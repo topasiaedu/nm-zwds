@@ -13,6 +13,26 @@ interface ProfileFormProps {
   onSuccess?: (profileId?: string) => void;
 }
 
+/**
+ * Formats a date string from YYYY-MM-DD to DD/MM/YYYY
+ * @param dateString - Date string in YYYY-MM-DD format
+ * @returns Formatted date string in DD/MM/YYYY format
+ */
+const formatDateForDisplay = (dateString: string): string => {
+  const [year, month, day] = dateString.split("-");
+  return `${day}/${month}/${year}`;
+};
+
+/**
+ * Formats a date string from DD/MM/YYYY to YYYY-MM-DD
+ * @param dateString - Date string in DD/MM/YYYY format
+ * @returns Formatted date string in YYYY-MM-DD format
+ */
+const formatDateForStorage = (dateString: string): string => {
+  const [day, month, year] = dateString.split("/");
+  return `${year}-${month}-${day}`;
+};
+
 // Chinese Earthly Branches for time periods
 const EarthlyBranches = [
   "子", // 23-1
@@ -48,16 +68,31 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ isSelfProfile, onSuccess }) =
     gender: ""
   });
   
+  const [displayDate, setDisplayDate] = useState(
+    formatDateForDisplay(formData.birthDate)
+  );
+  
   /**
    * Handle form input changes
    * @param e - Change event from form input
    */
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value
-    });
+    
+    if (name === "birthDate") {
+      // Convert display format (DD/MM/YYYY) to storage format (YYYY-MM-DD)
+      const storageDate = formatDateForStorage(value);
+      setFormData({
+        ...formData,
+        [name]: storageDate
+      });
+      setDisplayDate(value);
+    } else {
+      setFormData({
+        ...formData,
+        [name]: value
+      });
+    }
   };
   
   /**
@@ -163,11 +198,13 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ isSelfProfile, onSuccess }) =
               {t("form.birthDate")}
             </label>
             <input
-              type="date"
+              type="text"
               id="birthDate"
               name="birthDate"
-              value={formData.birthDate}
+              value={displayDate}
               onChange={handleChange}
+              placeholder="DD/MM/YYYY"
+              pattern="\d{2}/\d{2}/\d{4}"
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
               required
             />

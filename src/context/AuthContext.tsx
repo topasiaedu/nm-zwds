@@ -100,7 +100,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
         setUser(session?.user ?? null);
 
         if (event === "SIGNED_OUT") {
-          navigate("/authentication/sign-in");
+          // Only redirect to sign-in if not on a public route
+          const currentPath = window.location.pathname;
+          const isPublicRoute = currentPath.startsWith("/free-") || 
+                              currentPath.startsWith("/authentication/");
+          
+          if (!isPublicRoute) {
+            navigate("/authentication/sign-in");
+          }
         }
       }
     );
