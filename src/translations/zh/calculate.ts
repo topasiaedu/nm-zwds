@@ -37,6 +37,8 @@ const calculate = {
     createOtherProfile: "创建档案",
     selectedDate: "选择日期",
     selectTime: "选择时间",
+    dateFormatHint: "请按照日/月/年格式输入日期（例如：31/12/1990）",
+    invalidDateFormat: "日期格式无效。请使用日/月/年格式"
   },
 };
 

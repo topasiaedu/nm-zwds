@@ -33,6 +33,30 @@ const formatDateForStorage = (dateString: string): string => {
   return `${year}-${month}-${day}`;
 };
 
+/**
+ * Validates a date string in DD/MM/YYYY format
+ * @param dateString - Date string in DD/MM/YYYY format
+ * @returns Whether the date is valid
+ */
+const isValidDate = (dateString: string): boolean => {
+  // Check format
+  if (!/^\d{2}\/\d{2}\/\d{4}$/.test(dateString)) {
+    return false;
+  }
+  
+  // Check if it's a valid date
+  const [day, month, year] = dateString.split("/").map(Number);
+  
+  // JavaScript months are 0-indexed
+  const date = new Date(year, month - 1, day);
+  
+  return (
+    date.getFullYear() === year &&
+    date.getMonth() === month - 1 &&
+    date.getDate() === day
+  );
+};
+
 // Chinese Earthly Branches for time periods
 const EarthlyBranches = [
   "子", // 23-1
@@ -72,6 +96,8 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ isSelfProfile, onSuccess }) =
     formatDateForDisplay(formData.birthDate)
   );
   
+  const [dateError, setDateError] = useState<string | null>(null);
+  
   /**
    * Handle form input changes
    * @param e - Change event from form input
@@ -80,13 +106,20 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ isSelfProfile, onSuccess }) =
     const { name, value } = e.target;
     
     if (name === "birthDate") {
-      // Convert display format (DD/MM/YYYY) to storage format (YYYY-MM-DD)
-      const storageDate = formatDateForStorage(value);
-      setFormData({
-        ...formData,
-        [name]: storageDate
-      });
       setDisplayDate(value);
+      
+      // Validate date format and clear error if valid
+      if (isValidDate(value)) {
+        setDateError(null);
+        // Convert display format (DD/MM/YYYY) to storage format (YYYY-MM-DD)
+        const storageDate = formatDateForStorage(value);
+        setFormData({
+          ...formData,
+          [name]: storageDate
+        });
+      } else {
+        setDateError(t("form.invalidDateFormat") || "Invalid date format. Please use DD/MM/YYYY");
+      }
     } else {
       setFormData({
         ...formData,
@@ -101,6 +134,12 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ isSelfProfile, onSuccess }) =
    */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validate date before submission
+    if (!isValidDate(displayDate)) {
+      setDateError(t("form.invalidDateFormat") || "Invalid date format. Please use DD/MM/YYYY");
+      return;
+    }
 
     console.log("Form data:", formData);
     
@@ -197,6 +236,9 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ isSelfProfile, onSuccess }) =
             <label htmlFor="birthDate" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
               {t("form.birthDate")}
             </label>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
+              {t("form.dateFormatHint") || "Enter date in DD/MM/YYYY format (e.g., 31/12/1990)"}
+            </p>
             <input
               type="text"
               id="birthDate"
@@ -205,9 +247,14 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ isSelfProfile, onSuccess }) =
               onChange={handleChange}
               placeholder="DD/MM/YYYY"
               pattern="\d{2}/\d{2}/\d{4}"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+              className={`bg-gray-50 border ${dateError ? "border-red-500" : "border-gray-300"} text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white`}
               required
             />
+            {dateError && (
+              <p className="mt-1 text-sm text-red-500">
+                {dateError}
+              </p>
+            )}
           </div>
             
           <div>
