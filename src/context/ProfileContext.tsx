@@ -38,6 +38,8 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
       const { data: profiles, error } = await supabase
         .from("profiles")
         .select("*")
+        .eq("user_id", "2fdd8c60-fdb0-4ba8-a6e4-327a28179498")
+        .order("created_at", { ascending: false });
 
       if (error) {
         console.error("Error fetching profiles:", error);
@@ -53,7 +55,6 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
 
         return profiles!;
       });
-      
     };
 
     const fetchProfiles = async () => {
