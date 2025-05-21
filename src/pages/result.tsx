@@ -617,7 +617,7 @@ const Result: React.FC = () => {
                   </div>
 
                   <div className="mt-6">
-                    <button
+                    {/* <button
                       onClick={handleExport}
                       disabled={isExporting}
                       className="w-full px-6 py-3 text-white font-medium rounded-lg transition-all 
@@ -649,7 +649,7 @@ const Result: React.FC = () => {
                           {t("result.exportPdf") || "导出专业PDF报告"}
                         </>
                       )}
-                    </button>
+                    </button> */}
                   </div>
 
                   {isSelfProfile && (
