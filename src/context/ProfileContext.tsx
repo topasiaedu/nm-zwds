@@ -46,7 +46,6 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
         return;
       }
 
-      console.log("Profiles Amount:", profiles?.length);
 
       setProfiles((prev) => {
         if (isEqual(prev, profiles)) {
