@@ -67,7 +67,10 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
         return;
       }
 
-      console.log("Profiles Amount:", profiles?.length);
+      // If profile length is more than 4k, console log out a warning message with the length and the user id
+      if (profiles?.length > 4000) {
+        console.warn("Warning: Profile length is more than 4k, user id:", user?.id, "Profile length:", profiles?.length);
+      }
 
       setProfiles((prev) => {
         if (isEqual(prev, profiles)) {

@@ -332,9 +332,9 @@ const Palace: React.FC<PalaceProps> = ({
         }
       : isHighlighted
       ? { 
-          boxShadow: "0 0 0 3px rgba(239, 68, 68, 0.8)",
-          borderColor: "rgb(239, 68, 68)",
-          borderWidth: "2px"
+          borderColor: "#ef4444", // solid red
+          borderWidth: "4px",
+          borderStyle: "solid"
         }
       : { boxShadow: "none" }), // Explicitly reset boxShadow when not selected or target
     transition: "all 0.3s ease",
@@ -421,9 +421,8 @@ const Palace: React.FC<PalaceProps> = ({
           ? "bg-indigo-50/80 dark:bg-indigo-900/30 text-white"
           : isCurrentDaXian && !isSelected
           ? "bg-gradient-to-br from-yellow-100 to-amber-300 dark:from-yellow-400/70 dark:to-amber-400/60"
-          : isHighlighted
-          ? "bg-red-50/50 dark:bg-red-900/20"
-          : "bg-white dark:bg-gray-800"
+          : 
+           "bg-white dark:bg-gray-800"
       } flex flex-col rounded-lg shadow-sm cursor-pointer ${
         isSelected
           ? "ring-1 sm:ring-2 ring-indigo-500"

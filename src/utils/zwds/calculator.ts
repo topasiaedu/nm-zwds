@@ -806,9 +806,7 @@ export class ZWDSCalculator {
         }
       
         const palace = this.chartData.palaces[palaceIndex];
-      
-        console.log("palaceIndex", palaceIndex);
-      
+            
         // Calculate age range
         const ageOffset = i * 10;
         palace.majorLimit = {
@@ -953,9 +951,6 @@ export class ZWDSCalculator {
           palaceName as keyof typeof OPPOSITE_PALACE_INFLUENCE
         ];
 
-      console.log("oppositePalaceName", oppositePalaceName);
-      console.log("palaceName", palaceName);
-
       if (!oppositePalaceName) {
         continue; // Skip if no opposite palace defined
       }
@@ -971,8 +966,6 @@ export class ZWDSCalculator {
 
       // Get transformation rules for this palace's heavenly stem
       const transformations = FOUR_TRANSFORMATIONS[heavenlyStem];
-
-      console.log("transformations", transformations);
 
       if (!transformations) {
         continue; // Skip if no transformation rules for this heavenly stem
