@@ -579,15 +579,7 @@ const Palace: React.FC<PalaceProps> = ({
                     {word}
                   </span>
                 ))}
-              {star.selfInfluence && (
-                <span className="mb-0.5">
-                  <FaSyncAlt
-                    className={`${getTransformationColor(
-                      star.selfInfluence[0]
-                    )} text-3xs xs:text-2xs sm:text-xs`}
-                  />
-                </span>
-              )}
+    
               {star.transformations?.map((transformation, tidx) => (
                 <span
                   key={tidx}
@@ -618,6 +610,15 @@ const Palace: React.FC<PalaceProps> = ({
                     : transformation}
                 </span>
               ))}
+                        {star.selfInfluence && (
+                <span className="mb-0.5">
+                  <FaSyncAlt
+                    className={`${getTransformationColor(
+                      star.selfInfluence[0]
+                    )} text-3xs xs:text-2xs sm:text-xs`}
+                  />
+                </span>
+              )}
             </div>
           ))}
 
@@ -643,15 +644,7 @@ const Palace: React.FC<PalaceProps> = ({
                       {word}
                     </span>
                   ))}
-                {star.selfInfluence && (
-                  <span className="mb-0.5">
-                    <FaSyncAlt
-                      className={`${getTransformationColor(
-                        star.selfInfluence[0]
-                      )} text-3xs xs:text-2xs sm:text-xs`}
-                    />
-                  </span>
-                )}
+
                 {star.transformations?.map((transformation, idx) => (
                   <span
                     key={idx}
@@ -684,6 +677,15 @@ const Palace: React.FC<PalaceProps> = ({
                       : transformation}
                   </span>
                 ))}
+                                {star.selfInfluence && (
+                  <span className="mb-0.5">
+                    <FaSyncAlt
+                      className={`${getTransformationColor(
+                        star.selfInfluence[0]
+                      )} text-3xs xs:text-2xs sm:text-xs`}
+                    />
+                  </span>
+                )}
               </div>
             ))}
         </div>
