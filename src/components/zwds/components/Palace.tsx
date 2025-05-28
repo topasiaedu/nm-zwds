@@ -38,24 +38,19 @@ interface PalaceProps {
   isTargetPalace: boolean;
   transformationType: string | null;
   selectedPalace: number | null;
-  targetYear?: number;
-  birthYear?: number;
-  startingPalaceNumber?: number; // Palace number where annual flow starts
-  palaceTag?: string | null; // Tag to display at top right corner
-  delay?: number; // Animation delay for staggered entrance
-  monthDisplay?: string | null; // Month to display instead of year
-  showMonths?: number | null; // Palace number that was clicked to show months
-  secondaryPalaceName?: string | null;
-  registerStarRef: (
-    palaceNumber: number,
-    starName: string,
-    element: HTMLDivElement | null
-  ) => void;
+  birthYear: number;
+  targetYear: number;
+  palaceTag: string | null;
+  registerStarRef: (palaceNumber: number, starName: string, element: HTMLDivElement | null) => void;
   handlePalaceClick: (palaceNumber: number) => void;
   handleDaXianClick: (palaceNumber: number) => void;
   handleYearClick: (palaceNumber: number, e: React.MouseEvent) => void;
   handlePalaceNameClick: (palaceNumber: number, e: React.MouseEvent) => void;
+  monthDisplay: string | null;
+  showMonths: number | null;
   palaceRefs: React.MutableRefObject<(HTMLDivElement | null)[]>;
+  delay: number;
+  secondaryPalaceName: string | null;
 }
 
 /**
@@ -68,22 +63,52 @@ const Palace: React.FC<PalaceProps> = ({
   isTargetPalace,
   transformationType,
   selectedPalace,
-  targetYear = new Date().getFullYear(),
-  birthYear = new Date().getFullYear() - 30,
-  startingPalaceNumber = 1, // Default to palace 1 if not provided
+  birthYear,
+  targetYear,
   palaceTag,
-  delay = 0,
-  monthDisplay,
-  showMonths,
-  secondaryPalaceName,
   registerStarRef,
   handlePalaceClick,
   handleDaXianClick,
   handleYearClick,
   handlePalaceNameClick,
+  monthDisplay,
+  showMonths,
   palaceRefs,
+  delay,
+  secondaryPalaceName,
 }) => {
   const { t, language } = useLanguage();
+  const clickTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
+  const [isHighlighted, setIsHighlighted] = React.useState(false);
+
+  // Handle click with timing to support both single and double clicks
+  const handleClick = () => {
+    if (clickTimeoutRef.current === null) {
+      // First click
+      clickTimeoutRef.current = setTimeout(() => {
+        // Single click
+        console.log("Single click detected");
+        handlePalaceClick(palaceNumber);
+        clickTimeoutRef.current = null;
+      }, 250); // 250ms threshold for double click
+    } else {
+      // Second click within threshold
+      console.log("Double click detected");
+      clearTimeout(clickTimeoutRef.current);
+      clickTimeoutRef.current = null;
+      // Double click - toggle highlight
+      setIsHighlighted(prev => !prev);
+    }
+  };
+
+  // Cleanup timeout on unmount
+  React.useEffect(() => {
+    return () => {
+      if (clickTimeoutRef.current) {
+        clearTimeout(clickTimeoutRef.current);
+      }
+    };
+  }, []);
 
   // Get the appropriate zodiac icon based on earthly branch
   const ZodiacIcon = getZodiacIcon(palace.earthlyBranch);
@@ -109,12 +134,12 @@ const Palace: React.FC<PalaceProps> = ({
   // Calculate the year to display for this palace
   const calculateYearForPalace = (): number => {
     // If this is the starting palace (with annual flow), return the target year
-    if (palaceNumber === startingPalaceNumber) {
+    if (palaceNumber === 1) {
       return targetYear;
     }
 
     // Calculate how many positions away from the starting palace
-    let distance = palaceNumber - startingPalaceNumber;
+    let distance = palaceNumber - 1;
     if (distance <= 0) {
       distance += 12; // Wrap around for a complete circle of 12 palaces
     }
@@ -305,6 +330,12 @@ const Palace: React.FC<PalaceProps> = ({
       ? {
           /* boxShadow already set in daXianStyle */
         }
+      : isHighlighted
+      ? { 
+          boxShadow: "0 0 0 3px rgba(239, 68, 68, 0.8)",
+          borderColor: "rgb(239, 68, 68)",
+          borderWidth: "2px"
+        }
       : { boxShadow: "none" }), // Explicitly reset boxShadow when not selected or target
     transition: "all 0.3s ease",
   };
@@ -390,6 +421,8 @@ const Palace: React.FC<PalaceProps> = ({
           ? "bg-indigo-50/80 dark:bg-indigo-900/30 text-white"
           : isCurrentDaXian && !isSelected
           ? "bg-gradient-to-br from-yellow-100 to-amber-300 dark:from-yellow-400/70 dark:to-amber-400/60"
+          : isHighlighted
+          ? "bg-red-50/50 dark:bg-red-900/20"
           : "bg-white dark:bg-gray-800"
       } flex flex-col rounded-lg shadow-sm cursor-pointer ${
         isSelected
@@ -398,6 +431,8 @@ const Palace: React.FC<PalaceProps> = ({
           ? `ring-1 sm:ring-1 ${transformationBorderColor}`
           : isCurrentDaXian && !isSelected
           ? "ring-2 ring-amber-400/80 dark:ring-amber-400/80"
+          : isHighlighted
+          ? "ring-2 ring-red-500 dark:ring-red-500"
           : ""
       }`}
       variants={palaceVariants}
@@ -405,8 +440,12 @@ const Palace: React.FC<PalaceProps> = ({
       animate={isSelected ? "pulse" : isTargetPalace ? "target" : "visible"}
       initial="hidden"
       style={combinedStyle}
-      onClick={() => handlePalaceClick(palaceNumber)}
-      ref={(el) => (palaceRefs.current[palaceNumber - 1] = el)}>
+      onClick={handleClick}
+      ref={(el) => {
+        if (palaceRefs.current) {
+          palaceRefs.current[palaceNumber - 1] = el;
+        }
+      }}>
       {/* Zodiac icon background */}
       {ZodiacIcon && (
         <div className="absolute inset-0 flex sm:items-center sm:justify-center pointer-events-none opacity-[0.07] dark:opacity-[0.15] z-10">

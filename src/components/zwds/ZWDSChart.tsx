@@ -195,18 +195,18 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
   };
 
   /**
-   * Handle year or age click to toggle month display
+   * Handle year click to show months
    */
   const handleYearClick = (palaceNumber: number, e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent palace click from triggering
+    e.stopPropagation();
     setShowMonths(showMonths === palaceNumber ? null : palaceNumber);
   };
 
   /**
-   * Handle palace name click
+   * Handle palace name click to show secondary palace name
    */
   const handlePalaceNameClick = (palaceNumber: number, e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent palace click from triggering
+    e.stopPropagation();
     setSelectedPalaceName(selectedPalaceName === palaceNumber ? null : palaceNumber);
   };
 
@@ -252,7 +252,7 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
     if (!selectedPalaceName) return null;
 
     // Calculate how many positions to move from the clicked palace
-    let distance = currentPalaceNumber - selectedPalaceName;
+    let distance = selectedPalaceName - currentPalaceNumber;
     if (distance < 0) {
       distance += 12; // Wrap around for negative distances
     }
