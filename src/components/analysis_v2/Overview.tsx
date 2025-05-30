@@ -1,5 +1,7 @@
 import React from "react";
 import { Badge } from "flowbite-react";
+import { ChartData } from "../../utils/zwds/types";
+import { analyzeOverview, getDebugInfo, OverviewAnalysisResult } from "../../utils/zwds/analysis/overviewAnalysis";
 
 /**
  * Type definition for a feature item to be displayed as a badge
@@ -19,44 +21,38 @@ type FeaturesData = {
 };
 
 /**
+ * Props for the Overview component
+ */
+type OverviewProps = {
+  chartData: ChartData;
+};
+
+/**
  * Overview component displaying personality analysis in a two-column layout
  */
-const Overview: React.FC = () => {
-  // Mock data for the features section
+const Overview: React.FC<OverviewProps> = ({ chartData }) => {
+  // Analyze the chart data to get real data
+  const analysisResult: OverviewAnalysisResult = analyzeOverview(chartData);
+  
+  // For debugging purposes (can be removed in production)
+  const debugInfo = getDebugInfo(chartData);
+  console.log("Overview Debug Info:", debugInfo);
+  console.log("Analysis Result:", analysisResult);
+
+  // Transform analysis results into the component's expected format
   const featuresData: FeaturesData = {
-    strengths: [
-      { id: "strength-1", label: "Dares to speak the truth" },
-      { id: "strength-2", label: "Clear logic" },
-      { id: "strength-3", label: "Strong observational skills" },
-      { id: "strength-4", label: "Impactful expression" },
-    ],
-    weaknesses: [
-      { id: "weakness-1", label: "Can appear too critical" },
-      { id: "weakness-2", label: "May struggle with tact" },
-      { id: "weakness-3", label: "Risk of alienating others" },
-      { id: "weakness-4", label: "Potential for overthinking" },
-    ],
-    tips: [
-      {
-        id: "tip-1",
-        label:
-          "You're not a master of arguments—you're an antidote to toxic language",
-      },
-      {
-        id: "tip-2",
-        label:
-          "Learn to price yourself through altruism, so your value can be seen",
-      },
-      {
-        id: "tip-3",
-        label: "Build a team system / Establish a leadership-profit equation",
-      },
-      {
-        id: "tip-4",
-        label:
-          "Define your professional niche / Practice expressing ambition with grace",
-      },
-    ],
+    strengths: analysisResult.strengths.map((strength, index) => ({
+      id: `strength-${index + 1}`,
+      label: strength,
+    })),
+    weaknesses: analysisResult.weaknesses.map((weakness, index) => ({
+      id: `weakness-${index + 1}`,
+      label: weakness,
+    })),
+    tips: analysisResult.quotes.map((quote, index) => ({
+      id: `tip-${index + 1}`,
+      label: quote,
+    })),
   };
 
   /**
@@ -88,35 +84,30 @@ const Overview: React.FC = () => {
     ));
   };
 
+  /**
+   * Renders description paragraphs from analysis
+   */
+  const renderDescriptions = (): JSX.Element[] => {
+    return analysisResult.descriptions.map((description, index) => (
+      <p key={`description-${index}`} className="mb-4 text-gray-700 dark:text-gray-300">
+        {description}
+      </p>
+    ));
+  };
+
   return (
     <div className="p-6 dark:bg-gray-900">
       <div className="flex flex-col md:flex-row">
         {/* Left Column - Description Text */}
         <div className="md:w-1/2 p-4">
           <div className="rounded-lg shadow-sm">
-            <p className="mb-4 text-gray-700 dark:text-gray-300">
-              You are a natural thinker, skilled at dissecting the logic and
-              truth behind things, with the sharp insight to see through
-              appearances. You&apos;re not easily swayed by popular opinion, and
-              you&apos;re unafraid to voice your genuine judgments. Your
-              questions often cut straight to the point, and your analyses tend
-              to offer unique perspectives. While others may still be distracted
-              by surface phenomena, you&apos;ve already begun to qstion and dig
-              deeper.
-            </p>
-            <p className="text-gray-700 dark:text-gray-300">
-              You have a strong need to express yourself and the ability to
-              speak on behalf of the silent majority. You thrive in areas that
-              require judgment, discussion, dialectical thinking, and public
-              communication — such as media, law, policy analysis, and public
-              communication. Your words carry weight; they are powerful tools to
-              expose falsehoods and challenge blind conformity. However,
-              it&apos;s important for you to learn when and how to speak, so
-              that your sharpness becomes a strength rather than a source of
-              conflict. When you channel your critical mindset into constructive
-              language, you become a key force in changing systems and elevating
-              collective awareness.
-            </p>
+            {analysisResult.descriptions.length > 0 ? (
+              renderDescriptions()
+            ) : (
+              <p className="mb-4 text-gray-700 dark:text-gray-300">
+                No analysis data available for the stars in your life palace. Please ensure your chart data is properly calculated.
+              </p>
+            )}
           </div>
         </div>
 
@@ -126,29 +117,52 @@ const Overview: React.FC = () => {
         {/* Right Column - Features (Strengths, Weaknesses, Tips) */}
         <div className="md:w-1/2 p-4">
           <div className="rounded-lg shadow-sm">
+            {/* Strengths Section */}
             <div className="mb-6">
               <h5 className="text-lg font-bold mb-3 dark:text-white">
                 Strengths
               </h5>
               <div className="flex flex-wrap">
-                {renderFeatureItems(featuresData.strengths, "success")}
+                {featuresData.strengths.length > 0 ? (
+                  renderFeatureItems(featuresData.strengths, "success")
+                ) : (
+                  <p className="text-gray-500 dark:text-gray-400 text-sm">
+                    No strength data available
+                  </p>
+                )}
               </div>
             </div>
 
+            {/* Weaknesses Section */}
             <div className="mb-6">
               <h5 className="text-lg font-bold mb-3 dark:text-white">
                 Potential Challenges
               </h5>
               <div className="flex flex-wrap">
-                {renderFeatureItems(featuresData.weaknesses, "failure")}
+                {featuresData.weaknesses.length > 0 ? (
+                  renderFeatureItems(featuresData.weaknesses, "failure")
+                ) : (
+                  <p className="text-gray-500 dark:text-gray-400 text-sm">
+                    No challenge data available
+                  </p>
+                )}
               </div>
             </div>
 
+            {/* Tips Section */}
             <div>
-              <h5 className="text-lg font-bold mb-4 pb-2 dark:text-white ">
+              <h5 className="text-lg font-bold mb-4 pb-2 dark:text-white">
                 Growth Tips
               </h5>
-              <div>{renderTipItems(featuresData.tips)}</div>
+              <div>
+                {featuresData.tips.length > 0 ? (
+                  renderTipItems(featuresData.tips)
+                ) : (
+                  <p className="text-gray-500 dark:text-gray-400 text-sm">
+                    No tip data available
+                  </p>
+                )}
+              </div>
             </div>
           </div>
         </div>

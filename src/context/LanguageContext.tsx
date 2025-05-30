@@ -47,21 +47,21 @@ interface LanguageProviderProps {
  * Provider component for language context
  */
 export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) => {
-  // Always return English as the default language
+  // Always force English language
   const getBrowserLanguage = (): Language => {
     return "en";
   };
 
-  const [language, setLanguage] = useState<Language>(
-    (localStorage.getItem("language") as Language) || getBrowserLanguage()
-  );
+  // Force language to always be English, ignore localStorage
+  const [language, setLanguage] = useState<Language>("en");
 
   /**
-   * Change the current language
+   * Change the current language (disabled - always stays English)
    */
   const changeLanguage = (lang: Language): void => {
-    setLanguage(lang);
-    localStorage.setItem("language", lang);
+    // Force language to always stay English
+    setLanguage("en");
+    localStorage.setItem("language", "en");
   };
 
   /**

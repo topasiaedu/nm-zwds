@@ -1,14 +1,19 @@
 import React, { useState, useEffect, useRef } from "react";
-import { analyzeHealth, getStarsInPalace } from "../../utils/zwds/analysis";
+import {
+  analyzeHealthFromChart,
+  HealthAnalysisResult,
+} from "../../utils/zwds/health_analyzer";
 import { useLanguage } from "../../context/LanguageContext";
 import AnimatedWrapper from "../analysis/AnimatedWrapper";
 import { motion } from "framer-motion";
 import maleSvgContent from "../../assets/male-svg";
+import { ChartData } from "../../utils/zwds/types";
+
 /**
  * Props interface for the HealthAnalysis component
  */
 interface HealthAnalysisProps {
-  chartData: any;
+  chartData: ChartData;
 }
 
 /**
@@ -63,6 +68,9 @@ const bodyPartMapping: Record<string, string[]> = {
     "lungs",
   ],
   膝盖: ["knee_1", "knee_2"],
+  骨: ["spine", "ribs"],
+  血液: ["heart", "lungs"],
+  筋骨: ["left-arm", "right-arm", "left-leg", "right-leg"],
 };
 
 /**
@@ -169,10 +177,10 @@ const HumanBodySVG: React.FC<{
  */
 const Health: React.FC<HealthAnalysisProps> = ({ chartData }) => {
   const { t, language } = useLanguage();
-  const [affectedBodyParts, setAffectedBodyParts] = useState<string[]>([]);
-  const [starsInHealthPalace, setStarsInHealthPalace] = useState<string[]>([]);
+  const [healthAnalysis, setHealthAnalysis] =
+    useState<HealthAnalysisResult | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
   const [expandedTips, setExpandedTips] = useState<Record<number, boolean>>({});
 
   const toggleTip = (index: number) => {
@@ -185,36 +193,28 @@ const Health: React.FC<HealthAnalysisProps> = ({ chartData }) => {
   useEffect(() => {
     if (chartData) {
       try {
-        // TEMPORARILY HARDCODED
-        // Get affected body parts
-        // const bodyParts = analyzeHealth(chartData);
-        
-        // Get stars in the health palace
-        const stars = getStarsInPalace(chartData, "疾厄");
+        setLoading(true);
+        setError("");
 
-        // Check if we have any data
-        if (stars.length === 0) {
-          // Use sample data for testing if no real data is available
-          // setAffectedBodyParts(["头", "眼", "心脏", "肝脏", "神经系统"]);
-          setAffectedBodyParts(["胃", "膝盖"]);
-          setStarsInHealthPalace(["太阳", "武曲", "廉贞"]);
-          setError(true);
-        } else {
-          // setAffectedBodyParts(bodyParts);
-          setAffectedBodyParts(["胃", "膝盖"]);
-          setStarsInHealthPalace(stars.map((star) => star.star));
-          setError(false);
-        }
+        // Analyze health using the new utility
+        const analysisResult = analyzeHealthFromChart(chartData);
+        setHealthAnalysis(analysisResult);
 
-        setLoading(false);
+        console.log("Health Analysis Result:", analysisResult);
       } catch (error) {
         console.error("Error analyzing health data:", error);
+        setError(
+          error instanceof Error ? error.message : "Unknown error occurred"
+        );
 
-        // Use sample data in case of error
-        // setAffectedBodyParts(["头", "眼", "心脏", "肝脏", "神经系统"]);
-        setAffectedBodyParts(["胃", "膝盖"]);
-        setStarsInHealthPalace(["太阳", "武曲", "廉贞"]);
-        setError(true);
+        // Set empty result instead of sample data
+        setHealthAnalysis({
+          affectedBodyParts: [],
+          healthTips: [],
+          starsInHealthPalace: [],
+          usedParentsPalace: false,
+        });
+      } finally {
         setLoading(false);
       }
     }
@@ -224,6 +224,29 @@ const Health: React.FC<HealthAnalysisProps> = ({ chartData }) => {
     return (
       <div className="flex items-center justify-center p-8">
         <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-purple-500"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="p-6 dark:bg-gray-900">
+        <div className="text-center py-8">
+          <svg
+            className="mx-auto h-12 w-12 text-red-400"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg">
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+            />
+          </svg>
+          <p className="mt-2 text-red-500 dark:text-red-400">Error: {error}</p>
+        </div>
       </div>
     );
   }
@@ -240,111 +263,61 @@ const Health: React.FC<HealthAnalysisProps> = ({ chartData }) => {
 
       {/* Subtitle */}
       <p className="text-lg mb-6 dark:text-white text-center italic">
-        Decode your body&apos;s energetic blueprint — where vitality flows and where
-        it breaks down.
+        Decode your body&apos;s energetic blueprint — where vitality flows and
+        where it breaks down.
       </p>
+
       <div className="p-6 dark:bg-gray-900">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Left column - Health interpretations (swapped from right) */}
+          {/* Left column - Health interpretations */}
           <div className="flex flex-col space-y-6">
-            {affectedBodyParts.length > 0 ? (
+            {healthAnalysis && healthAnalysis.affectedBodyParts.length > 0 ? (
               <>
                 <div className="space-y-3">
                   <h3 className="text-xl font-semibold mb-4 text-gray-800 dark:text-white">
-                    {t("analysis.health.areasOfConcern") ||
-                      "Areas of Health Concern"}
+                    Areas of Health Concern
                   </h3>
-                  {/* Commented out dynamic rendering from affectedBodyParts
-                  {affectedBodyParts.map((bodyPart, index) => (
-                    <div
-                      key={index}
-                      className="flex items-center p-3 rounded-lg border-l-4 border-red-500 bg-red-50 dark:bg-red-900/10">
-                      <span className="w-3 h-3 rounded-full bg-red-500 mr-3 animate-pulse"></span>
-                      <span className="text-gray-800 dark:text-gray-200 font-medium">
-                        {t(`analysis.health.${bodyPart}`)}
-                      </span>
-                    </div>
-                  ))} */}
 
-                  {/* Temporarily hardcoded to stomach and knees */}
-                  {affectedBodyParts.map((bodyPart, index) => (
+                  {healthAnalysis.affectedBodyParts.map((bodyPart, index) => (
                     <div
                       key={index}
                       className="flex items-center p-3 rounded-lg border-l-4 border-red-500 bg-red-50 dark:bg-red-900/10">
-                      <span className="w-3 h-3 rounded-full bg-red-500 mr-3 animate-pulse"></span>
+                      <span className="w-3 h-3 rounded-full bg-red-500 mr-3"></span>
                       <span className="text-gray-800 dark:text-gray-200 font-medium">
-                        {bodyPart === "胃" ? "Stomach" : bodyPart === "膝盖" ? "Knee" : t(`analysis.health.${bodyPart}`)}
+                        {healthAnalysis.healthTips.find(
+                          (tip) => tip.bodyPart === bodyPart
+                        )?.englishName || bodyPart}
                       </span>
                     </div>
                   ))}
-
-                  {/* Hardcoded examples - commented out
-                  <div className="flex items-center p-3 rounded-lg border-l-4 border-red-500 bg-red-50 dark:bg-red-900/10">
-                    <span className="w-3 h-3 rounded-full bg-red-500 mr-3 animate-pulse"></span>
-                    <span className="text-gray-800 dark:text-gray-200 font-medium">
-                      Stomach
-                    </span>
-                  </div>
-                  <div className="flex items-center p-3 rounded-lg border-l-4 border-red-500 bg-red-50 dark:bg-red-900/10">
-                    <span className="w-3 h-3 rounded-full bg-red-500 mr-3 animate-pulse"></span>
-                    <span className="text-gray-800 dark:text-gray-200 font-medium">
-                      Knee
-                    </span>
-                  </div>
-                  */}
                 </div>
 
-                {/* Modified Tips Section with individual See More functionality */}
+                {/* Health Tips Section */}
                 <div className="mt-8">
                   <h3 className="text-xl font-semibold mb-4 text-gray-800 dark:text-white">
                     Health Tips
                   </h3>
                   <div className="space-y-4">
-                    <div className="p-4 border-l-4 border-green-500 bg-green-50 dark:bg-green-900/10 rounded-r">
+                    {healthAnalysis.healthTips.map((tip, index) => (
                       <div
-                        className={`${!expandedTips[0] ? "line-clamp-4" : ""}`}>
-                        <p className="text-gray-700 dark:text-gray-300">
-                          The stomach is where you digest not just food, but the
-                          pace of life and external pressure. The more you
-                          suppress your emotions, the more likely your stomach
-                          will protest—bloating, acid, and pain are often not
-                          caused by what you eat, but by what&apos;s weighing on
-                          your heart. Yes, regular meals and mindful chewing
-                          matter, but what matters more is learning to express
-                          discomfort, handle stress, and stop forcing yourself
-                          to swallow too much. When you start honoring your own
-                          rhythm, your stomach will settle too—helping you face
-                          the world with greater strength.
-                        </p>
+                        key={index}
+                        className="p-4 border-l-4 border-green-500 bg-green-50 dark:bg-green-900/10 rounded-r">
+                        <div
+                          className={`${
+                            !expandedTips[index] ? "line-clamp-4" : ""
+                          }`}>
+                          <p className="text-gray-700 dark:text-gray-300">
+                            {tip.description}
+                          </p>
+                        </div>
+
+                        <button
+                          onClick={() => toggleTip(index)}
+                          className="mt-2 text-sm font-medium text-purple-600 hover:text-purple-700 dark:text-purple-400 dark:hover:text-purple-300 transition-colors duration-200">
+                          {expandedTips[index] ? "Show Less" : "See More"}
+                        </button>
                       </div>
-                      <button
-                        onClick={() => toggleTip(0)}
-                        className="mt-2 text-sm font-medium text-purple-600 hover:text-purple-700 dark:text-purple-400 dark:hover:text-purple-300 transition-colors duration-200">
-                        {expandedTips[0] ? "Show Less" : "See More"}
-                      </button>
-                    </div>
-                    <div className="p-4 border-l-4 border-blue-500 bg-blue-50 dark:bg-blue-900/10 rounded-r">
-                      <div
-                        className={`${!expandedTips[1] ? "line-clamp-4" : ""}`}>
-                        <p className="text-gray-700 dark:text-gray-300">
-                          Your knees carry your direction and drive—they
-                          symbolize your willingness to move forward. When you
-                          feel hesitant, fear change, or silently endure
-                          pressure without asking for help, your knees are
-                          likely to show signs of strain. Stop forcing yourself
-                          to push through everything alone. Taking proper rest,
-                          strengthening your lower body, and keeping warm can
-                          help you walk farther and more steadily. True support
-                          comes from allowing yourself to soften, not from
-                          constantly pretending to be strong.
-                        </p>
-                      </div>
-                      <button
-                        onClick={() => toggleTip(1)}
-                        className="mt-2 text-sm font-medium text-purple-600 hover:text-purple-700 dark:text-purple-400 dark:hover:text-purple-300 transition-colors duration-200">
-                        {expandedTips[1] ? "Show Less" : "See More"}
-                      </button>
-                    </div>
+                    ))}
                   </div>
                 </div>
               </>
@@ -364,13 +337,21 @@ const Health: React.FC<HealthAnalysisProps> = ({ chartData }) => {
                   />
                 </svg>
                 <p className="mt-2 text-gray-500 dark:text-gray-400">
-                  {t("analysis.health.noData")}
+                  No health concerns detected in your chart.
                 </p>
+                {healthAnalysis && (
+                  <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">
+                    Stars in palace:{" "}
+                    {healthAnalysis.starsInHealthPalace.length === 0
+                      ? "None"
+                      : healthAnalysis.starsInHealthPalace.join(", ")}
+                  </p>
+                )}
               </div>
             )}
           </div>
 
-          {/* Right column - Interactive human body (swapped from left) */}
+          {/* Right column - Interactive human body */}
           <motion.div
             className="relative flex items-center justify-center h-[500px]"
             initial={{ opacity: 0, scale: 0.9 }}
@@ -378,7 +359,7 @@ const Health: React.FC<HealthAnalysisProps> = ({ chartData }) => {
             transition={{ duration: 0.5, delay: 0.7 }}>
             <div className="absolute inset-0 bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 rounded-lg h-full w-full">
               <HumanBodySVG
-                affectedParts={affectedBodyParts}
+                affectedParts={healthAnalysis?.affectedBodyParts || []}
                 gender={
                   chartData?.input?.gender === "female" ? "female" : "male"
                 }

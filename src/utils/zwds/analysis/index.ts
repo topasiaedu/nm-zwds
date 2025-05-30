@@ -3,7 +3,7 @@
  */
 
 // Export career analysis
-export { analyzeCareer } from "./careerAnalysis";
+export { analyzeCareer, analyzeCareerLegacy } from "./careerAnalysis";
 
 // Export health analysis
 export { analyzeHealth } from "./healthAnalysis";
@@ -33,6 +33,18 @@ export type {
   TraditionToSimplifiedMap,
   PalaceNameMapping
 } from "./fourKeyPalaceAnalysis";
+
+// Export Destiny Alert analysis
+export {
+  analyzeDestinyAlert,
+  getDestinyAlertDebugInfo,
+} from "./destinyAlertAnalysis";
+
+// Export types from Destiny Alert analysis
+export type {
+  PalaceAlertData,
+  DestinyAlertAnalysisResult,
+} from "./destinyAlertAnalysis";
 
 // Export Life Areas analysis
 export {

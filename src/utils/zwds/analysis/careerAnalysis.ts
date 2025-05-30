@@ -1,65 +1,208 @@
-import { CAREER_ANALYSIS_CONSTANTS } from "../analysis_constants/career_analysis";
+import { ChartData, Palace, Star } from "../types";
+import { CAREER_ANALYSIS_CONSTANTS, CAREER_CATEGORIES_CONSTANTS } from "../analysis_constants/career_analysis";
+import { CAREER_DATA_CONSTANTS } from "../analysis_constants/career_data";
 
 /**
- * Analyzes career aptitudes based on stars in a chart's career palace (官禄宫)
- * @param chartData - The calculated ZWDS chart data
- * @returns Array of career aptitudes based on stars in the career palace
+ * Type definition for career analysis result
  */
-export function analyzeCareer(chartData: any): string[] {
-  if (!chartData || !chartData.palaces) {
-    console.log("Career analysis: No chart data or palaces found");
-    return [];
-  }
+export type CareerAnalysisResult = {
+  archetype: string;
+  description: string;
+  idealCareers: readonly string[];
+  nonIdealCareers: readonly string[];
+  debugInfo: {
+    careerPalaceStars: string[];
+    spousePalaceStars: string[];
+    usedSpousePalace: boolean;
+    starMatches: Record<string, string[]>;
+    categoryScores: Record<string, number>;
+  };
+};
 
+/**
+ * Extract all star names from a palace
+ */
+const extractStarNames = (palace: Palace): string[] => {
+  const allStars: Star[] = [
+    ...(palace.mainStar || []),
+    ...(palace.bodyStar ? [palace.bodyStar] : []),
+    ...(palace.lifeStar ? [palace.lifeStar] : []),
+    ...palace.minorStars,
+    ...palace.auxiliaryStars,
+    ...palace.yearStars,
+    ...palace.monthStars,
+    ...palace.dayStars,
+    ...palace.hourStars,
+  ];
 
-  // Find the career palace (官禄宫) by name
-  // The palace names are assigned in calculator.ts step 5 based on the Life Palace position
-  const careerPalace = chartData.palaces.find((palace: any) => 
-    palace.name === "官禄" || 
-    palace.name === "官祿" || 
-    palace.name.includes("官禄") || 
-    palace.name.includes("官祿") ||
-    palace.name === "官"
-  );
+  return allStars.map(star => star.name);
+};
 
-  if (!careerPalace) {
-    console.log("Career analysis: Career palace not found");
-    return [];
-  }
+/**
+ * Find career-related occupations from star names
+ */
+const findCareerOccupations = (starNames: string[]): string[] => {
+  const occupations: string[] = [];
 
-
-  // Get all stars in the career palace - check both stars array and mainStar array
-  let allStars: string[] = [];
-  
-  // Add regular stars if available
-  if (careerPalace.stars && Array.isArray(careerPalace.stars)) {
-    allStars = [...careerPalace.stars];
-  }
-  
-  // Add main stars if available
-  if (careerPalace.mainStar && Array.isArray(careerPalace.mainStar)) {
-    const mainStarNames = careerPalace.mainStar.map((star: any) => star.name);
-    allStars = [...allStars, ...mainStarNames];
-  }
-   
-  if (allStars.length === 0) {
-    console.log("Career analysis: No stars found in career palace");
-    return [];
-  }
-  
-  // Get career aptitudes based on stars
-  const careerAptitudes = allStars.flatMap((star: string) => {
-    // Ensure we only use the main star name (some might have suffixes)
-    const mainStarName = star.split("_")[0].trim();
-    
-    // Get careers for this star
-    const careers = CAREER_ANALYSIS_CONSTANTS[mainStarName as keyof typeof CAREER_ANALYSIS_CONSTANTS];
-    if (!careers) {
-      console.log(`Career analysis: No matching careers found for star ${mainStarName}`);
+  starNames.forEach(starName => {
+    const starOccupations = CAREER_ANALYSIS_CONSTANTS[starName as keyof typeof CAREER_ANALYSIS_CONSTANTS];
+    if (starOccupations) {
+      occupations.push(...starOccupations);
     }
-    return careers ? Array.from(careers) : [];
   });
 
-  // Remove duplicates
-  return [...new Set(careerAptitudes)] as string[];
-} 
+  return occupations;
+};
+
+/**
+ * Calculate category scores based on occupation matches
+ */
+const calculateCategoryScores = (occupations: string[]): Record<string, number> => {
+  const scores: Record<string, number> = {};
+
+  // Initialize scores
+  Object.keys(CAREER_CATEGORIES_CONSTANTS).forEach(category => {
+    scores[category] = 0;
+  });
+
+  // Count matches for each category
+  occupations.forEach(occupation => {
+    Object.entries(CAREER_CATEGORIES_CONSTANTS).forEach(([category, categoryOccupations]) => {
+      if ((categoryOccupations as readonly string[]).includes(occupation)) {
+        scores[category] += 1;
+      }
+    });
+  });
+
+  return scores;
+};
+
+/**
+ * Find the category with the highest score
+ */
+const findTopCategory = (categoryScores: Record<string, number>): string => {
+  let topCategory = "";
+  let highestScore = 0;
+
+  Object.entries(categoryScores).forEach(([category, score]) => {
+    if (score > highestScore) {
+      highestScore = score;
+      topCategory = category;
+    }
+  });
+
+  // If no matches found, default to "Visionaries"
+  return topCategory || "Visionaries 灵感者";
+};
+
+/**
+ * Analyze career based on chart data
+ */
+export const analyzeCareer = (chartData: ChartData): CareerAnalysisResult => {
+  // Find career palace (官禄)
+  const careerPalace = chartData.palaces.find(palace => palace.name === "官禄");
+  const spousePalace = chartData.palaces.find(palace => palace.name === "夫妻");
+
+  if (!careerPalace || !spousePalace) {
+    throw new Error("Could not find career or spouse palace");
+  }
+
+  // Extract stars from career palace
+  const careerPalaceStars = extractStarNames(careerPalace);
+  const spousePalaceStars = extractStarNames(spousePalace);
+
+  // Determine which palace to use for analysis
+  const usedSpousePalace = careerPalaceStars.length === 0;
+  const analysisStars = usedSpousePalace ? spousePalaceStars : careerPalaceStars;
+
+  // Find career occupations from stars
+  const occupations = findCareerOccupations(analysisStars);
+
+  // Create star matches for debug info
+  const starMatches: Record<string, string[]> = {};
+  analysisStars.forEach(starName => {
+    const starOccupations = CAREER_ANALYSIS_CONSTANTS[starName as keyof typeof CAREER_ANALYSIS_CONSTANTS];
+    if (starOccupations) {
+      starMatches[starName] = [...starOccupations];
+    }
+  });
+
+  // Calculate category scores
+  const categoryScores = calculateCategoryScores(occupations);
+
+  // Find top category
+  const topCategory = findTopCategory(categoryScores);
+
+  // Clean up category name to match CAREER_DATA_CONSTANTS keys
+  const cleanCategoryName = topCategory.split(" ")[0]; // Remove Chinese part
+
+  // Get career data
+  const careerData = CAREER_DATA_CONSTANTS[cleanCategoryName as keyof typeof CAREER_DATA_CONSTANTS];
+
+  if (!careerData) {
+    throw new Error(`No career data found for category: ${cleanCategoryName}`);
+  }
+
+  return {
+    archetype: cleanCategoryName,
+    description: careerData.description,
+    idealCareers: careerData.career_paths.ideal,
+    nonIdealCareers: careerData.career_paths.non_ideal,
+    debugInfo: {
+      careerPalaceStars,
+      spousePalaceStars,
+      usedSpousePalace,
+      starMatches,
+      categoryScores,
+    },
+  };
+};
+
+/**
+ * Get image path for career archetype based on gender
+ */
+export const getCareerArchetypeImage = (archetype: string, gender: "male" | "female"): string => {
+  const genderSuffix = gender === "male" ? "m" : "f";
+  let archetypeLower = archetype.toLowerCase();
+  
+  // Handle filename inconsistencies
+  if (archetypeLower === "lifekeepers" && gender === "male") {
+    // Handle typo in filename: "liekeepers-m.png" instead of "lifekeepers-m.png"
+    archetypeLower = "liekeepers";
+  } else if (archetypeLower === "strategists" && gender === "female") {
+    // Handle missing 's': "strategist-f.png" instead of "strategists-f.png"
+    archetypeLower = "strategist";
+  }
+  
+  return `/assets/${archetypeLower}-${genderSuffix}.png`;
+};
+
+/**
+ * Backward compatibility function for old CareerAnalysis component
+ * Returns career aptitudes as string array
+ */
+export const analyzeCareerLegacy = (chartData: ChartData): string[] => {
+  try {
+    const result = analyzeCareer(chartData);
+    
+    // Extract career aptitudes from the analysis stars
+    const careerPalace = chartData.palaces.find(palace => palace.name === "官禄");
+    const spousePalace = chartData.palaces.find(palace => palace.name === "夫妻");
+    
+    if (!careerPalace || !spousePalace) {
+      return [];
+    }
+    
+    const careerStars = extractStarNames(careerPalace);
+    const spouseStars = extractStarNames(spousePalace);
+    const analysisStars = careerStars.length > 0 ? careerStars : spouseStars;
+    
+    // Get career occupations from stars
+    const occupations = findCareerOccupations(analysisStars);
+    
+    return occupations;
+  } catch (error) {
+    console.error("Career analysis error:", error);
+    return [];
+  }
+}; 

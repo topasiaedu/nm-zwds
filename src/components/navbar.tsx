@@ -3,7 +3,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useLanguage } from "../context/LanguageContext";
-import LanguageToggle from "./LanguageToggle";
+// import LanguageToggle from "./LanguageToggle";
 import ThemeToggle from "./ThemeToggle";
 
 /**
@@ -48,10 +48,10 @@ const Navbar: React.FC = () => {
     <nav className="fixed top-0 left-0 right-0 z-50 h-14 bg-transparent border-gray-200 px-2 sm:px-4 border-b border-white/10 dark:border-gray-800/50 backdrop-blur-md">
       <div className="h-full max-w-screen-xl flex flex-wrap items-center justify-between mx-auto">
         <div className="flex items-center space-x-1 sm:space-x-3">
-          {/* Language toggle */}
-          <div className="flex items-center">
+          {/* Language toggle - Hidden to force English only */}
+          {/* <div className="flex items-center">
             <LanguageToggle />
-          </div>
+          </div> */}
           
           {/* Theme toggle */}
           <div className="flex items-center">

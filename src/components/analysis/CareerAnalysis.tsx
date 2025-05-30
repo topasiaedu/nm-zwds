@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
-import { analyzeCareer, getStarsInPalace } from "../../utils/zwds/analysis";
+import { analyzeCareerLegacy as analyzeCareer, getStarsInPalace } from "../../utils/zwds/analysis";
 import { useLanguage } from "../../context/LanguageContext";
 import { ResponsiveBar } from "@nivo/bar";
 import AnimatedWrapper from "./AnimatedWrapper";

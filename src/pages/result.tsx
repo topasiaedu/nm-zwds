@@ -686,17 +686,17 @@ const Result: React.FC = () => {
                 {/* Subtitle */}
                 <p className="text-lg mb-6 dark:text-white text-center italic">
                   {t("analysis.subtitle") ||
-                    "A custom breakdown of your chart’s strengths, patterns, and strategic focus areas."}
+                    "A custom breakdown of your chart's strengths, patterns, and strategic focus areas."}
                 </p>
               </div>
 
               <div className="space-y-8">
-                <Overview />
-                <Career />
+                <Overview chartData={calculatedChartData} />
+                <Career chartData={calculatedChartData} />
                 <Health chartData={calculatedChartData} />
                 <AreasOfLife chartData={calculatedChartData} />
-                <FourKeyPalace />
-                <DestinyCompass />
+                <FourKeyPalace chartData={calculatedChartData} />
+                <DestinyCompass chartData={calculatedChartData} />
 
                 {/* Summary Analysis */}
                 {/* <SummaryAnalysis chartData={calculatedChartData} /> */}
