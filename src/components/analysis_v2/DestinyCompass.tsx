@@ -104,6 +104,7 @@ const DestinyCompass: React.FC<DestinyCompassProps> = ({ chartData }) => {
           "田宅": "Property Palace",
           "福德": "Fortune Palace",
           "父母": "Parents Palace",
+          "交友": "Friends Palace",
           // Other variations
           "父艺": "Parents Palace",
           "子艺": "Children Palace",
