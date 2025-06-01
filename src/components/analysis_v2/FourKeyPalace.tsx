@@ -136,13 +136,13 @@ const FourKeyPalace: React.FC<FourKeyPalaceProps> = ({ chartData }) => {
       </p>
       
       {/* Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch">
         {analysisResult.alerts.map((alert, index) => (
-          <Tilt key={`${alert.palaceNumber}-${alert.transformation}`} options={tiltOptions} className="w-full h-full">
+          <Tilt key={`${alert.palaceNumber}-${alert.transformation}`} options={tiltOptions} className="w-full h-full max-h-[500px]">
             <div
               className={`relative rounded-lg shadow-md overflow-hidden border-2 ${getHighlightColor(
                 alert.transformation
-              )} min-h-[300px]`}>
+              )} h-full flex flex-col`}>
               {/* Background transformation character */}
               <div className="absolute inset-0 pointer-events-none z-0">
                 <div className="flex items-end justify-end h-full">
@@ -157,9 +157,9 @@ const FourKeyPalace: React.FC<FourKeyPalaceProps> = ({ chartData }) => {
                 </div>
               </div>
 
-              <div className="p-5 relative z-10">
+              <div className="p-5 relative z-10 flex flex-col h-full">
                 {/* Palace name header */}
-                <div className="flex justify-between items-center mb-4">
+                <div className="flex justify-between items-center mb-4 flex-shrink-0">
                   <h3 className="text-xl font-bold text-gray-800 dark:text-white">
                     {alert.palace}
                   </h3>
@@ -167,7 +167,7 @@ const FourKeyPalace: React.FC<FourKeyPalaceProps> = ({ chartData }) => {
 
                 {/* Quote with strong emphasis */}
                 {alert.quote && (
-                  <blockquote className="text-xl italic font-semibold text-gray-700 dark:text-gray-300 pl-4 py-2 mb-4 text-center relative">
+                  <blockquote className="text-xl italic font-semibold text-gray-700 dark:text-gray-300 pl-4 py-2 mb-4 text-center relative flex-shrink-0">
                     <span className="absolute top-0 left-0 text-5xl text-purple-400/30 dark:text-purple-500/20 leading-none font-serif">
                       &ldquo;
                     </span>
@@ -178,9 +178,9 @@ const FourKeyPalace: React.FC<FourKeyPalaceProps> = ({ chartData }) => {
                   </blockquote>
                 )}
 
-                {/* Description with fixed height and hidden scrollbar */}
+                {/* Description with flexible height and hidden scrollbar */}
                 <div 
-                  className="text-gray-600 dark:text-gray-400 text-sm description-container h-48 overflow-y-auto">
+                  className="text-gray-600 dark:text-gray-400 text-sm description-container flex-1 overflow-y-auto">
                   {alert.description ? (
                     // Split description by double line breaks to create paragraphs
                     alert.description.split('\n\n').map((paragraph, pIndex) => (

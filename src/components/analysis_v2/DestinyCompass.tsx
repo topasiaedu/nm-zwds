@@ -53,7 +53,14 @@ const DestinyCompass: React.FC<DestinyCompassProps> = ({ chartData }) => {
   // Transform destiny data into year cards
   const yearCards: YearCardData[] = useMemo(() => {
     return destinyData.map((yearData: YearDestinyData) => {
-      const activations = Object.entries(yearData.activations);
+      // Define explicit order for transformations: 禄, 权, 科, 忌
+      const transformationOrder = ["化祿", "化權", "化科", "化忌"] as const;
+      
+      // Create ordered activations array
+      const activations = transformationOrder.map(transformationType => [
+        transformationType,
+        yearData.activations[transformationType]
+      ] as const);
       
       // Helper function to translate transformation types to English
       const getEnglishTransformationType = (transformationType: string): string => {
@@ -63,6 +70,7 @@ const DestinyCompass: React.FC<DestinyCompassProps> = ({ chartData }) => {
           "化权": "Power", 
           "化權" : "Power",
           "化禄": "Wealth",
+          "化祿": "Wealth",
           "化忌": "Obstacle",
           // Short forms
           "禄": "Wealth",
@@ -118,14 +126,14 @@ const DestinyCompass: React.FC<DestinyCompassProps> = ({ chartData }) => {
         const colors = ["success", "blue", "warning", "failure"];
         
         // Debug logging to see what we're trying to translate
-        console.log("Original transformationType:", transformationType);
-        console.log("Original palaceName:", activation.palaceName);
+        console.log(`Badge ${index + 1} - transformationType:`, transformationType);
+        console.log(`Badge ${index + 1} - palaceName:`, activation.palaceName);
         
         const englishType = getEnglishTransformationType(transformationType);
         const englishPalace = getEnglishPalaceName(activation.palaceName);
         
-        console.log("Translated type:", englishType);
-        console.log("Translated palace:", englishPalace);
+        console.log(`Badge ${index + 1} - Translated type:`, englishType);
+        console.log(`Badge ${index + 1} - Translated palace:`, englishPalace);
         
         return {
           text: `${englishPalace}`,
@@ -134,7 +142,10 @@ const DestinyCompass: React.FC<DestinyCompassProps> = ({ chartData }) => {
       });
 
       // Create descriptions from the activation descriptions - use full descriptions
-      const descriptions = activations.map(([transformationType, activation]) => {
+      const descriptions = activations.map(([transformationType, activation], index) => {
+        console.log(`Description ${index + 1} - transformationType:`, transformationType);
+        console.log(`Description ${index + 1} - palaceName:`, activation.palaceName);
+        console.log(`Description ${index + 1} - description preview:`, activation.description.substring(0, 50) + "...");
         return activation.description; // Use full description instead of splitting
       });
 

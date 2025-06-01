@@ -127,10 +127,52 @@ function getTransformationStars(heavenlyStem: string, chartData: ChartData) {
 }
 
 /**
+ * Map palace names to the corresponding destiny compass constant keys
+ */
+function getPalaceConstantKey(palaceName: string): string {
+  const palaceNameMap: { [key: string]: string } = {
+    // Full palace names with 宫
+    "命宫": "1",
+    "兄弟宫": "2", 
+    "夫妻宫": "3",
+    "子女宫": "4",
+    "财帛宫": "5",
+    "疾厄宫": "6",
+    "迁移宫": "7",
+    "奴仆宫": "8",
+    "交友宫": "8", // Friends Palace alternative name
+    "官禄宫": "9",
+    "田宅宫": "10",
+    "福德宫": "11",
+    "父母宫": "12",
+    // Short forms without 宫
+    "命": "1",
+    "兄弟": "2",
+    "夫妻": "3", 
+    "子女": "4",
+    "财帛": "5",
+    "疾厄": "6",
+    "迁移": "7",
+    "奴仆": "8",
+    "交友": "8",
+    "官禄": "9",
+    "田宅": "10",
+    "福德": "11",
+    "父母": "12",
+    // Additional variations
+    "父艺": "12",
+    "子艺": "4",
+  };
+  
+  return palaceNameMap[palaceName] || "1"; // Default to Life Palace if not found
+}
+
+/**
  * Get description for a transformation activation
  */
-function getActivationDescription(palaceNumber: number, transformationType: Transformation): string {
-  const palaceData = DESTINY_COMPASS_CONSTANTS[palaceNumber.toString() as keyof typeof DESTINY_COMPASS_CONSTANTS];
+function getActivationDescription(palaceName: string, transformationType: Transformation): string {
+  const palaceConstantKey = getPalaceConstantKey(palaceName);
+  const palaceData = DESTINY_COMPASS_CONSTANTS[palaceConstantKey as keyof typeof DESTINY_COMPASS_CONSTANTS];
   
   if (!palaceData) {
     return "Description not available for this palace.";
@@ -170,25 +212,25 @@ function generateYearDestinyData(year: number, chartData: ChartData): YearDestin
       starName: transformationStars.化祿?.star.name || "Unknown",
       palaceNumber: transformationStars.化祿?.palace.number || 0,
       palaceName: transformationStars.化祿?.palace.name || "Unknown",
-      description: getActivationDescription(transformationStars.化祿?.palace.number || 0, "化祿"),
+      description: getActivationDescription(transformationStars.化祿?.palace.name || "", "化祿"),
     },
     化權: {
       starName: transformationStars.化權?.star.name || "Unknown",
       palaceNumber: transformationStars.化權?.palace.number || 0,
       palaceName: transformationStars.化權?.palace.name || "Unknown",
-      description: getActivationDescription(transformationStars.化權?.palace.number || 0, "化權"),
+      description: getActivationDescription(transformationStars.化權?.palace.name || "", "化權"),
     },
     化科: {
       starName: transformationStars.化科?.star.name || "Unknown",
       palaceNumber: transformationStars.化科?.palace.number || 0,
       palaceName: transformationStars.化科?.palace.name || "Unknown",
-      description: getActivationDescription(transformationStars.化科?.palace.number || 0, "化科"),
+      description: getActivationDescription(transformationStars.化科?.palace.name || "", "化科"),
     },
     化忌: {
       starName: transformationStars.化忌?.star.name || "Unknown",
       palaceNumber: transformationStars.化忌?.palace.number || 0,
       palaceName: transformationStars.化忌?.palace.name || "Unknown",
-      description: getActivationDescription(transformationStars.化忌?.palace.number || 0, "化忌"),
+      description: getActivationDescription(transformationStars.化忌?.palace.name || "", "化忌"),
     },
   };
   

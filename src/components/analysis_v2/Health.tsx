@@ -268,43 +268,33 @@ const Health: React.FC<HealthAnalysisProps> = ({ chartData }) => {
       </p>
 
       <div className="p-6 dark:bg-gray-900">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left column - Health interpretations */}
-          <div className="flex flex-col space-y-6">
+          <div className="flex flex-col space-y-6 order-2 lg:order-1 col-span-2">
             {healthAnalysis && healthAnalysis.affectedBodyParts.length > 0 ? (
               <>
-                <div className="space-y-3">
-                  <h3 className="text-xl font-semibold mb-4 text-gray-800 dark:text-white">
-                    Areas of Health Concern
-                  </h3>
-
-                  {healthAnalysis.affectedBodyParts.map((bodyPart, index) => (
-                    <div
-                      key={index}
-                      className="flex items-center p-3 rounded-lg border-l-4 border-red-500 bg-red-50 dark:bg-red-900/10">
-                      <span className="w-3 h-3 rounded-full bg-red-500 mr-3"></span>
-                      <span className="text-gray-800 dark:text-gray-200 font-medium">
-                        {healthAnalysis.healthTips.find(
-                          (tip) => tip.bodyPart === bodyPart
-                        )?.englishName || bodyPart}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Health Tips Section */}
+                {/* Combined Health Tips and Body Parts Section */}
                 <div className="mt-8">
                   <h3 className="text-xl font-semibold mb-4 text-gray-800 dark:text-white">
-                    Health Tips
+                    Health Analysis & Tips
                   </h3>
                   <div className="space-y-4">
                     {healthAnalysis.healthTips.map((tip, index) => (
                       <div
                         key={index}
-                        className="p-4 border-l-4 border-green-500 bg-green-50 dark:bg-green-900/10 rounded-r">
+                        className="p-4 border-l-4 border-red-500 bg-red-50 dark:bg-red-900/10 rounded-r">
+                        {/* Body Part Header */}
+                        <div className="flex items-center mb-3">
+                          <span className="w-3 h-3 rounded-full bg-red-500 mr-3"></span>
+                          <span className="text-lg font-semibold text-gray-800 dark:text-gray-200">
+                            {tip.englishName || tip.bodyPart}
+                          </span>
+                        </div>
+                        
+                        {/* Tip Description */}
                         <div
                           className={`${
-                            !expandedTips[index] ? "line-clamp-4" : ""
+                            !expandedTips[index] ? "line-clamp-2" : ""
                           }`}>
                           <p className="text-gray-700 dark:text-gray-300">
                             {tip.description}
@@ -353,17 +343,20 @@ const Health: React.FC<HealthAnalysisProps> = ({ chartData }) => {
 
           {/* Right column - Interactive human body */}
           <motion.div
-            className="relative flex items-center justify-center h-[500px]"
+            className="relative order-1 lg:order-2"
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5, delay: 0.7 }}>
-            <div className="absolute inset-0 bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 rounded-lg h-full w-full">
-              <HumanBodySVG
-                affectedParts={healthAnalysis?.affectedBodyParts || []}
-                gender={
-                  chartData?.input?.gender === "female" ? "female" : "male"
-                }
-              />
+            {/* Container with 1:3 aspect ratio for the new 300x900 viewBox */}
+            <div className="w-full max-w-md mx-auto">
+              <div className="w-full bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4">
+                <HumanBodySVG
+                  affectedParts={healthAnalysis?.affectedBodyParts || []}
+                  gender={
+                    chartData?.input?.gender === "female" ? "female" : "male"
+                  }
+                />
+              </div>
             </div>
           </motion.div>
         </div>

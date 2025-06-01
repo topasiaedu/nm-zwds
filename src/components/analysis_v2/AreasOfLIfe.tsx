@@ -210,7 +210,7 @@ const AreasOfLife: React.FC<{ chartData: ChartDataType }> = ({ chartData }) => {
                           className={`text-lg font-bold ${getScoreBadgeClasses(
                             area.score
                           )}`}>
-                          {area.score}
+                          {area.score}%
                         </span>
                       </div>
                       <div className="space-y-2">
