@@ -88,10 +88,26 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
     }
 
     const handleChanges = (payload: any) => {
+      console.log("ProfileContext - Real-time event:", payload.eventType, payload.new || payload.old);
+      
       if (payload.eventType === "INSERT") {
-        // Check if the profile is for the current user
-        if (payload.new.user_id === user?.id) {
+        // Check if the profile is for the current user OR for free test users
+        const isForCurrentUser = payload.new.user_id === user?.id;
+        const isForFreeTestUser = !user && payload.new.user_id === "2fdd8c60-fdb0-4ba8-a6e4-327a28179498";
+        
+        console.log("ProfileContext - INSERT check:", {
+          isForCurrentUser,
+          isForFreeTestUser,
+          userId: user?.id,
+          payloadUserId: payload.new.user_id,
+          profileId: payload.new.id
+        });
+        
+        if (isForCurrentUser || isForFreeTestUser) {
+          console.log("ProfileContext - Adding profile to context:", payload.new.id);
           setProfiles((prev) => [...prev, payload.new]);
+        } else {
+          console.log("ProfileContext - Ignoring profile (not for current user)");
         }
       } else if (payload.eventType === "UPDATE") {
         const updatedProfiles = profiles.map((profile) =>
@@ -130,6 +146,7 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
   }, [user]);
 
   const addProfile = useCallback(async (profile: ProfileInsert) => {
+    console.log("ProfileContext - addProfile called with:", profile);
     setLoading(true);
 
     const { data, error } = await supabase
@@ -141,12 +158,19 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
       ])
       .select();
     if (error) {
-      console.error("Error adding contact:", error);
+      console.error("ProfileContext - Error adding contact:", error);
+      setLoading(false);
       return null;
     }
 
+    console.log("ProfileContext - Profile created successfully:", data?.[0]);
+    
     // We add to the array of Profiles
-    setProfiles((prev) => [...prev, data?.[0]]);
+    setProfiles((prev) => {
+      const newProfiles = [...prev, data?.[0]];
+      console.log("ProfileContext - Updated profiles in context:", newProfiles.map(p => ({ id: p.id, name: p.name })));
+      return newProfiles;
+    });
     setLoading(false);
     return data?.[0] || null;
   }, []);

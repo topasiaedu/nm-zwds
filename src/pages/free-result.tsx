@@ -14,6 +14,7 @@ import {
 import FREE_TEST_CONFIG from "../config/freeTestConfig";
 import { FourKeyPalace, Overview } from "../components/analysis_v2";
 import { Career } from "../components/analysis_v2";
+import { supabase } from "../utils/supabaseClient";
 
 /**
  * Interface for chart data
@@ -117,9 +118,13 @@ const FreeResult: React.FC = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
+        
+        console.log("FreeResult fetchData - Looking for profile ID:", id);
+        console.log("FreeResult fetchData - Available profiles:", profiles.map(p => ({ id: p.id, name: p.name, user_id: p.user_id })));
 
         // If profile is found in context, use that data
         if (profileToShow) {
+          console.log("FreeResult fetchData - Profile found in context:", profileToShow.id);
           const profile = profileToShow;
 
           // Convert the profile data to ChartData format
@@ -141,23 +146,53 @@ const FreeResult: React.FC = () => {
 
         // If id specified but profile not found in context
         if (id) {
+          console.log("FreeResult fetchData - Profile not found in context, profiles.length:", profiles.length);
           if (profiles.length > 0) {
             if (isMounted) {
               // Check if we've waited long enough before showing error
               if (!profileLoadAttempts.current) {
+                console.log("FreeResult fetchData - First retry attempt");
                 profileLoadAttempts.current = 1;
-                // Try again after a delay - profiles might still be updating in context
+                // Try again after a longer delay - profiles might still be updating in context
                 setTimeout(() => {
                   if (isMounted) fetchData();
-                }, 1000);
+                }, 2000); // Increased from 1000ms to 2000ms
+                return;
+              } else if (profileLoadAttempts.current < 3) {
+                // Allow up to 3 attempts instead of just 1
+                console.log("FreeResult fetchData - Retry attempt", profileLoadAttempts.current + 1);
+                profileLoadAttempts.current++;
+                setTimeout(() => {
+                  if (isMounted) fetchData();
+                }, 2000);
                 return;
               }
+              console.log("FreeResult fetchData - Max retries reached, trying direct database fetch");
+              
+              // Before showing error, try direct database fetch as final fallback
+              const directProfile = await fetchProfileDirectly(id);
+              if (directProfile) {
+                console.log("FreeResult fetchData - Profile found via direct fetch after max retries:", directProfile.id);
+                const chartData: ChartData = {
+                  id: directProfile.id,
+                  name: directProfile.name,
+                  birthDate: directProfile.birthday,
+                  birthTime: formatBirthTime(directProfile.birth_time),
+                  gender: directProfile.gender,
+                  createdAt: directProfile.created_at,
+                };
+                setChartData(chartData);
+                return;
+              }
+              
+              console.log("FreeResult fetchData - Profile not found even with direct fetch, showing error");
               setError(`Profile with ID ${id} not found.`);
               setLoading(false);
             }
           } else {
+            console.log("FreeResult fetchData - No profiles loaded yet, waiting...");
             // If profiles aren't loaded yet, wait longer and show loading state
-            await new Promise((resolve) => setTimeout(resolve, 1500));
+            await new Promise((resolve) => setTimeout(resolve, 2500)); // Increased from 1500ms to 2500ms
             if (isMounted) {
               // Check one more time if profile is now available
               const retryProfileCheck = profiles.find(
@@ -165,6 +200,7 @@ const FreeResult: React.FC = () => {
               );
               
               if (retryProfileCheck) {
+                console.log("FreeResult fetchData - Profile found after wait:", retryProfileCheck.id);
                 const profile = retryProfileCheck;
                 const chartData: ChartData = {
                   id: profile.id,
@@ -178,6 +214,50 @@ const FreeResult: React.FC = () => {
                 return;
               }
               
+              // Additional retry attempt after longer wait
+              if (!profileLoadAttempts.current) {
+                console.log("FreeResult fetchData - Final retry attempt after long wait");
+                profileLoadAttempts.current = 1;
+                await new Promise((resolve) => setTimeout(resolve, 2000));
+                if (isMounted) {
+                  const finalRetryCheck = profiles.find(
+                    (profile) => String(profile.id) === String(id)
+                  );
+                  if (finalRetryCheck) {
+                    console.log("FreeResult fetchData - Profile found in final retry:", finalRetryCheck.id);
+                    const profile = finalRetryCheck;
+                    const chartData: ChartData = {
+                      id: profile.id,
+                      name: profile.name,
+                      birthDate: profile.birthday,
+                      birthTime: formatBirthTime(profile.birth_time),
+                      gender: profile.gender,
+                      createdAt: profile.created_at,
+                    };
+                    setChartData(chartData);
+                    return;
+                  }
+                  
+                  // Last resort: try direct database fetch
+                  console.log("FreeResult fetchData - Attempting direct database fetch as final fallback");
+                  const directProfile = await fetchProfileDirectly(id);
+                  if (directProfile) {
+                    console.log("FreeResult fetchData - Profile found via direct fetch:", directProfile.id);
+                    const chartData: ChartData = {
+                      id: directProfile.id,
+                      name: directProfile.name,
+                      birthDate: directProfile.birthday,
+                      birthTime: formatBirthTime(directProfile.birth_time),
+                      gender: directProfile.gender,
+                      createdAt: directProfile.created_at,
+                    };
+                    setChartData(chartData);
+                    return;
+                  }
+                }
+              }
+              
+              console.log("FreeResult fetchData - All retries exhausted, showing error");
               setError(
                 "Unable to find the requested profile. It may have expired or been removed."
               );
@@ -186,6 +266,7 @@ const FreeResult: React.FC = () => {
           }
         }
       } catch (err) {
+        console.error("FreeResult fetchData - Error:", err);
         if (isMounted) {
           setError("Failed to load chart data");
           setLoading(false);
@@ -292,6 +373,33 @@ const FreeResult: React.FC = () => {
     "{{date}}",
     FREE_TEST_CONFIG.endDate
   );
+
+  /**
+   * Fetch profile directly from database as final fallback
+   * @param profileId - ID of the profile to fetch
+   * @returns Profile data or null if not found
+   */
+  const fetchProfileDirectly = async (profileId: string) => {
+    try {
+      console.log("FreeResult - Attempting direct database fetch for profile:", profileId);
+      const { data: profile, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", profileId)
+        .single();
+
+      if (error) {
+        console.error("FreeResult - Error fetching profile directly:", error);
+        return null;
+      }
+
+      console.log("FreeResult - Profile fetched directly from database:", profile);
+      return profile;
+    } catch (error) {
+      console.error("FreeResult - Exception during direct fetch:", error);
+      return null;
+    }
+  };
 
   // If loading profiles from context
   if (profilesLoading) {
