@@ -11,6 +11,7 @@ type ProfileInsert = Database["public"]["Tables"]["profiles"]["Insert"];
 interface ProfileFormProps {
   isSelfProfile: boolean;
   onSuccess?: (profileId?: string) => void;
+  disabled?: boolean;
 }
 
 /**
@@ -77,8 +78,9 @@ const EarthlyBranches = [
  * ProfileForm component for creating both self and other profiles
  * @param isSelfProfile - Whether this is for creating a self profile
  * @param onSuccess - Optional callback to run after successful profile creation
+ * @param disabled - Whether the form should be disabled (prevents multiple submissions)
  */
-const ProfileForm: React.FC<ProfileFormProps> = ({ isSelfProfile, onSuccess }) => {
+const ProfileForm: React.FC<ProfileFormProps> = ({ isSelfProfile, onSuccess, disabled = false }) => {
   const { t } = useLanguage();
   const { user } = useAuth();
   const { addProfile } = useProfileContext();
@@ -135,13 +137,23 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ isSelfProfile, onSuccess }) =
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Prevent submission if form is disabled
+    if (disabled) {
+      console.log("Form submission blocked - form is disabled");
+      return;
+    }
+
     // Validate date before submission
     if (!isValidDate(displayDate)) {
       setDateError(t("form.invalidDateFormat") || "Invalid date format. Please use DD/MM/YYYY");
       return;
     }
 
-    console.log("Form data:", formData);
+    console.log("Form submission started:", {
+      formData,
+      isSelfProfile,
+      userId: user?.id
+    });
     
     try {
       const newProfile: ProfileInsert = {
@@ -155,7 +167,16 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ isSelfProfile, onSuccess }) =
         last_viewed: new Date().toISOString()
       };
 
+      console.log("Creating profile with data:", newProfile);
       const createdProfile = await addProfile(newProfile);
+      
+      if (!createdProfile) {
+        console.error("Profile creation failed - no profile returned");
+        showAlert(t("profile.createError"), "error");
+        return;
+      }
+
+      console.log("Profile created successfully:", createdProfile);
       showAlert(
         isSelfProfile 
           ? t("profile.createSelfSuccess") 
@@ -163,8 +184,8 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ isSelfProfile, onSuccess }) =
         "success"
       );
       
-      if (onSuccess && createdProfile) {
-        console.log("Calling onSuccess with profile ID:", createdProfile.id);
+      if (onSuccess) {
+        console.log("Calling onSuccess callback with profile ID:", createdProfile.id);
         onSuccess(createdProfile.id);
       } else if (isSelfProfile) {
         navigate("/my-chart");
@@ -297,13 +318,27 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ isSelfProfile, onSuccess }) =
             </button>
             <button
               type="submit"
-              className="flex-1 px-5 py-3 text-white font-medium rounded-lg transition-all 
-                       bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700
-                       focus:ring-4 focus:ring-purple-300 focus:outline-none"
+              disabled={disabled}
+              className={`flex-1 px-5 py-3 text-white font-medium rounded-lg transition-all 
+                       ${disabled 
+                         ? "bg-gray-400 cursor-not-allowed opacity-50" 
+                         : "bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700"
+                       }
+                       focus:ring-4 focus:ring-purple-300 focus:outline-none`}
             >
-              {isSelfProfile 
-                ? t("form.createSelfProfile") 
-                : t("form.createOtherProfile")}
+              {disabled ? (
+                <span className="flex items-center justify-center">
+                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  {t("form.submitting") || "Creating..."}
+                </span>
+              ) : (
+                isSelfProfile 
+                  ? t("form.createSelfProfile") 
+                  : t("form.createOtherProfile")
+              )}
             </button>
           </div>
         </form>

@@ -4,6 +4,7 @@ import React, {
   useEffect,
   useState,
   ReactNode,
+  useRef,
 } from "react";
 import { supabase } from "../utils/supabase-client";
 import { Session, User, AuthError } from "@supabase/supabase-js";
@@ -57,6 +58,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const navigate = useNavigate();
+  const initializedRef = useRef<boolean>(false);
+  const redirectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // TEMP CONSOLE LOG OUT USER ID
   useEffect(() => {
@@ -64,7 +67,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
       const {
         data: { session },
       } = await supabase.auth.getSession();
-      console.log(session?.user.id);
+      console.log("AuthContext - Initial session user ID:", session?.user.id);
     };
     getUserId();
   }, []);
@@ -78,12 +81,21 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
         // Get current session
         const {
           data: { session },
+          error,
         } = await supabase.auth.getSession();
 
+        if (error) {
+          console.error("AuthContext - Error getting session:", error);
+        }
+
+        console.log("AuthContext - Initialize auth with session:", !!session);
+        
         if (session) {
           setSession(session);
           setUser(session.user);
         }
+        
+        initializedRef.current = true;
       } catch (error) {
         console.error("Error loading auth:", error);
       } finally {
@@ -96,17 +108,57 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     // Set up auth state listener
     const { data: authListener } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        console.log("Auth state change:", event, "Session exists:", !!session, "User ID:", session?.user?.id);
         setSession(session);
         setUser(session?.user ?? null);
+
+        // Don't redirect during initial load
+        if (!initializedRef.current) {
+          console.log("AuthContext - Skipping redirect during initialization");
+          return;
+        }
 
         // Check if we're on a public route
         const currentPath = window.location.pathname;
         const isPublicRoute = currentPath.startsWith("/free-") || 
                             currentPath.startsWith("/authentication/");
 
-        // Only redirect to sign-in if not on a public route
-        if (!session && !isPublicRoute) {
-          navigate("/authentication/sign-in");
+        console.log("Auth state check:", {
+          event,
+          hasSession: !!session,
+          currentPath,
+          isPublicRoute,
+          initialized: initializedRef.current
+        });
+
+        // Clear any existing redirect timeout
+        if (redirectTimeoutRef.current) {
+          clearTimeout(redirectTimeoutRef.current);
+          redirectTimeoutRef.current = null;
+        }
+
+        // Only redirect to sign-in if:
+        // 1. No session exists
+        // 2. Not on a public route  
+        // 3. Not during specific events that are part of normal flow
+        // 4. App has been initialized
+        if (!session && !isPublicRoute && 
+            !["SIGNED_OUT", "INITIAL_SESSION", "TOKEN_REFRESHED"].includes(event) &&
+            initializedRef.current) {
+          
+          // Add a delay to prevent race conditions during page navigation
+          redirectTimeoutRef.current = setTimeout(() => {
+            const pathAfterDelay = window.location.pathname;
+            const isStillNonPublicRoute = !pathAfterDelay.startsWith("/free-") && 
+                                        !pathAfterDelay.startsWith("/authentication/");
+            
+            if (isStillNonPublicRoute) {
+              console.log("AuthContext - Redirecting to sign-in from:", pathAfterDelay);
+              navigate("/authentication/sign-in");
+            } else {
+              console.log("AuthContext - Skipping redirect - now on public route:", pathAfterDelay);
+            }
+          }, 500); // 500ms delay to allow navigation to complete
         }
       }
     );
@@ -114,6 +166,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     // Clean up subscription
     return () => {
       authListener.subscription.unsubscribe();
+      if (redirectTimeoutRef.current) {
+        clearTimeout(redirectTimeoutRef.current);
+      }
     };
   }, [navigate]);
 

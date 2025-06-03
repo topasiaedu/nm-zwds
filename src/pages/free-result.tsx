@@ -14,7 +14,7 @@ import {
 import FREE_TEST_CONFIG from "../config/freeTestConfig";
 import { FourKeyPalace, Overview } from "../components/analysis_v2";
 import { Career } from "../components/analysis_v2";
-import { supabase } from "../utils/supabaseClient";
+import { supabase } from "../utils/supabase-client";
 
 /**
  * Interface for chart data

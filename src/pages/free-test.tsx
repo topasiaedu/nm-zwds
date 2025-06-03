@@ -13,6 +13,7 @@ const FreeTest: React.FC = () => {
   const { t } = useLanguage();
   const navigate = useNavigate();
   const [isEventActive, setIsEventActive] = useState<boolean>(true);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   // WhatsApp link
   const whatsappLink = "https://wa.me/601158639269";
@@ -50,11 +51,23 @@ const FreeTest: React.FC = () => {
    */
   const handleProfileSuccess = (profileId?: string) => {
     console.log("Free test profile created:", profileId);
+    
+    // Prevent multiple submissions
+    if (isSubmitting) {
+      console.log("Submission already in progress, ignoring duplicate");
+      return;
+    }
+    
+    setIsSubmitting(true);
+    
     if (profileId) {
-      // Increase delay before navigation to ensure the profile is fully saved in context and real-time subscription updates
-      setTimeout(() => {
-        navigate(`/free-result/${profileId}`);
-      }, 2000); // Increased from 1000ms to 2000ms
+      // Navigate immediately to prevent auth state race conditions
+      console.log("Navigating to free result:", `/free-result/${profileId}`);
+      navigate(`/free-result/${profileId}`);
+    } else {
+      console.error("Profile creation succeeded but no ID returned");
+      setIsSubmitting(false);
+      // Optional: show error message to user
     }
   };
 
@@ -108,6 +121,7 @@ const FreeTest: React.FC = () => {
             <ProfileForm
               isSelfProfile={false}
               onSuccess={handleProfileSuccess}
+              disabled={isSubmitting}
             />
           </div>
 

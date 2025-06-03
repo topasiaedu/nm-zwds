@@ -6,7 +6,7 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import { supabase } from "../utils/supabaseClient";
+import { supabase } from "../utils/supabase-client";
 import { Database } from "../../database.types";
 import { useAuthContext } from "./AuthContext";
 import isEqual from "lodash.isequal";
@@ -35,55 +35,69 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const fetchProfileWithoutUser = async () => {
-      const { data: profiles, error } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("user_id", "2fdd8c60-fdb0-4ba8-a6e4-327a28179498")
-        .order("created_at", { ascending: false });
+      try {
+        const { data: profiles, error } = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("user_id", "2fdd8c60-fdb0-4ba8-a6e4-327a28179498")
+          .order("created_at", { ascending: false });
 
-      if (error) {
-        console.error("Error fetching profiles:", error);
-        return;
-      }
-
-
-      setProfiles((prev) => {
-        if (isEqual(prev, profiles)) {
-          return prev;
+        if (error) {
+          console.error("Error fetching profiles:", error);
+          return;
         }
 
-        return profiles!;
-      });
+        console.log("ProfileContext - Fetched free test profiles:", profiles?.length);
+
+        setProfiles((prev) => {
+          if (isEqual(prev, profiles)) {
+            return prev;
+          }
+
+          return profiles!;
+        });
+      } catch (error) {
+        console.error("ProfileContext - Exception fetching free test profiles:", error);
+      }
     };
 
     const fetchProfiles = async () => {
-      const { data: profiles, error } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("user_id", user?.id);
+      try {
+        const { data: profiles, error } = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("user_id", user?.id);
 
-      if (error) {
-        console.error("Error fetching profiles:", error);
-        return;
-      }
-
-      // If profile length is more than 4k, console log out a warning message with the length and the user id
-      if (profiles?.length > 4000) {
-        console.warn("Warning: Profile length is more than 4k, user id:", user?.id, "Profile length:", profiles?.length);
-      }
-
-      setProfiles((prev) => {
-        if (isEqual(prev, profiles)) {
-          return prev;
+        if (error) {
+          console.error("Error fetching profiles:", error);
+          return;
         }
 
-        return profiles!;
-      });
+        // If profile length is more than 4k, console log out a warning message with the length and the user id
+        if (profiles?.length > 4000) {
+          console.warn("Warning: Profile length is more than 4k, user id:", user?.id, "Profile length:", profiles?.length);
+        }
+
+        console.log("ProfileContext - Fetched authenticated user profiles:", profiles?.length);
+
+        setProfiles((prev) => {
+          if (isEqual(prev, profiles)) {
+            return prev;
+          }
+
+          return profiles!;
+        });
+      } catch (error) {
+        console.error("ProfileContext - Exception fetching user profiles:", error);
+      }
     };
 
+    // Fetch profiles regardless of auth state to support free test
     if (user) {
+      console.log("ProfileContext - Fetching profiles for authenticated user:", user.id);
       fetchProfiles();
     } else {
+      console.log("ProfileContext - Fetching free test profiles (no auth required)");
       fetchProfileWithoutUser();
     }
 
@@ -128,19 +142,32 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
       }
     };
 
-    const subscription = supabase
-      .channel("profiles")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "profiles" },
-        (payload) => {
-          handleChanges(payload);
-        }
-      )
-      .subscribe();
+    // Create unique channel names to prevent cross-user interference
+    // For free test users, skip real-time subscriptions entirely
+    let subscription: any = null;
+    
+    if (user) {
+      const channelName = `profiles-user-${user.id}`;
+      console.log("ProfileContext - Subscribing to channel:", channelName);
+
+      subscription = supabase
+        .channel(channelName)
+        .on(
+          "postgres_changes",
+          { event: "*", schema: "public", table: "profiles" },
+          (payload) => {
+            handleChanges(payload);
+          }
+        )
+        .subscribe();
+    } else {
+      console.log("ProfileContext - Skipping real-time subscription for free test users");
+    }
 
     return () => {
-      subscription.unsubscribe();
+      if (subscription) {
+        subscription.unsubscribe();
+      }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);

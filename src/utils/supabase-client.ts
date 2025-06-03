@@ -14,6 +14,19 @@ if (!supabaseUrl || !supabaseAnonKey) {
 }
 
 /**
- * Create and export the Supabase client
+ * Create and export the Supabase client with explicit session persistence
  */
-export const supabase: SupabaseClient = createClient(supabaseUrl, supabaseAnonKey); 
+export const supabase: SupabaseClient = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    // Ensure session persistence
+    persistSession: true,
+    // Set session storage to localStorage (default, but explicit)
+    storage: window.localStorage,
+    // Auto refresh tokens before they expire
+    autoRefreshToken: true,
+    // Detect session in URL (for email confirmations, password resets)
+    detectSessionInUrl: false, // Disable for free test to prevent conflicts
+    // Use a longer storage key to avoid conflicts
+    storageKey: "zwds-supabase-auth-token"
+  }
+}); 
