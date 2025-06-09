@@ -275,9 +275,21 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     newPassword: string
   ): Promise<{ error: AuthError | null }> => {
     try {
+      // First, verify the recovery session using the token
+      const { error: sessionError } = await supabase.auth.verifyOtp({
+        token_hash: token,
+        type: "recovery",
+      });
+
+      if (sessionError) {
+        return { error: sessionError };
+      }
+
+      // Then update the password
       const { error } = await supabase.auth.updateUser({
         password: newPassword,
       });
+      
       return { error };
     } catch (error) {
       console.error("Error completing password reset:", error);
