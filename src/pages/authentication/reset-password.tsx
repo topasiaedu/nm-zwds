@@ -5,6 +5,7 @@ import { Alert, Card, Label, TextInput } from "flowbite-react";
 import { useAuth } from "../../context/AuthContext";
 import { useLanguage } from "../../context/LanguageContext";
 import PageTransition from "../../components/PageTransition";
+import { supabase } from "../../utils/supabase-client";
 
 /**
  * ResetPasswordPage component
@@ -26,27 +27,52 @@ const ResetPasswordPage: React.FC = () => {
   // Extract token from URL hash fragment
   // Example: https://app.caegoh.com/authentication/reset-password#access_token=eyJhbGciOiJIUzI1NiIsImtpZCI6InI5RE5qQkVuelR0L0JCRW8iLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2Z3Ynl4Y3p4dGVwa3ZrbGtobmp2LnN1cGFiYXNlLmNvL2F1dGgvdjEiLCJzdWIiOiI1NGIxZjZhNS00YWY2LTRmNzgtYmEyNS0zOGMzMTY0NmEyMzAiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzQ5NDQzMzc3LCJpYXQiOjE3NDk0Mzk3NzcsImVtYWlsIjoic3RhbmxleTEyMTQ5OUBnbWFpbC5jb20iLCJwaG9uZSI6IiIsImFwcF9tZXRhZGF0YSI6eyJwcm92aWRlciI6ImVtYWlsIiwicHJvdmlkZXJzIjpbImVtYWlsIl19LCJ1c2VyX21ldGFkYXRhIjp7ImVtYWlsX3ZlcmlmaWVkIjp0cnVlfSwicm9sZSI6ImF1dGhlbnRpY2F0ZWQiLCJhYWwiOiJhYWwxIiwiYW1yIjpbeyJtZXRob2QiOiJvdHAiLCJ0aW1lc3RhbXAiOjE3NDk0Mzk3Nzd9XSwic2Vzc2lvbl9pZCI6ImY4MGIwMzlmLTc2ODItNDQyMy05MDliLTliNDViZTMyNDM4NSIsImlzX2Fub255bW91cyI6ZmFsc2V9.jjS0Y1uxq6QoTFDI5WWAozZPCGBT8ws-qnnGxaFuJrE&expires_at=1749443377&expires_in=3600&refresh_token=gymcwzxm2ntk&token_type=bearer&type=recovery
   useEffect(() => {
-    // Parse hash fragment parameters (after #)
-    const hash = location.hash.substring(1); // Remove the # character
-    const hashParams = new URLSearchParams(hash);
-    const accessToken = hashParams.get("access_token");
-    
-    if (accessToken) {
-      // For Supabase, we don't need to manually store the token
-      // Supabase will automatically handle the session when the page loads
-      // We just set a flag to show the form is ready
-      setToken("ready");
-    } else {
-      // Fallback: check query parameters for backward compatibility
-      const queryParams = new URLSearchParams(location.search);
-      const resetToken = queryParams.get("token");
+    const handleAuthCallback = async () => {
+      // Parse hash fragment parameters (after #)
+      const hash = location.hash.substring(1); // Remove the # character
+      const hashParams = new URLSearchParams(hash);
+      const accessToken = hashParams.get("access_token");
       
-      if (resetToken) {
-        setToken(resetToken);
+      if (accessToken) {
+        try {
+          // Manually set the session using the tokens from the URL
+          const refreshToken = hashParams.get("refresh_token");
+          
+          if (refreshToken) {
+            const { data, error } = await supabase.auth.setSession({
+              access_token: accessToken,
+              refresh_token: refreshToken,
+            });
+            
+            if (error) {
+              console.error("Error setting session:", error);
+              setError(t("auth.reset.invalidToken"));
+              return;
+            }
+            
+            console.log("Session established successfully for password reset");
+            setToken("ready");
+          } else {
+            setError(t("auth.reset.invalidToken"));
+          }
+        } catch (err) {
+          console.error("Error processing auth callback:", err);
+          setError(t("auth.reset.invalidToken"));
+        }
       } else {
-        setError(t("auth.reset.invalidToken"));
+        // Fallback: check query parameters for backward compatibility
+        const queryParams = new URLSearchParams(location.search);
+        const resetToken = queryParams.get("token");
+        
+        if (resetToken) {
+          setToken(resetToken);
+        } else {
+          setError(t("auth.reset.invalidToken"));
+        }
       }
-    }
+    };
+    
+    handleAuthCallback();
   }, [location, t]);
   
   const handleSubmit = async (e: React.FormEvent) => {
