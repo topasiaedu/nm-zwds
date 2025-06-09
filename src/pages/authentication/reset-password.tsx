@@ -32,7 +32,10 @@ const ResetPasswordPage: React.FC = () => {
     const accessToken = hashParams.get("access_token");
     
     if (accessToken) {
-      setToken(accessToken);
+      // For Supabase, we don't need to manually store the token
+      // Supabase will automatically handle the session when the page loads
+      // We just set a flag to show the form is ready
+      setToken("ready");
     } else {
       // Fallback: check query parameters for backward compatibility
       const queryParams = new URLSearchParams(location.search);
@@ -73,7 +76,8 @@ const ResetPasswordPage: React.FC = () => {
     
     try {
       setIsSubmitting(true);
-      const { error } = await completePasswordReset(token, password);
+      // For Supabase, we don't need to pass the token as it's handled automatically
+      const { error } = await completePasswordReset("", password);
       
       if (error) {
         setError(error.message);

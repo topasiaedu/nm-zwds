@@ -122,6 +122,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
         const currentPath = window.location.pathname;
         const isPublicRoute = currentPath.startsWith("/free-") || 
                             currentPath.startsWith("/authentication/");
+        
+        // Special case: don't redirect from reset password page if there's a token in the URL
+        const isResetPasswordWithToken = currentPath.includes("/reset-password") && 
+                                       window.location.hash.includes("access_token");
 
         console.log("Auth state check:", {
           event,
@@ -142,7 +146,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
         // 2. Not on a public route  
         // 3. Not during specific events that are part of normal flow
         // 4. App has been initialized
-        if (!session && !isPublicRoute && 
+        // 5. Not on reset password page with token
+        if (!session && !isPublicRoute && !isResetPasswordWithToken &&
             !["SIGNED_OUT", "INITIAL_SESSION", "TOKEN_REFRESHED"].includes(event) &&
             initializedRef.current) {
           
@@ -275,17 +280,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     newPassword: string
   ): Promise<{ error: AuthError | null }> => {
     try {
-      // First, verify the recovery session using the token
-      const { error: sessionError } = await supabase.auth.verifyOtp({
-        token_hash: token,
-        type: "recovery",
-      });
-
-      if (sessionError) {
-        return { error: sessionError };
-      }
-
-      // Then update the password
+      // For Supabase password reset, we just update the password
+      // The session should already be established by the auth state change
+      // when the user lands on the page with the token
       const { error } = await supabase.auth.updateUser({
         password: newPassword,
       });
