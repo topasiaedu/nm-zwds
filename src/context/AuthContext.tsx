@@ -118,54 +118,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
           return;
         }
 
-        // Check if we're on a public route
-        const currentPath = window.location.pathname;
-        const isPublicRoute = currentPath.startsWith("/free-") || 
-                            currentPath.startsWith("/authentication/");
-        
-        // Special case: don't redirect from reset password page if there's a token in the URL
-        // or if we're on the reset password page with an active session (during password reset flow)
-        const isResetPasswordWithToken = currentPath.includes("/reset-password") && 
-                                       (window.location.hash.includes("access_token") || session);
-
-        console.log("Auth state check:", {
-          event,
-          hasSession: !!session,
-          currentPath,
-          isPublicRoute,
-          initialized: initializedRef.current
-        });
-
-        // Clear any existing redirect timeout
-        if (redirectTimeoutRef.current) {
-          clearTimeout(redirectTimeoutRef.current);
-          redirectTimeoutRef.current = null;
-        }
-
-        // Only redirect to sign-in if:
-        // 1. No session exists
-        // 2. Not on a public route  
-        // 3. Not during specific events that are part of normal flow
-        // 4. App has been initialized
-        // 5. Not on reset password page with token
-        if (!session && !isPublicRoute && !isResetPasswordWithToken &&
-            !["SIGNED_OUT", "INITIAL_SESSION", "TOKEN_REFRESHED"].includes(event) &&
-            initializedRef.current) {
-          
-          // Add a delay to prevent race conditions during page navigation
-          redirectTimeoutRef.current = setTimeout(() => {
-            const pathAfterDelay = window.location.pathname;
-            const isStillNonPublicRoute = !pathAfterDelay.startsWith("/free-") && 
-                                        !pathAfterDelay.startsWith("/authentication/");
-            
-            if (isStillNonPublicRoute) {
-              console.log("AuthContext - Redirecting to sign-in from:", pathAfterDelay);
-              navigate("/authentication/sign-in");
-            } else {
-              console.log("AuthContext - Skipping redirect - now on public route:", pathAfterDelay);
-            }
-          }, 500); // 500ms delay to allow navigation to complete
-        }
+        console.log("Auth state change:", event, "Session exists:", !!session, "User ID:", session?.user?.id);
       }
     );
 

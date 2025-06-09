@@ -32,13 +32,16 @@ import { SpeedInsights } from "@vercel/speed-insights/react"
 
 /**
  * Authentication route wrapper that redirects authenticated users to dashboard
+ * (except for password reset flow)
  */
 const AuthRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user } = useAuth();
   const location = useLocation();
 
   // If user is authenticated and trying to access auth pages, redirect to dashboard
-  if (user && location.pathname.includes("/authentication")) {
+  // EXCEPT for password reset page (allow users to complete password reset flow)
+  if (user && location.pathname.includes("/authentication") && 
+      !location.pathname.includes("/reset-password")) {
     return <Navigate to="/dashboard" replace />;
   }
 
