@@ -124,8 +124,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
                             currentPath.startsWith("/authentication/");
         
         // Special case: don't redirect from reset password page if there's a token in the URL
+        // or if we're on the reset password page with an active session (during password reset flow)
         const isResetPasswordWithToken = currentPath.includes("/reset-password") && 
-                                       window.location.hash.includes("access_token");
+                                       (window.location.hash.includes("access_token") || session);
 
         console.log("Auth state check:", {
           event,
