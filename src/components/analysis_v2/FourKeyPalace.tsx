@@ -97,7 +97,7 @@ const FourKeyPalace: React.FC<FourKeyPalaceProps> = ({ chartData }) => {
     return (
       <div className="p-6 dark:bg-gray-900">
         {/* Divider */}
-        <div className="w-full border-t border-gray-200 dark:border-gray-700 mb-6"></div>
+        <div className="w-full border-t border-gray-400 dark:border-gray-600 mb-6"></div>
 
         {/* Title */}
         <h2 className="text-4xl mb-2 dark:text-white text-center font-bold">
@@ -122,7 +122,7 @@ const FourKeyPalace: React.FC<FourKeyPalaceProps> = ({ chartData }) => {
   return (
     <div className="p-6 dark:bg-gray-900">
       {/* Divider */}
-      <div className="w-full border-t border-gray-200 dark:border-gray-700 mb-6"></div>
+      <div className="w-full border-t border-gray-400 dark:border-gray-600 mb-6"></div>
 
       {/* Title */}
       <h2 className="text-4xl mb-2 dark:text-white text-center font-bold">

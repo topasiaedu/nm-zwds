@@ -8,8 +8,9 @@ export const DATASET_1 = {
       title: "🔱 紫微（命宫）｜帝王星",
       description:
         "你天生有王者气场，骨子里就是要带头的人。\n你的人设不适合服从太久，你适合创造方向、设定标准。\n越早意识到“我不是来被指挥的”，你会越早翻盘。",
-      strengths: "Has a strong presence, is responsible, and possesses strong organizational skills",
-      cautions: "Don't be too proud, too cold, or too demanding, which will lose your popularity",
+      strengths:
+        "Strong presence, Highly responsible, Exceptional at organizing and managing tasks, Reliable in leadership, Able to inspire confidence in others",
+      cautions: "Prideful, Distant, Demanding",
       next_focus: "Learn to make decisions, use a stable heart to raise a team",
       quote: "Your life is not meant to please, but to lead.",
     },
@@ -20,7 +21,8 @@ export const DATASET_1 = {
       earning_methods: "打造自己的商业系统、有领导的金钱管道",
       financial_risks: "太依赖权贵，或过度投资门面、排场",
       focus_areas: "多管道收入／组团队赚钱／建立金钱系统",
-      quote: "You are not a money-making worker, you are the master of your asset empire.",
+      quote:
+        "You are not a money-making worker, you are the master of your asset empire.",
     },
     官禄宫: {
       title: "🔱 紫微（官禄宫）｜帝王星",
@@ -29,7 +31,8 @@ export const DATASET_1 = {
       career_traits: "企业高管、组织领导、政策制定者",
       career_pitfalls: "过于追求权力，忽视团队协作",
       focus_areas: "建立权威的同时，注重团队建设和协作",
-      quote: "Your leadership is the core of your career, leading a team to create glory.",
+      quote:
+        "Your leadership is the core of your career, leading a team to create glory.",
     },
   },
   天府: {
@@ -39,9 +42,12 @@ export const DATASET_1 = {
       title: "🏛️ 天府（命宫）｜掌财星",
       description:
         "你天生稳重、可靠，擅长管理和规划。\n你对资源的掌控能力强，适合担任管理和协调的角色。\n越早意识到“稳定是你的优势”，你会越早建立自己的王国。",
-      strengths: "Stable, reliable, and strong management skills",
-      cautions: "Too conservative, lack of innovation",
-      next_focus: "On the basis of stability, try to innovate and break through",
+      strengths:
+        "Stable under pressure, Consistently reliable, Excellent at managing systems and processes, Dependable in decision-making, Methodical in execution",
+      cautions: "Conservative, Unoriginal",
+
+      next_focus:
+        "On the basis of stability, try to innovate and break through",
       quote: "Your stability is the foundation of your success",
     },
     财帛宫: {
@@ -60,7 +66,8 @@ export const DATASET_1 = {
       career_traits: "企业管理、行政管理、项目管理",
       career_pitfalls: "过于保守，缺乏创新",
       focus_areas: "在稳定的基础上，尝试创新和突破",
-      quote: "Your management skills are the core of your career, innovation is the driving force of your career.",
+      quote:
+        "Your management skills are the core of your career, innovation is the driving force of your career.",
     },
   },
   天相: {
@@ -70,10 +77,13 @@ export const DATASET_1 = {
       title: "⚖️ 天相（命宫）｜协调星",
       description:
         "你天生温和、善于协调，擅长处理人际关系。\n你适合担任协调和管理的角色，建立和谐的团队氛围。\n越早意识到“协调是你的天赋”，你会越早发挥自己的影响力。",
-      strengths: "Gentle, good at coordination, and has strong interpersonal skills",
-      cautions: "Tends to overly pursue harmony, which may lead to neglecting their own needs",
+      strengths:
+        "Gentle demeanor, Skilled at coordination, Strong interpersonal connections, Empathetic in communication, Effective at building harmonious relationships",
+      cautions: "Over-accommodating",
+
       next_focus: "Focus on yourself while coordinating others",
-      quote: "Your coordination skills are the source of your influence, focusing on yourself can better serve others.",
+      quote:
+        "Your coordination skills are the source of your influence, focusing on yourself can better serve others.",
     },
     财帛宫: {
       title: "👑 天相（财帛宫）",
@@ -82,7 +92,8 @@ export const DATASET_1 = {
       earning_methods: "品牌服务、咨询顾问、教学辅导、客户关系经营",
       financial_risks: "太怕要价、太讲人情、被人情消费",
       focus_areas: "清楚表达价值／创造信任通路／定价别再退",
-      quote: "You are not a product seller, you are a soul brand that people buy安心。",
+      quote:
+        "You are not a product seller, you are a soul brand that people buy安心。",
     },
     官禄宫: {
       title: "⚖️ 天相（官禄宫）｜协调星",
@@ -92,7 +103,8 @@ export const DATASET_1 = {
         "客户关系管理／内部行政主管／人事／教育系统中层干部／助理顾问类岗位／政府单位",
       career_pitfalls: "怕冲突导致让步过多／不善拒绝而被压榨",
       focus_areas: "练习边界感／明确职掌与KPI／打造可复制的协作模式",
-      quote: "You are the quiet force that keeps the world running smoothly, without conflict, yet remarkably stable.",
+      quote:
+        "You are the quiet force that keeps the world running smoothly, without conflict, yet remarkably stable.",
     },
   },
   武曲: {
@@ -102,10 +114,13 @@ export const DATASET_1 = {
       title: "⚔️ 武曲（命宫）｜执行星",
       description:
         "你是天生的执行者，行得快、撑得久、做得深。你对时间、效率、成果特别有意识。\n你不是花拳绣腿型，你是靠干、靠拼、靠狠劲活出价值的人。",
-      strengths: "High execution, discipline, solid, goal-oriented",
-      cautions: "Emotional expression is weak,tends to suppress feelings and work hard without complaint, often bottling everything up",
+      strengths:
+        "Highly effective in execution, Disciplined and focused, Grounded in stability, Driven by clear goals, Consistent in performance",
+      cautions: "Emotionally reserved",
+
       next_focus: "Learn to express yourself and be seen and valued",
-      quote: "You are not a tool, you are a hard-core pioneer who breaks the value loop.",
+      quote:
+        "You are not a tool, you are a hard-core pioneer who breaks the value loop.",
     },
     财帛宫: {
       title: "⚔️ 武曲（财帛宫）｜执行星",
@@ -124,7 +139,8 @@ export const DATASET_1 = {
         "企业中高层、执行长、金融、军警、供应链、财务分析、专案管理",
       career_pitfalls: "压过主管、推不开团队、太用力失去弹性",
       focus_areas: "打造「带人系统」而不是「做事系统」，让你从个人强转团队强",
-      quote: "You are not just to complete tasks, you are here to build a performance system.",
+      quote:
+        "You are not just to complete tasks, you are here to build a performance system.",
     },
   },
   天机: {
@@ -133,10 +149,13 @@ export const DATASET_1 = {
     命宫: {
       title: "🧠 天机（命宫）｜智多星",
       description: "",
-      strengths: "Quick reaction, deep thinking, strong strategy, flexible but not rigid",
-      cautions: "Too much thinking, indecisive, plans always lag behind actions",
+      strengths:
+        "Quick to react, Deeply analytical, Strong in strategic planning, Adaptable in changing situations, Mentally agile and insightful",
+      cautions: "Overthinks, Indecisive",
+
       next_focus: "Start executing比思考更重要，练习让一个想法跑到终点",
-      quote: "You are not too slow, you are using your time to predict the future——it's time to take action.",
+      quote:
+        "You are not too slow, you are using your time to predict the future——it's time to take action.",
     },
     财帛宫: {
       title: "🧠 天机（财帛宫）｜智多星",
@@ -145,7 +164,8 @@ export const DATASET_1 = {
         "顾问型收入、逻辑型教学、数据分析、策略搭建、线上系统变现",
       financial_risks: "想太多导致错失入场机会，方案变来变去影响财务稳定",
       focus_areas: "选一个最有机会长期跑赢的方向深耕，别把能量分给太多细枝末节",
-      quote: "Your money is not fast or slow, it's whether you are doing the right thing at the right time.",
+      quote:
+        "Your money is not fast or slow, it's whether you are doing the right thing at the right time.",
     },
     官禄宫: {
       title: "🧠 天机（官禄宫）｜智多星",
@@ -165,10 +185,13 @@ export const DATASET_1 = {
       title: "🎼 文曲（命宫）｜感性艺术星",
       description:
         "你是艺术气质型人格，情感丰富、审美力强、感受力极高。你很会感人，也常常容易“被情绪影响”。\n你适合传达美、传递氛围、写下感觉。",
-      strengths: "Emotional, creative, artistic, writes movingly",
-      cautions: "Too emotional, too much thinking, prone to self-pity",
+      strengths:
+        "Emotionally expressive, Highly creative, Artistically talented, Skilled in evocative writing, Deeply imaginative",
+      cautions: "Overemotional, Self-pitying",
+
       next_focus: "培养稳定输出能力／情绪不再控制你，而是被你转化成灵感",
-      quote: "You are not a glass heart, you are a container of the whole galaxy.",
+      quote:
+        "You are not a glass heart, you are a container of the whole galaxy.",
     },
     财帛宫: {
       title: "🎼 文曲（财帛宫）｜感性艺术星",
@@ -188,7 +211,8 @@ export const DATASET_1 = {
         "艺术创作人／心理咨询／身心灵导师／品牌视觉顾问／美学策划人／内容IP打造者",
       career_pitfalls: "情绪管理影响项目交付／完美主义／难以与团队系统节奏配合",
       focus_areas: "结合“结构型合伙人”，把你的灵感转化为实际可售产品或服务",
-      quote: "You are not a worker, you are a person who perceives the world and creates energy through art.",
+      quote:
+        "You are not a worker, you are a person who perceives the world and creates energy through art.",
     },
   },
   文昌: {
@@ -198,10 +222,13 @@ export const DATASET_1 = {
       title: "✍️ 文昌（命宫）｜逻辑表达星",
       description:
         "你是理性派的表达者，思路清晰，逻辑严谨，适合教学、研究、写作等需要组织性强的领域。\n你的优势在于“讲得懂＋写得清”，别人绕圈时，你能一语道破。",
-      strengths: "Clear mind, good at organizing, solid writing, quick reaction",
-      cautions: "Overly rational, strict, with a tendency to focus on form over action",
+      strengths:
+        "Clear and logical thinker, Highly organized, Proficient in structured writing, Responds swiftly and accurately, Detail-oriented",
+      cautions: "Overly rigid",
+
       next_focus: "让表达更接地气／不要怕重复／一支笔可以换一座山",
-      quote: "You are not a talkative person, you are a person who makes the world understand.",
+      quote:
+        "You are not a talkative person, you are a person who makes the world understand.",
     },
     财帛宫: {
       title: "✍️ 文昌（财帛宫）｜逻辑表达星",
@@ -211,7 +238,8 @@ export const DATASET_1 = {
         "专业内容整理、课程架构、教育产品、策略型咨询、写作变现、线上知识产品",
       financial_risks: "太过理性压抑消费、过度花时间优化系统反而错失入金节奏",
       focus_areas: "提升内容变现速度、打造一套“有结构的知识型产品”并持续销售",
-      quote: "You make money not by luck, but by making people understand how much you are worth.",
+      quote:
+        "You make money not by luck, but by making people understand how much you are worth.",
     },
     官禄宫: {
       title: "✍️ 文昌（官禄宫）｜逻辑表达星",
@@ -221,7 +249,8 @@ export const DATASET_1 = {
         "教学讲师、企划撰写、职能训练、教育系统设计、品牌架构师、SEO文案／系统顾问",
       career_pitfalls: "太在意小细节／拖延症发作／完成度永远不满意",
       focus_areas: "练习“80分就推”、“内容先上线再优化”，让你的知识真正开始变现",
-      quote: "You are not a knowledge-based employee, you are the center of a business that simplifies complexity.",
+      quote:
+        "You are not a knowledge-based employee, you are the center of a business that simplifies complexity.",
     },
   },
   贪狼: {
@@ -231,10 +260,13 @@ export const DATASET_1 = {
       title: "🐺 贪狼（命宫）｜魅力星",
       description:
         "你是命盘里“最懂得玩”的人。你多才多艺、多变多面，吸引力强，有创造力与极高的人际磁场。",
-      strengths: "Highly charismatic, socially skilled, and excels at creative expression and sensory experiences",
-      cautions: "Easily loses interest quickly, struggles with scattered energy, and experiences strong emotional, desire-driven inner conflicts",
+      strengths:
+        "Highly charismatic, Naturally social, Excels in creative self-expression, Deeply attuned to sensory details, Engaging and magnetic presence",
+      cautions: "Easily distracted, Conflicted",
+
       next_focus: "专注做出一个让你“又爱又赢”的系统，不再只是体验而已",
-      quote: "You are not a person who plays a lot, you are the king who can turn happiness into a profession.",
+      quote:
+        "You are not a person who plays a lot, you are the king who can turn happiness into a profession.",
     },
     财帛宫: {
       title: "🐺 贪狼（财帛宫）｜魅力星",
@@ -253,7 +285,8 @@ export const DATASET_1 = {
         "演艺／直播／行销／公关／娱乐主持／业务销售／活动策划／创意副业",
       career_pitfalls: "太看心情工作／难维持长线专注／常因关系搞砸合作",
       focus_areas: "建立“玩中赢”系统，让创意有结构、情绪有出口、事业有节奏",
-      quote: "You are not here to work overtime, you are here to make people remember who you are.",
+      quote:
+        "You are not here to work overtime, you are here to make people remember who you are.",
     },
   },
   太阳: {
@@ -263,9 +296,11 @@ export const DATASET_1 = {
       title: "🌞 太阳（命宫）｜领导星",
       description:
         "你是来发光的。你身上有一种天生的温暖、领导气场与承担力。别人犹豫时，你已经点燃自己照亮别人。",
-      strengths: "Decisive, responsible, strongly principled, capable of leading others, and driven by a clear vision",
-      cautions: "Gives too much and easily gets drained, struggles to express vulnerability, and tends to maintain appearances for pride",
-      quote: "You are not a person who lights up the world, you are also worth being lit.",
+      strengths:
+        "Decisive under pressure, Deeply responsible, Grounded in strong principles, Natural leadership ability, Guided by a compelling vision",
+      cautions: "Overgiving, Guarded",
+      quote:
+        "You are not a person who lights up the world, you are also worth being lit.",
     },
     财帛宫: {
       title: "🌞 太阳（财帛宫）｜领导星",
@@ -275,7 +310,8 @@ export const DATASET_1 = {
         "培训导师／顾问讲师／业务主导／高曝光个人品牌／直播／公开演讲／销售领袖",
       financial_risks: "过度付出、定价偏低、怕别人负担不敢报价",
       focus_areas: "练习带出价值感的主张／敢亮出价格与框架／定时回收信任红利",
-      quote: "You are not here to sell products, you are here to ignite the source of trust.",
+      quote:
+        "You are not here to sell products, you are here to ignite the source of trust.",
     },
     官禄宫: {
       title: "🌞 太阳（官禄宫）｜领导星",
@@ -284,7 +320,8 @@ export const DATASET_1 = {
       career_traits: "创业领袖／教育培训／营销顾问／政治／公益／社群主理人",
       career_pitfalls: "怕求助／好强不肯放手／坚持旧方式不更新",
       focus_areas: "打造带人系统／建立“领导力赢利方程式”",
-      quote: "You are not an employee, you are the light that leads everyone forward.",
+      quote:
+        "You are not an employee, you are the light that leads everyone forward.",
     },
   },
   太阴: {
@@ -294,8 +331,9 @@ export const DATASET_1 = {
       title: "🌙 太阴（命宫）｜内在温柔星",
       description:
         "你是安静的力量，是默默观察、稳定输出、从细节中见深度的人。你拥有强大的情感洞察力，是天生的倾听者与照顾者。",
-      strengths: "Delicate, gentle, calm and patient, thoughtful, and emotionally balanced",
-      cautions: "Tends to suppress emotions, overly prioritizes others' needs, and avoids conflict",
+      strengths:
+        "Delicate, Gentle, Calm And Patient, Thoughtful, Emotionally Balanced",
+      cautions: "Emotion-Suppressing, Overaccommodating, Conflict-Averse",
       quote: "You are not fragile, you are the ocean of deep inner energy.",
     },
     财帛宫: {
@@ -306,7 +344,8 @@ export const DATASET_1 = {
         "客户管理／家庭教育／照护产业／投资理财顾问／女性创业／疗愈型服务",
       financial_risks: "容易被情感带走、怕要价、常常帮太多不该帮的人",
       focus_areas: "建立服务结构／打造长期稳定客户池／设定定价底线",
-      quote: "Your gentleness can make money, as long as you learn to set a price for yourself.",
+      quote:
+        "Your gentleness can make money, as long as you learn to set a price for yourself.",
     },
     官禄宫: {
       title: "🌙 太阴（官禄宫）｜内在温柔星",
@@ -315,7 +354,8 @@ export const DATASET_1 = {
       career_traits: "教育／金融／照护／文创／家庭／心理／品牌幕僚",
       career_pitfalls: "缺乏曝光、不敢推自己、容易被看轻",
       focus_areas: "打造专业定位／练习“温和地表达野心”",
-      quote: "You are not without ambition, you just conquer the world in the most gentle way.",
+      quote:
+        "You are not without ambition, you just conquer the world in the most gentle way.",
     },
   },
   巨门: {
@@ -325,8 +365,10 @@ export const DATASET_1 = {
       title: "🌪️ 巨门（命宫）｜说话能量星",
       description:
         "你是思辨型人格，常常一语戳破重点，带有强烈的洞察与“敢说真话”的气场。你的话术强、逻辑力高，是打破假象的人。",
-      strengths: "Speaks the truth boldly, thinks logically, highly observant, and delivers impactful communication",
-      cautions: "Easily misunderstood as aggressive, often unintentionally hurts others with direct communication",
+      strengths:
+        "Boldly Honest, Logical Thinker, Highly Observant, Impactful Communicator, Direct and Clear",
+      cautions: "Misinterpreted, Blunt",
+
       quote: "You are not a quarrel king, you are the解毒剂 of language.",
     },
     财帛宫: {
@@ -356,9 +398,12 @@ export const DATASET_1 = {
       title: "🍀 天同（命宫）｜天真疗愈星",
       description:
         "你是“世界的疗愈剂”，内在柔软、有同理心，喜欢和善、讨厌冲突，是温柔但坚定的理想主义者。\n你渴望世界更好，而你也会用行动慢慢修补它。",
-      strengths: "Positive-minded, empathetic, a peacemaker, gentle and accepting, with a healing presence",
-      cautions: "Avoids conflict, tends to shrink back under pressure, and is overly dependent on others' opinions",
-      quote: "You are not weak, you are the light person who can overcome the hard with gentleness.",
+      strengths:
+        "Positive-Minded, Empathetic, Peacemaker, Gentle And Accepting, Healing Presence",
+      cautions: "Conflict-Avoidant, Withdrawing, Approval-Seeking",
+
+      quote:
+        "You are not weak, you are the light person who can overcome the hard with gentleness.",
     },
     财帛宫: {
       title: "🍀 天同（财帛宫）｜天真疗愈星",
@@ -368,7 +413,8 @@ export const DATASET_1 = {
         "咨询辅导／身心疗愈／亲子教育／服务业／顾问陪跑型方案／社群陪伴服务",
       financial_risks: "怕报价／给太多免费价值／靠感情撑服务",
       focus_areas: "建立“疗愈型服务收费模型”，把温柔定价，让温暖变被动收入",
-      quote: "You are a soft person who can make money, but gentleness cannot be free anymore.",
+      quote:
+        "You are a soft person who can make money, but gentleness cannot be free anymore.",
     },
     官禄宫: {
       title: "🍀 天同（官禄宫）｜天真疗愈星",
@@ -378,7 +424,8 @@ export const DATASET_1 = {
         "教育培训／心理咨询／儿童产业／人资导师／陪跑型教练／社群文化主理人",
       career_pitfalls: "太不主动就被边缘化／怕冲突就不争取机会",
       focus_areas: "把你的温柔建立成“影响力系统”，让安静的你也能稳收事业红利",
-      quote: "You don't win the world by shouting, you win it by trust and depth.",
+      quote:
+        "You don't win the world by shouting, you win it by trust and depth.",
     },
   },
   七杀: {
@@ -388,9 +435,11 @@ export const DATASET_1 = {
       title: "🗡 七杀（命宫）｜行动破格星",
       description:
         "你是天生的突破者、不走寻常路的先锋军。你天生带着“不爽就改、不对就拆”的霸气，别人犹豫的时候你已经冲上战场。",
-      strengths: "Highly action-oriented, decisive, independent, willing to take risks, and skilled at driving innovation and breakthroughs",
-      cautions: "Moves too fast for others to keep up, experiences intense emotional swings, and tends to feel drained after bursts of energy",
-      quote: "You are not a bad temper, you are the engineer of fate who comes with a knife.",
+      strengths:
+        "Action-Oriented, Decisive, Independent, Risk-Taking, Innovation-Driven",
+      cautions: "Overpaces Others, Emotionally Volatile, Energy-Crashing",
+      quote:
+        "You are not a bad temper, you are the engineer of fate who comes with a knife.",
     },
     财帛宫: {
       title: "🗡 七杀（财帛宫）｜行动破格星",
@@ -400,7 +449,8 @@ export const DATASET_1 = {
         "投资交易／新创项目／快销产品／趋势第一波／数字货币／技术操盘",
       financial_risks: "贪快／管不住手／情绪交易",
       focus_areas: "打造“快而稳”的金流策略、练习止盈纪律、带团队控节奏",
-      quote: "You are the money-making突击手 in the battlefield, not the always冲锋的炮灰.",
+      quote:
+        "You are the money-making突击手 in the battlefield, not the always冲锋的炮灰.",
     },
     官禄宫: {
       title: "🗡 七杀（官禄宫）｜行动破格星",
@@ -409,7 +459,8 @@ export const DATASET_1 = {
       career_traits: "创业／接案型工作／品牌打造／风险项目负责人／先行者型顾问",
       career_pitfalls: "难融入团队文化／太强调自由／带不住人",
       focus_areas: "建立可传承系统／打造“自由有边界”的个人品牌",
-      quote: "You are not a person in the system, you are here to create a new system.",
+      quote:
+        "You are not a person in the system, you are here to create a new system.",
     },
   },
   破军: {
@@ -419,9 +470,12 @@ export const DATASET_1 = {
       title: "🌊 破军（命宫）｜重生星",
       description:
         "You are a soul-type personality who constantly breaks and rebuilds yourself. You don't live easily, but every turn is ten times more精彩。You are not afraid to lose, you are afraid of being too predictable.",
-      strengths: "Strong ability to break the old and establish the new, strong adaptability, reform energy, and natural momentum",
-      cautions: "Tends to make self-sabotaging career shifts, overly rejects the past, and struggles to find long-term stability",
-      quote: "You are not always restarting, you are creating the strongest version of yourself.",
+      strengths:
+        "Trailblazing, Highly Adaptable, Reform-Driven, Naturally Dynamic, Change-Oriented",
+      cautions: "Self-Sabotaging, Past-Rejecting, Unstable",
+
+      quote:
+        "You are not always restarting, you are creating the strongest version of yourself.",
     },
     财帛宫: {
       title: "🌊 破军（财帛宫）｜重生星",
@@ -431,7 +485,8 @@ export const DATASET_1 = {
         "创业型产品／投机市场／社交媒体内容／网红流量转化／新平台吃红利",
       financial_risks: "反复换方向、没收口系统、看太大做太慢",
       focus_areas: "建立“短打赢收口”流程／打造多渠道流量变现系统",
-      quote: "You are here to turn chaos into a gold mine, not to be swallowed by change.",
+      quote:
+        "You are here to turn chaos into a gold mine, not to be swallowed by change.",
     },
     官禄宫: {
       title: "🌊 破军（官禄宫）｜重生星",
@@ -441,7 +496,8 @@ export const DATASET_1 = {
         "自媒体／内容创作者／斜杠型创业者／线上平台主理人／创意实验性产品主脑",
       career_pitfalls: "没稳定系统／易被误解为不靠谱／团队难配合你节奏",
       focus_areas: "打造“破局→变现→带人”三部曲结构，放大独特风格变资产",
-      quote: "You are not an employee, you are a warrior who is always ready to overthrow the old system.",
+      quote:
+        "You are not an employee, you are a warrior who is always ready to overthrow the old system.",
     },
   },
   左輔: {
@@ -451,8 +507,9 @@ export const DATASET_1 = {
       title: "🫱 左輔（命宫）｜辅佐星",
       description:
         "你天生给人安全感，是团队中最可靠的存在。你擅长倾听、扶持、补位，是领导信赖的左膀右臂。",
-      strengths: "Loyal, gentle, and helpful",
-      cautions: "Prone to excessive self-sacrifice, often lacks a strong personal standpoint",
+      strengths: "Loyal, Gentle, Helpful, Supportive, Dependable",
+      cautions: "Self-Sacrificing, Unassertive",
+
       next_focus: "学习设界限，在给予中不失自我",
       quote: "Your value is in supporting the whole team silently.",
     },
@@ -471,7 +528,8 @@ export const DATASET_1 = {
       career_traits: "团队管理、执行协助、项目协调",
       career_pitfalls: "缺乏个人声音，容易被忽视",
       focus_areas: "提升专业能力，发出你的影响力",
-      quote: "You are the backbone of the protagonist, also the soul of the stage.",
+      quote:
+        "You are the backbone of the protagonist, also the soul of the stage.",
     },
   },
   右弼: {
@@ -480,10 +538,13 @@ export const DATASET_1 = {
     命宫: {
       title: "🤝 右弼（命宫）｜辅佐星",
       description: "你为人亲切、擅长调和人际关系，是让团队更和谐的粘合剂。",
-      strengths: "Diplomatic, sociable, and reliable",
-      cautions: "Cares too much about others’ opinions, often at the expense of their own needs",
+      strengths:
+        "Diplomatic, Sociable, Reliable, Graceful Under Pressure, Cooperative",
+      cautions: "Approval-Seeking, Self-Neglecting",
+
       next_focus: "学会表达真实感受，平衡自己与他人",
-      quote: "You are not an accessory, but a lubricant that makes everything smoother.",
+      quote:
+        "You are not an accessory, but a lubricant that makes everything smoother.",
     },
     财帛宫: {
       title: "🤝 右弼（财帛宫）",
@@ -499,7 +560,8 @@ export const DATASET_1 = {
       career_traits: "公关、协调、客户成功",
       career_pitfalls: "容易被情绪左右，影响判断",
       focus_areas: "练习理性表达，做出理智决策",
-      quote: "You make cooperation more warm, and make achievements more visible.",
+      quote:
+        "You make cooperation more warm, and make achievements more visible.",
     },
   },
   天梁: {
@@ -509,10 +571,13 @@ export const DATASET_1 = {
       title: "🧱 天梁（命宫）｜辅佐星",
       description:
         "你天生有责任感，具有公理与同理心，是团队中守护者的角色，擅长安抚与解决冲突。",
-      strengths: "Strong sense of justice, compassionate, and has a nurturing, healing energy",
-      cautions: "Tends to take on too much, is prone to shouldering others' responsibilities",
+      strengths:
+        "Justice-Oriented, Compassionate, Nurturing, Healing Presence, Emotionally Supportive",
+      cautions: "Overburdened, Overresponsible",
+
       next_focus: "学会区分责任界线，不为所有人负责",
-      quote: "Your kindness is not weakness, but the strongest armor in your energy field.",
+      quote:
+        "Your kindness is not weakness, but the strongest armor in your energy field.",
     },
     财帛宫: {
       title: "🧱 天梁（财帛宫）",
@@ -529,7 +594,8 @@ export const DATASET_1 = {
       career_traits: "顾问、导师、医疗健康、公职体系",
       career_pitfalls: "过于宽容，放任问题扩大",
       focus_areas: "增强决断力，守护也能立威",
-      quote: "Your authority comes from your virtue, and you are the mountain of security for the team.",
+      quote:
+        "Your authority comes from your virtue, and you are the mountain of security for the team.",
     },
   },
   廉贞: {
@@ -539,10 +605,13 @@ export const DATASET_1 = {
       title: "🔥 廉贞（命宫）｜斗志星",
       description:
         "你充满斗志、外冷内热，是带点叛逆的领袖人格。擅长突破框架，挑战权威。",
-      strengths: "Decisive, charismatic, and ambitious",
-      cautions: "Can be stubborn and self-opinionated, with occasional emotional instability",
+      strengths:
+        "Decisive, Charismatic, Ambitious, Vision-Driven, Confident Leader",
+      cautions: "Stubborn, Self-Opinionated, Emotionally Unsteady",
+
       next_focus: "整合情绪与行动，让锋芒更有方向",
-      quote: "You are not here to adapt to the world, you are here to change the rules.",
+      quote:
+        "You are not here to adapt to the world, you are here to change the rules.",
     },
     财帛宫: {
       title: "🔥 廉贞（财帛宫）",
@@ -554,7 +623,8 @@ export const DATASET_1 = {
     },
     官禄宫: {
       title: "🔥 廉贞（官禄宫）｜斗志星",
-      description: "You are suitable for a career that requires power and rules, and you are the person who changes the game rules.",
+      description:
+        "You are suitable for a career that requires power and rules, and you are the person who changes the game rules.",
       career_traits: "Strategy官、改革推动者、领导者",
       career_pitfalls: "太过强势，易树敌",
       focus_areas: "融入团队，激烈中保留圆润",
@@ -582,7 +652,7 @@ export const TIP_CONSTANTS = {
     左輔: "学习设界限，在给予中不失自我",
     右弼: "学会表达真实感受，平衡自己与他人",
     天梁: "学会区分责任界线，不为所有人负责",
-    廉贞: "整合情绪与行动，让锋芒更有方向"
+    廉贞: "整合情绪与行动，让锋芒更有方向",
   },
   财帛宫: {
     紫微: "多管道收入／组团队赚钱／建立金钱系统",
@@ -602,7 +672,7 @@ export const TIP_CONSTANTS = {
     左輔: "设好合作条件，争取应得报酬",
     右弼: "建立清晰界限，资源换位合理",
     天梁: "在利他中学会定价，让价值被看见",
-    廉贞: "培养长期思维，累积稳健资产"
+    廉贞: "培养长期思维，累积稳健资产",
   },
   官禄宫: {
     紫微: "建立权威的同时，注重团队建设和协作",
@@ -622,7 +692,7 @@ export const TIP_CONSTANTS = {
     左輔: "提升专业能力，发出你的影响力",
     右弼: "练习理性表达，做出理智决策",
     天梁: "增强决断力，守护也能立威",
-    廉贞: "融入团队，激烈中保留圆润"
+    廉贞: "融入团队，激烈中保留圆润",
   },
 };
 

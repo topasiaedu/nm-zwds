@@ -698,6 +698,16 @@ const Palace: React.FC<PalaceProps> = ({
           className={`flex flex-col items-start sm:items-center justify-center py-0.5 xs:py-1 sm:py-1.5 border-r border-gray-200 dark:border-gray-700 ${
             isSelected ? "text-white/90 dark:text-white/90" : ""
           }`}>
+                {/* Mobile view: Palace Name - Updated with click handler */}
+          <div
+            className={`sm:hidden ${
+              isSelected ? "text-white dark:text-white" : ""
+            } cursor-pointer font-bold hover:opacity-80`}
+            onClick={(e) => handlePalaceNameClick(palaceNumber, e)}>
+            {language === "en" && t(`zwds.palaces.${palace.name}`)
+              ? t(`zwds.palaces.${palace.name}`)
+              : palace.name}
+          </div>
           {/* Mobile view: Heavenly Stem and Earthly Branch on one line */}
           <div className="flex items-center gap-1 sm:hidden">
             <span>
@@ -723,16 +733,7 @@ const Palace: React.FC<PalaceProps> = ({
               ? t(`zwds.branches.${palace.earthlyBranch}`)
               : palace.earthlyBranch}
           </div>
-          {/* Mobile view: Palace Name - Updated with click handler */}
-          <div
-            className={`sm:hidden ${
-              isSelected ? "text-white dark:text-white" : ""
-            } cursor-pointer hover:opacity-80`}
-            onClick={(e) => handlePalaceNameClick(palaceNumber, e)}>
-            {language === "en" && t(`zwds.palaces.${palace.name}`)
-              ? t(`zwds.palaces.${palace.name}`)
-              : palace.name}
-          </div>
+      
 
           {/* Mobile view: Major Limit */}
           {palace.majorLimit && (

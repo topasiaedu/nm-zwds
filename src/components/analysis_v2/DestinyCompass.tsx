@@ -97,7 +97,7 @@ const DestinyCompass: React.FC<DestinyCompassProps> = ({ chartData }) => {
           "奴仆宫": "Friends Palace",
           "官禄宫": "Career Palace",
           "田宅宫": "Property Palace",
-          "福德宫": "Fortune Palace",
+          "福德宫": "Wellbeing Palace",
           "父母宫": "Parents Palace",
           // Short forms without 宫
           "命": "Life Palace",
@@ -110,7 +110,7 @@ const DestinyCompass: React.FC<DestinyCompassProps> = ({ chartData }) => {
           "奴仆": "Friends Palace",
           "官禄": "Career Palace",
           "田宅": "Property Palace",
-          "福德": "Fortune Palace",
+          "福德": "Wellbeing Palace",
           "父母": "Parents Palace",
           "交友": "Friends Palace",
           // Other variations
@@ -241,7 +241,7 @@ const DestinyCompass: React.FC<DestinyCompassProps> = ({ chartData }) => {
   if (yearCards.length === 0) {
     return (
       <div className="p-6 dark:bg-gray-900">
-        <div className="w-full border-t border-gray-200 dark:border-gray-700 mb-6"></div>
+        <div className="w-full border-t border-gray-400 dark:border-gray-600 mb-6"></div>
         <h2 className="text-4xl mb-2 font-bold text-center text-gray-800 dark:text-white">
           DESTINY COMPASS
         </h2>
@@ -312,7 +312,7 @@ const DestinyCompass: React.FC<DestinyCompassProps> = ({ chartData }) => {
         `}
       </style>
       {/* Divider */}
-      <div className="w-full border-t border-gray-200 dark:border-gray-700 mb-6"></div>
+      <div className="w-full border-t border-gray-400 dark:border-gray-600 mb-6"></div>
       <h2 className="text-4xl mb-2 font-bold text-center text-gray-800 dark:text-white">
         DESTINY COMPASS
       </h2>

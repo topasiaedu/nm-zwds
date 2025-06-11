@@ -103,12 +103,12 @@ const zwds = {
 
     // Transformations
     transformations: {
-      化科: "Status",
-      化权: "Power",
-      化權: "Power",
-      化禄: "Fortune",
-      化祿: "Fortune",
-      化忌: "Obstacles",
+      化科: "Ke",
+      化权: "Quan",
+      化權: "Quan",
+      化禄: "Lu",
+      化祿: "Lu",
+      化忌: "Ji",
     },
 
     // Minor stars
