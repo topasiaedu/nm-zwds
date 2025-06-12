@@ -66,8 +66,8 @@ const CAEGPT: React.FC = () => {
               <div className="p-1 sm:p-2">
                 <div className="rounded-xl overflow-hidden shadow-inner bg-white/5 dark:bg-black/5">
                   <iframe
-                    // src="https://chatbot-gen-client.vercel.app/chat-widget/3ce543bc-8767-4a05-9836-d1f21e2749c1"
-                    src="http://localhost:3001/chat-widget/3ce543bc-8767-4a05-9836-d1f21e2749c1"
+                    src="https://chatbot-gen-client.vercel.app/chat-widget/3ce543bc-8767-4a05-9836-d1f21e2749c1"
+                    // src="http://localhost:3001/chat-widget/3ce543bc-8767-4a05-9836-d1f21e2749c1"
                     width="100%"
                     style={{ height: "80vh", border: "none", width: "100%" }}
                     title="Destiny Wealth Navigator Chat Assistant"
