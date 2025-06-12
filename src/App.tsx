@@ -21,6 +21,7 @@ import ResetPasswordPage from "./pages/authentication/reset-password";
 import NotFoundPage from "./pages/404";
 import Calculate from "./pages/calculate";
 import Result from "./pages/result";
+import CAEGPT from "./pages/caegpt";
 // Import new free test pages
 import FreeTest from "./pages/free-test";
 import FreeResult from "./pages/free-result";
@@ -175,6 +176,16 @@ const App: React.FC = () => {
                       element={
                         <ProtectedRoute>
                           <Result />
+                        </ProtectedRoute>
+                      }
+                    />
+
+                    {/* Destiny Wealth Navigator AI Assistant */}
+                    <Route
+                      path="/destiny-wealth-navigator"
+                      element={
+                        <ProtectedRoute>
+                          <CAEGPT />
                         </ProtectedRoute>
                       }
                     />

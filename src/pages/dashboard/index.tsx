@@ -15,7 +15,7 @@ const Dashboard: React.FC = () => {
   const { user } = useAuth();
   const { profiles, loading, deleteProfile } = useProfileContext();
   const { showAlert } = useAlertContext();
-  
+
   /**
    * Get recent profiles sorted by last_viewed
    */
@@ -33,16 +33,22 @@ const Dashboard: React.FC = () => {
   /**
    * Handle profile deletion
    */
-  const handleDeleteProfile = async (profileId: string, profileName: string) => {
+  const handleDeleteProfile = async (
+    profileId: string,
+    profileName: string
+  ) => {
     try {
       await deleteProfile(profileId);
-      showAlert(t("dashboard.deleteSuccess").replace("{{name}}", profileName), "success");
+      showAlert(
+        t("dashboard.deleteSuccess").replace("{{name}}", profileName),
+        "success"
+      );
     } catch (error) {
       console.error("Error deleting profile:", error);
       showAlert(t("dashboard.deleteError"), "error");
     }
   };
-  
+
   return (
     <PageTransition>
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -56,9 +62,9 @@ const Dashboard: React.FC = () => {
               <p className="text-base text-gray-600 dark:text-gray-400">
                 {t("dashboard.subtitle")}
               </p>
-            </div>       
+            </div>
           </div>
-      
+
           <div className="grid grid-cols-1 lg:grid-cols-6 gap-8">
             {/* Main Actions */}
             <div className="lg:col-span-2 space-y-6">
@@ -66,18 +72,26 @@ const Dashboard: React.FC = () => {
                 <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
                   {t("dashboard.quickActions")}
                 </h2>
-                
+
                 <div className="space-y-4">
                   {/* My Chart */}
-                  <Link 
-                    to="/chart" 
-                    className="block bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                  >
+                  <Link
+                    to="/chart"
+                    className="block bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                     <div className="flex items-start justify-between">
                       <div className="flex items-center">
                         <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center mr-3">
-                          <svg className="w-5 h-5 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />
+                          <svg
+                            className="w-5 h-5 text-indigo-600 dark:text-indigo-400"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"
+                            />
                           </svg>
                         </div>
                         <div>
@@ -89,8 +103,17 @@ const Dashboard: React.FC = () => {
                           </p>
                         </div>
                       </div>
-                      <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      <svg
+                        className="w-5 h-5 text-gray-400"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 5l7 7-7 7"
+                        />
                       </svg>
                     </div>
                     {/* <div className="mt-4 flex justify-end">
@@ -99,17 +122,25 @@ const Dashboard: React.FC = () => {
                       </span>
                     </div> */}
                   </Link>
-                  
+
                   {/* Calculate for Others */}
-                  <Link 
-                    to="/calculate" 
-                    className="block bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                  >
+                  <Link
+                    to="/calculate"
+                    className="block bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                     <div className="flex items-start justify-between">
                       <div className="flex items-center">
                         <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center mr-3">
-                          <svg className="w-5 h-5 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                          <svg
+                            className="w-5 h-5 text-green-600 dark:text-green-400"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                            />
                           </svg>
                         </div>
                         <div>
@@ -121,22 +152,81 @@ const Dashboard: React.FC = () => {
                           </p>
                         </div>
                       </div>
-                      <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      <svg
+                        className="w-5 h-5 text-gray-400"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 5l7 7-7 7"
+                        />
                       </svg>
                     </div>
                     <div className="mt-4 flex justify-between items-center">
                       <span className="text-xs text-gray-500 dark:text-gray-400">
-                        {t("dashboard.savedProfiles").replace("{{count}}", profiles.length.toString())}
+                        {t("dashboard.savedProfiles").replace(
+                          "{{count}}",
+                          profiles.length.toString()
+                        )}
                       </span>
                       <span className="text-xs py-1 px-2 rounded-md bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">
                         {t("dashboard.newBadge")}
                       </span>
                     </div>
                   </Link>
+
+                  {/* Destiny Wealth Navigator AI Assistant */}
+                  {user &&
+                    user.id === "54b1f6a5-4af6-4f78-ba25-38c31646a230" && (
+                      <Link
+                        to="/destiny-wealth-navigator"
+                        className="block bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                        <div className="flex items-start justify-between">
+                          <div className="flex items-center">
+                            <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center mr-3">
+                              <svg
+                                className="w-5 h-5 text-purple-600 dark:text-purple-400"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                                />
+                              </svg>
+                            </div>
+                            <div>
+                              <h3 className="text-lg font-medium text-gray-900 dark:text-white">
+                                Destiny Wealth Navigator
+                              </h3>
+                              <p className="text-sm text-gray-600 dark:text-gray-400">
+                                AI-powered astrology insights and guidance
+                              </p>
+                            </div>
+                          </div>
+                          <svg
+                            className="w-5 h-5 text-gray-400"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M9 5l7 7-7 7"
+                            />
+                          </svg>
+                        </div>
+                      </Link>
+                    )}
                 </div>
               </div>
-              
+
               {/* Resources */}
               {/* <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm">
                 <h3 className="text-xl font-semibold text-gray-900 dark:text-white flex items-center mb-4">
@@ -177,27 +267,35 @@ const Dashboard: React.FC = () => {
                 </div>
               </div> */}
             </div>
-            
+
             {/* Recent Results */}
             <div className="lg:col-span-4">
               <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm overflow-hidden">
                 <div className="p-6 border-b border-gray-200 dark:border-gray-700">
                   <div className="flex justify-between items-center">
                     <h2 className="text-xl font-semibold text-gray-900 dark:text-white flex items-center">
-                      <svg className="w-5 h-5 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                      <svg
+                        className="w-5 h-5 mr-2 text-indigo-600"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                        />
                       </svg>
                       {t("dashboard.recentResults")}
                     </h2>
-                    <Link 
-                      to="/calculate" 
-                      className="text-sm text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 hover:bg-gray-50 dark:hover:bg-gray-700/50 px-3 py-1 rounded-lg transition-colors"
-                    >
+                    <Link
+                      to="/calculate"
+                      className="text-sm text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 hover:bg-gray-50 dark:hover:bg-gray-700/50 px-3 py-1 rounded-lg transition-colors">
                       {t("dashboard.viewAll")}
                     </Link>
                   </div>
                 </div>
-                
+
                 {loading ? (
                   <div className="text-center py-12">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
@@ -207,26 +305,33 @@ const Dashboard: React.FC = () => {
                     <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                       <thead className="bg-gray-50 dark:bg-gray-700/30">
                         <tr>
-                          <th scope="col" className="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                          <th
+                            scope="col"
+                            className="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                             {t("dashboard.table.name")}
                           </th>
-                          <th scope="col" className="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                          <th
+                            scope="col"
+                            className="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                             {t("dashboard.table.date")}
                           </th>
-                          <th scope="col" className="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                          <th
+                            scope="col"
+                            className="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                             {t("dashboard.table.gender")}
                           </th>
-                          <th scope="col" className="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                          <th
+                            scope="col"
+                            className="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                             {t("dashboard.table.action")}
                           </th>
                         </tr>
                       </thead>
                       <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                         {recentProfiles.map((profile) => (
-                          <tr 
-                            key={profile.id} 
-                            className="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors"
-                          >
+                          <tr
+                            key={profile.id}
+                            className="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors">
                             <td className="px-6 py-4 whitespace-nowrap">
                               <div className="text-sm font-medium text-gray-900 dark:text-white">
                                 {profile.name}
@@ -234,29 +339,45 @@ const Dashboard: React.FC = () => {
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
                               <div className="text-sm text-gray-500 dark:text-gray-400">
-                                {new Date(profile.birthday).toLocaleDateString()}
+                                {new Date(
+                                  profile.birthday
+                                ).toLocaleDateString()}
                               </div>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
                               <div className="text-sm text-gray-500 dark:text-gray-400">
-                                {profile.gender === "male" ? t("dashboard.table.male") : t("dashboard.table.female")}
+                                {profile.gender === "male"
+                                  ? t("dashboard.table.male")
+                                  : t("dashboard.table.female")}
                               </div>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm">
                               <div className="flex items-center space-x-3">
-                                <Link 
-                                  to={`/result/${profile.id}`} 
-                                  className="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 hover:bg-gray-50 dark:hover:bg-gray-700/50 px-3 py-1 rounded-lg transition-colors inline-block"
-                                >
+                                <Link
+                                  to={`/result/${profile.id}`}
+                                  className="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 hover:bg-gray-50 dark:hover:bg-gray-700/50 px-3 py-1 rounded-lg transition-colors inline-block">
                                   {t("dashboard.table.view")}
                                 </Link>
                                 <button
-                                  onClick={() => handleDeleteProfile(profile.id, profile.name)}
+                                  onClick={() =>
+                                    handleDeleteProfile(
+                                      profile.id,
+                                      profile.name
+                                    )
+                                  }
                                   className="text-red-600 hover:text-red-900 dark:text-red-400 hover:bg-gray-50 dark:hover:bg-gray-700/50 px-3 py-1 rounded-lg transition-colors inline-block"
-                                  title={t("dashboard.table.delete")}
-                                >
-                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                  title={t("dashboard.table.delete")}>
+                                  <svg
+                                    className="w-4 h-4"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth={2}
+                                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                    />
                                   </svg>
                                 </button>
                               </div>
@@ -268,8 +389,17 @@ const Dashboard: React.FC = () => {
                   </div>
                 ) : (
                   <div className="text-center py-12">
-                    <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                    <svg
+                      className="mx-auto h-12 w-12 text-gray-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={1}
+                        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                      />
                     </svg>
                     <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-white">
                       {t("dashboard.emptyState.title")}
@@ -278,12 +408,20 @@ const Dashboard: React.FC = () => {
                       {t("dashboard.emptyState.description")}
                     </p>
                     <div className="mt-6">
-                      <Link 
-                        to="/calculate" 
-                        className="inline-flex items-center px-4 py-2 border border-transparent rounded-lg text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors shadow-sm"
-                      >
-                        <svg className="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                      <Link
+                        to="/calculate"
+                        className="inline-flex items-center px-4 py-2 border border-transparent rounded-lg text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors shadow-sm">
+                        <svg
+                          className="-ml-1 mr-2 h-5 w-5"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24">
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                          />
                         </svg>
                         {t("dashboard.emptyState.action")}
                       </Link>
@@ -299,4 +437,4 @@ const Dashboard: React.FC = () => {
   );
 };
 
-export default Dashboard; 
+export default Dashboard;
