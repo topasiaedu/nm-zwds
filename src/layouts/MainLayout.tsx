@@ -52,7 +52,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
       <Navbar />
       
       {/* Main content */}
-      <div className="relative z-10 container mx-auto px-4 pt-16">
+      <div className="relative z-10 container mx-auto px-4 pt-8 lg:pt-16">
         {/* Page content with transitions */}
         <AnimatePresence mode="wait">
           <PageTransition key={location.pathname}>
