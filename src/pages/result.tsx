@@ -674,9 +674,7 @@ const Result: React.FC = () => {
         {/* Analysis Section */}
         {calculatedChartData &&
           !loading &&
-          !error &&
-          user &&
-          user.id === "54b1f6a5-4af6-4f78-ba25-38c31646a230" && (
+          !error && (
             <div className="mt-8">
               <div className="flex flex-col justify-center items-center">
                 <h2 className="text-4xl mb-2 font-bold dark:text-white flex items-center text-center pt-4">
