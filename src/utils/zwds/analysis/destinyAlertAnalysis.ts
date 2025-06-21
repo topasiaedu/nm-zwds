@@ -34,6 +34,37 @@ const TRANSFORMATION_KEY_MAP: Record<string, string> = {
 };
 
 /**
+ * Maps palace names to their English names in DESTINY_ALERT_CONSTANTS
+ */
+const PALACE_NAME_TO_ENGLISH: Record<string, string> = {
+  "命宫": "Life Palace",
+  "兄弟": "Siblings Palace",
+  "夫妻": "Spouse Palace",
+  "子女": "Children Palace",
+  "财帛": "Wealth Palace",
+  "疾厄": "Health Palace",
+  "迁移": "Travel Palace",
+  "交友": "Friends Palace",
+  "官禄": "Career Palace",
+  "田宅": "Property Palace",
+  "福德": "Wellbeing Palace",
+  "父母": "Parents Palace",
+  // Add variations without 宫
+  "命": "Life Palace",
+  "兄弟宫": "Siblings Palace",
+  "夫妻宫": "Spouse Palace",
+  "子女宫": "Children Palace",
+  "财帛宫": "Wealth Palace",
+  "疾厄宫": "Health Palace",
+  "迁移宫": "Travel Palace",
+  "交友宫": "Friends Palace",
+  "官禄宫": "Career Palace",
+  "田宅宫": "Property Palace",
+  "福德宫": "Wellbeing Palace",
+  "父母宫": "Parents Palace",
+};
+
+/**
  * Extracts quote and description from the full description text
  * Quote is the last sentence (after the last full stop), description is everything else
  */
@@ -113,8 +144,17 @@ export const analyzeDestinyAlert = (chartData: ChartData): DestinyAlertAnalysisR
         palace: palaceNumber,
       };
       
-      // Get the corresponding data from DESTINY_ALERT_CONSTANTS
-      const palaceConstant = DESTINY_ALERT_CONSTANTS[palaceNumber.toString() as keyof typeof DESTINY_ALERT_CONSTANTS];
+      // Get the English name for the palace
+      const englishName = PALACE_NAME_TO_ENGLISH[palace.name];
+      if (!englishName) {
+        console.warn(`No English name mapping found for palace: ${palace.name}`);
+        continue;
+      }
+      
+      // Find the palace constant by matching the English name
+      const palaceConstant = Object.values(DESTINY_ALERT_CONSTANTS).find(
+        constant => constant.english_name === englishName
+      );
       
       if (palaceConstant) {
         const transformationKey = TRANSFORMATION_KEY_MAP[transformation];
