@@ -2,6 +2,7 @@ import React from "react";
 import { useLanguage } from "../../context/LanguageContext";
 import { useAuth } from "../../context/AuthContext";
 import { useProfileContext } from "../../context/ProfileContext";
+import { useTierAccess } from "../../context/TierContext";
 import { Link } from "react-router-dom";
 import PageTransition from "../../components/PageTransition";
 import { useAlertContext } from "../../context/AlertContext";
@@ -15,6 +16,7 @@ const Dashboard: React.FC = () => {
   const { user } = useAuth();
   const { profiles, loading, deleteProfile } = useProfileContext();
   const { showAlert } = useAlertContext();
+  const { hasDestinyNavigatorAccess, isAdmin, tier } = useTierAccess();
 
   /**
    * Get recent profiles sorted by last_viewed
@@ -178,52 +180,102 @@ const Dashboard: React.FC = () => {
                     </div>
                   </Link>
 
-                  {/* Destiny Wealth Navigator AI Assistant */}
-                  {user &&
-                    user.id === "54b1f6a5-4af6-4f78-ba25-38c31646a230" && (
-                      <Link
-                        to="/destiny-wealth-navigator"
-                        className="block bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-                        <div className="flex items-start justify-between">
-                          <div className="flex items-center">
-                            <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center mr-3">
-                              <svg
-                                className="w-5 h-5 text-purple-600 dark:text-purple-400"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24">
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-                                />
-                              </svg>
-                            </div>
-                            <div>
-                              <h3 className="text-lg font-medium text-gray-900 dark:text-white">
-                                Destiny Wealth Navigator
-                              </h3>
-                              <p className="text-sm text-gray-600 dark:text-gray-400">
-                                AI-powered astrology insights and guidance
-                              </p>
-                            </div>
+                  {/* Destiny Wealth Navigator AI Assistant - Tier 2+ */}
+                  {hasDestinyNavigatorAccess && (
+                    <Link
+                      to="/destiny-wealth-navigator"
+                      className="block bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-center">
+                          <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center mr-3">
+                            <svg
+                              className="w-5 h-5 text-purple-600 dark:text-purple-400"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24">
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                              />
+                            </svg>
                           </div>
-                          <svg
-                            className="w-5 h-5 text-gray-400"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24">
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M9 5l7 7-7 7"
-                            />
-                          </svg>
+                          <div>
+                            <h3 className="text-lg font-medium text-gray-900 dark:text-white">
+                              Destiny Wealth Navigator
+                            </h3>
+                            <p className="text-sm text-gray-600 dark:text-gray-400">
+                              AI-powered astrology insights and guidance
+                            </p>
+                          </div>
                         </div>
-                      </Link>
-                    )}
+                        <svg
+                          className="w-5 h-5 text-gray-400"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24">
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M9 5l7 7-7 7"
+                          />
+                        </svg>
+                      </div>
+                    </Link>
+                  )}
+
+                  {/* Admin Management - Admin Only */}
+                  {isAdmin && (
+                    <Link
+                      to="/admin/users"
+                      className="block bg-gradient-to-r from-red-50 to-pink-50 dark:from-red-900/20 dark:to-pink-900/20 rounded-xl p-4 hover:from-red-100 hover:to-pink-100 dark:hover:from-red-900/30 dark:hover:to-pink-900/30 transition-all border border-red-200 dark:border-red-800">
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-center">
+                          <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-red-100 dark:bg-red-900/50 flex items-center justify-center mr-3">
+                            <svg
+                              className="w-5 h-5 text-red-600 dark:text-red-400"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24">
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"
+                              />
+                            </svg>
+                          </div>
+                          <div>
+                            <div className="flex items-center mb-1">
+                              <h3 className="text-lg font-medium text-gray-900 dark:text-white">
+                                User Management
+                              </h3>
+                              <span className="ml-2 px-2 py-1 text-xs font-semibold bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300 rounded-full">
+                                ADMIN
+                              </span>
+                            </div>
+                            <p className="text-sm text-gray-600 dark:text-gray-400">
+                              Manage user tiers and permissions
+                            </p>
+                          </div>
+                        </div>
+                        <svg
+                          className="w-5 h-5 text-red-400"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24">
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M9 5l7 7-7 7"
+                          />
+                        </svg>
+                      </div>
+                    </Link>
+                  )}
                 </div>
               </div>
 

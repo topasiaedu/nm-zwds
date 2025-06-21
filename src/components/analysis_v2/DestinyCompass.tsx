@@ -47,8 +47,6 @@ const DestinyCompass: React.FC<DestinyCompassProps> = ({ chartData }) => {
     return getDestinyCompassDebugInfo(chartData);
   }, [chartData]);
 
-  console.log("Destiny Compass Debug Info:", debugInfo);
-  console.log("Destiny Data:", destinyData);
 
   // Transform destiny data into year cards
   const yearCards: YearCardData[] = useMemo(() => {
@@ -125,15 +123,11 @@ const DestinyCompass: React.FC<DestinyCompassProps> = ({ chartData }) => {
       const badges = activations.map(([transformationType, activation], index) => {
         const colors = ["success", "blue", "warning", "failure"];
         
-        // Debug logging to see what we're trying to translate
-        console.log(`Badge ${index + 1} - transformationType:`, transformationType);
-        console.log(`Badge ${index + 1} - palaceName:`, activation.palaceName);
+
         
         const englishType = getEnglishTransformationType(transformationType);
         const englishPalace = getEnglishPalaceName(activation.palaceName);
         
-        console.log(`Badge ${index + 1} - Translated type:`, englishType);
-        console.log(`Badge ${index + 1} - Translated palace:`, englishPalace);
         
         return {
           text: `${englishPalace}`,
@@ -143,9 +137,6 @@ const DestinyCompass: React.FC<DestinyCompassProps> = ({ chartData }) => {
 
       // Create descriptions from the activation descriptions - use full descriptions
       const descriptions = activations.map(([transformationType, activation], index) => {
-        console.log(`Description ${index + 1} - transformationType:`, transformationType);
-        console.log(`Description ${index + 1} - palaceName:`, activation.palaceName);
-        console.log(`Description ${index + 1} - description preview:`, activation.description.substring(0, 50) + "...");
         return activation.description; // Use full description instead of splitting
       });
 

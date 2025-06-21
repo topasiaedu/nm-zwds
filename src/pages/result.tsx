@@ -8,6 +8,7 @@ import ZWDSChart from "../components/ZWDSChart";
 import { ZWDSCalculator } from "../utils/zwds/calculator";
 import { ChartInput } from "../utils/zwds/types";
 import { useAuthContext } from "../context/AuthContext";
+import { useTierAccess } from "../context/TierContext";
 
 // Import PrintableReport component and PDF export utilities
 import PrintableReport from "../components/PrintableReport";
@@ -31,6 +32,7 @@ const Result: React.FC = () => {
   const navigate = useNavigate();
   const { profiles, loading: profilesLoading } = useProfileContext();
   const { user } = useAuthContext();
+  const { hasAnalyticsAccess, tier } = useTierAccess();
 
   // State for chart data
   const [chartData, setChartData] = useState<ChartData | null>(null);
@@ -671,56 +673,59 @@ const Result: React.FC = () => {
           )
         )}
 
-        {/* Analysis Section */}
-        {calculatedChartData &&
-          !loading &&
-          !error &&
-          user &&
-          user.id === "54b1f6a5-4af6-4f78-ba25-38c31646a230" && (
-            <div className="mt-8">
-              <div className="flex flex-col justify-center items-center">
-                <h2 className="text-4xl mb-2 font-bold dark:text-white flex items-center text-center pt-4">
-                  {t("analysis.title") || "Chart Analysis"}
-                </h2>
+        {/* Analysis Section - Always show Overview, but other components require Tier 2+ */}
+        {calculatedChartData && !loading && !error &&hasAnalyticsAccess && (
+          <div className="mt-8">
+            <div className="flex flex-col justify-center items-center">
+              <h2 className="text-4xl mb-2 font-bold dark:text-white flex items-center text-center pt-4">
+                {t("analysis.title") || "Chart Analysis"}
+              </h2>
 
-                {/* Subtitle */}
-                <p className="text-lg mb-6 dark:text-white text-center italic">
-                  {t("analysis.subtitle") ||
-                    "A custom breakdown of your chart's strengths, patterns, and strategic focus areas."}
-                </p>
-              </div>
+              {/* Subtitle */}
+              <p className="text-lg mb-6 dark:text-white text-center italic">
+                {t("analysis.subtitle") ||
+                  "A custom breakdown of your chart's strengths, patterns, and strategic focus areas."}
+              </p>
 
-              <div className="space-y-8">
-                <Overview chartData={calculatedChartData} />
-                <Career chartData={calculatedChartData} />
-                <Health chartData={calculatedChartData} />
-                <AreasOfLife chartData={calculatedChartData} />
-                <FourKeyPalace chartData={calculatedChartData} />
-                <DestinyCompass chartData={calculatedChartData} />
 
-                {/* Summary Analysis */}
-                {/* <SummaryAnalysis chartData={calculatedChartData} /> */}
-
-                {/* Life Areas Radar Chart */}
-                {/* <LifeAreasRadarChart chartData={calculatedChartData} /> */}
-
-                {/* Life Areas Explanation */}
-                {/* <LifeAreasExplanation chartData={calculatedChartData} /> */}
-
-                {/* Four Key Palace Analysis */}
-                {/* <FourKeyPalaceAnalysis chartData={calculatedChartData} /> */}
-
-                {/* Watchout Analysis */}
-                {/* <WatchoutAnalysis chartData={calculatedChartData} /> */}
-
-                {/* Career Analysis */}
-                {/* <CareerAnalysis chartData={calculatedChartData} /> */}
-
-                {/* Health Analysis */}
-                {/* <HealthAnalysis chartData={calculatedChartData} /> */}
-              </div>
             </div>
-          )}
+
+            <div className="space-y-8">
+              {/* Overview - Always available */}
+              <Overview chartData={calculatedChartData} />
+              
+              {/* Premium Analytics - Tier 2+ only */}
+                <>
+                  <Career chartData={calculatedChartData} />
+                  <Health chartData={calculatedChartData} />
+                  <AreasOfLife chartData={calculatedChartData} />
+                  <FourKeyPalace chartData={calculatedChartData} />
+                  <DestinyCompass chartData={calculatedChartData} />
+                </>
+
+              {/* Summary Analysis */}
+              {/* <SummaryAnalysis chartData={calculatedChartData} /> */}
+
+              {/* Life Areas Radar Chart */}
+              {/* <LifeAreasRadarChart chartData={calculatedChartData} /> */}
+
+              {/* Life Areas Explanation */}
+              {/* <LifeAreasExplanation chartData={calculatedChartData} /> */}
+
+              {/* Four Key Palace Analysis */}
+              {/* <FourKeyPalaceAnalysis chartData={calculatedChartData} /> */}
+
+              {/* Watchout Analysis */}
+              {/* <WatchoutAnalysis chartData={calculatedChartData} /> */}
+
+              {/* Career Analysis */}
+              {/* <CareerAnalysis chartData={calculatedChartData} /> */}
+
+              {/* Health Analysis */}
+              {/* <HealthAnalysis chartData={calculatedChartData} /> */}
+            </div>
+          </div>
+        )}
       </div>
     </PageTransition>
   );

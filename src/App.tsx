@@ -8,10 +8,12 @@ import {
 } from "react-router-dom";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { ProfileProvider } from "./context/ProfileContext";
+import { TierProvider } from "./context/TierContext";
 import { LanguageProvider } from "./context/LanguageContext";
 import { AlertProvider } from "./context/AlertContext";
 import { SidebarProvider } from "./context/SidebarContext";
 import ProtectedRoute from "./components/ProtectedRoute";
+import TierProtectedRoute from "./components/TierProtectedRoute";
 import MainLayout from "./layouts/MainLayout";
 import Dashboard from "./pages/dashboard/index";
 import SignInPage from "./pages/authentication/sign-in";
@@ -22,6 +24,7 @@ import NotFoundPage from "./pages/404";
 import Calculate from "./pages/calculate";
 import Result from "./pages/result";
 import CAEGPT from "./pages/caegpt";
+import UserManagement from "./pages/admin/user-management";
 // Import new free test pages
 import FreeTest from "./pages/free-test";
 import FreeResult from "./pages/free-result";
@@ -71,10 +74,11 @@ const App: React.FC = () => {
       <SpeedInsights />
       <AlertProvider>
         <AuthProvider>
-          <ProfileProvider>
-            <LanguageProvider>
-              <SidebarProvider>
-                <MainLayout>
+          <TierProvider>
+            <ProfileProvider>
+              <LanguageProvider>
+                <SidebarProvider>
+                  <MainLayout>
                   <Routes>
                     {/* Authentication routes */}
                     <Route
@@ -180,12 +184,24 @@ const App: React.FC = () => {
                       }
                     />
 
-                    {/* Destiny Wealth Navigator AI Assistant */}
+                    {/* Destiny Wealth Navigator AI Assistant - Tier 2+ Only */}
                     <Route
                       path="/destiny-wealth-navigator"
                       element={
                         <ProtectedRoute>
-                          <CAEGPT />
+                            <CAEGPT />
+                        </ProtectedRoute>
+                      }
+                    />
+
+
+
+                    {/* Admin Routes */}
+                    <Route
+                      path="/admin/users"
+                      element={
+                        <ProtectedRoute>
+                            <UserManagement />
                         </ProtectedRoute>
                       }
                     />
@@ -194,9 +210,10 @@ const App: React.FC = () => {
                     <Route path="*" element={<NotFoundPage />} />
                   </Routes>
                 </MainLayout>
-              </SidebarProvider>
-            </LanguageProvider>
-          </ProfileProvider>
+                </SidebarProvider>
+              </LanguageProvider>
+            </ProfileProvider>
+          </TierProvider>
         </AuthProvider>
       </AlertProvider>
     </Router>
