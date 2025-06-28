@@ -55,48 +55,41 @@ const Result: React.FC = () => {
     const hour = parseInt(birthTimeString);
     if (isNaN(hour)) return "Unknown";
 
-    // Map hour to earthly branch and time range
-    const getTimeRange = (hour: number): { branch: string; englishName: string; range: string } => {
+    // Map hour to time range
+    const getTimeRange = (hour: number): string => {
       const timeRanges = [
-        { branch: "子", englishName: "Rat", start: 23, end: 1, range: "23:00-01:59" },
-        { branch: "丑", englishName: "Ox", start: 1, end: 3, range: "01:00-03:59" },
-        { branch: "寅", englishName: "Tiger", start: 3, end: 5, range: "03:00-05:59" },
-        { branch: "卯", englishName: "Rabbit", start: 5, end: 7, range: "05:00-07:59" },
-        { branch: "辰", englishName: "Dragon", start: 7, end: 9, range: "07:00-09:59" },
-        { branch: "巳", englishName: "Snake", start: 9, end: 11, range: "09:00-11:59" },
-        { branch: "午", englishName: "Horse", start: 11, end: 13, range: "11:00-13:59" },
-        { branch: "未", englishName: "Goat", start: 13, end: 15, range: "13:00-15:59" },
-        { branch: "申", englishName: "Monkey", start: 15, end: 17, range: "15:00-17:59" },
-        { branch: "酉", englishName: "Rooster", start: 17, end: 19, range: "17:00-19:59" },
-        { branch: "戌", englishName: "Dog", start: 19, end: 21, range: "19:00-21:59" },
-        { branch: "亥", englishName: "Pig", start: 21, end: 23, range: "21:00-23:59" },
+        { start: 23, end: 1, range: "23:00-01:59" },
+        { start: 1, end: 3, range: "01:00-03:59" },
+        { start: 3, end: 5, range: "03:00-05:59" },
+        { start: 5, end: 7, range: "05:00-07:59" },
+        { start: 7, end: 9, range: "07:00-09:59" },
+        { start: 9, end: 11, range: "09:00-11:59" },
+        { start: 11, end: 13, range: "11:00-13:59" },
+        { start: 13, end: 15, range: "13:00-15:59" },
+        { start: 15, end: 17, range: "15:00-17:59" },
+        { start: 17, end: 19, range: "17:00-19:59" },
+        { start: 19, end: 21, range: "19:00-21:59" },
+        { start: 21, end: 23, range: "21:00-23:59" },
       ];
 
-      // Handle special case for 子 (23:00-01:59)
+      // Handle special case for 23:00-01:59
       if (hour >= 23 || hour < 1) {
-        return timeRanges[0]; // 子
+        return timeRanges[0].range;
       }
 
       // Find the correct time range
       for (const timeRange of timeRanges) {
         if (hour >= timeRange.start && hour < timeRange.end) {
-          return timeRange;
+          return timeRange.range;
         }
       }
 
-      // Fallback to 子 if no match found
-      return timeRanges[0];
+      // Fallback to first range if no match found
+      return timeRanges[0].range;
     };
 
-    const timeInfo = getTimeRange(hour);
-    
-    // Format based on language
-    if (language === "zh") {
-      return `${timeInfo.branch}时 (${timeInfo.range})`;
-    } else {
-      return `${timeInfo.englishName} Hour (${timeInfo.range})`;
-    }
-  }, [language]);
+    return getTimeRange(hour);
+  }, []);
 
   // Find the user's self profile if no id is provided
   const isSelfProfile = !id;
