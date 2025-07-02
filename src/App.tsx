@@ -23,6 +23,7 @@ import ResetPasswordPage from "./pages/authentication/reset-password";
 import NotFoundPage from "./pages/404";
 import Calculate from "./pages/calculate";
 import Result from "./pages/result";
+import TimingChart from "./pages/timing-chart";
 import CAEGPT from "./pages/caegpt";
 import UserManagement from "./pages/admin/user-management";
 // Import new free test pages
@@ -180,6 +181,14 @@ const App: React.FC = () => {
                       element={
                         <ProtectedRoute>
                           <Result />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/timing-chart/:id"
+                      element={
+                        <ProtectedRoute>
+                          <TimingChart />
                         </ProtectedRoute>
                       }
                     />

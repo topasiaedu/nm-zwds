@@ -51,6 +51,7 @@ interface PalaceProps {
   palaceRefs: React.MutableRefObject<(HTMLDivElement | null)[]>;
   delay: number;
   secondaryPalaceName: string | null;
+  simulatedAge?: number; // Optional prop to simulate a specific age for highlighting Da Xian
 }
 
 /**
@@ -76,6 +77,7 @@ const Palace: React.FC<PalaceProps> = ({
   palaceRefs,
   delay,
   secondaryPalaceName,
+  simulatedAge,
 }) => {
   const { t, language } = useLanguage();
   const clickTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
@@ -125,11 +127,12 @@ const Palace: React.FC<PalaceProps> = ({
   // Calculate current age
   const currentAge = getAgeAtYear(new Date().getFullYear());
 
-  // Check if current age falls within this palace's Major Limit (da xian) range
+  // Check if current age (or simulated age) falls within this palace's Major Limit (da xian) range
+  const ageToCheck = simulatedAge !== undefined ? simulatedAge : currentAge;
   const isCurrentDaXian =
     palace.majorLimit &&
-    palace.majorLimit.startAge <= currentAge &&
-    palace.majorLimit.endAge >= currentAge;
+    palace.majorLimit.startAge <= ageToCheck &&
+    palace.majorLimit.endAge >= ageToCheck;
 
   // Calculate the year to display for this palace
   const calculateYearForPalace = (): number => {
@@ -677,7 +680,7 @@ const Palace: React.FC<PalaceProps> = ({
                       : transformation}
                   </span>
                 ))}
-                                {star.selfInfluence && (
+                {star.selfInfluence && (
                   <span className="mb-0.5">
                     <FaSyncAlt
                       className={`${getTransformationColor(
@@ -698,7 +701,7 @@ const Palace: React.FC<PalaceProps> = ({
           className={`flex flex-col items-start sm:items-center justify-center py-0.5 xs:py-1 sm:py-1.5 border-r border-gray-200 dark:border-gray-700 ${
             isSelected ? "text-white/90 dark:text-white/90" : ""
           }`}>
-                {/* Mobile view: Palace Name - Updated with click handler */}
+          {/* Mobile view: Palace Name - Updated with click handler */}
           <div
             className={`sm:hidden ${
               isSelected ? "text-white dark:text-white" : ""
@@ -733,7 +736,6 @@ const Palace: React.FC<PalaceProps> = ({
               ? t(`zwds.branches.${palace.earthlyBranch}`)
               : palace.earthlyBranch}
           </div>
-      
 
           {/* Mobile view: Major Limit */}
           {palace.majorLimit && (

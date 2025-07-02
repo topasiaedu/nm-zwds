@@ -56,6 +56,9 @@ const MONTHS_EN = ["January", "February", "March", "April", "May", "June", "July
 interface ZWDSChartProps {
   chartData: ChartData;
   targetYear?: number; // Optional prop to specify which year's annual flow to display
+  simulatedAge?: number; // Optional prop to simulate a specific age for highlighting Da Xian
+  selectedDaXianPalace?: number; // Optional prop to auto-select a palace for Da Ming tags
+  disableInteraction?: boolean; // Optional prop to disable all user interactions
 }
 
 /**
@@ -64,11 +67,14 @@ interface ZWDSChartProps {
 const ZWDSChart: React.FC<ZWDSChartProps> = ({
   chartData,
   targetYear = new Date().getFullYear(),
+  simulatedAge,
+  selectedDaXianPalace,
+  disableInteraction = false,
 }) => {
   // State to track the selected palace for transformations
   const [selectedPalace, setSelectedPalace] = useState<number | null>(null);
   // State to track the selected Da Xian for palace tags
-  const [selectedDaXian, setSelectedDaXian] = useState<number | null>(null);
+  const [selectedDaXian, setSelectedDaXian] = useState<number | null>(selectedDaXianPalace || null);
   // State to track whether to show months instead of years
   const [showMonths, setShowMonths] = useState<number | null>(null);
   // State to track clicked palace name for secondary palace names
@@ -142,12 +148,14 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
 
   /**
    * Calculate palace tag for a given palace based on the selected Da Xian
-   * Tags are assigned clockwise starting from the selected palace
+   * Tags are assigned anticlockwise starting from the selected palace
+   * Da Ming (大命) should be at the selected palace, then Da Xiong (大兄) anticlockwise, etc.
    */
   const getPalaceTag = (palaceNumber: number): { tag: string | null; delay: number } => {
     if (!selectedDaXian) return { tag: null, delay: 0 };
     
-    // Calculate the reversed index in the PALACE_TAGS array
+    // Calculate the anticlockwise distance from the selected palace
+    // Palace numbers go 1-12, but we need 0-11 for array indexing
     let tagIndex = (selectedDaXian - palaceNumber) % 12;
     if (tagIndex < 0) tagIndex += 12;
   
@@ -175,6 +183,8 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
    * Handle palace click
    */
   const handlePalaceClick = (palaceNumber: number) => {
+    if (disableInteraction) return;
+    
     setSelectedPalace(selectedPalace === palaceNumber ? null : palaceNumber);
     
     // Ensure refs are ready for rendering transformation lines
@@ -190,6 +200,8 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
    * Handle Da Xian click
    */
   const handleDaXianClick = (palaceNumber: number) => {
+    if (disableInteraction) return;
+    
     setSelectedDaXian(selectedDaXian === palaceNumber ? null : palaceNumber);
   };
 
@@ -197,6 +209,8 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
    * Handle year click to show months
    */
   const handleYearClick = (palaceNumber: number, e: React.MouseEvent) => {
+    if (disableInteraction) return;
+    
     e.stopPropagation();
     setShowMonths(showMonths === palaceNumber ? null : palaceNumber);
   };
@@ -205,6 +219,8 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
    * Handle palace name click to show secondary palace name
    */
   const handlePalaceNameClick = (palaceNumber: number, e: React.MouseEvent) => {
+    if (disableInteraction) return;
+    
     e.stopPropagation();
     setSelectedPalaceName(selectedPalaceName === palaceNumber ? null : palaceNumber);
   };
@@ -313,6 +329,7 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
         palaceRefs={palaceRefs}
         delay={delay}
         secondaryPalaceName={secondaryPalaceName}
+        simulatedAge={simulatedAge}
       />
     );
   };
