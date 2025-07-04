@@ -47,6 +47,7 @@ const chart = {
     shareChart: "Share",
     print: "Print",
     exportPdf: "Download PDF",
+    exporting: "Exporting...",
     exportTitle: "Zi Wei Dou Shu Chart Analysis",
     generatedOn: "Generated on",
     confidential: "Confidential Report - For Personal Use Only",

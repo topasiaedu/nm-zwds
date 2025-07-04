@@ -47,6 +47,7 @@ const chart = {
     shareChart: "分享",
     print: "打印",
     exportPdf: "下载PDF",
+    exporting: "正在导出...",
     exportTitle: "紫微斗数命盘分析",
     generatedOn: "生成于",
     confidential: "机密报告 - 仅供个人使用",

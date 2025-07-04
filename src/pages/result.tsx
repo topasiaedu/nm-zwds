@@ -9,6 +9,7 @@ import { ZWDSCalculator } from "../utils/zwds/calculator";
 import { ChartInput } from "../utils/zwds/types";
 import { useAuthContext } from "../context/AuthContext";
 import { useTierAccess } from "../context/TierContext";
+import { useAlertContext } from "../context/AlertContext";
 
 // Import PrintableReport component and PDF export utilities
 import PrintableReport from "../components/PrintableReport";
@@ -31,8 +32,8 @@ const Result: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { profiles, loading: profilesLoading } = useProfileContext();
-  const { user } = useAuthContext();
-  const { hasAnalyticsAccess, tier } = useTierAccess();
+  const { hasAnalyticsAccess } = useTierAccess();
+  const { showAlert } = useAlertContext();
 
   // State for chart data
   const [chartData, setChartData] = useState<ChartData | null>(null);
@@ -225,6 +226,7 @@ const Result: React.FC = () => {
     selfProfile,
     profileToShow,
     isSelfProfile,
+    formatBirthTime,
   ]);
 
   /**
@@ -318,12 +320,13 @@ const Result: React.FC = () => {
       () => {
         setIsPrinting(false);
         setIsExporting(false);
-      }
+      },
+      showAlert
     );
 
     // Show printable report during export
     setIsPrinting(true);
-  }, [chartData, language]);
+  }, [chartData, language, showAlert]);
 
   // If loading profiles from context
   if (profilesLoading) {
@@ -650,7 +653,7 @@ const Result: React.FC = () => {
                   </div>
 
                   <div className="mt-6">
-                    {/* <button
+                    <button
                       onClick={handleExport}
                       disabled={isExporting}
                       className="w-full px-6 py-3 text-white font-medium rounded-lg transition-all 
@@ -662,7 +665,7 @@ const Result: React.FC = () => {
                       {isExporting ? (
                         <>
                           <div className="w-5 h-5 mr-3 border-t-2 border-b-2 border-white rounded-full animate-spin"></div>
-                          {t("result.exporting") || "正在导出..."}
+                          {t("result.exporting") || "Exporting..."}
                         </>
                       ) : (
                         <>
@@ -679,10 +682,10 @@ const Result: React.FC = () => {
                               d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
                             />
                           </svg>
-                          {t("result.exportPdf") || "导出专业PDF报告"}
+                          {t("result.exportPdf") || "Export Professional PDF Report"}
                         </>
                       )}
-                    </button> */}
+                    </button>
                   </div>
 
                   {/* Timing Chart Button */}
@@ -717,7 +720,7 @@ const Result: React.FC = () => {
         )}
 
         {/* Analysis Section - Always show Overview, but other components require Tier 2+ */}
-        {calculatedChartData && !loading && !error &&hasAnalyticsAccess && (
+        {calculatedChartData && !loading && !error && (
           <div className="mt-8">
             <div className="flex flex-col justify-center items-center">
               <h2 className="text-4xl mb-2 font-bold dark:text-white flex items-center text-center pt-4">
@@ -729,8 +732,6 @@ const Result: React.FC = () => {
                 {t("analysis.subtitle") ||
                   "A custom breakdown of your chart's strengths, patterns, and strategic focus areas."}
               </p>
-
-
             </div>
 
             <div className="space-y-8">
@@ -738,6 +739,7 @@ const Result: React.FC = () => {
               <Overview chartData={calculatedChartData} />
               
               {/* Premium Analytics - Tier 2+ only */}
+              {hasAnalyticsAccess && (
                 <>
                   <Career chartData={calculatedChartData} />
                   <Health chartData={calculatedChartData} />
@@ -745,6 +747,42 @@ const Result: React.FC = () => {
                   <FourKeyPalace chartData={calculatedChartData} />
                   <DestinyCompass chartData={calculatedChartData} />
                 </>
+              )}
+
+              {/* Tier Access Prompt for Basic Users */}
+              {!hasAnalyticsAccess && (
+                <div className="mt-8 p-6 bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20 rounded-xl border border-purple-200 dark:border-purple-800">
+                  <div className="text-center">
+                    <h3 className="text-2xl font-bold text-purple-800 dark:text-purple-200 mb-2">
+                      Unlock Premium Analysis
+                    </h3>
+                    <p className="text-purple-600 dark:text-purple-300 mb-4">
+                      Get detailed insights into your career, health, relationships, and destiny patterns with our premium analysis suite.
+                    </p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                      <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm">
+                        <h4 className="font-semibold text-gray-800 dark:text-gray-200 mb-2">Career Analysis</h4>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">Discover your professional strengths and optimal career paths</p>
+                      </div>
+                      <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm">
+                        <h4 className="font-semibold text-gray-800 dark:text-gray-200 mb-2">Health Insights</h4>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">Understand your health patterns and wellness guidance</p>
+                      </div>
+                      <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm">
+                        <h4 className="font-semibold text-gray-800 dark:text-gray-200 mb-2">Life Areas</h4>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">Comprehensive analysis of all major life domains</p>
+                      </div>
+                      <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm">
+                        <h4 className="font-semibold text-gray-800 dark:text-gray-200 mb-2">Destiny Compass</h4>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">Strategic guidance for your life&apos;s journey</p>
+                      </div>
+                    </div>
+                    <button className="px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold rounded-lg hover:from-purple-700 hover:to-indigo-700 transition-all duration-200 shadow-lg hover:shadow-xl">
+                      Upgrade to Premium
+                    </button>
+                  </div>
+                </div>
+              )}
 
               {/* Summary Analysis */}
               {/* <SummaryAnalysis chartData={calculatedChartData} /> */}

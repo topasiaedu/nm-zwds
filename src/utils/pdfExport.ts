@@ -96,22 +96,24 @@ const forceLightMode = (doc: Document): void => {
  * @param language - Current language
  * @param onExportStart - Callback called when export starts
  * @param onExportEnd - Callback called when export ends
+ * @param showAlert - Function to show alert notifications
  */
 export const exportChartAsPdf = (
   printRef: React.RefObject<HTMLDivElement>,
   chartData: ChartData | null,
   language: string,
   onExportStart: () => void,
-  onExportEnd: () => void
+  onExportEnd: () => void,
+  showAlert: (message: string, type: "info" | "success" | "warning" | "error") => void
 ): void => {
   // Show export in progress
   onExportStart();
 
   // Show a user-friendly message about PDF generation
   if (language === "en") {
-    alert("Preparing your professional report. This may take a moment...");
+    showAlert("Preparing your professional report. This may take a moment...", "info");
   } else {
-    alert("正在准备您的专业报告，这可能需要一点时间...");
+    showAlert("正在准备您的专业报告，这可能需要一点时间...", "info");
   }
 
   // Give time for the content to render - longer for complex charts
@@ -267,6 +269,13 @@ export const exportChartAsPdf = (
           })
           .save()
           .then(() => {
+            // Show success message
+            if (language === "en") {
+              showAlert("PDF report generated successfully!", "success");
+            } else {
+              showAlert("PDF报告生成成功！", "success");
+            }
+            
             // Reset states after PDF is generated
             setTimeout(() => {
               onExportEnd();
@@ -278,9 +287,9 @@ export const exportChartAsPdf = (
             
             // Show error notification to user
             if (language === "en") {
-              alert("Failed to generate PDF. Please try again.");
+              showAlert("Failed to generate PDF. Please try again.", "error");
             } else {
-              alert("导出PDF失败。请重试。");
+              showAlert("导出PDF失败。请重试。", "error");
             }
           });
       } catch (error) {
@@ -289,9 +298,9 @@ export const exportChartAsPdf = (
         
         // Show error notification to user
         if (language === "en") {
-          alert("An error occurred during export. Please try again.");
+          showAlert("An error occurred during export. Please try again.", "error");
         } else {
-          alert("导出过程中发生错误。请重试。");
+          showAlert("导出过程中发生错误。请重试。", "error");
         }
       }
     } else {
