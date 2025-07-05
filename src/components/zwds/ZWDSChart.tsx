@@ -93,8 +93,7 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
     height: window.innerHeight,
   });
 
-  // Track redraw counter for transformation lines
-  const [redrawCounter, setRedrawCounter] = useState<number>(0);
+  // Remove redraw counter as it's no longer needed and causes flashing
 
   // Use our custom hooks
   const { starRefs, palaceRefs, refsReady, setRefsReady, registerStarRef } = useStarRefs(chartData, selectedPalace);
@@ -108,8 +107,7 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
         width: window.innerWidth,
         height: window.innerHeight,
       });
-      // Force redraw of transformation lines when window is resized
-      setRedrawCounter(prev => prev + 1);
+          // Window resize handled by TransformationLines component
     };
 
     window.addEventListener("resize", handleResize);
@@ -145,7 +143,9 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
     }
     
     // Combine regular transformations and opposite palace influences
-    return [...regularTransformations, ...oppositeInfluences];
+    const allTransformations = [...regularTransformations, ...oppositeInfluences];
+    
+    return allTransformations;
   };
 
   /**
@@ -187,15 +187,19 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
   const handlePalaceClick = (palaceNumber: number) => {
     if (disableInteraction) return;
     
-    setSelectedPalace(selectedPalace === palaceNumber ? null : palaceNumber);
+    console.log("🏰 Palace clicked:", palaceNumber);
+    
+    const newSelectedPalace = selectedPalace === palaceNumber ? null : palaceNumber;
+    console.log("🏰 New selected palace will be:", newSelectedPalace);
+    
+    setSelectedPalace(newSelectedPalace);
     
     // Ensure refs are ready for rendering transformation lines
     if (!refsReady) {
       setRefsReady(true);
     }
     
-    // Increment redraw counter to force redrawing of transformation lines
-    setRedrawCounter(prev => prev + 1);
+    // Redraw counter removed to prevent flashing
   };
 
   /**
@@ -333,6 +337,7 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
         secondaryPalaceName={secondaryPalaceName}
         simulatedAge={simulatedAge}
         isPdfExport={isPdfExport}
+        disableInteraction={disableInteraction}
       />
     );
   };
@@ -389,7 +394,6 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
         refsReady={refsReady}
         selectedPalace={selectedPalace}
         windowSize={windowSize}
-        redrawCounter={redrawCounter}
       />
     </motion.div>
   );

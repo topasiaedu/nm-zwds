@@ -132,15 +132,19 @@ const useTransformations = (chartData: ChartData, selectedPalace: number | null)
    * Calculate transformations based on the palace's heavenly stem
    */
   const calculateTransformations = (): TransformationResult[] => {
-    if (!selectedPalace) return [];
+    if (!selectedPalace) {
+      return [];
+    }
     
     // Get the selected palace's heavenly stem
     const palace = chartData.palaces[selectedPalace - 1];
+    
     if (!palace || !palace.heavenlyStem) {
       return [];
     }
     
     const transformations = FOUR_TRANSFORMATIONS[palace.heavenlyStem];
+    
     if (!transformations) {
       return [];
     }

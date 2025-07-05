@@ -53,6 +53,7 @@ interface PalaceProps {
   secondaryPalaceName: string | null;
   simulatedAge?: number; // Optional prop to simulate a specific age for highlighting Da Xian
   isPdfExport?: boolean; // Optional prop to indicate PDF export mode
+  disableInteraction?: boolean; // Optional prop to disable all user interactions
 }
 
 /**
@@ -80,6 +81,7 @@ const Palace: React.FC<PalaceProps> = ({
   secondaryPalaceName,
   simulatedAge,
   isPdfExport = false,
+  disableInteraction = false,
 }) => {
   const { t, language } = useLanguage();
   const clickTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
@@ -87,17 +89,20 @@ const Palace: React.FC<PalaceProps> = ({
 
   // Handle click with timing to support both single and double clicks
   const handleClick = () => {
+    console.log("🏰 Palace", palaceNumber, "handleClick called, disableInteraction:", disableInteraction);
+    if (disableInteraction) return;
+    
     if (clickTimeoutRef.current === null) {
       // First click
       clickTimeoutRef.current = setTimeout(() => {
         // Single click
-        console.log("Single click detected");
+        console.log("Single click detected on palace", palaceNumber);
         handlePalaceClick(palaceNumber);
         clickTimeoutRef.current = null;
       }, 250); // 250ms threshold for double click
     } else {
       // Second click within threshold
-      console.log("Double click detected");
+      console.log("Double click detected on palace", palaceNumber);
       clearTimeout(clickTimeoutRef.current);
       clickTimeoutRef.current = null;
       // Double click - toggle highlight
@@ -362,6 +367,7 @@ const Palace: React.FC<PalaceProps> = ({
 
   // Handle click on the Major Limit (Da Xian) section
   const handleMajorLimitClick = (e: React.MouseEvent) => {
+    if (disableInteraction) return;
     e.stopPropagation(); // Prevent the palace click from triggering
     if (palace.majorLimit) {
       handleDaXianClick(palaceNumber);

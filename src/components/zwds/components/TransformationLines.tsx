@@ -18,7 +18,6 @@ interface TransformationLinesProps {
   refsReady: boolean;
   selectedPalace: number | null;
   windowSize: { width: number; height: number };
-  redrawCounter?: number;
 }
 
 /**
@@ -190,21 +189,12 @@ const TransformationLines: React.FC<TransformationLinesProps> = ({
   starRefs,
   refsReady,
   selectedPalace,
-  windowSize,
-  redrawCounter = 0
+  windowSize
 }) => {
-  const [forceUpdate, setForceUpdate] = useState<number>(0);
-
-  // Force rerender when redrawCounter changes, but only for regular transformations
-  useEffect(() => {
-    if (redrawCounter > 0) {
-      // Small delay to ensure refs are updated
-      const timer = setTimeout(() => {
-        setForceUpdate(prev => prev + 1);
-      }, 10);
-      return () => clearTimeout(timer);
-    }
-  }, [redrawCounter]);
+  // Only log when there are issues for debugging
+  if (selectedPalace && starRefs.current.size === 0) {
+    console.log("🎭 Warning: Selected palace but no star refs available");
+  }
 
   if (!chartRef.current || !refsReady) {
     return null;
@@ -252,6 +242,9 @@ const TransformationLines: React.FC<TransformationLinesProps> = ({
       const toStarRef = starRefs.current.get(toStarKey);
       
       if (!fromPalaceRef || !toStarRef) {
+        if (selectedPalace) {
+          console.log("🎭 Missing ref for transformation:", toStarKey);
+        }
         return null;
       }
       
@@ -303,9 +296,8 @@ const TransformationLines: React.FC<TransformationLinesProps> = ({
         opacity: 0.8, // Additional transparency for all lines
       };
       
-      // Create a unique key incorporating forceUpdate so the SVG elements recreate
-      // This ensures regular transformations redraw when needed
-      const lineKey = `${transformation.fromPalace}-${transformation.toPalace}-${transformation.type}-${groupIndex}-${forceUpdate}-${redrawCounter}`;
+      // Create a stable key for smooth transitions
+      const lineKey = `${transformation.fromPalace}-${transformation.toPalace}-${transformation.type}-${groupIndex}`;
       
       // Check if transformation points to the same palace
       const isSelfTransformation = transformation.fromPalace === transformation.toPalace;
@@ -355,7 +347,7 @@ const TransformationLines: React.FC<TransformationLinesProps> = ({
                 pathLength: [0, 1]
               }}
               transition={{ 
-                duration: 1.5,
+                duration: 0.8, // Reduced from 1.5s to 0.8s
                 ease: "easeOut" 
               }}
             />
@@ -370,8 +362,8 @@ const TransformationLines: React.FC<TransformationLinesProps> = ({
               initial={{ opacity: 0, scale: 0 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ 
-                delay: 0.8,
-                duration: 0.3
+                delay: 0.4, // Reduced from 0.8s to 0.4s
+                duration: 0.2 // Reduced from 0.3s to 0.2s
               }}
             />
           </g>
@@ -412,7 +404,7 @@ const TransformationLines: React.FC<TransformationLinesProps> = ({
                 pathLength: [0, 1]
               }}
               transition={{ 
-                duration: 1.5,
+                duration: 0.8, // Reduced from 1.5s to 0.8s
                 ease: "easeOut" 
               }}
             />
@@ -422,8 +414,8 @@ const TransformationLines: React.FC<TransformationLinesProps> = ({
               initial={{ opacity: 0, scale: 0 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ 
-                delay: 0.8,
-                duration: 0.3
+                delay: 0.4, // Reduced from 0.8s to 0.4s
+                duration: 0.2 // Reduced from 0.3s to 0.2s
               }}
             />
           </g>
@@ -431,6 +423,11 @@ const TransformationLines: React.FC<TransformationLinesProps> = ({
       }
     });
   }).filter(Boolean);
+  
+  // Only log if there are issues
+  if (selectedPalace && regularLines.length === 0 && regularTransformations.length > 0) {
+    console.log("🎭 Warning: Expected transformation lines but none created");
+  }
   
   // Render opposite palace influences with no redraw logic
   // These will be static and only update on window resize
@@ -496,8 +493,7 @@ const TransformationLines: React.FC<TransformationLinesProps> = ({
         opacity: 0.8, // Additional transparency for all lines
       };
       
-      // Create a unique key that does NOT include forceUpdate or redrawCounter
-      // This ensures opposite palace influences don't redraw when selecting palaces
+      // Create a stable key for opposite palace influences
       const lineKey = `opposite-${transformation.fromPalace}-${transformation.toPalace}-${transformation.type}-${groupIndex}`;
       
       // Calculate multiple offset angles for spacing multiple lines going to the same palace
@@ -547,34 +543,33 @@ const TransformationLines: React.FC<TransformationLinesProps> = ({
     });
   }).filter(Boolean);
   
-  // Create unique key for the SVG element to force remounting for regular transformations
-  const regularSvgKey = `transformation-lines-${forceUpdate}-${redrawCounter}`;
+  // Use a stable key for the SVG to avoid remounting
+  const regularSvgKey = `transformation-lines`;
   // Static key for opposite palace influences
   const oppositeSvgKey = `opposite-influences`;
   
   return (
     <>
-      {/* Render regular transformations with redraw logic */}
-      {regularLines.length > 0 && (
-        <svg 
-          key={regularSvgKey}
-          className="absolute top-0 left-0 w-full h-full pointer-events-none z-50"
-          style={{ overflow: "visible" }}
-        >
-          {regularLines}
-        </svg>
-      )}
+      {/* Render regular transformations with smooth transitions */}
+      <motion.svg 
+        key={regularSvgKey}
+        className="absolute top-0 left-0 w-full h-full pointer-events-none z-50"
+        style={{ overflow: "visible" }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: regularLines.length > 0 ? 1 : 0 }}
+        transition={{ duration: 0.2, ease: "easeOut" }}
+      >
+        {regularLines}
+      </motion.svg>
       
       {/* Render opposite palace influences with static rendering */}
-      {oppositeLines.length > 0 && (
-        <svg 
-          key={oppositeSvgKey}
-          className="absolute top-0 left-0 w-full h-full pointer-events-none z-50"
-          style={{ overflow: "visible" }}
-        >
-          {oppositeLines}
-        </svg>
-      )}
+      <svg 
+        key={oppositeSvgKey}
+        className="absolute top-0 left-0 w-full h-full pointer-events-none z-50"
+        style={{ overflow: "visible" }}
+      >
+        {oppositeLines}
+      </svg>
     </>
   );
 };

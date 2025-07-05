@@ -24,43 +24,32 @@ const useStarRefs = (chartData: ChartData, selectedPalace: number | null): UseSt
 
   // Function to register a star element reference
   const registerStarRef = (palaceNumber: number, starName: string, element: HTMLDivElement | null) => {
+    const key = `${palaceNumber}:${starName}`;
+    
     if (element) {
-      const key = `${palaceNumber}:${starName}`;
       starRefs.current.set(key, element);
     }
   };
 
-  // Reset starRefs when chart data changes
+  // Reset starRefs when chart data actually changes (use a stable reference)
   useEffect(() => {
     starRefs.current = new Map();
-  }, [chartData]);
+  }, [chartData.lunarDate.year, chartData.lunarDate.month, chartData.lunarDate.day]);
 
-  // Track starRefs population status
+  // Set refs ready immediately when palace is selected
   useEffect(() => {
     if (selectedPalace) {
-      // Check if we have refs populated for this palace
-      const palaceStarsPopulated = Array.from(starRefs.current.keys()).some(key => 
-        key.startsWith(`${selectedPalace}:`)
-      );
+      // Small delay to ensure DOM elements are rendered, but much shorter
+      const timer = setTimeout(() => {
+        setRefsReady(true);
+      }, 10); // Reduced from 100ms to 10ms
       
-      if (!palaceStarsPopulated) {
-        // Force a re-render to ensure refs are populated
-        setTimeout(() => {
-          setRefsReady(true);
-        }, 100);
-      }
+      return () => clearTimeout(timer);
+    } else {
+      // If no palace selected, refs are ready immediately
+      setRefsReady(true);
     }
   }, [selectedPalace]);
-
-  // Ensure refs are properly populated after first render
-  useEffect(() => {
-    // After component mounts, ensure refs are marked as ready
-    const timer = setTimeout(() => {
-      setRefsReady(true);
-    }, 500);
-    
-    return () => clearTimeout(timer);
-  }, []);
 
   return {
     starRefs,
