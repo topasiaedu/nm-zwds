@@ -1,310 +1,282 @@
+import React from "react";
+import { createRoot } from "react-dom/client";
 // @ts-ignore
 import html2pdf from "html2pdf.js";
+import PdfDocument, { PdfChartData } from "../components/PdfDocument";
+import { LanguageProvider } from "../context/LanguageContext";
+
+// Re-export PdfChartData for external use
+export type { PdfChartData };
 
 /**
- * Interface for chart data
+ * Progress callback type for PDF export
  */
-export interface ChartData {
-  id: string;
-  name: string;
-  birthDate: string;
-  birthTime: string;
-  gender: string;
-  createdAt: string;
+export type PdfExportProgressCallback = (progress: {
+  step: string;
+  percentage: number;
+  isComplete: boolean;
+  error?: string;
+}) => void;
+
+/**
+ * Options for PDF export
+ */
+export interface PdfExportOptions {
+  includeAnalysis?: boolean;
+  pageBreaks?: boolean;
+  quality?: number;
+  scale?: number;
+  format?: "a4" | "letter" | "legal";
+  orientation?: "portrait" | "landscape";
 }
 
 /**
- * Check if an element's height exceeds the available page height
- * @param element - The HTML element to check
- * @param pageHeight - The available page height in pixels
- * @returns boolean indicating if the element needs to be split
+ * Default PDF export options
  */
-const shouldSplitElement = (element: HTMLElement, pageHeight: number): boolean => {
-  const rect = element.getBoundingClientRect();
-  return rect.height > pageHeight;
+const DEFAULT_OPTIONS: PdfExportOptions = {
+  includeAnalysis: true,
+  pageBreaks: true,
+  quality: 0.95,
+  scale: 1.5,
+  format: "a4",
+  orientation: "portrait",
 };
 
 /**
- * Apply light mode styles to ensure PDF is rendered in light mode regardless of app theme
- * @param doc - The document to apply styles to
+ * Enhanced PDF export function with professional document generation
+ * @param chartData - The chart data to export
+ * @param calculatedChartData - The calculated chart data
+ * @param formatDate - Date formatting function
+ * @param language - Current language setting
+ * @param onProgress - Progress callback function
+ * @param options - Export options
  */
-const forceLightMode = (doc: Document): void => {
-  // Add inline styles to force light mode for the export
-  const printContainer = doc.querySelector(".print-container");
-  if (printContainer) {
-    // Force light mode colors
-    (printContainer as HTMLElement).style.setProperty("color", "#000", "important");
-    (printContainer as HTMLElement).style.setProperty("background-color", "#fff", "important");
-    
-    // Apply to all child elements
-    const allElements = printContainer.querySelectorAll("*");
-    allElements.forEach(el => {
-      // Skip SVG paths and specific elements that shouldn't inherit text color
-      if (el.tagName.toLowerCase() === "path" || 
-          el.tagName.toLowerCase() === "circle" ||
-          el.tagName.toLowerCase() === "rect") {
-        return;
-      }
-      
-      const element = el as HTMLElement;
-      
-      // Check for dark mode text colors and replace with light mode equivalents
-      const computedStyle = window.getComputedStyle(element);
-      const color = computedStyle.color;
-      const backgroundColor = computedStyle.backgroundColor;
-      
-      // If it's a very dark color (likely text in dark mode), make it black
-      if (color && color.includes("rgba(255,") || color.includes("rgb(255,")) {
-        element.style.setProperty("color", "#000", "important");
-      }
-      
-      // If it's a very dark background, make it white or light
-      if (backgroundColor && 
-          (backgroundColor.includes("rgba(0,") || 
-           backgroundColor.includes("rgb(0,") ||
-           backgroundColor.includes("rgba(17,") || 
-           backgroundColor.includes("rgb(17,"))) {
-        element.style.setProperty("background-color", "#fff", "important");
-      }
+export const exportChartAsPdf = async (
+  chartData: PdfChartData,
+  calculatedChartData: any,
+  formatDate: (date: string) => string,
+  language: string,
+  onProgress: PdfExportProgressCallback,
+  options: PdfExportOptions = {}
+): Promise<void> => {
+  const finalOptions = { ...DEFAULT_OPTIONS, ...options };
+  
+  try {
+    // Step 1: Initialize
+    onProgress({
+      step: language === "zh" ? "准备图表数据..." : "Preparing chart data...",
+      percentage: 10,
+      isComplete: false,
     });
-    
-    // Handle specific elements like headings and text
-    const headings = printContainer.querySelectorAll("h1, h2, h3, h4, h5, h6, strong, .font-bold");
-    headings.forEach(heading => {
-      (heading as HTMLElement).style.setProperty("color", "#000", "important");
+
+    // Create a temporary container for rendering
+    const tempContainer = document.createElement("div");
+    tempContainer.style.position = "absolute";
+    tempContainer.style.top = "-9999px";
+    tempContainer.style.left = "-9999px";
+    tempContainer.style.width = "210mm";
+    tempContainer.style.visibility = "hidden";
+    document.body.appendChild(tempContainer);
+
+    // Step 2: Create PDF document component
+    onProgress({
+      step: language === "zh" ? "生成封面页..." : "Generating cover page...",
+      percentage: 25,
+      isComplete: false,
     });
+
+    const root = createRoot(tempContainer);
     
-    // Handle SVG text elements for charts
-    const svgTexts = printContainer.querySelectorAll("svg text, svg .chart-text");
-    svgTexts.forEach(text => {
-      (text as SVGElement).style.setProperty("fill", "#000", "important");
+    // Create the PDF document element
+    const pdfDocumentElement = React.createElement(
+      LanguageProvider,
+      null,
+      React.createElement(PdfDocument, {
+        chartData,
+        calculatedChartData,
+        formatDate,
+        includeAnalysis: finalOptions.includeAnalysis,
+        pageBreaks: finalOptions.pageBreaks,
+      })
+    );
+
+    root.render(pdfDocumentElement);
+
+    // Wait for rendering to complete
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
+    // Step 3: Prepare chart visualization
+    onProgress({
+      step: language === "zh" ? "渲染图表可视化..." : "Rendering chart visualization...",
+      percentage: 50,
+      isComplete: false,
     });
+
+    // Wait for chart rendering
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+
+    // Step 4: Configure PDF options
+    onProgress({
+      step: language === "zh" ? "优化打印..." : "Optimizing for print...",
+      percentage: 70,
+      isComplete: false,
+    });
+
+    const pdfOptions = {
+      margin: 0, // CRITICAL: Set to 0 to prevent blank pages
+      filename: `${chartData.name.replace(/[^a-zA-Z0-9\u4e00-\u9fa5]/g, "_")}_zwds_chart.pdf`,
+      pagebreak: { mode: 'css' }, // Let CSS handle page breaks
+      image: { 
+        type: "jpeg", 
+        quality: finalOptions.quality 
+      },
+      html2canvas: { 
+        scale: finalOptions.scale,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: "#ffffff",
+        logging: false,
+        letterRendering: true,
+      },
+      jsPDF: { 
+        unit: "mm", 
+        format: finalOptions.format, 
+        orientation: finalOptions.orientation,
+      },
+    };
+
+    // Step 5: Generate PDF
+    onProgress({
+      step: language === "zh" ? "最终化PDF..." : "Finalizing PDF...",
+      percentage: 85,
+      isComplete: false,
+    });
+
+    // Generate and download PDF
+    const pdfElement = tempContainer.firstElementChild as HTMLElement;
     
-    // Content boxes
-    const contentBoxes = printContainer.querySelectorAll(".content-box");
-    contentBoxes.forEach(box => {
-      (box as HTMLElement).style.setProperty("background-color", "#fff", "important");
-      (box as HTMLElement).style.setProperty("border-color", "#e5e7eb", "important");
+    await html2pdf()
+      .from(pdfElement)
+      .set(pdfOptions)
+      .toPdf()
+      .get("pdf")
+      .then((pdf: any) => {
+        // Add metadata
+        pdf.setProperties({
+          title: `${chartData.name} - Zi Wei Dou Shu Chart`,
+          subject: "紫微斗数 Chart Analysis",
+          author: "ZWDS Chart System",
+          keywords: "紫微斗数, astrology, chart, analysis",
+          creator: "ZWDS Chart System",
+          producer: "ZWDS Chart System",
+        });
+        
+        return pdf;
+      })
+      .save()
+      .then(() => {
+        onProgress({
+          step: language === "zh" ? "导出完成!" : "Export complete!",
+          percentage: 100,
+          isComplete: true,
+        });
+      });
+
+    // Cleanup
+    root.unmount();
+    document.body.removeChild(tempContainer);
+
+  } catch (error) {
+    console.error("PDF export error:", error);
+    onProgress({
+      step: language === "zh" ? "导出失败" : "Export failed",
+      percentage: 0,
+      isComplete: true,
+      error: error instanceof Error ? error.message : "Unknown error occurred",
     });
   }
 };
 
 /**
- * Exports the chart data as a PDF
- * @param printRef - Reference to the element to be exported
- * @param chartData - The chart data object
- * @param language - Current language
- * @param onExportStart - Callback called when export starts
- * @param onExportEnd - Callback called when export ends
- * @param showAlert - Function to show alert notifications
+ * Utility function to check if PDF export is supported
  */
-export const exportChartAsPdf = (
+export const isPdfExportSupported = (): boolean => {
+  try {
+    return typeof html2pdf !== "undefined" && typeof document !== "undefined";
+  } catch {
+    return false;
+  }
+};
+
+/**
+ * Utility function to estimate PDF size
+ */
+export const estimatePdfSize = (
+  chartData: PdfChartData,
+  includeAnalysis: boolean = true
+): { pages: number; estimatedSizeMB: number } => {
+  const basePages = 2; // Cover + Chart
+  const analysisPages = includeAnalysis ? 6 : 0; // Analysis sections
+  const totalPages = basePages + analysisPages;
+  
+  // Rough estimate: 0.3MB per page on average
+  const estimatedSizeMB = totalPages * 0.3;
+  
+  return {
+    pages: totalPages,
+    estimatedSizeMB: Math.round(estimatedSizeMB * 100) / 100,
+  };
+};
+
+/**
+ * Legacy export function for backward compatibility
+ */
+export const exportChartAsPdfLegacy = (
   printRef: React.RefObject<HTMLDivElement>,
-  chartData: ChartData | null,
+  chartData: PdfChartData | null,
   language: string,
   onExportStart: () => void,
   onExportEnd: () => void,
   showAlert: (message: string, type: "info" | "success" | "warning" | "error") => void
 ): void => {
-  // Show export in progress
-  onExportStart();
-
-  // Show a user-friendly message about PDF generation
-  if (language === "en") {
-    showAlert("Preparing your professional report. This may take a moment...", "info");
-  } else {
-    showAlert("正在准备您的专业报告，这可能需要一点时间...", "info");
+  if (!printRef.current) {
+    onExportEnd();
+    showAlert(
+      language === "en" ? "PDF export failed: No content to export" : "PDF导出失败：没有可导出的内容",
+      "error"
+    );
+    return;
   }
 
-  // Give time for the content to render - longer for complex charts
-  setTimeout(() => {
-    if (printRef.current) {
-      try {
-        // Configure pdf options for better chart rendering
-        const options = {
-          margin: 0,
-          filename: `${chartData?.name || "chart"}_zwds_report.pdf`,
-          image: { type: "jpeg", quality: 1.0 },
-          html2canvas: {
-            scale: 2,
-            useCORS: true,
-            logging: false,
-            letterRendering: true,
-            allowTaint: true,
-            onclone: (clonedDoc: Document) => {
-              try {
-                // Force light mode for export
-                forceLightMode(clonedDoc);
-                
-                // Define available page height (A4 page height minus margins)
-                const availablePageHeight = 960; // ~297mm (A4 height) - margins in px at 96dpi
-                
-                // Process all pages for better layout
-                const pages = clonedDoc.querySelectorAll(".print-page");
-                pages.forEach(page => {
-                  // Let Tailwind CSS handle the styling, just ensure we have proper page breaks
-                  (page as HTMLElement).style.pageBreakAfter = "always";
-                  (page as HTMLElement).style.breakAfter = "page";
-                });
-                
-                // Special handling for chart containers
-                const chartContainers = clonedDoc.querySelectorAll(".zwds-chart-container, .radar-chart-container");
-                chartContainers.forEach(container => {
-                  const containerElement = container as HTMLElement;
-                  containerElement.style.pageBreakInside = "avoid";
-                  containerElement.style.breakInside = "avoid";
-                  containerElement.style.overflow = "visible";
-                });
-                
-                // Make sure SVGs render correctly
-                const svgs = clonedDoc.querySelectorAll("svg");
-                svgs.forEach(svg => {
-                  svg.style.overflow = "visible";
-                  svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
-                });
-                
-                // Special handling for content boxes that exceed page height
-                const contentBoxes = clonedDoc.querySelectorAll(".content-box");
-                contentBoxes.forEach(box => {
-                  const boxElement = box as HTMLElement;
-                  
-                  // Allow large content boxes to naturally break across pages
-                  if (shouldSplitElement(boxElement, availablePageHeight)) {
-                    if (boxElement.classList.contains("life-areas-explanation-container") || 
-                        boxElement.classList.contains("career-analysis-container") ||
-                        boxElement.classList.contains("watchout-analysis-container")) {
-                      boxElement.style.pageBreakInside = "auto";
-                      boxElement.style.breakInside = "auto";
-                      
-                      // Add page break hints before headings for natural content flow
-                      const headings = boxElement.querySelectorAll("h3, h4");
-                      Array.from(headings).forEach((heading, idx) => {
-                        if (idx > 0) {
-                          (heading as HTMLElement).style.pageBreakBefore = "auto";
-                          (heading as HTMLElement).style.breakBefore = "auto";
-                          // Add margin to make breaks more natural
-                          (heading as HTMLElement).style.marginTop = "1.5rem";
-                        }
-                      });
-                    }
-                  } else {
-                    // Smaller content boxes should stay together
-                    boxElement.style.pageBreakInside = "avoid";
-                    boxElement.style.breakInside = "avoid";
-                  }
-                });
-                
-                // Handle ZWDS chart elements to ensure they render properly
-                const zwdsElements = clonedDoc.querySelectorAll(".palace-box, .palace-content, .palace-star");
-                zwdsElements.forEach(element => {
-                  (element as HTMLElement).style.overflow = "visible";
-                });
-                
-                // Keep tables and images intact
-                const tables = clonedDoc.querySelectorAll("table");
-                tables.forEach(table => {
-                  (table as HTMLElement).style.pageBreakInside = "avoid";
-                  (table as HTMLElement).style.breakInside = "avoid";
-                });
-                
-                const images = clonedDoc.querySelectorAll("img");
-                images.forEach(img => {
-                  (img as HTMLElement).style.pageBreakInside = "avoid";
-                  (img as HTMLElement).style.breakInside = "avoid";
-                });
-              } catch (e) {
-                console.error("Error in onclone handler:", e);
-              }
-            }
-          },
-          jsPDF: {
-            unit: "mm",
-            format: "a4",
-            orientation: "portrait",
-            compress: true,
-            pagesplit: true,
-            hotfixes: ["px_scaling"]
-          },
-          pagebreak: {
-            mode: ["css", "legacy"],
-            avoid: ["table", "img", ".zwds-chart-container", ".radar-chart-container"]
-          },
-        };
+  onExportStart();
 
-        // Generate and download PDF
-        html2pdf()
-          .from(printRef.current)
-          .set(options)
-          .toPdf() // Convert to PDF
-          .get("pdf")
-          .then((pdf: any) => {
-            // Ensure PDF is fully rendered before saving
-            try {
-              pdf.setProperties({
-                title: `${chartData?.name} - 紫微斗数命盘分析`,
-                subject: "紫微斗数命盘分析",
-                creator: "紫微斗数 Analysis",
-                author: "紫微斗数 Analysis"
-              });
-              
-              // Add page numbers to all pages except cover
-              const totalPages = pdf.internal.getNumberOfPages();
-              for (let i = 2; i <= totalPages; i++) {
-                pdf.setPage(i);
-                pdf.setFontSize(9);
-                pdf.setTextColor(150, 150, 150);
-                pdf.text(
-                  `${i-1}/${totalPages-1}`, 
-                  pdf.internal.pageSize.getWidth() / 2, 
-                  pdf.internal.pageSize.getHeight() - 10, 
-                  { align: "center" }
-                );
-              }
-              
-              return pdf;
-            } catch (e) {
-              console.error("Error setting PDF properties:", e);
-              return pdf;
-            }
-          })
-          .save()
-          .then(() => {
-            // Show success message
-            if (language === "en") {
-              showAlert("PDF report generated successfully!", "success");
-            } else {
-              showAlert("PDF报告生成成功！", "success");
-            }
-            
-            // Reset states after PDF is generated
-            setTimeout(() => {
-              onExportEnd();
-            }, 1000);
-          })
-          .catch((error: any) => {
-            console.error("PDF generation failed:", error);
-            onExportEnd();
-            
-            // Show error notification to user
-            if (language === "en") {
-              showAlert("Failed to generate PDF. Please try again.", "error");
-            } else {
-              showAlert("导出PDF失败。请重试。", "error");
-            }
-          });
-      } catch (error) {
-        console.error("Error in export process:", error);
-        onExportEnd();
-        
-        // Show error notification to user
-        if (language === "en") {
-          showAlert("An error occurred during export. Please try again.", "error");
-        } else {
-          showAlert("导出过程中发生错误。请重试。", "error");
-        }
-      }
-    } else {
+  const options = {
+    margin: 1,
+    filename: `${chartData?.name || "chart"}_zwds_chart.pdf`,
+    image: { type: "jpeg", quality: 0.98 },
+    html2canvas: { scale: 2 },
+    jsPDF: { unit: "in", format: "letter", orientation: "portrait" },
+  };
+
+  html2pdf()
+    .from(printRef.current)
+    .set(options)
+    .save()
+    .then(() => {
       onExportEnd();
-    }
-  }, 3000); // Give more time for the content to render
+      showAlert(
+        language === "en" ? "PDF downloaded successfully!" : "PDF下载成功！",
+        "success"
+      );
+    })
+    .catch((error: any) => {
+      onExportEnd();
+      showAlert(
+        language === "en" ? "PDF export failed" : "PDF导出失败",
+        "error"
+      );
+      console.error("PDF export error:", error);
+    });
 }; 
+
+ 

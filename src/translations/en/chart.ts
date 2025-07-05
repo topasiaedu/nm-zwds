@@ -46,8 +46,6 @@ const chart = {
     chartVisualizationPlaceholder: "This is a placeholder visualization. In the full implementation, this would show an interactive Zi Wei Dou Shu chart.",
     shareChart: "Share",
     print: "Print",
-    exportPdf: "Download PDF",
-    exporting: "Exporting...",
     exportTitle: "Zi Wei Dou Shu Chart Analysis",
     generatedOn: "Generated on",
     confidential: "Confidential Report - For Personal Use Only",
@@ -63,8 +61,39 @@ const chart = {
       birthPlace: "Birth Place",
       generated: "Generated"
     },
+    exportPdf: "Export PDF",
    
     
+  },
+  
+  pdfExport: {
+    title: "Zi Wei Dou Shu Chart Analysis",
+    subtitle: "Professional Astrological Report",
+    profileTitle: "Profile Information",
+    reportGenerated: "Report Generated",
+    confidential: "This report is confidential and intended for personal use only.",
+    chartDescription: "Chart Description",
+    chartInfo: "This Zi Wei Dou Shu chart represents the cosmic influences at the time of birth. Each palace contains specific stars that influence different aspects of life. The arrangement of these stars provides insights into personality, destiny, and life patterns.",
+    reportFooter: "End of Report",
+    disclaimer: "This report is generated based on traditional Chinese astrology principles. Results should be considered as guidance and not absolute predictions.",
+    pageNumber: "Page",
+    exporting: "Exporting PDF",
+    success: "Export Complete",
+    failed: "Export Failed",
+    errorMessage: "Failed to export PDF",
+    successMessage: "PDF exported successfully!",
+    downloadStarted: "Your download should start automatically.",
+    processingChart: "Processing your chart data...",
+    progress: "Progress",
+    chartName: "Chart",
+    step1: "Preparing chart data...",
+    step2: "Generating cover page...",
+    step3: "Rendering chart visualization...",
+    step4: "Optimizing for print...",
+    step5: "Finalizing PDF...",
+    starting: "Starting export...",
+    noData: "No chart data available for export",
+    notSupported: "PDF export is not supported in this browser",
   },
 };
 

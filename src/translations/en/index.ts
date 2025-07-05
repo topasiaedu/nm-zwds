@@ -24,6 +24,9 @@ const en = {
   ...zwds,
   ...misc,
   ...freeTest,
+  general:{
+    close: "Close",
+  }
 };
 
 console.log("ENGLISH TRANSLATIONS", en.analysis.fourKeyPalaceContent.田宅);

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useLanguage } from "../context/LanguageContext";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import PageTransition from "../components/PageTransition";
@@ -9,11 +9,12 @@ import { ZWDSCalculator } from "../utils/zwds/calculator";
 import { ChartInput } from "../utils/zwds/types";
 import { useAuthContext } from "../context/AuthContext";
 import { useTierAccess } from "../context/TierContext";
-import { useAlertContext } from "../context/AlertContext";
 
-// Import PrintableReport component and PDF export utilities
-import PrintableReport from "../components/PrintableReport";
-import { ChartData, exportChartAsPdf } from "../utils/pdfExport";
+// PDF export functionality
+import { exportChartAsPdf, estimatePdfSize, isPdfExportSupported } from "../utils/pdfExport";
+import PdfExportModal from "../components/PdfExportModal";
+import PdfDocument, { PdfChartData } from "../components/PdfDocument";
+import { useAlertContext } from "../context/AlertContext";
 import {
   Overview,
   Career,
@@ -22,6 +23,11 @@ import {
   DestinyCompass,
   AreasOfLife,
 } from "../components/analysis_v2";
+
+/**
+ * ChartData interface for chart information - using PdfChartData for consistency
+ */
+type ChartData = PdfChartData;
 
 /**
  * Result component to display 紫微斗数 chart results
@@ -39,8 +45,19 @@ const Result: React.FC = () => {
   const [chartData, setChartData] = useState<ChartData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [isPrinting, setIsPrinting] = useState<boolean>(false);
-  const [isExporting, setIsExporting] = useState<boolean>(false);
+
+  // PDF export state
+  const [pdfExportModal, setPdfExportModal] = useState({
+    isOpen: false,
+    progress: {
+      step: "",
+      percentage: 0,
+      isComplete: false,
+      error: undefined as string | undefined,
+    },
+  });
+
+
 
 
   // Add a ref to keep track of the loaded chart data
@@ -49,10 +66,97 @@ const Result: React.FC = () => {
   );
 
   const [calculatedChartData, setCalculatedChartData] = useState<any>(null);
-  const printRef = useRef<HTMLDivElement>(null);
 
-  // Memoize formatBirthTime function to prevent it from changing on every render
-  const formatBirthTime = useCallback((birthTimeString: string): string => {
+  /**
+   * Handle PDF export with progress modal
+   */
+  const handlePdfExport = async () => {
+    if (!chartData || !calculatedChartData) {
+      showAlert(
+        t("pdfExport.noData") || "No chart data available for export",
+        "error"
+      );
+      return;
+    }
+
+    // Check if PDF export is supported
+    if (!isPdfExportSupported()) {
+      showAlert(
+        t("pdfExport.notSupported") || "PDF export is not supported in this browser",
+        "error"
+      );
+      return;
+    }
+
+    // Show size estimation
+    const sizeEstimate = estimatePdfSize(chartData, hasAnalyticsAccess);
+    
+    // Show modal and start export
+    setPdfExportModal({
+      isOpen: true,
+      progress: {
+        step: t("pdfExport.starting") || "Starting export...",
+        percentage: 0,
+        isComplete: false,
+        error: undefined,
+      },
+    });
+
+    try {
+      await exportChartAsPdf(
+        chartData,
+        calculatedChartData,
+        formatDate,
+        language,
+        (progress) => {
+          setPdfExportModal(prev => ({
+            ...prev,
+            progress: {
+              ...progress,
+              error: progress.error || undefined,
+            },
+          }));
+        },
+        {
+          includeAnalysis: hasAnalyticsAccess,
+          pageBreaks: true,
+          quality: 0.95,
+          scale: 1.5,
+          format: "a4",
+          orientation: "portrait",
+        }
+      );
+    } catch (error) {
+      console.error("PDF export error:", error);
+      setPdfExportModal(prev => ({
+        ...prev,
+        progress: {
+          step: t("pdfExport.failed") || "Export failed",
+          percentage: 0,
+          isComplete: true,
+          error: error instanceof Error ? error.message : "Unknown error",
+        },
+      }));
+    }
+  };
+
+  /**
+   * Close PDF export modal
+   */
+  const closePdfExportModal = () => {
+    setPdfExportModal({
+      isOpen: false,
+      progress: {
+        step: "",
+        percentage: 0,
+        isComplete: false,
+        error: undefined,
+      },
+    });
+  };
+
+  // Format birth time function
+  const formatBirthTime = (birthTimeString: string): string => {
     const hour = parseInt(birthTimeString);
     if (isNaN(hour)) return "Unknown";
 
@@ -90,7 +194,7 @@ const Result: React.FC = () => {
     };
 
     return getTimeRange(hour);
-  }, []);
+  };
 
   // Find the user's self profile if no id is provided
   const isSelfProfile = !id;
@@ -308,25 +412,7 @@ const Result: React.FC = () => {
     }
   }, [chartData]);
 
-  /**
-   * Handle exporting the chart as a PDF with direct download
-   */
-  const handleExport = useCallback(() => {
-    exportChartAsPdf(
-      printRef,
-      chartData,
-      language,
-      () => setIsExporting(true),
-      () => {
-        setIsPrinting(false);
-        setIsExporting(false);
-      },
-      showAlert
-    );
-
-    // Show printable report during export
-    setIsPrinting(true);
-  }, [chartData, language, showAlert]);
+  // PDF export functionality will be rebuilt later
 
   // If loading profiles from context
   if (profilesLoading) {
@@ -400,24 +486,8 @@ const Result: React.FC = () => {
 
   return (
     <PageTransition>
-      {/* Print View (hidden until printing) */}
-      {isPrinting && chartData && calculatedChartData && (
-        <div
-          ref={printRef}
-          className={`print-only ${!isPrinting ? "hidden" : ""}`}>
-          <PrintableReport
-            chartData={chartData}
-            calculatedChartData={calculatedChartData}
-            formatDate={formatDate}
-          />
-        </div>
-      )}
-
       {/* Regular View */}
-      <div
-        className={`container mx-auto px-0 xs:px-1 sm:px-2 md:px-4 py-2 sm:py-4 md:py-8 ${
-          isPrinting ? "no-print" : ""
-        }`}>
+      <div className="container mx-auto px-0 xs:px-1 sm:px-2 md:px-4 py-2 sm:py-4 md:py-8">
         <div className="mb-8">
           <div className="flex items-center mb-4">
             <Link
@@ -652,41 +722,34 @@ const Result: React.FC = () => {
                     </div>
                   </div>
 
+                  {/* PDF Export Button */}
                   <div className="mt-6">
                     <button
-                      onClick={handleExport}
-                      disabled={isExporting}
-                      className="w-full px-6 py-3 text-white font-medium rounded-lg transition-all 
-                               bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700
-                               focus:ring-4 focus:ring-purple-300 focus:outline-none
-                               shadow-lg hover:shadow-xl
-                               disabled:opacity-70 disabled:cursor-not-allowed
-                               flex items-center justify-center">
-                      {isExporting ? (
-                        <>
-                          <div className="w-5 h-5 mr-3 border-t-2 border-b-2 border-white rounded-full animate-spin"></div>
-                          {t("result.exporting") || "Exporting..."}
-                        </>
-                      ) : (
-                        <>
-                          <svg
-                            className="w-5 h-5 mr-3"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-                            />
-                          </svg>
-                          {t("result.exportPdf") || "Export Professional PDF Report"}
-                        </>
-                      )}
+                      onClick={handlePdfExport}
+                      disabled={!chartData || !calculatedChartData}
+                      className="w-full px-4 py-2 text-white font-medium rounded-lg transition-all 
+                            bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700
+                            focus:ring-4 focus:ring-red-300 focus:outline-none
+                            disabled:opacity-50 disabled:cursor-not-allowed
+                            flex items-center justify-center">
+                      <svg
+                        className="w-5 h-5 mr-2"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                        />
+                      </svg>
+                      {t("result.exportPdf") || "Export PDF"}
                     </button>
                   </div>
+
+
 
                   {/* Timing Chart Button */}
                   <div className="mt-6">
@@ -718,6 +781,8 @@ const Result: React.FC = () => {
             </div>
           )
         )}
+
+
 
         {/* Analysis Section - Always show Overview, but other components require Tier 2+ */}
         {calculatedChartData && !loading && !error && (
@@ -807,6 +872,14 @@ const Result: React.FC = () => {
             </div>
           </div>
         )}
+
+        {/* PDF Export Modal */}
+        <PdfExportModal
+          isOpen={pdfExportModal.isOpen}
+          onClose={closePdfExportModal}
+          progress={pdfExportModal.progress}
+          chartName={chartData?.name || ""}
+        />
       </div>
     </PageTransition>
   );
