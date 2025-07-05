@@ -52,6 +52,7 @@ interface PalaceProps {
   delay: number;
   secondaryPalaceName: string | null;
   simulatedAge?: number; // Optional prop to simulate a specific age for highlighting Da Xian
+  isPdfExport?: boolean; // Optional prop to indicate PDF export mode
 }
 
 /**
@@ -78,6 +79,7 @@ const Palace: React.FC<PalaceProps> = ({
   delay,
   secondaryPalaceName,
   simulatedAge,
+  isPdfExport = false,
 }) => {
   const { t, language } = useLanguage();
   const clickTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
@@ -695,99 +697,164 @@ const Palace: React.FC<PalaceProps> = ({
       </div>
 
       {/* Bottom section with grid layout - positioned absolute at bottom */}
-      <div className="absolute bottom-0 left-0 right-0 grid grid-cols-1 sm:grid-cols-3 w-full text-3xs xs:text-2xs sm:text-xs text-zinc-800 dark:text-zinc-200 border-t border-gray-200 dark:border-gray-700 z-20">
-        {/* First column (mobile and desktop) */}
-        <div
-          className={`flex flex-col items-start sm:items-center justify-center py-0.5 xs:py-1 sm:py-1.5 border-r border-gray-200 dark:border-gray-700 ${
-            isSelected ? "text-white/90 dark:text-white/90" : ""
-          }`}>
-          {/* Mobile view: Palace Name - Updated with click handler */}
+      {isPdfExport ? (
+        // PDF Export Version - Static 3-column layout without responsive classes
+        <div className="absolute bottom-0 left-0 right-0 grid grid-cols-3 w-full text-xs text-zinc-800 dark:text-zinc-200 border-t border-gray-200 dark:border-gray-700 z-20">
+          {/* First column - Heavenly Stem and Earthly Branch */}
           <div
-            className={`sm:hidden ${
-              isSelected ? "text-white dark:text-white" : ""
-            } cursor-pointer font-bold hover:opacity-80`}
-            onClick={(e) => handlePalaceNameClick(palaceNumber, e)}>
-            {language === "en" && t(`zwds.palaces.${palace.name}`)
-              ? t(`zwds.palaces.${palace.name}`)
-              : palace.name}
-          </div>
-          {/* Mobile view: Heavenly Stem and Earthly Branch on one line */}
-          <div className="flex items-center gap-1 sm:hidden">
-            <span>
+            className={`flex flex-col items-center justify-center py-1.5 border-r border-gray-200 dark:border-gray-700 ${
+              isSelected ? "text-white/90 dark:text-white/90" : ""
+            }`}>
+            <div>
               {language === "en" && t(`zwds.stems.${palace.heavenlyStem}`)
                 ? t(`zwds.stems.${palace.heavenlyStem}`)
                 : palace.heavenlyStem}
-            </span>
-            <span>
+            </div>
+            <div>
               {language === "en" && t(`zwds.branches.${palace.earthlyBranch}`)
                 ? t(`zwds.branches.${palace.earthlyBranch}`)
                 : palace.earthlyBranch}
-            </span>
-          </div>
-          {/* Desktop view: Heavenly Stem */}
-          <div className="hidden sm:block">
-            {language === "en" && t(`zwds.stems.${palace.heavenlyStem}`)
-              ? t(`zwds.stems.${palace.heavenlyStem}`)
-              : palace.heavenlyStem}
-          </div>
-          {/* Desktop view: Earthly Branch */}
-          <div className="hidden sm:block">
-            {language === "en" && t(`zwds.branches.${palace.earthlyBranch}`)
-              ? t(`zwds.branches.${palace.earthlyBranch}`)
-              : palace.earthlyBranch}
-          </div>
-
-          {/* Mobile view: Major Limit */}
-          {palace.majorLimit && (
-            <div
-              className={`sm:hidden text-zinc-500 dark:text-zinc-400 ${
-                isCurrentDaXian
-                  ? "text-amber-900 dark:text-amber-200 font-bold cursor-pointer"
-                  : "cursor-pointer hover:text-amber-600 dark:hover:text-amber-400"
-              }`}
-              onClick={handleMajorLimitClick}>
-              {palace.majorLimit.startAge}-{palace.majorLimit.endAge}
             </div>
-          )}
-          {/* Mobile view: Year and Age - Modified to use renderMobileYearOrMonth */}
-          {renderMobileYearOrMonth()}
-        </div>
-
-        {/* Second column (desktop only) - Updated with click handler */}
-        <div
-          className={`hidden sm:flex flex-col items-center justify-center py-0.5 xs:py-1 sm:py-1.5 border-r border-gray-200 dark:border-gray-700 ${
-            isSelected ? "text-white dark:text-white" : ""
-          }`}>
-          <div 
-            className="font-medium cursor-pointer hover:opacity-80"
-            onClick={(e) => handlePalaceNameClick(palaceNumber, e)}>
-            {language === "en" && t(`zwds.palaces.${palace.name}`)
-              ? t(`zwds.palaces.${palace.name}`)
-              : palace.name}
           </div>
-          {palace.majorLimit && (
-            <div
-              className={`text-zinc-500 dark:text-zinc-400 ${
-                isCurrentDaXian
-                  ? "text-amber-900 dark:text-amber-200 font-bold cursor-pointer"
-                  : "cursor-pointer hover:text-amber-600 dark:hover:text-amber-400"
-              }`}
-              onClick={handleMajorLimitClick}>
-              {palace.majorLimit.startAge}-{palace.majorLimit.endAge}
-            </div>
-          )}
-        </div>
 
-        {/* Third column (desktop only) - Modified to use renderYearOrMonth */}
-        <div
-          className={`hidden sm:flex flex-col items-center justify-center py-0.5 xs:py-1 sm:py-1.5 ${
-            isSelected
-              ? "text-white/80 dark:text-white/80"
-              : "text-zinc-500 dark:text-zinc-400"
-          }`}>
-          {renderYearOrMonth()}
+          {/* Second column - Palace Name and Major Limit */}
+          <div
+            className={`flex flex-col items-center justify-center py-1.5 border-r border-gray-200 dark:border-gray-700 ${
+              isSelected ? "text-white dark:text-white" : ""
+            }`}>
+            <div className="font-medium">
+              {language === "en" && t(`zwds.palaces.${palace.name}`)
+                ? t(`zwds.palaces.${palace.name}`)
+                : palace.name}
+            </div>
+            {palace.majorLimit && (
+              <div
+                className={`text-zinc-500 dark:text-zinc-400 ${
+                  isCurrentDaXian
+                    ? "text-amber-900 dark:text-amber-200 font-bold"
+                    : ""
+                }`}>
+                {palace.majorLimit.startAge}-{palace.majorLimit.endAge}
+              </div>
+            )}
+          </div>
+
+          {/* Third column - Year and Age */}
+          <div
+            className={`flex flex-col items-center justify-center py-1.5 ${
+              isSelected
+                ? "text-white/80 dark:text-white/80"
+                : "text-zinc-500 dark:text-zinc-400"
+            }`}>
+            <div className={`${
+              showAnnualFlow
+                ? isSelected
+                  ? "text-red-300"
+                  : "text-red-600 dark:text-red-400"
+                : ""
+            } font-medium`}>
+              {palaceYear}
+            </div>
+            <div className="text-xs">
+              {monthDisplay || getAgeAtYear(palaceYear)}
+            </div>
+          </div>
         </div>
-      </div>
+      ) : (
+        <div className="absolute bottom-0 left-0 right-0 grid grid-cols-1 sm:grid-cols-3 w-full text-3xs xs:text-2xs sm:text-xs text-zinc-800 dark:text-zinc-200 border-t border-gray-200 dark:border-gray-700 z-20">
+          {/* First column (mobile and desktop) */}
+          <div
+            className={`flex flex-col items-start sm:items-center justify-center py-0.5 xs:py-1 sm:py-1.5 border-r border-gray-200 dark:border-gray-700 ${
+              isSelected ? "text-white/90 dark:text-white/90" : ""
+            }`}>
+            {/* Mobile view: Palace Name - Updated with click handler */}
+            <div
+              className={`sm:hidden ${
+                isSelected ? "text-white dark:text-white" : ""
+              } cursor-pointer font-bold hover:opacity-80`}
+              onClick={(e) => handlePalaceNameClick(palaceNumber, e)}>
+              {language === "en" && t(`zwds.palaces.${palace.name}`)
+                ? t(`zwds.palaces.${palace.name}`)
+                : palace.name}
+            </div>
+            {/* Mobile view: Heavenly Stem and Earthly Branch on one line */}
+            <div className="flex items-center gap-1 sm:hidden">
+              <span>
+                {language === "en" && t(`zwds.stems.${palace.heavenlyStem}`)
+                  ? t(`zwds.stems.${palace.heavenlyStem}`)
+                  : palace.heavenlyStem}
+              </span>
+              <span>
+                {language === "en" && t(`zwds.branches.${palace.earthlyBranch}`)
+                  ? t(`zwds.branches.${palace.earthlyBranch}`)
+                  : palace.earthlyBranch}
+              </span>
+            </div>
+            {/* Desktop view: Heavenly Stem */}
+            <div className="hidden sm:block">
+              {language === "en" && t(`zwds.stems.${palace.heavenlyStem}`)
+                ? t(`zwds.stems.${palace.heavenlyStem}`)
+                : palace.heavenlyStem}
+            </div>
+            {/* Desktop view: Earthly Branch */}
+            <div className="hidden sm:block">
+              {language === "en" && t(`zwds.branches.${palace.earthlyBranch}`)
+                ? t(`zwds.branches.${palace.earthlyBranch}`)
+                : palace.earthlyBranch}
+            </div>
+
+            {/* Mobile view: Major Limit */}
+            {palace.majorLimit && (
+              <div
+                className={`sm:hidden text-zinc-500 dark:text-zinc-400 ${
+                  isCurrentDaXian
+                    ? "text-amber-900 dark:text-amber-200 font-bold cursor-pointer"
+                    : "cursor-pointer hover:text-amber-600 dark:hover:text-amber-400"
+                }`}
+                onClick={handleMajorLimitClick}>
+                {palace.majorLimit.startAge}-{palace.majorLimit.endAge}
+              </div>
+            )}
+            {/* Mobile view: Year and Age - Modified to use renderMobileYearOrMonth */}
+            {renderMobileYearOrMonth()}
+          </div>
+
+          {/* Second column (desktop only) - Updated with click handler */}
+          <div
+            className={`hidden sm:flex flex-col items-center justify-center py-0.5 xs:py-1 sm:py-1.5 border-r border-gray-200 dark:border-gray-700 ${
+              isSelected ? "text-white dark:text-white" : ""
+            }`}>
+            <div 
+              className="font-medium cursor-pointer hover:opacity-80"
+              onClick={(e) => handlePalaceNameClick(palaceNumber, e)}>
+              {language === "en" && t(`zwds.palaces.${palace.name}`)
+                ? t(`zwds.palaces.${palace.name}`)
+                : palace.name}
+            </div>
+            {palace.majorLimit && (
+              <div
+                className={`text-zinc-500 dark:text-zinc-400 ${
+                  isCurrentDaXian
+                    ? "text-amber-900 dark:text-amber-200 font-bold cursor-pointer"
+                    : "cursor-pointer hover:text-amber-600 dark:hover:text-amber-400"
+                }`}
+                onClick={handleMajorLimitClick}>
+                {palace.majorLimit.startAge}-{palace.majorLimit.endAge}
+              </div>
+            )}
+          </div>
+
+          {/* Third column (desktop only) - Modified to use renderYearOrMonth */}
+          <div
+            className={`hidden sm:flex flex-col items-center justify-center py-0.5 xs:py-1 sm:py-1.5 ${
+              isSelected
+                ? "text-white/80 dark:text-white/80"
+                : "text-zinc-500 dark:text-zinc-400"
+            }`}>
+            {renderYearOrMonth()}
+          </div>
+        </div>
+      )}
     </motion.div>
   );
 };

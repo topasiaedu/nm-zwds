@@ -16,17 +16,16 @@ import { FourKeyPalace, Overview } from "../components/analysis_v2";
 import { Career } from "../components/analysis_v2";
 import { supabase } from "../utils/supabase-client";
 
+// PDF export functionality
+import { exportChartAsPdf, estimatePdfSize, isPdfExportSupported } from "../utils/pdfExport";
+import PdfExportModal from "../components/PdfExportModal";
+import PdfDocument, { PdfChartData } from "../components/PdfDocument";
+import { useAlertContext } from "../context/AlertContext";
+
 /**
- * Interface for chart data
+ * Interface for chart data - using PdfChartData for consistency
  */
-interface ChartData {
-  id: string;
-  name: string;
-  birthDate: string;
-  birthTime: string;
-  gender: string;
-  createdAt: string;
-}
+type ChartData = PdfChartData;
 
 /**
  * FreeResult component to display 紫微斗数 chart results for free test users
@@ -38,6 +37,7 @@ const FreeResult: React.FC = () => {
   const navigate = useNavigate();
   const { profiles, loading: profilesLoading } = useProfileContext();
   const profileLoadAttempts = useRef<number>(0);
+  const { showAlert } = useAlertContext();
 
   // State for chart data
   const [chartData, setChartData] = useState<ChartData | null>(null);
@@ -45,6 +45,17 @@ const FreeResult: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [isEventActive, setIsEventActive] = useState<boolean>(true);
   const [calculatedChartData, setCalculatedChartData] = useState<any>(null);
+
+  // PDF export state
+  const [pdfExportModal, setPdfExportModal] = useState({
+    isOpen: false,
+    progress: {
+      step: "",
+      percentage: 0,
+      isComplete: false,
+      error: undefined as string | undefined,
+    },
+  });
 
   // WhatsApp link
   const whatsappLink = "https://wa.me/601158639269";
@@ -61,6 +72,94 @@ const FreeResult: React.FC = () => {
       <path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z" />
     </svg>
   );
+
+  /**
+   * Handle PDF export with progress modal
+   */
+  const handlePdfExport = async () => {
+    if (!chartData || !calculatedChartData) {
+      showAlert(
+        t("pdfExport.noData") || "No chart data available for export",
+        "error"
+      );
+      return;
+    }
+
+    // Check if PDF export is supported
+    if (!isPdfExportSupported()) {
+      showAlert(
+        t("pdfExport.notSupported") || "PDF export is not supported in this browser",
+        "error"
+      );
+      return;
+    }
+
+    // Show size estimation
+    const sizeEstimate = estimatePdfSize(chartData, false); // Free users don't have analytics access
+    
+    // Show modal and start export
+    setPdfExportModal({
+      isOpen: true,
+      progress: {
+        step: t("pdfExport.starting") || "Starting export...",
+        percentage: 0,
+        isComplete: false,
+        error: undefined,
+      },
+    });
+
+    try {
+      await exportChartAsPdf(
+        chartData,
+        calculatedChartData,
+        formatDate,
+        language,
+        (progress) => {
+          setPdfExportModal(prev => ({
+            ...prev,
+            progress: {
+              ...progress,
+              error: progress.error || undefined,
+            },
+          }));
+        },
+        {
+          includeAnalysis: false, // Free users don't get full analysis
+          pageBreaks: true,
+          quality: 0.95,
+          scale: 1.5,
+          format: "a4",
+          orientation: "portrait",
+        }
+      );
+    } catch (error) {
+      console.error("PDF export error:", error);
+      setPdfExportModal(prev => ({
+        ...prev,
+        progress: {
+          step: t("pdfExport.failed") || "Export failed",
+          percentage: 0,
+          isComplete: true,
+          error: error instanceof Error ? error.message : "Unknown error",
+        },
+      }));
+    }
+  };
+
+  /**
+   * Close PDF export modal
+   */
+  const closePdfExportModal = () => {
+    setPdfExportModal({
+      isOpen: false,
+      progress: {
+        step: "",
+        percentage: 0,
+        isComplete: false,
+        error: undefined,
+      },
+    });
+  };
 
   /**
    * Check if the free test event is still active
@@ -592,6 +691,33 @@ const FreeResult: React.FC = () => {
                     </div>
                   </div>
 
+                  {/* PDF Export Button */}
+                  <div className="mt-6">
+                    <button
+                      onClick={handlePdfExport}
+                      disabled={!chartData || !calculatedChartData}
+                      className="w-full px-4 py-2 text-white font-medium rounded-lg transition-all 
+                            bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700
+                            focus:ring-4 focus:ring-red-300 focus:outline-none
+                            disabled:opacity-50 disabled:cursor-not-allowed
+                            flex items-center justify-center">
+                      <svg
+                        className="w-5 h-5 mr-2"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                        />
+                      </svg>
+                      {t("result.exportPdf") || "Export PDF"}
+                    </button>
+                  </div>
+
                   {/* Sign up CTA */}
                   {/* <div
                     className="mt-8 rounded-2xl shadow-2xl overflow-hidden
@@ -624,6 +750,13 @@ const FreeResult: React.FC = () => {
           )
         )}
 
+        {/* PDF Export Modal */}
+        <PdfExportModal
+          isOpen={pdfExportModal.isOpen}
+          onClose={closePdfExportModal}
+          progress={pdfExportModal.progress}
+          chartName={chartData?.name || ""}
+        />
         
       </div>
     </PageTransition>

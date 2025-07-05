@@ -292,7 +292,11 @@ const PdfDocument = forwardRef<HTMLDivElement, PdfDocumentProps>(
                   alignItems: "center",
                   transformOrigin: "center",
                 }}>
-                  <ZWDSChart chartData={calculatedChartData} />
+                  <ZWDSChart 
+                    chartData={calculatedChartData} 
+                    disableInteraction={true}
+                    isPdfExport={true}
+                  />
                 </div>
               )}
             </div>

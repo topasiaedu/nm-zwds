@@ -59,6 +59,7 @@ interface ZWDSChartProps {
   simulatedAge?: number; // Optional prop to simulate a specific age for highlighting Da Xian
   selectedDaXianPalace?: number; // Optional prop to auto-select a palace for Da Ming tags
   disableInteraction?: boolean; // Optional prop to disable all user interactions
+  isPdfExport?: boolean; // Optional prop to indicate PDF export mode
 }
 
 /**
@@ -70,6 +71,7 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
   simulatedAge,
   selectedDaXianPalace,
   disableInteraction = false,
+  isPdfExport = false,
 }) => {
   // State to track the selected palace for transformations
   const [selectedPalace, setSelectedPalace] = useState<number | null>(null);
@@ -330,6 +332,7 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
         delay={delay}
         secondaryPalaceName={secondaryPalaceName}
         simulatedAge={simulatedAge}
+        isPdfExport={isPdfExport}
       />
     );
   };

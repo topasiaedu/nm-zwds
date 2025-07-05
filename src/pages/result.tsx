@@ -751,8 +751,8 @@ const Result: React.FC = () => {
 
 
 
-                  {/* Timing Chart Button */}
-                  <div className="mt-6">
+                  {/* Timing Chart Button - Hidden */}
+                  {/* <div className="mt-6">
                     <Link
                       to={`/timing-chart/${chartData.id}`}
                       className="w-full px-4 py-2 text-white font-medium rounded-lg transition-all 
@@ -762,7 +762,7 @@ const Result: React.FC = () => {
                      
                       {"View Timing Analysis"}
                     </Link>
-                  </div>
+                  </div> */}
 
                   {isSelfProfile && (
                     <div className="mt-6">
