@@ -155,14 +155,7 @@ const FreeTest: React.FC = () => {
                   </ul>
                 </div>
 
-                <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg">
-                  <h3 className="font-medium text-green-800 dark:text-green-300 mb-2">
-                    {t("freeTest.fullFeatures")}
-                  </h3>
-                  <p className="text-sm text-green-600 dark:text-green-400">
-                    {t("freeTest.upgradeDescription")}
-                  </p>
-                </div>
+
               </div>
             </div>
           </div>
