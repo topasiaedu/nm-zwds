@@ -1,7 +1,7 @@
 import React from "react";
 import { Tilt } from "react-tilt";
 import { ChartData } from "../../utils/zwds/types";
-import { analyzeDestinyAlert, getDestinyAlertDebugInfo, PalaceAlertData } from "../../utils/zwds/analysis";
+import { analyzeDestinyAlert } from "../../utils/zwds/analysis";
 
 /**
  * Type definition for Tilt options
@@ -28,10 +28,7 @@ const FourKeyPalace: React.FC<FourKeyPalaceProps> = ({ chartData }) => {
   // Analyze the chart data to get real destiny alert data
   const analysisResult = analyzeDestinyAlert(chartData);
   
-  // For debugging purposes (can be removed in production)
-  const debugInfo = getDestinyAlertDebugInfo(chartData);
-  console.log("Destiny Alert Debug Info:", debugInfo);
-  console.log("Destiny Alert Analysis Result:", analysisResult);
+
 
   // Tilt options for the cards
   const tiltOptions: TiltOptions = {

@@ -89,14 +89,14 @@ const Palace: React.FC<PalaceProps> = ({
 
   // Handle click with timing to support both single and double clicks
   const handleClick = () => {
-    console.log("🏰 Palace", palaceNumber, "handleClick called, disableInteraction:", disableInteraction);
+
     if (disableInteraction) return;
     
     if (clickTimeoutRef.current === null) {
       // First click
       clickTimeoutRef.current = setTimeout(() => {
         // Single click
-        console.log("Single click detected on palace", palaceNumber);
+
         handlePalaceClick(palaceNumber);
         clickTimeoutRef.current = null;
       }, 250); // 250ms threshold for double click

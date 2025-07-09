@@ -84,9 +84,6 @@ const mapStarsToBodyParts = (stars: Star[]): string[] => {
     
     if (bodyParts) {
       bodyParts.forEach(part => affectedParts.add(part));
-      console.log(`Health Analysis: Star ${starName} affects body parts:`, bodyParts);
-    } else {
-      console.log(`Health Analysis: No body parts mapping found for star ${starName}`);
     }
   });
   
@@ -126,13 +123,9 @@ const getHealthTipsForBodyParts = (bodyParts: string[]) => {
  * Main function to analyze health based on chart data
  */
 export const analyzeHealthFromChart = (chartData: ChartData): HealthAnalysisResult => {
-  console.log("Health Analysis: Starting analysis with chart data:", chartData);
-  
   if (!chartData || !chartData.palaces) {
     throw new Error("Invalid chart data provided");
   }
-  
-  console.log("Health Analysis: Found", chartData.palaces.length, "palaces");
   
   // Find the health palace (疾厄)
   const healthPalace = chartData.palaces.find(palace => palace.name === "疾厄");
@@ -143,20 +136,15 @@ export const analyzeHealthFromChart = (chartData: ChartData): HealthAnalysisResu
     throw new Error("Health palace (疾厄) not found in chart data");
   }
   
-  console.log("Health Analysis: Found health palace:", healthPalace);
-  
   // Extract stars from health palace
   let starsInPalace = extractAllStarsFromPalace(healthPalace);
   let usedParentsPalace = false;
-  
-  console.log("Health Analysis: Stars in health palace:", starsInPalace.length);
   
   // If no stars in health palace, use parents palace (父母) as fallback
   if (starsInPalace.length === 0) {
     const parentsPalace = chartData.palaces.find(palace => palace.name === "父母");
     
     if (parentsPalace) {
-      console.log("Health Analysis: No stars in health palace, using parents palace as fallback");
       starsInPalace = extractAllStarsFromPalace(parentsPalace);
       usedParentsPalace = true;
     } else {
@@ -166,11 +154,9 @@ export const analyzeHealthFromChart = (chartData: ChartData): HealthAnalysisResu
   
   // Extract star names
   const starNames = starsInPalace.map(star => star.name);
-  console.log("Health Analysis: Final star names:", starNames);
   
   // Map stars to body parts
   const affectedBodyParts = mapStarsToBodyParts(starsInPalace);
-  console.log("Health Analysis: Affected body parts:", affectedBodyParts);
   
   // Get health tips for affected body parts
   const healthTips = getHealthTipsForBodyParts(affectedBodyParts);
@@ -181,8 +167,6 @@ export const analyzeHealthFromChart = (chartData: ChartData): HealthAnalysisResu
     starsInHealthPalace: starNames,
     usedParentsPalace,
   };
-  
-  console.log("Health Analysis: Final result:", result);
   
   return result;
 };

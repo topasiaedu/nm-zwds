@@ -26,9 +26,11 @@ const en = {
   ...freeTest,
   general:{
     close: "Close",
+    back: "Back",
+    loadingText: "Loading...",
   }
 };
 
-console.log("ENGLISH TRANSLATIONS", en.analysis.fourKeyPalaceContent.田宅);
+
 
 export default en; 

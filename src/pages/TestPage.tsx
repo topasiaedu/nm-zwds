@@ -6,13 +6,7 @@ import { Link } from "react-router-dom";
  * Test page component to verify page transitions
  */
 const TestPage: React.FC = () => {
-  useEffect(() => {
-    // Log for debugging
-    console.log("TestPage mounted");
-  }, []);
 
-  // Log when rendering
-  console.log("TestPage rendering");
 
   return (
     <div className="flex flex-col items-center justify-center p-8">

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { useLanguage } from "../context/LanguageContext";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import PageTransition from "../components/PageTransition";
@@ -6,20 +6,13 @@ import { useProfileContext } from "../context/ProfileContext";
 import ZWDSChart from "../components/ZWDSChart";
 import { ZWDSCalculator } from "../utils/zwds/calculator";
 import { ChartInput } from "../utils/zwds/types";
-import {
-  LifeAreasRadarChart,
-  LifeAreasExplanation,
-  SummaryAnalysis,
-} from "../components/analysis";
 import FREE_TEST_CONFIG from "../config/freeTestConfig";
-import { FourKeyPalace, Overview } from "../components/analysis_v2";
-import { Career } from "../components/analysis_v2";
 import { supabase } from "../utils/supabase-client";
 
 // PDF export functionality
-import { exportChartAsPdf, estimatePdfSize, isPdfExportSupported } from "../utils/pdfExport";
+import { exportChartAsPdf, isPdfExportSupported } from "../utils/pdfExport";
 import PdfExportModal from "../components/PdfExportModal";
-import PdfDocument, { PdfChartData } from "../components/PdfDocument";
+import { PdfChartData } from "../components/PdfDocument";
 import { useAlertContext } from "../context/AlertContext";
 
 /**
@@ -44,7 +37,6 @@ const FreeResult: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [isEventActive, setIsEventActive] = useState<boolean>(true);
-  const [calculatedChartData, setCalculatedChartData] = useState<any>(null);
 
   // PDF export state
   const [pdfExportModal, setPdfExportModal] = useState({
@@ -57,10 +49,12 @@ const FreeResult: React.FC = () => {
     },
   });
 
-  // WhatsApp link
+  // WhatsApp link (currently unused)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const whatsappLink = "https://wa.me/601158639269";
 
-  // WhatsApp icon SVG component
+  // WhatsApp icon SVG component (currently unused)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const WhatsAppIcon = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -74,82 +68,21 @@ const FreeResult: React.FC = () => {
   );
 
   /**
-   * Handle PDF export with progress modal
+   * Memoized formatDate function to prevent unnecessary re-renders
    */
-  const handlePdfExport = async () => {
-    if (!chartData || !calculatedChartData) {
-      showAlert(
-        t("pdfExport.noData") || "No chart data available for export",
-        "error"
-      );
-      return;
-    }
-
-    // Check if PDF export is supported
-    if (!isPdfExportSupported()) {
-      showAlert(
-        t("pdfExport.notSupported") || "PDF export is not supported in this browser",
-        "error"
-      );
-      return;
-    }
-
-    // Show size estimation
-    const sizeEstimate = estimatePdfSize(chartData, false); // Free users don't have analytics access
-    
-    // Show modal and start export
-    setPdfExportModal({
-      isOpen: true,
-      progress: {
-        step: t("pdfExport.starting") || "Starting export...",
-        percentage: 0,
-        isComplete: false,
-        error: undefined,
-      },
+  const formatDate = useCallback((dateString: string): string => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
     });
-
-    try {
-      await exportChartAsPdf(
-        chartData,
-        calculatedChartData,
-        formatDate,
-        language,
-        (progress) => {
-          setPdfExportModal(prev => ({
-            ...prev,
-            progress: {
-              ...progress,
-              error: progress.error || undefined,
-            },
-          }));
-        },
-        {
-          includeAnalysis: false, // Free users don't get full analysis
-          pageBreaks: true,
-          quality: 0.95,
-          scale: 1.5,
-          format: "a4",
-          orientation: "portrait",
-        }
-      );
-    } catch (error) {
-      console.error("PDF export error:", error);
-      setPdfExportModal(prev => ({
-        ...prev,
-        progress: {
-          step: t("pdfExport.failed") || "Export failed",
-          percentage: 0,
-          isComplete: true,
-          error: error instanceof Error ? error.message : "Unknown error",
-        },
-      }));
-    }
-  };
+  }, []);
 
   /**
    * Close PDF export modal
    */
-  const closePdfExportModal = () => {
+  const closePdfExportModal = useCallback(() => {
     setPdfExportModal({
       isOpen: false,
       progress: {
@@ -159,7 +92,7 @@ const FreeResult: React.FC = () => {
         error: undefined,
       },
     });
-  };
+  }, []);
 
   /**
    * Check if the free test event is still active
@@ -218,12 +151,8 @@ const FreeResult: React.FC = () => {
       try {
         setLoading(true);
         
-        console.log("FreeResult fetchData - Looking for profile ID:", id);
-        console.log("FreeResult fetchData - Available profiles:", profiles.map(p => ({ id: p.id, name: p.name, user_id: p.user_id })));
-
         // If profile is found in context, use that data
         if (profileToShow) {
-          console.log("FreeResult fetchData - Profile found in context:", profileToShow.id);
           const profile = profileToShow;
 
           // Convert the profile data to ChartData format
@@ -245,12 +174,10 @@ const FreeResult: React.FC = () => {
 
         // If id specified but profile not found in context
         if (id) {
-          console.log("FreeResult fetchData - Profile not found in context, profiles.length:", profiles.length);
           if (profiles.length > 0) {
             if (isMounted) {
               // Check if we've waited long enough before showing error
               if (!profileLoadAttempts.current) {
-                console.log("FreeResult fetchData - First retry attempt");
                 profileLoadAttempts.current = 1;
                 // Try again after a longer delay - profiles might still be updating in context
                 setTimeout(() => {
@@ -259,19 +186,16 @@ const FreeResult: React.FC = () => {
                 return;
               } else if (profileLoadAttempts.current < 3) {
                 // Allow up to 3 attempts instead of just 1
-                console.log("FreeResult fetchData - Retry attempt", profileLoadAttempts.current + 1);
                 profileLoadAttempts.current++;
                 setTimeout(() => {
                   if (isMounted) fetchData();
                 }, 2000);
                 return;
               }
-              console.log("FreeResult fetchData - Max retries reached, trying direct database fetch");
               
               // Before showing error, try direct database fetch as final fallback
               const directProfile = await fetchProfileDirectly(id);
               if (directProfile) {
-                console.log("FreeResult fetchData - Profile found via direct fetch after max retries:", directProfile.id);
                 const chartData: ChartData = {
                   id: directProfile.id,
                   name: directProfile.name,
@@ -384,88 +308,141 @@ const FreeResult: React.FC = () => {
   }, [id, profiles, profilesLoading, profileToShow, formatBirthTime]);
 
   /**
-   * Format a date string to a readable format
-   * @param dateString - ISO date string
-   * @returns Formatted date string
+   * Memoized chart calculation to prevent unnecessary recalculations
+   * Only recalculates when chartData changes
    */
-  const formatDate = (dateString: string): string => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  };
+  const calculatedChartData = useMemo(() => {
+    if (!chartData) return null;
 
-  /**
-   * Calculate the Zi Wei Dou Shu chart data
-   */
-  useEffect(() => {
-    if (chartData) {
-      try {
-        setLoading(true); // Keep loading true while calculating
-        
-        // Convert birth time to 24-hour format
-        const timeMatch = chartData.birthTime.match(/(\d+):(\d+)\s*(AM|PM)?/i);
-        let hour = timeMatch ? parseInt(timeMatch[1]) : 12;
+    try {
+      // Convert birth time to 24-hour format
+      const timeMatch = chartData.birthTime.match(/(\d+):(\d+)\s*(AM|PM)?/i);
+      let hour = timeMatch ? parseInt(timeMatch[1]) : 12;
 
-        // Convert to 24-hour format if PM
-        if (
-          timeMatch &&
-          timeMatch[3] &&
-          timeMatch[3].toUpperCase() === "PM" &&
-          hour < 12
-        ) {
-          hour += 12;
-        }
-        // Handle 12 AM conversion
-        if (
-          timeMatch &&
-          timeMatch[3] &&
-          timeMatch[3].toUpperCase() === "AM" &&
-          hour === 12
-        ) {
-          hour = 0;
-        }
-
-        // Parse birth date - handle potential timezone issues
-        let dateObj;
-        if (chartData.birthDate.includes("T")) {
-          // If it's an ISO string, create the date directly to handle timezone
-          dateObj = new Date(chartData.birthDate);
-        } else {
-          // If it's just YYYY-MM-DD, create a date at noon to avoid timezone issues
-          dateObj = new Date(`${chartData.birthDate}T12:00:00`);
-        }
-
-        // Get the correct date components in local timezone
-        const year = dateObj.getFullYear();
-        const month = dateObj.getMonth() + 1; // JavaScript months are 0-indexed
-        const day = dateObj.getDate();
-
-        // Create chart input
-        const chartInput: ChartInput = {
-          year,
-          month,
-          day,
-          hour,
-          gender: chartData.gender as "male" | "female",
-          name: chartData.name,
-        };
-
-        // Calculate chart
-        const calculator = new ZWDSCalculator(chartInput);
-        const calculatedData = calculator.calculate();
-        
-        setCalculatedChartData(calculatedData);
-        setLoading(false); // Set loading to false after setting calculated data
-      } catch (error) {
-        console.error("Error calculating chart:", error);
-        setError(`Failed to calculate chart data: ${error}`);
-        setLoading(false); // Also set loading to false on error
+      // Convert to 24-hour format if PM
+      if (
+        timeMatch &&
+        timeMatch[3] &&
+        timeMatch[3].toUpperCase() === "PM" &&
+        hour < 12
+      ) {
+        hour += 12;
       }
+      // Handle 12 AM conversion
+      if (
+        timeMatch &&
+        timeMatch[3] &&
+        timeMatch[3].toUpperCase() === "AM" &&
+        hour === 12
+      ) {
+        hour = 0;
+      }
+
+      // Parse birth date - handle potential timezone issues
+      let dateObj;
+      if (chartData.birthDate.includes("T")) {
+        // If it's an ISO string, create the date directly to handle timezone
+        dateObj = new Date(chartData.birthDate);
+      } else {
+        // If it's just YYYY-MM-DD, create a date at noon to avoid timezone issues
+        dateObj = new Date(`${chartData.birthDate}T12:00:00`);
+      }
+
+      // Get the correct date components in local timezone
+      const year = dateObj.getFullYear();
+      const month = dateObj.getMonth() + 1; // JavaScript months are 0-indexed
+      const day = dateObj.getDate();
+
+      // Create chart input
+      const chartInput: ChartInput = {
+        year,
+        month,
+        day,
+        hour,
+        gender: chartData.gender as "male" | "female",
+        name: chartData.name,
+      };
+
+      // Calculate chart
+      const calculator = new ZWDSCalculator(chartInput);
+      return calculator.calculate();
+    } catch (error) {
+      console.error("Error calculating chart:", error);
+      setError(`Failed to calculate chart data: ${error}`);
+      return null;
     }
   }, [chartData]);
+
+  /**
+   * Handle PDF export with progress modal (currently disabled)
+   */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const handlePdfExport = useCallback(async () => {
+    if (!chartData || !calculatedChartData) {
+      showAlert(
+        t("pdfExport.noData") || "No chart data available for export",
+        "error"
+      );
+      return;
+    }
+
+    // Check if PDF export is supported
+    if (!isPdfExportSupported()) {
+      showAlert(
+        t("pdfExport.notSupported") || "PDF export is not supported in this browser",
+        "error"
+      );
+      return;
+    }
+
+    // Show modal and start export
+    setPdfExportModal({
+      isOpen: true,
+      progress: {
+        step: t("pdfExport.starting") || "Starting export...",
+        percentage: 0,
+        isComplete: false,
+        error: undefined,
+      },
+    });
+
+    try {
+      await exportChartAsPdf(
+        chartData,
+        calculatedChartData,
+        formatDate,
+        language,
+        (progress) => {
+          setPdfExportModal(prev => ({
+            ...prev,
+            progress: {
+              ...progress,
+              error: progress.error || undefined,
+            },
+          }));
+        },
+        {
+          includeAnalysis: false, // Free users don't get full analysis
+          pageBreaks: true,
+          quality: 0.95,
+          scale: 1.5,
+          format: "a4",
+          orientation: "portrait",
+        }
+      );
+    } catch (error) {
+      console.error("PDF export error:", error);
+      setPdfExportModal(prev => ({
+        ...prev,
+        progress: {
+          step: t("pdfExport.failed") || "Export failed",
+          percentage: 0,
+          isComplete: true,
+          error: error instanceof Error ? error.message : "Unknown error",
+        },
+      }));
+    }
+  }, [chartData, calculatedChartData, formatDate, language, showAlert, t]);
 
   // Prepare the limited time offer text
   const limitedTimeText = t("freeTest.limitedTime").replace(

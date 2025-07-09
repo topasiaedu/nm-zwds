@@ -1,7 +1,7 @@
 import React from "react";
 import { Badge } from "flowbite-react";
 import { ChartData } from "../../utils/zwds/types";
-import { analyzeOverview, getDebugInfo, OverviewAnalysisResult } from "../../utils/zwds/analysis/overviewAnalysis";
+import { analyzeOverview, OverviewAnalysisResult } from "../../utils/zwds/analysis/overviewAnalysis";
 
 /**
  * Type definition for a feature item to be displayed as a badge
@@ -34,10 +34,8 @@ const Overview: React.FC<OverviewProps> = ({ chartData }) => {
   // Analyze the chart data to get real data
   const analysisResult: OverviewAnalysisResult = analyzeOverview(chartData);
   
-  // For debugging purposes (can be removed in production)
-  const debugInfo = getDebugInfo(chartData);
-  console.log("Overview Debug Info:", debugInfo);
-  console.log("Analysis Result:", analysisResult);
+
+
 
   // Transform analysis results into the component's expected format
   const featuresData: FeaturesData = {

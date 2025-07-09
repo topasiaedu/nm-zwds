@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { useLanguage } from "../context/LanguageContext";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import PageTransition from "../components/PageTransition";
@@ -7,13 +7,12 @@ import ProfileForm from "../components/ProfileForm";
 import ZWDSChart from "../components/ZWDSChart";
 import { ZWDSCalculator } from "../utils/zwds/calculator";
 import { ChartInput } from "../utils/zwds/types";
-import { useAuthContext } from "../context/AuthContext";
 import { useTierAccess } from "../context/TierContext";
 
 // PDF export functionality
-import { exportChartAsPdf, estimatePdfSize, isPdfExportSupported } from "../utils/pdfExport";
+import { exportChartAsPdf, isPdfExportSupported } from "../utils/pdfExport";
 import PdfExportModal from "../components/PdfExportModal";
-import PdfDocument, { PdfChartData } from "../components/PdfDocument";
+import { PdfChartData } from "../components/PdfDocument";
 import { useAlertContext } from "../context/AlertContext";
 import {
   Overview,
@@ -57,106 +56,15 @@ const Result: React.FC = () => {
     },
   });
 
-
-
-
   // Add a ref to keep track of the loaded chart data
   const loadedChartDataRef = useRef<{ id: string; data: ChartData } | null>(
     null
   );
 
-  const [calculatedChartData, setCalculatedChartData] = useState<any>(null);
-
   /**
-   * Handle PDF export with progress modal
+   * Memoized formatBirthTime function to prevent unnecessary re-renders
    */
-  const handlePdfExport = async () => {
-    if (!chartData || !calculatedChartData) {
-      showAlert(
-        t("pdfExport.noData") || "No chart data available for export",
-        "error"
-      );
-      return;
-    }
-
-    // Check if PDF export is supported
-    if (!isPdfExportSupported()) {
-      showAlert(
-        t("pdfExport.notSupported") || "PDF export is not supported in this browser",
-        "error"
-      );
-      return;
-    }
-
-    // Show size estimation
-    const sizeEstimate = estimatePdfSize(chartData, hasAnalyticsAccess);
-    
-    // Show modal and start export
-    setPdfExportModal({
-      isOpen: true,
-      progress: {
-        step: t("pdfExport.starting") || "Starting export...",
-        percentage: 0,
-        isComplete: false,
-        error: undefined,
-      },
-    });
-
-    try {
-      await exportChartAsPdf(
-        chartData,
-        calculatedChartData,
-        formatDate,
-        language,
-        (progress) => {
-          setPdfExportModal(prev => ({
-            ...prev,
-            progress: {
-              ...progress,
-              error: progress.error || undefined,
-            },
-          }));
-        },
-        {
-          includeAnalysis: hasAnalyticsAccess,
-          pageBreaks: true,
-          quality: 0.95,
-          scale: 1.5,
-          format: "a4",
-          orientation: "portrait",
-        }
-      );
-    } catch (error) {
-      console.error("PDF export error:", error);
-      setPdfExportModal(prev => ({
-        ...prev,
-        progress: {
-          step: t("pdfExport.failed") || "Export failed",
-          percentage: 0,
-          isComplete: true,
-          error: error instanceof Error ? error.message : "Unknown error",
-        },
-      }));
-    }
-  };
-
-  /**
-   * Close PDF export modal
-   */
-  const closePdfExportModal = () => {
-    setPdfExportModal({
-      isOpen: false,
-      progress: {
-        step: "",
-        percentage: 0,
-        isComplete: false,
-        error: undefined,
-      },
-    });
-  };
-
-  // Format birth time function
-  const formatBirthTime = (birthTimeString: string): string => {
+  const formatBirthTime = useCallback((birthTimeString: string): string => {
     const hour = parseInt(birthTimeString);
     if (isNaN(hour)) return "Unknown";
 
@@ -194,7 +102,34 @@ const Result: React.FC = () => {
     };
 
     return getTimeRange(hour);
-  };
+  }, []);
+
+  /**
+   * Memoized formatDate function to prevent unnecessary re-renders
+   */
+  const formatDate = useCallback((dateString: string): string => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  }, []);
+
+  /**
+   * Close PDF export modal
+   */
+  const closePdfExportModal = useCallback(() => {
+    setPdfExportModal({
+      isOpen: false,
+      progress: {
+        step: "",
+        percentage: 0,
+        isComplete: false,
+        error: undefined,
+      },
+    });
+  }, []);
 
   // Find the user's self profile if no id is provided
   const isSelfProfile = !id;
@@ -205,7 +140,8 @@ const Result: React.FC = () => {
 
   // Add debug logs to help identify issues
   useEffect(() => {
-    if (id && !profileToShow && profiles.length > 0) {
+    // Add debug logs only in development for missing profiles
+    if (process.env.NODE_ENV === "development" && id && !profileToShow && profiles.length > 0) {
       console.log("Profile not found in context:", id);
       console.log(
         "Available profiles:",
@@ -334,85 +270,141 @@ const Result: React.FC = () => {
   ]);
 
   /**
-   * Format a date string to a readable format
-   * @param dateString - ISO date string
-   * @returns Formatted date string
+   * Memoized chart calculation to prevent unnecessary recalculations
+   * Only recalculates when chartData changes
    */
-  const formatDate = (dateString: string): string => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  };
+  const calculatedChartData = useMemo(() => {
+    if (!chartData) return null;
 
-  /**
-   * Calculate the Zi Wei Dou Shu chart data
-   */
-  useEffect(() => {
-    if (chartData) {
-      try {
-        // Convert birth time to 24-hour format
-        const timeMatch = chartData.birthTime.match(/(\d+):(\d+)\s*(AM|PM)?/i);
-        let hour = timeMatch ? parseInt(timeMatch[1]) : 12;
+    try {
+      // Convert birth time to 24-hour format
+      const timeMatch = chartData.birthTime.match(/(\d+):(\d+)\s*(AM|PM)?/i);
+      let hour = timeMatch ? parseInt(timeMatch[1]) : 12;
 
-        // Convert to 24-hour format if PM
-        if (
-          timeMatch &&
-          timeMatch[3] &&
-          timeMatch[3].toUpperCase() === "PM" &&
-          hour < 12
-        ) {
-          hour += 12;
-        }
-        // Handle 12 AM conversion
-        if (
-          timeMatch &&
-          timeMatch[3] &&
-          timeMatch[3].toUpperCase() === "AM" &&
-          hour === 12
-        ) {
-          hour = 0;
-        }
-
-        // Parse birth date - handle potential timezone issues
-        let dateObj;
-        if (chartData.birthDate.includes("T")) {
-          // If it's an ISO string, create the date directly to handle timezone
-          dateObj = new Date(chartData.birthDate);
-        } else {
-          // If it's just YYYY-MM-DD, create a date at noon to avoid timezone issues
-          dateObj = new Date(`${chartData.birthDate}T12:00:00`);
-        }
-
-        // Get the correct date components in local timezone
-        const year = dateObj.getFullYear();
-        const month = dateObj.getMonth() + 1; // JavaScript months are 0-indexed
-        const day = dateObj.getDate();
-
-        // Create chart input
-        const chartInput: ChartInput = {
-          year,
-          month,
-          day,
-          hour,
-          gender: chartData.gender as "male" | "female",
-          name: chartData.name,
-        };
-
-        // Calculate chart
-        const calculator = new ZWDSCalculator(chartInput);
-        const calculatedData = calculator.calculate();
-        setCalculatedChartData(calculatedData);
-      } catch (error) {
-        console.error("Error calculating chart:", error);
-        setError(`Failed to calculate chart data: ${error}`);
+      // Convert to 24-hour format if PM
+      if (
+        timeMatch &&
+        timeMatch[3] &&
+        timeMatch[3].toUpperCase() === "PM" &&
+        hour < 12
+      ) {
+        hour += 12;
       }
+      // Handle 12 AM conversion
+      if (
+        timeMatch &&
+        timeMatch[3] &&
+        timeMatch[3].toUpperCase() === "AM" &&
+        hour === 12
+      ) {
+        hour = 0;
+      }
+
+      // Parse birth date - handle potential timezone issues
+      let dateObj;
+      if (chartData.birthDate.includes("T")) {
+        // If it's an ISO string, create the date directly to handle timezone
+        dateObj = new Date(chartData.birthDate);
+      } else {
+        // If it's just YYYY-MM-DD, create a date at noon to avoid timezone issues
+        dateObj = new Date(`${chartData.birthDate}T12:00:00`);
+      }
+
+      // Get the correct date components in local timezone
+      const year = dateObj.getFullYear();
+      const month = dateObj.getMonth() + 1; // JavaScript months are 0-indexed
+      const day = dateObj.getDate();
+
+      // Create chart input
+      const chartInput: ChartInput = {
+        year,
+        month,
+        day,
+        hour,
+        gender: chartData.gender as "male" | "female",
+        name: chartData.name,
+      };
+
+      // Calculate chart
+      const calculator = new ZWDSCalculator(chartInput);
+      return calculator.calculate();
+    } catch (error) {
+      console.error("Error calculating chart:", error);
+      setError(`Failed to calculate chart data: ${error}`);
+      return null;
     }
   }, [chartData]);
 
-  // PDF export functionality will be rebuilt later
+  /**
+   * Handle PDF export with progress modal (currently disabled)
+   */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const handlePdfExport = useCallback(async () => {
+    if (!chartData || !calculatedChartData) {
+      showAlert(
+        t("pdfExport.noData") || "No chart data available for export",
+        "error"
+      );
+      return;
+    }
+
+    // Check if PDF export is supported
+    if (!isPdfExportSupported()) {
+      showAlert(
+        t("pdfExport.notSupported") || "PDF export is not supported in this browser",
+        "error"
+      );
+      return;
+    }
+
+    // Show modal and start export
+    setPdfExportModal({
+      isOpen: true,
+      progress: {
+        step: t("pdfExport.starting") || "Starting export...",
+        percentage: 0,
+        isComplete: false,
+        error: undefined,
+      },
+    });
+
+    try {
+      await exportChartAsPdf(
+        chartData,
+        calculatedChartData,
+        formatDate,
+        language,
+        (progress) => {
+          setPdfExportModal(prev => ({
+            ...prev,
+            progress: {
+              ...progress,
+              error: progress.error || undefined,
+            },
+          }));
+        },
+        {
+          includeAnalysis: hasAnalyticsAccess,
+          pageBreaks: true,
+          quality: 0.95,
+          scale: 1.5,
+          format: "a4",
+          orientation: "portrait",
+        }
+      );
+    } catch (error) {
+      console.error("PDF export error:", error);
+      setPdfExportModal(prev => ({
+        ...prev,
+        progress: {
+          step: t("pdfExport.failed") || "Export failed",
+          percentage: 0,
+          isComplete: true,
+          error: error instanceof Error ? error.message : "Unknown error",
+        },
+      }));
+    }
+  }, [chartData, calculatedChartData, hasAnalyticsAccess, formatDate, language, showAlert, t]);
 
   // If loading profiles from context
   if (profilesLoading) {

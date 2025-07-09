@@ -5,6 +5,7 @@ import React, {
   useEffect,
   useMemo,
   useState,
+  useRef,
 } from "react";
 import { supabase } from "../utils/supabase-client";
 import { Database } from "../../database.types";
@@ -14,6 +15,7 @@ import isEqual from "lodash.isequal";
 export type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 export type Profiles = { profiles: Profile[] };
 export type ProfileInsert = Database["public"]["Tables"]["profiles"]["Insert"];
+
 interface ProfileContextProps {
   loading: boolean;
   profiles: Profile[];
@@ -32,6 +34,19 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(false);
   const [currentProfile, setCurrentProfile] = useState<Profile | null>(null);
   const { user } = useAuthContext();
+  
+  // Use ref to avoid closure issues in real-time handlers
+  const profilesRef = useRef<Profile[]>([]);
+  const userRef = useRef(user);
+  
+  // Update refs when state changes
+  useEffect(() => {
+    profilesRef.current = profiles;
+  }, [profiles]);
+  
+  useEffect(() => {
+    userRef.current = user;
+  }, [user]);
 
   useEffect(() => {
     const fetchProfileWithoutUser = async () => {
@@ -78,7 +93,7 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
           console.warn("Warning: Profile length is more than 4k, user id:", user?.id, "Profile length:", profiles?.length);
         }
 
-        console.log("ProfileContext - Fetched authenticated user profiles:", profiles?.length);
+        // Fetched authenticated user profiles
 
         setProfiles((prev) => {
           if (isEqual(prev, profiles)) {
@@ -101,34 +116,22 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
       fetchProfileWithoutUser();
     }
 
+    // Use refs to avoid closure issues
     const handleChanges = (payload: any) => {
-      console.log("ProfileContext - Real-time event:", payload.eventType, payload.new || payload.old);
-      
       if (payload.eventType === "INSERT") {
         // Check if the profile is for the current user OR for free test users
-        const isForCurrentUser = payload.new.user_id === user?.id;
-        const isForFreeTestUser = !user && payload.new.user_id === "2fdd8c60-fdb0-4ba8-a6e4-327a28179498";
-        
-        console.log("ProfileContext - INSERT check:", {
-          isForCurrentUser,
-          isForFreeTestUser,
-          userId: user?.id,
-          payloadUserId: payload.new.user_id,
-          profileId: payload.new.id
-        });
+        const isForCurrentUser = payload.new.user_id === userRef.current?.id;
+        const isForFreeTestUser = !userRef.current && payload.new.user_id === "2fdd8c60-fdb0-4ba8-a6e4-327a28179498";
         
         if (isForCurrentUser || isForFreeTestUser) {
-          console.log("ProfileContext - Adding profile to context:", payload.new.id);
           setProfiles((prev) => [...prev, payload.new]);
-        } else {
-          console.log("ProfileContext - Ignoring profile (not for current user)");
         }
       } else if (payload.eventType === "UPDATE") {
-        const updatedProfiles = profiles.map((profile) =>
-          profile.id === payload.new.id ? payload.new : profile
-        );
-
         setProfiles((prev) => {
+          const updatedProfiles = prev.map((profile) =>
+            profile.id === payload.new.id ? payload.new : profile
+          );
+
           if (!isEqual(prev, updatedProfiles)) {
             return updatedProfiles;
           }
@@ -148,29 +151,27 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
     
     if (user) {
       const channelName = `profiles-user-${user.id}`;
-      console.log("ProfileContext - Subscribing to channel:", channelName);
+      // Subscribing to real-time channel for user profiles
 
       subscription = supabase
         .channel(channelName)
         .on(
           "postgres_changes",
           { event: "*", schema: "public", table: "profiles" },
-          (payload) => {
-            handleChanges(payload);
-          }
+          handleChanges
         )
         .subscribe();
-    } else {
-      console.log("ProfileContext - Skipping real-time subscription for free test users");
     }
 
+    // Improved cleanup
     return () => {
       if (subscription) {
-        subscription.unsubscribe();
+        subscription.unsubscribe().catch((error: any) => {
+          console.error("ProfileContext - Error unsubscribing:", error);
+        });
       }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user]);
+  }, [user]); // Only depend on user, not profiles
 
   const addProfile = useCallback(async (profile: ProfileInsert) => {
     console.log("ProfileContext - addProfile called with:", profile);
@@ -249,7 +250,7 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
       setCurrentProfile,
       setCurrentProfileById,
     }),
-    [profiles, currentProfile, addProfile, updateProfile, deleteProfile]
+    [loading, profiles, currentProfile, addProfile, updateProfile, deleteProfile, setCurrentProfileById]
   );
 
   return (
@@ -258,8 +259,8 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
     </ProfileContext.Provider>
   );
 }
-// Add the whyDidYouRender property after defining the component
-(ProfileProvider as any).whyDidYouRender = true; // Add this line
+
+// Removed whyDidYouRender to reduce debugging overhead
 export function useProfileContext() {
   const context = useContext(ProfileContext);
   if (!context) {

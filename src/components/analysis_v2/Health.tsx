@@ -3,7 +3,7 @@ import {
   analyzeHealthFromChart,
   HealthAnalysisResult,
 } from "../../utils/zwds/health_analyzer";
-import { useLanguage } from "../../context/LanguageContext";
+
 import AnimatedWrapper from "../analysis/AnimatedWrapper";
 import { motion } from "framer-motion";
 import maleSvgContent from "../../assets/male-svg";
@@ -166,7 +166,7 @@ const HumanBodySVG: React.FC<{
         cancelAnimationFrame(animationFrame);
       };
     }
-  }, [svgContent, affectedParts]);
+  }, [svgContent, affectedParts, getAffectedSvgParts]);
 
   return <div ref={svgContainerRef} className="w-full h-full" />;
 };
@@ -176,7 +176,7 @@ const HumanBodySVG: React.FC<{
  * based on stars in the chart's health palace (疾厄宫) with a human body visualization
  */
 const Health: React.FC<HealthAnalysisProps> = ({ chartData }) => {
-  const { t, language } = useLanguage();
+
   const [healthAnalysis, setHealthAnalysis] =
     useState<HealthAnalysisResult | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -200,7 +200,7 @@ const Health: React.FC<HealthAnalysisProps> = ({ chartData }) => {
         const analysisResult = analyzeHealthFromChart(chartData);
         setHealthAnalysis(analysisResult);
 
-        console.log("Health Analysis Result:", analysisResult);
+      
       } catch (error) {
         console.error("Error analyzing health data:", error);
         setError(

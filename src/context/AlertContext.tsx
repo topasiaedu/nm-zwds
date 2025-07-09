@@ -6,6 +6,7 @@ import React, {
   useEffect,
   useCallback,
   useMemo,
+  useRef,
 } from "react";
 
 type AlertContextType = {
@@ -27,9 +28,17 @@ export const AlertProvider: React.FC<{ children: ReactNode }> = ({
     "success"
   );
   const [visible, setVisible] = useState(false);
+  
+  // Use ref to track the current timer to avoid multiple timers
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   const showAlert = useCallback(
     (message: string, type: "info" | "success" | "warning" | "error") => {
+      // Clear any existing timer
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
+      
       setMessage(message);
       setType(type);
       setVisible(true);
@@ -38,17 +47,38 @@ export const AlertProvider: React.FC<{ children: ReactNode }> = ({
   );
 
   const hideAlert = useCallback(() => {
+    // Clear timer when manually hiding
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+    
     setMessage("");
     setType("info");
     setVisible(false);
   }, []);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setVisible(false);
-    }, 10000);
+    if (visible) {
+      // Clear any existing timer
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
+      
+      // Set new timer
+      timerRef.current = setTimeout(() => {
+        setVisible(false);
+        timerRef.current = null;
+      }, 10000);
+    }
 
-    return () => clearTimeout(timer);
+    // Cleanup timer on unmount or when visible changes
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+        timerRef.current = null;
+      }
+    };
   }, [visible]);
 
   const contextValue = useMemo(
@@ -65,8 +95,7 @@ export const AlertProvider: React.FC<{ children: ReactNode }> = ({
 
 const AlertContext = createContext<AlertContextType | undefined>(undefined);
 
-// Add the whyDidYouRender property after defining the component
-(AlertProvider as any).whyDidYouRender = true; // Add this line
+// Removed whyDidYouRender to reduce debugging overhead
 
 export const useAlertContext = () => {
   const context = useContext(AlertContext);

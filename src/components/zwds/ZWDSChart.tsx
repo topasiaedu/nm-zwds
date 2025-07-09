@@ -242,13 +242,10 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
     if (!bottomRightPalace) return null;
 
 
-    console.log("Bottom right palace", bottomRightPalace.name);
     // Get the starting month based on the bottom right palace's name
     const monthMapping = language === "en" ? PALACE_TO_MONTH_MAPPING_EN : PALACE_TO_MONTH_MAPPING;
     const startingMonth = monthMapping[bottomRightPalace.name as keyof typeof monthMapping];
     if (!startingMonth) return null;
-
-    console.log("Starting month", startingMonth);
 
     // Find the index of the starting month
     const months = language === "en" ? MONTHS_EN : MONTHS;

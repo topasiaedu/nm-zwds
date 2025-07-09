@@ -1,9 +1,11 @@
 import React, {
   createContext,
-  useCallback,
   useContext,
-  useEffect,
   useState,
+  useEffect,
+  useCallback,
+  ReactNode,
+  useRef,
 } from "react";
 import { supabase } from "../utils/supabase-client";
 import { Database } from "../../database.types";
@@ -13,10 +15,11 @@ export type UserDetails = Database["public"]["Tables"]["user_details"]["Row"];
 export type UserDetailsInsert = Database["public"]["Tables"]["user_details"]["Insert"];
 export type UserDetailsUpdate = Database["public"]["Tables"]["user_details"]["Update"];
 
-// Extended type for admin functions that includes email
+// Type for user details with email from auth
 export type UserDetailsWithEmail = UserDetails & {
   email?: string;
 };
+
 export type UserTier = string;
 
 interface TierContextProps {
@@ -29,20 +32,24 @@ interface TierContextProps {
   getAllUserDetails: () => Promise<UserDetailsWithEmail[]>;
 }
 
-const TierContext = createContext<TierContextProps>(undefined!);
+const TierContext = createContext<TierContextProps | undefined>(undefined);
 
 /**
- * TierProvider component that manages user tier information
- * Follows the same architecture as ProfileContext
+ * TierProvider component that manages user tier state and provides tier-related functions
  */
-export function TierProvider({ children }: { children: React.ReactNode }) {
-  const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
+export function TierProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState<boolean>(true);
+  const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
   const { user } = useAuthContext();
+  
+  // Use ref to avoid closure issues in real-time handlers
+  const userRef = useRef(user);
+  
+  // Update ref when user changes
+  useEffect(() => {
+    userRef.current = user;
+  }, [user]);
 
-  /**
-   * Fetch user tier information when user changes
-   */
   useEffect(() => {
     const fetchUserDetails = async () => {
       if (!user) {
@@ -82,7 +89,7 @@ export function TierProvider({ children }: { children: React.ReactNode }) {
             setUserDetails(null);
           }
         } else {
-          console.log("TierContext - Fetched user_details:", data);
+          // Fetched user details successfully
           setUserDetails(data);
         }
       } catch (error) {
@@ -100,7 +107,15 @@ export function TierProvider({ children }: { children: React.ReactNode }) {
     
     if (user) {
       const channelName = `user-details-${user.id}`;
-      console.log("TierContext - Subscribing to channel:", channelName);
+      // Use a handler that doesn't capture user in closure
+      const handleRealtimeChange = (payload: any) => {
+        
+        if (payload.eventType === "UPDATE" && payload.new) {
+          setUserDetails(payload.new as UserDetails);
+        } else if (payload.eventType === "INSERT" && payload.new) {
+          setUserDetails(payload.new as UserDetails);
+        }
+      };
 
       subscription = supabase
         .channel(channelName)
@@ -112,22 +127,17 @@ export function TierProvider({ children }: { children: React.ReactNode }) {
             table: "user_details",
             filter: `user_id=eq.${user.id}`
           },
-          (payload) => {
-            console.log("TierContext - Real-time event:", payload.eventType, payload.new || payload.old);
-            
-            if (payload.eventType === "UPDATE" && payload.new) {
-              setUserDetails(payload.new as UserDetails);
-            } else if (payload.eventType === "INSERT" && payload.new) {
-              setUserDetails(payload.new as UserDetails);
-            }
-          }
+          handleRealtimeChange
         )
         .subscribe();
     }
 
+    // Improved cleanup
     return () => {
       if (subscription) {
-        subscription.unsubscribe();
+        subscription.unsubscribe().catch((error: any) => {
+          console.error("TierContext - Error unsubscribing:", error);
+        });
       }
     };
   }, [user]);
