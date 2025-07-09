@@ -135,10 +135,10 @@ const FreeResult: React.FC = () => {
     return `${hourIn12Format}:00 ${period}`;
   }, []);
 
-  // Find profile in context to display
-  const profileToShow = profiles.find(
-    (profile) => String(profile.id) === String(id)
-  );
+  // Find profile in context to display - memoized to prevent infinite re-renders
+  const profileToShow = useMemo(() => {
+    return profiles.find((profile) => String(profile.id) === String(id));
+  }, [profiles, id]);
 
   /**
    * Fetch or prepare chart data on component mount and when profiles change
@@ -305,7 +305,7 @@ const FreeResult: React.FC = () => {
     return () => {
       isMounted = false;
     };
-  }, [id, profiles, profilesLoading, profileToShow, formatBirthTime]);
+  }, [id, profiles, profilesLoading, formatBirthTime]); // Removed profileToShow from dependencies
 
   /**
    * Memoized chart calculation to prevent unnecessary recalculations
@@ -372,6 +372,15 @@ const FreeResult: React.FC = () => {
       return null;
     }
   }, [chartData]);
+
+  /**
+   * Handle loading completion when chart calculation is ready
+   */
+  useEffect(() => {
+    if (chartData && calculatedChartData) {
+      setLoading(false);
+    }
+  }, [chartData, calculatedChartData]);
 
   /**
    * Handle PDF export with progress modal (currently disabled)
