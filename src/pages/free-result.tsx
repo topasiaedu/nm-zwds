@@ -79,79 +79,7 @@ const FreeResult: React.FC = () => {
     });
   }, []);
 
-  /**
-   * PDF export handler for free users
-   */
-  const handlePdfExport = async () => {
-    if (!chartData || !calculatedChartData) {
-      showAlert(
-        t("pdfExport.noData") || "No chart data available for export",
-        "error"
-      );
-      return;
-    }
 
-    // Check if PDF export is supported
-    if (!isPdfExportSupported()) {
-      showAlert(
-        t("pdfExport.notSupported") || "PDF export is not supported in this browser",
-        "error"
-      );
-      return;
-    }
-
-    // Show size estimation
-    const sizeEstimate = estimatePdfSize(chartData, false, true); // Free users don't have analytics access and it's a free result
-    
-    // Show modal and start export
-    setPdfExportModal({
-      isOpen: true,
-      progress: {
-        step: t("pdfExport.starting") || "Starting export...",
-        percentage: 0,
-        isComplete: false,
-        error: undefined,
-      },
-    });
-
-    try {
-      await exportChartAsPdf(
-        chartData,
-        calculatedChartData,
-        formatDate,
-        language,
-        (progress) => {
-          setPdfExportModal(prev => ({
-            ...prev,
-            progress: {
-              ...progress,
-              error: progress.error || undefined,
-            },
-          }));
-        },
-        {
-          includeAnalysis: false, // Free users don't get full analysis
-          pageBreaks: true,
-          quality: 0.95,
-          scale: 1.5,
-          format: "a4",
-          orientation: "portrait",
-          isFreeResult: true, // This is a free result export
-        }
-      );
-    } catch (error) {
-      console.error("PDF export error:", error);
-      setPdfExportModal(prev => ({
-        ...prev,
-        progress: {
-          step: t("pdfExport.failed") || "Export failed",
-          percentage: 0,
-          isComplete: true,
-          error: error instanceof Error ? error.message : "Unknown error",
-        },
-      }));
-    }
-  };
 
   /**
    * Close PDF export modal
