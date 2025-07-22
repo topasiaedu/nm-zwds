@@ -2,6 +2,30 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Environment Variables
+
+This project uses environment variables for configuration. Create a `.env.local` file in the root directory with the following variables:
+
+```env
+# Free Test Configuration
+REACT_APP_FREE_TEST_START_DATE=2025-01-01
+REACT_APP_FREE_TEST_END_DATE=2025-08-11
+REACT_APP_FREE_TEST_ENABLED=true
+
+# Supabase Configuration
+REACT_APP_SUPABASE_URL=your_supabase_url_here
+REACT_APP_SUPABASE_ANON_KEY=your_supabase_anon_key_here
+```
+
+### Free Test Configuration
+- `REACT_APP_FREE_TEST_START_DATE`: Start date for the free test feature (YYYY-MM-DD format)
+- `REACT_APP_FREE_TEST_END_DATE`: End date for the free test feature (YYYY-MM-DD format)
+- `REACT_APP_FREE_TEST_ENABLED`: Enable/disable free test feature (set to "false" or "0" to disable)
+
+### Supabase Configuration
+- `REACT_APP_SUPABASE_URL`: Your Supabase project URL
+- `REACT_APP_SUPABASE_ANON_KEY`: Your Supabase anonymous public API key
+
 ## Available Scripts
 
 In the project directory, you can run:

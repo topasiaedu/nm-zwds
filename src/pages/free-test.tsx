@@ -18,27 +18,19 @@ const FreeTest: React.FC = () => {
 
 
   /**
-   * Check if the free test event is still active
+   * Check if the free test event is currently active
    */
   useEffect(() => {
     const checkEventStatus = () => {
-      // If feature is disabled via config, redirect immediately
-      if (!FREE_TEST_CONFIG.isEnabled) {
-        setIsEventActive(false);
-        return;
-      }
-
-      // Check if current date is after the configured end date
-      const today = new Date();
-      const endDate = new Date(`${FREE_TEST_CONFIG.endDate}T23:59:59`);
-
-      console.log("today", today);
-      console.log("endDate", endDate);
+      const status = FREE_TEST_CONFIG.getStatusReason();
       
-      if (today > endDate) {
-        console.log("today is after endDate");
-        setIsEventActive(false);
-      }
+      console.log("Free test status:", status);
+      console.log("Start date:", FREE_TEST_CONFIG.startDate);
+      console.log("End date:", FREE_TEST_CONFIG.endDate);
+      console.log("Is enabled:", FREE_TEST_CONFIG.isEnabled);
+      
+      // Set active only if status is "active"
+      setIsEventActive(status === "active");
     };
 
     checkEventStatus();
@@ -70,17 +62,24 @@ const FreeTest: React.FC = () => {
     }
   };
 
-  // If event is not active, redirect to the event-ended page
+  // If event is not active, redirect to the appropriate page
   if (!isEventActive) {
-    navigate("/free-test-ended");
+    const status = FREE_TEST_CONFIG.getStatusReason();
+    if (status === "not-started") {
+      // Could redirect to a "coming soon" page or show a message
+      // For now, redirect to the ended page with appropriate messaging
+      navigate("/free-test-ended");
+    } else {
+      // For "ended" or "disabled" status
+      navigate("/free-test-ended");
+    }
     return null;
   }
 
-  // Format the limited time offer text with the end date
-  const limitedTimeText = t("freeTest.limitedTime").replace(
-    "{{date}}",
-    FREE_TEST_CONFIG.endDate
-  );
+  // Format the limited time offer text with the date range
+  const limitedTimeText = t("freeTest.limitedTime")
+    .replace("{{startDate}}", FREE_TEST_CONFIG.startDate)
+    .replace("{{endDate}}", FREE_TEST_CONFIG.endDate);
 
 
 

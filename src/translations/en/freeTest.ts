@@ -6,7 +6,7 @@ const freeTest = {
     // Free test page
     title: "Free Purple Star Astrology Chart Visualization",
     subtitle: "Try our Purple Star Astrology chart for free for a limited time only!",
-    limitedTime: "Limited time offer - Available until {{date}}",
+    limitedTime: "Limited time offer - Available from {{startDate}} to {{endDate}}",
     aboutTitle: "About This Free Test",
     aboutDescription: "This free test allows you to experience the power of Purple Star Astrology chart analysis without creating an account.",
     whatYouGet: "What You'll Get",
@@ -37,7 +37,7 @@ const freeTest = {
   // Free test ended page
   freeTestEnded: {
     title: "Free Test Period Has Ended",
-    description: "Our promotional free test period ended on {{date}}. Thank you for your interest in our 紫微斗数 (Zi Wei Dou Shu) chart analysis!",
+    description: "Our promotional free test period ({{startDate}} to {{endDate}}) has ended. Thank you for your interest in our 紫微斗数 (Zi Wei Dou Shu) chart analysis!",
     whatNow: "What Now?",
     createAccount: "You can still access all our features by contacting us on WhatsApp. Our full service offers:",
     feature1: "Full 紫微斗数 chart visualization and analysis",
@@ -48,6 +48,18 @@ const freeTest = {
     signInCta: "Learn More",
     questions: "Questions or feedback?",
     contactUs: "Contact us on WhatsApp",
+  },
+  
+  // Free test not started page
+  freeTestNotStarted: {
+    title: "Free Test Coming Soon",
+    description: "Our promotional free test period will be available from {{startDate}} to {{endDate}}. Please check back on the start date!",
+  },
+  
+  // Free test disabled page
+  freeTestDisabled: {
+    title: "Free Test Currently Unavailable",
+    description: "The free test feature is currently disabled. Please contact us on WhatsApp for more information about our services.",
   },
   
   // Promotional component

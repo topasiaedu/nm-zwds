@@ -13,26 +13,27 @@ const FreeTestPromo: React.FC = () => {
   const [daysLeft, setDaysLeft] = useState<number>(0);
   
   /**
-   * Check if the free test event is still active and calculate days remaining
+   * Check if the free test event is currently active and calculate days remaining
    */
   useEffect(() => {
     const checkEventStatus = () => {
-      // If feature is disabled via config, hide the promo
-      if (!FREE_TEST_CONFIG.isEnabled) {
+      const status = FREE_TEST_CONFIG.getStatusReason();
+      
+      // Only show promo if status is "active"
+      if (status !== "active") {
         setIsActive(false);
         return;
       }
       
-      // Check if current date is after the configured end date
+      // Calculate days left until end date
       const today = new Date();
       const endDate = new Date(`${FREE_TEST_CONFIG.endDate}T23:59:59`);
       
-      // Calculate days left
       const timeDiff = endDate.getTime() - today.getTime();
       const daysRemaining = Math.ceil(timeDiff / (1000 * 3600 * 24));
       
       setDaysLeft(daysRemaining > 0 ? daysRemaining : 0);
-      setIsActive(today <= endDate);
+      setIsActive(true);
     };
     
     checkEventStatus();

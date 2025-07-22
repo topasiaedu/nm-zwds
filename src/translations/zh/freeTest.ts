@@ -6,7 +6,7 @@ const freeTest = {
     // Free test page
     title: "紫微斗数免费测试",
     subtitle: "限时免费体验紫微斗数命盘解析！",
-    limitedTime: "限时优惠 - 截止日期 {{date}}",
+    limitedTime: "限时优惠 - {{startDate}} 至 {{endDate}} 期间可用",
     aboutTitle: "关于此免费测试",
     aboutDescription: "此免费测试让您无需创建账户即可体验紫微斗数命盘分析的强大功能。",
     whatYouGet: "您将获得什么",
@@ -37,7 +37,7 @@ const freeTest = {
   // Free test ended page
   freeTestEnded: {
     title: "免费测试期已结束",
-    description: "我们的促销免费测试期已于 {{date}} 结束。感谢您对我们紫微斗数命盘分析的关注！",
+    description: "我们的促销免费测试期（{{startDate}} 至 {{endDate}}）已结束。感谢您对我们紫微斗数命盘分析的关注！",
     whatNow: "现在怎么办？",
     createAccount: "您仍可以通过创建账户访问我们所有的功能。我们的完整版提供：",
     feature1: "完整的紫微斗数命盘可视化和分析",
@@ -48,6 +48,18 @@ const freeTest = {
     signInCta: "登录",
     questions: "问题或反馈？",
     contactUs: "联系我们",
+  },
+  
+  // Free test not started page
+  freeTestNotStarted: {
+    title: "免费测试即将开始",
+    description: "我们的促销免费测试期将于 {{startDate}} 至 {{endDate}} 期间提供。请在开始日期回来查看！",
+  },
+  
+  // Free test disabled page
+  freeTestDisabled: {
+    title: "免费测试暂不可用",
+    description: "免费测试功能当前已禁用。请通过微信联系我们了解更多关于我们服务的信息。",
   },
   
   // Promotional component

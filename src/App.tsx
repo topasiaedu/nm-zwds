@@ -57,12 +57,7 @@ const AuthRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
  * Check if free test feature is active based on config
  */
 const isFreeTestActive = (): boolean => {
-  if (!FREE_TEST_CONFIG.isEnabled) return false;
-  
-  const today = new Date();
-  const endDate = new Date(`${FREE_TEST_CONFIG.endDate}T23:59:59`);
-  
-  return today <= endDate;
+  return FREE_TEST_CONFIG.isActive();
 };
 
 /**

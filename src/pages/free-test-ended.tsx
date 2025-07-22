@@ -5,7 +5,7 @@ import PageTransition from "../components/PageTransition";
 import FREE_TEST_CONFIG from "../config/freeTestConfig";
 
 /**
- * FreeTestEnded component shown when the promotional free test period has ended
+ * FreeTestEnded component shown when the promotional free test period has ended or not started
  */
 const FreeTestEnded: React.FC = () => {
   const { t } = useLanguage();
@@ -13,8 +13,32 @@ const FreeTestEnded: React.FC = () => {
   // WhatsApp link
   const whatsappLink = "https://wa.me/601158639269";
   
-  // Format the description with the end date
-  const descriptionText = t("freeTestEnded.description").replace("{{date}}", FREE_TEST_CONFIG.endDate);
+  // Get current status and format description accordingly
+  const status = FREE_TEST_CONFIG.getStatusReason();
+  
+  // Format the description based on the status
+  let descriptionText: string;
+  let titleKey: string;
+  
+  switch (status) {
+    case "not-started":
+      titleKey = "freeTestNotStarted.title";
+      descriptionText = t("freeTestNotStarted.description")
+        .replace("{{startDate}}", FREE_TEST_CONFIG.startDate)
+        .replace("{{endDate}}", FREE_TEST_CONFIG.endDate);
+      break;
+    case "disabled":
+      titleKey = "freeTestDisabled.title";
+      descriptionText = t("freeTestDisabled.description");
+      break;
+    case "ended":
+    default:
+      titleKey = "freeTestEnded.title";
+      descriptionText = t("freeTestEnded.description")
+        .replace("{{startDate}}", FREE_TEST_CONFIG.startDate)
+        .replace("{{endDate}}", FREE_TEST_CONFIG.endDate);
+      break;
+  }
   
   // WhatsApp icon SVG component
   const WhatsAppIcon = () => (
@@ -45,7 +69,7 @@ const FreeTestEnded: React.FC = () => {
           </div>
           
           <h1 className="text-3xl md:text-4xl font-bold mb-4 dark:text-white">
-            {t("freeTestEnded.title")}
+            {t(titleKey)}
           </h1>
           
           <p className="text-lg text-gray-600 dark:text-gray-400 mb-8 max-w-2xl mx-auto">

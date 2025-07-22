@@ -99,23 +99,19 @@ const FreeResultContent: React.FC = () => {
   }, []);
 
   /**
-   * Check if the free test event is still active
+   * Check if the free test event is currently active
    */
   useEffect(() => {
     const checkEventStatus = () => {
-      // If feature is disabled via config, redirect immediately
-      if (!FREE_TEST_CONFIG.isEnabled) {
-        setIsEventActive(false);
-        return;
-      }
-
-      // Check if current date is after the configured end date
-      const today = new Date();
-      const endDate = new Date(`${FREE_TEST_CONFIG.endDate}T23:59:59`);
-
-      if (today > endDate) {
-        setIsEventActive(false);
-      }
+      const status = FREE_TEST_CONFIG.getStatusReason();
+      
+      console.log("Free test status:", status);
+      console.log("Start date:", FREE_TEST_CONFIG.startDate);
+      console.log("End date:", FREE_TEST_CONFIG.endDate);
+      console.log("Is enabled:", FREE_TEST_CONFIG.isEnabled);
+      
+      // Set active only if status is "active"
+      setIsEventActive(status === "active");
     };
 
     checkEventStatus();
@@ -458,10 +454,9 @@ const FreeResultContent: React.FC = () => {
   }, [chartData, calculatedChartData, formatDate, language, showAlert, t]);
 
   // Prepare the limited time offer text
-  const limitedTimeText = t("freeTest.limitedTime").replace(
-    "{{date}}",
-    FREE_TEST_CONFIG.endDate
-  );
+  const limitedTimeText = t("freeTest.limitedTime")
+    .replace("{{startDate}}", FREE_TEST_CONFIG.startDate)
+    .replace("{{endDate}}", FREE_TEST_CONFIG.endDate);
 
   /**
    * Fetch profile directly from database as final fallback
