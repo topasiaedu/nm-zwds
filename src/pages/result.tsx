@@ -715,8 +715,8 @@ const Result: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* PDF Export Button - Hidden */}
-                  {/* <div className="mt-6">
+                  {/* PDF Export Button */}
+                  <div className="mt-6">
                     <button
                       onClick={handlePdfExport}
                       disabled={!chartData || !calculatedChartData}
@@ -740,7 +740,7 @@ const Result: React.FC = () => {
                       </svg>
                       {t("result.exportPdf") || "Export PDF"}
                     </button>
-                  </div> */}
+                  </div>
 
 
 
