@@ -1362,9 +1362,9 @@ export const exportChartAsPdf = async (
      });
 
      // Step 3.5: Add Overview page (only for non-free results)
-     if (!finalOptions.isFreeResult) {
+     if (!finalOptions.isFreeResult && finalOptions.includeAnalysis) {
        onProgress({
-         step: "Adding overview analysis...",
+         step: "Adding Personalized Life Report...",
          percentage: 65,
          isComplete: false,
        });
@@ -1375,7 +1375,7 @@ export const exportChartAsPdf = async (
        await addOverviewImageToPdf(doc, calculatedChartData);
 
        onProgress({
-         step: "Overview analysis added",
+         step: "Personalized Life Report added",
          percentage: 70,
          isComplete: false,
        });
@@ -1384,7 +1384,7 @@ export const exportChartAsPdf = async (
      // Step 3.6: Add Career page (only for non-free results with analytics access)
      if (!finalOptions.isFreeResult && finalOptions.includeAnalysis) {
        onProgress({
-         step: "Adding career analysis...",
+         step: "Adding Wealth Strategy Panel...",
          percentage: 70,
          isComplete: false,
        });
@@ -1395,7 +1395,7 @@ export const exportChartAsPdf = async (
        await addCareerImageToPdf(doc, calculatedChartData);
 
        onProgress({
-         step: "Career analysis added",
+         step: "Wealth Strategy Panel added",
          percentage: 72,
          isComplete: false,
        });
@@ -1404,7 +1404,7 @@ export const exportChartAsPdf = async (
      // Step 3.7: Add Health page (only for non-free results with analytics access)
      if (!finalOptions.isFreeResult && finalOptions.includeAnalysis) {
        onProgress({
-         step: "Adding health analysis...",
+         step: "Adding Health Code Scan...",
          percentage: 75,
          isComplete: false,
        });
@@ -1415,7 +1415,7 @@ export const exportChartAsPdf = async (
        await addHealthImageToPdf(doc, calculatedChartData);
 
        onProgress({
-         step: "Health analysis added",
+         step: "Health Code Scan added",
          percentage: 78,
          isComplete: false,
        });
@@ -1424,7 +1424,7 @@ export const exportChartAsPdf = async (
        const needsPagination = await needsHealthPagination(calculatedChartData);
        if (needsPagination) {
          onProgress({
-           step: "Adding additional health analysis...",
+           step: "Adding additional Health Code Scan...",
            percentage: 80,
            isComplete: false,
          });
@@ -1435,7 +1435,7 @@ export const exportChartAsPdf = async (
          await addHealthContinuedImageToPdf(doc, calculatedChartData);
 
          onProgress({
-           step: "Additional health analysis added",
+           step: "Additional Health Code Scan added",
            percentage: 82,
            isComplete: false,
          });
@@ -1445,7 +1445,7 @@ export const exportChartAsPdf = async (
      // Step 3.9: Add Areas of Life page (only for non-free results with analytics access)
      if (!finalOptions.isFreeResult && finalOptions.includeAnalysis) {
        onProgress({
-         step: "Adding areas of life analysis...",
+         step: "Adding Destiny Scoreboard...",
          percentage: 84,
          isComplete: false,
        });
@@ -1456,7 +1456,7 @@ export const exportChartAsPdf = async (
        await addAreasOfLifeImageToPdf(doc, calculatedChartData);
 
        onProgress({
-         step: "Areas of life analysis added",
+         step: "Destiny Scoreboard added",
          percentage: 86,
          isComplete: false,
        });
@@ -1465,7 +1465,7 @@ export const exportChartAsPdf = async (
        const needsAreasPagination = await needsAreasOfLifePagination(calculatedChartData);
        if (needsAreasPagination) {
          onProgress({
-           step: "Adding additional areas of life analysis...",
+           step: "Adding additional Destiny Scoreboard...",
            percentage: 88,
            isComplete: false,
          });
@@ -1476,17 +1476,17 @@ export const exportChartAsPdf = async (
          await addAreasOfLifeContinuedImageToPdf(doc, calculatedChartData);
 
          onProgress({
-           step: "Additional areas of life analysis added",
+           step: "Additional Destiny Scoreboard added",
            percentage: 90,
            isComplete: false,
          });
        }
      }
 
-     // Step 3.11: Add Four Key Palace page (only for non-free results with analytics access)
+     // Step 3.11: Add DESTINY ALERT MAP page (only for non-free results with analytics access)
      if (!finalOptions.isFreeResult && finalOptions.includeAnalysis) {
        onProgress({
-         step: "Adding four key palace analysis...",
+         step: "Adding Destiny Alert Map...",
          percentage: 92,
          isComplete: false,
        });
@@ -1497,7 +1497,7 @@ export const exportChartAsPdf = async (
        await addFourKeyPalaceImageToPdf(doc, calculatedChartData);
 
        onProgress({
-         step: "Four key palace analysis added",
+         step: "Destiny Alert Map added",
          percentage: 94,
          isComplete: false,
        });
@@ -1506,7 +1506,7 @@ export const exportChartAsPdf = async (
        const needsPalacePagination = await needsFourKeyPalacePagination(calculatedChartData);
        if (needsPalacePagination) {
          onProgress({
-           step: "Adding additional four key palace analysis...",
+           step: "Adding additional Destiny Alert Map...",
            percentage: 96,
            isComplete: false,
          });
@@ -1517,7 +1517,7 @@ export const exportChartAsPdf = async (
          await addFourKeyPalaceContinuedImageToPdf(doc, calculatedChartData);
 
          onProgress({
-           step: "Additional four key palace analysis added",
+           step: "Additional Destiny Alert Map added",
            percentage: 98,
            isComplete: false,
          });
@@ -1525,7 +1525,7 @@ export const exportChartAsPdf = async (
 
        // Step 3.13: Add Destiny Compass page (final page - only for non-free results with analytics access)
        onProgress({
-         step: "Adding destiny compass analysis...",
+         step: "Adding Destiny Compass...",
          percentage: 99,
          isComplete: false,
        });
@@ -1536,7 +1536,7 @@ export const exportChartAsPdf = async (
        await addDestinyCompassImageToPdf(doc, calculatedChartData);
 
        onProgress({
-         step: "Destiny compass analysis added",
+         step: "Destiny Compass added",
          percentage: 98,
          isComplete: false,
        });
