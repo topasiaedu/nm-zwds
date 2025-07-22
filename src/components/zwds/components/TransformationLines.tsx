@@ -18,6 +18,7 @@ interface TransformationLinesProps {
   refsReady: boolean;
   selectedPalace: number | null;
   windowSize: { width: number; height: number };
+  disableAnimations?: boolean; // Optional prop to disable animations for PDF export
 }
 
 /**
@@ -189,7 +190,8 @@ const TransformationLines: React.FC<TransformationLinesProps> = ({
   starRefs,
   refsReady,
   selectedPalace,
-  windowSize
+  windowSize,
+  disableAnimations = false
 }) => {
   // Only log when there are issues for debugging
   if (selectedPalace && starRefs.current.size === 0) {
@@ -341,12 +343,12 @@ const TransformationLines: React.FC<TransformationLinesProps> = ({
               stroke={lineColor}
               strokeWidth={strokeWidth}
               strokeDasharray={dashArray}
-              initial={{ strokeDashoffset: arcLength }}
-              animate={{ 
+              initial={disableAnimations ? false : { strokeDashoffset: arcLength }}
+              animate={disableAnimations ? false : { 
                 strokeDashoffset: [arcLength, 0],
                 pathLength: [0, 1]
               }}
-              transition={{ 
+              transition={disableAnimations ? { duration: 0 } : { 
                 duration: 0.8, // Reduced from 1.5s to 0.8s
                 ease: "easeOut" 
               }}
@@ -359,9 +361,9 @@ const TransformationLines: React.FC<TransformationLinesProps> = ({
                 toStarY - 10 * Math.sin(arrowAngle + Math.PI/6)}`
               }
               fill={lineColor}
-              initial={{ opacity: 0, scale: 0 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ 
+              initial={disableAnimations ? false : { opacity: 0, scale: 0 }}
+              animate={disableAnimations ? false : { opacity: 1, scale: 1 }}
+              transition={disableAnimations ? { duration: 0 } : { 
                 delay: 0.4, // Reduced from 0.8s to 0.4s
                 duration: 0.2 // Reduced from 0.3s to 0.2s
               }}
@@ -398,12 +400,12 @@ const TransformationLines: React.FC<TransformationLinesProps> = ({
               stroke={lineColor}
               strokeWidth={strokeWidth}
               strokeDasharray={dashArray}
-              initial={{ strokeDashoffset: lineLength }}
-              animate={{ 
+              initial={disableAnimations ? false : { strokeDashoffset: lineLength }}
+              animate={disableAnimations ? false : { 
                 strokeDashoffset: [lineLength, 0],
                 pathLength: [0, 1]
               }}
-              transition={{ 
+              transition={disableAnimations ? { duration: 0 } : { 
                 duration: 0.8, // Reduced from 1.5s to 0.8s
                 ease: "easeOut" 
               }}
@@ -411,9 +413,9 @@ const TransformationLines: React.FC<TransformationLinesProps> = ({
             <motion.polygon
               points={`${toStarX},${toStarY} ${x1},${y1} ${x2},${y2}`}
               fill={lineColor}
-              initial={{ opacity: 0, scale: 0 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ 
+              initial={disableAnimations ? false : { opacity: 0, scale: 0 }}
+              animate={disableAnimations ? false : { opacity: 1, scale: 1 }}
+              transition={disableAnimations ? { duration: 0 } : { 
                 delay: 0.4, // Reduced from 0.8s to 0.4s
                 duration: 0.2 // Reduced from 0.3s to 0.2s
               }}
@@ -555,9 +557,9 @@ const TransformationLines: React.FC<TransformationLinesProps> = ({
         key={regularSvgKey}
         className="absolute top-0 left-0 w-full h-full pointer-events-none z-50"
         style={{ overflow: "visible" }}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: regularLines.length > 0 ? 1 : 0 }}
-        transition={{ duration: 0.2, ease: "easeOut" }}
+        initial={disableAnimations ? false : { opacity: 0 }}
+        animate={disableAnimations ? false : { opacity: regularLines.length > 0 ? 1 : 0 }}
+        transition={disableAnimations ? { duration: 0 } : { duration: 0.2, ease: "easeOut" }}
       >
         {regularLines}
       </motion.svg>

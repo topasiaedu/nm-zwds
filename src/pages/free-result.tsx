@@ -95,7 +95,7 @@ const FreeResult: React.FC = () => {
     }
 
     // Show size estimation
-    const sizeEstimate = estimatePdfSize(chartData, false); // Free users don't have analytics access
+    const sizeEstimate = estimatePdfSize(chartData, false, true); // Free users don't have analytics access and it's a free result
     
     // Show modal and start export
     setPdfExportModal({
@@ -130,6 +130,7 @@ const FreeResult: React.FC = () => {
           scale: 1.5,
           format: "a4",
           orientation: "portrait",
+          isFreeResult: true, // This is a free result export
         }
       );
     } catch (error) {

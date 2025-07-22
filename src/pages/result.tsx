@@ -45,6 +45,7 @@ const Result: React.FC = () => {
   const [chartData, setChartData] = useState<ChartData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [isCapturingForPdf, setIsCapturingForPdf] = useState<boolean>(false);
 
   // PDF export state
   const [pdfExportModal, setPdfExportModal] = useState({
@@ -89,7 +90,7 @@ const Result: React.FC = () => {
     }
 
     // Show size estimation
-    const sizeEstimate = estimatePdfSize(chartData, hasAnalyticsAccess);
+    const sizeEstimate = estimatePdfSize(chartData, hasAnalyticsAccess, false); // This is not a free result
     
     // Show modal and start export
     setPdfExportModal({
@@ -124,7 +125,9 @@ const Result: React.FC = () => {
           scale: 1.5,
           format: "a4",
           orientation: "portrait",
-        }
+          isFreeResult: false, // This is not a free result export
+        },
+        setIsCapturingForPdf
       );
     } catch (error) {
       console.error("PDF export error:", error);
@@ -624,7 +627,7 @@ const Result: React.FC = () => {
                             ? "calc(100vh - 150px)"
                             : undefined,
                       }}>
-                      <ZWDSChart chartData={calculatedChartData} />
+                      <ZWDSChart chartData={calculatedChartData} isPdfExport={isCapturingForPdf} />
                     </div>
                   ) : (
                     <div className="absolute inset-0 flex items-center justify-center bg-white dark:bg-gray-800">
