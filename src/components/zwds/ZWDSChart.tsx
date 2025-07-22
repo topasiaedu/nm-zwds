@@ -170,7 +170,7 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
   /**
    * Animation variants for different elements
    */
-  const containerVariants = {
+  const containerVariants = isPdfExport ? undefined : {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
@@ -342,20 +342,21 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
   return (
     <motion.div 
       className="w-full mx-auto aspect-square md:aspect-square relative"
-      initial="hidden"
-      animate="visible"
+      initial={isPdfExport ? false : "hidden"}
+      animate={isPdfExport ? false : "visible"}
       variants={containerVariants}
       ref={chartRef}
+      data-zwds-chart-container="true"
       style={{
         minHeight: windowSize.width < SCREEN_SM ? 'calc(100vh - 50px)' : undefined,
         height: windowSize.width < SCREEN_SM ? 'calc(100vh - 260px)' : undefined,
         maxHeight: '900px' // Increased from 800px to give more room
       }}>
       <motion.div 
-        className="grid grid-cols-4 grid-rows-4 gap-1.5 xs:gap-2 sm:gap-1.5 md:gap-1 p-1 xs:p-1.5 sm:p-1 md:p-1 h-full rounded-xl"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5 }}>
+        className={`grid grid-cols-4 grid-rows-4 gap-1.5 xs:gap-2 sm:gap-1.5 md:gap-1 p-1 xs:p-1.5 sm:p-1 md:p-1 h-full rounded-xl ${isPdfExport ? 'bg-white' : ''}`}
+        initial={isPdfExport ? false : { opacity: 0 }}
+        animate={isPdfExport ? false : { opacity: 1 }}
+        transition={isPdfExport ? { duration: 0 } : { duration: 0.5 }}>
         {/* First row (top) */}
         {renderPalace(1)}
         {renderPalace(2)}
@@ -366,7 +367,7 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
         {renderPalace(12)}
         {/* Center info spans 2x2 */}
         <div className="col-span-2 row-span-2">
-          <CenterInfo chartData={chartData} />
+          <CenterInfo chartData={chartData} isPdfExport={isPdfExport} />
         </div>
         {renderPalace(5)}
         
@@ -391,6 +392,7 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
         refsReady={refsReady}
         selectedPalace={selectedPalace}
         windowSize={windowSize}
+        disableAnimations={isPdfExport}
       />
     </motion.div>
   );

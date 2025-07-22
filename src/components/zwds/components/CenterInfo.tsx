@@ -6,19 +6,20 @@ import { EARTHLY_BRANCHES } from "../../../utils/zwds/constants";
 
 interface CenterInfoProps {
   chartData: ChartData;
+  isPdfExport?: boolean; // Optional prop to disable animations for PDF export
 }
 
 /**
  * Component to display the center information section of the ZWDS chart
  */
-const CenterInfo: React.FC<CenterInfoProps> = ({ chartData }) => {
+const CenterInfo: React.FC<CenterInfoProps> = ({ chartData, isPdfExport = false }) => {
   const { t, language } = useLanguage();
   const { input } = chartData;
 
   /**
    * Animation variants for center info section
    */
-  const centerInfoVariants = {
+  const centerInfoVariants = isPdfExport ? undefined : {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
@@ -32,6 +33,8 @@ const CenterInfo: React.FC<CenterInfoProps> = ({ chartData }) => {
     <motion.div
       className="col-span-2 row-span-2 border border-indigo-400/40 dark:border-indigo-500/40 bg-white/95 dark:bg-indigo-900/30 flex flex-col h-full w-full rounded-lg shadow-md overflow-hidden relative"
       variants={centerInfoVariants}
+      initial={isPdfExport ? false : "hidden"}
+      animate={isPdfExport ? false : "visible"}
       style={{
         boxShadow: "0 4px 16px rgba(79, 70, 229, 0.1)",
       }}>
@@ -51,9 +54,9 @@ const CenterInfo: React.FC<CenterInfoProps> = ({ chartData }) => {
         {/* Name with animation */}
         <motion.div
           className="text-base sm:text-lg font-medium py-2 px-3 sm:px-4 text-indigo-900 dark:text-indigo-100 text-center bg-gradient-to-r from-indigo-100/90 to-purple-100/90 dark:from-indigo-800/70 dark:to-purple-900/70"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5 }}>
+          initial={isPdfExport ? false : { opacity: 0 }}
+          animate={isPdfExport ? false : { opacity: 1 }}
+          transition={isPdfExport ? { duration: 0 } : { duration: 0.5 }}>
           {input.name || t("result.chart")}
         </motion.div>
 

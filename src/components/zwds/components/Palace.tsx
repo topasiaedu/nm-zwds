@@ -162,7 +162,7 @@ const Palace: React.FC<PalaceProps> = ({
   const palaceYear = calculateYearForPalace();
 
   // Animation variants for palaces
-  const palaceVariants = {
+  const palaceVariants = isPdfExport ? undefined : {
     hidden: { opacity: 0, scale: 0.96 },
     visible: {
       opacity: 1,
@@ -446,9 +446,9 @@ const Palace: React.FC<PalaceProps> = ({
           : ""
       }`}
       variants={palaceVariants}
-      whileHover="hover"
-      animate={isSelected ? "pulse" : isTargetPalace ? "target" : "visible"}
-      initial="hidden"
+      whileHover={isPdfExport ? undefined : "hover"}
+      animate={isPdfExport ? false : (isSelected ? "pulse" : isTargetPalace ? "target" : "visible")}
+      initial={isPdfExport ? false : "hidden"}
       style={combinedStyle}
       onClick={handleClick}
       ref={(el) => {
