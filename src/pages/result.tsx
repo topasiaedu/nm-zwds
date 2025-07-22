@@ -22,6 +22,8 @@ import {
   DestinyCompass,
   AreasOfLife,
 } from "../components/analysis_v2";
+import { ChartSettingsProvider, useChartSettings } from "../context/ChartSettingsContext";
+import ChartSettingsModal from "../components/ChartSettingsModal";
 
 /**
  * ChartData interface for chart information - using PdfChartData for consistency
@@ -29,16 +31,16 @@ import {
 type ChartData = PdfChartData;
 
 /**
- * Result component to display 紫微斗数 chart results
- * Can display either user's own chart (is_self=true) or another profile's chart
+ * Inner Result component that uses chart settings
  */
-const Result: React.FC = () => {
+const ResultContent: React.FC = () => {
   const { t, language } = useLanguage();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { profiles, loading: profilesLoading } = useProfileContext();
   const { hasAnalyticsAccess } = useTierAccess();
   const { showAlert } = useAlertContext();
+  const { toggleModal } = useChartSettings();
 
   // State for chart data
   const [chartData, setChartData] = useState<ChartData | null>(null);
@@ -715,8 +717,39 @@ const Result: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* PDF Export Button */}
+                  {/* Chart Settings Button */}
                   <div className="mt-6">
+                    <button
+                      onClick={toggleModal}
+                      className="w-full px-4 py-2 text-white font-medium rounded-lg transition-all 
+                            bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700
+                            focus:ring-4 focus:ring-purple-300 focus:outline-none
+                            flex items-center justify-center mb-3">
+                      <svg
+                        className="w-5 h-5 mr-2"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+                        />
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                        />
+                      </svg>
+                      Chart Settings
+                    </button>
+                  </div>
+
+                  {/* PDF Export Button */}
+                  <div className="mt-3">
                     <button
                       onClick={handlePdfExport}
                       disabled={!chartData || !calculatedChartData}
@@ -873,8 +906,22 @@ const Result: React.FC = () => {
           progress={pdfExportModal.progress}
           chartName={chartData?.name || ""}
         />
+
+        {/* Chart Settings Modal */}
+        <ChartSettingsModal pageType="result" />
       </div>
     </PageTransition>
+  );
+};
+
+/**
+ * Result component wrapper with ChartSettingsProvider
+ */
+const Result: React.FC = () => {
+  return (
+    <ChartSettingsProvider defaultPageType="result">
+      <ResultContent />
+    </ChartSettingsProvider>
   );
 };
 

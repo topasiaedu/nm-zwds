@@ -4,7 +4,7 @@
  */
 const FREE_TEST_CONFIG = {
   // Set the end date for the free test feature (YYYY-MM-DD format)
-  endDate: "2025-07-11",
+  endDate: "2025-08-11",
   // Feature control flag - can be set to false to immediately disable the feature
   isEnabled: true
 };

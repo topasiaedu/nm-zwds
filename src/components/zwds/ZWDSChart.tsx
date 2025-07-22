@@ -9,6 +9,7 @@ import Palace from "./components/Palace";
 import CenterInfo from "./components/CenterInfo";
 import TransformationLines from "./components/TransformationLines";
 import { useLanguage } from "../../context/LanguageContext";
+import { useChartSettings } from "../../context/ChartSettingsContext";
 import { PALACE_NAMES } from "../../utils/zwds/constants";
 
 // Breakpoint constants - matching TailwindCSS defaults
@@ -83,6 +84,7 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
   const [selectedPalaceName, setSelectedPalaceName] = useState<number | null>(null);
   
   const { language } = useLanguage();
+  const { settings } = useChartSettings();
   
   // Reference to the chart container
   const chartRef = useRef<HTMLDivElement>(null);
@@ -119,9 +121,14 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
   }, []);
 
   /**
-   * Calculate all transformation lines to draw, including opposite palace influences
+   * Calculate all activation lines to draw, including opposite palace influences
    */
   const getAllTransformations = () => {
+    // Only return transformations if the setting is enabled
+    if (!settings.transformationLines) {
+      return [];
+    }
+    
     // Get regular transformations when a palace is selected
     const regularTransformations = selectedPalace ? calculateTransformations() : [];
     
@@ -154,7 +161,7 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
    * Da Ming (大命) should be at the selected palace, then Da Xiong (大兄) anticlockwise, etc.
    */
   const getPalaceTag = (palaceNumber: number): { tag: string | null; delay: number } => {
-    if (!selectedDaXian) return { tag: null, delay: 0 };
+    if (!selectedDaXian || !settings.daXianClickInteraction) return { tag: null, delay: 0 };
     
     // Calculate the anticlockwise distance from the selected palace
     // Palace numbers go 1-12, but we need 0-11 for array indexing
@@ -185,7 +192,7 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
    * Handle palace click
    */
   const handlePalaceClick = (palaceNumber: number) => {
-    if (disableInteraction) return;
+    if (disableInteraction || !settings.palaceClickInteraction) return;
     
     console.log("🏰 Palace clicked:", palaceNumber);
     
@@ -194,7 +201,7 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
     
     setSelectedPalace(newSelectedPalace);
     
-    // Ensure refs are ready for rendering transformation lines
+    // Ensure refs are ready for rendering activation lines
     if (!refsReady) {
       setRefsReady(true);
     }
@@ -206,7 +213,7 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
    * Handle Da Xian click
    */
   const handleDaXianClick = (palaceNumber: number) => {
-    if (disableInteraction) return;
+    if (disableInteraction || !settings.daXianClickInteraction) return;
     
     setSelectedDaXian(selectedDaXian === palaceNumber ? null : palaceNumber);
   };
@@ -215,7 +222,7 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
    * Handle year click to show months
    */
   const handleYearClick = (palaceNumber: number, e: React.MouseEvent) => {
-    if (disableInteraction) return;
+    if (disableInteraction || !settings.yearAgeClickInteraction) return;
     
     e.stopPropagation();
     setShowMonths(showMonths === palaceNumber ? null : palaceNumber);
@@ -225,7 +232,7 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
    * Handle palace name click to show secondary palace name
    */
   const handlePalaceNameClick = (palaceNumber: number, e: React.MouseEvent) => {
-    if (disableInteraction) return;
+    if (disableInteraction || !settings.palaceNameClickInteraction) return;
     
     e.stopPropagation();
     setSelectedPalaceName(selectedPalaceName === palaceNumber ? null : palaceNumber);
@@ -235,7 +242,7 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
    * Get month for a palace based on the clicked palace number
    */
   const getMonthForPalace = (clickedPalaceNumber: number, currentPalaceNumber: number): string | null => {
-    if (!showMonths) return null;
+    if (!showMonths || !settings.yearAgeClickInteraction) return null;
 
     // Get the bottom right palace (palace number 10)
     const bottomRightPalace = chartData.palaces[9];
@@ -267,7 +274,7 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
    * Get secondary palace name based on clicked palace
    */
   const getSecondaryPalaceName = (currentPalaceNumber: number): string | null => {
-    if (!selectedPalaceName) return null;
+    if (!selectedPalaceName || !settings.palaceNameClickInteraction) return null;
 
     // Calculate how many positions to move from the clicked palace
     let distance = selectedPalaceName - currentPalaceNumber;
@@ -335,6 +342,7 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
         simulatedAge={simulatedAge}
         isPdfExport={isPdfExport}
         disableInteraction={disableInteraction}
+        chartSettings={settings}
       />
     );
   };

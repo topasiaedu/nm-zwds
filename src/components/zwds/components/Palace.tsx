@@ -9,6 +9,7 @@ import { translateStarName } from "../utils/helpers";
 import ZodiacIcons from "../icons";
 import ZodiacIconWrapper from "./ZodiacIconWrapper";
 import { FaSyncAlt } from "react-icons/fa";
+import { ChartSettings } from "../../../context/ChartSettingsContext";
 
 // Map earthly branches to their zodiac animals
 const getZodiacIcon = (earthlyBranch: string): React.ElementType | null => {
@@ -54,6 +55,7 @@ interface PalaceProps {
   simulatedAge?: number; // Optional prop to simulate a specific age for highlighting Da Xian
   isPdfExport?: boolean; // Optional prop to indicate PDF export mode
   disableInteraction?: boolean; // Optional prop to disable all user interactions
+  chartSettings: ChartSettings; // Chart settings to control feature visibility
 }
 
 /**
@@ -82,6 +84,7 @@ const Palace: React.FC<PalaceProps> = ({
   simulatedAge,
   isPdfExport = false,
   disableInteraction = false,
+  chartSettings,
 }) => {
   const { t, language } = useLanguage();
   const clickTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
@@ -545,7 +548,7 @@ const Palace: React.FC<PalaceProps> = ({
 
       {/* Annual Year Tag and Da Yun Tag Container */}
       <div className="absolute bottom-[55px] xs:bottom-[53px] sm:bottom-[51px] right-1 xs:right-2 sm:right-3 z-20 flex gap-1">
-        {showAnnualFlow && (
+        {showAnnualFlow && chartSettings.liuNianTag && (
           <div className={`text-2xs xs:text-xs font-semibold px-1.5 py-0.5 rounded-md ${
             isSelected
               ? "bg-orange-400/20"
@@ -591,7 +594,7 @@ const Palace: React.FC<PalaceProps> = ({
                   </span>
                 ))}
     
-              {star.transformations?.map((transformation, tidx) => (
+              {chartSettings.activationTags && star.transformations?.map((transformation, tidx) => (
                 <span
                   key={tidx}
                   className={`text-3xs xs:text-2xs sm:text-xs mb-0.5 ${
@@ -621,7 +624,7 @@ const Palace: React.FC<PalaceProps> = ({
                     : transformation}
                 </span>
               ))}
-                        {star.selfInfluence && (
+                        {star.selfInfluence && chartSettings.selfInfluenceIcon && (
                 <span className="mb-0.5">
                   <FaSyncAlt
                     className={`${getTransformationColor(
@@ -656,7 +659,7 @@ const Palace: React.FC<PalaceProps> = ({
                     </span>
                   ))}
 
-                {star.transformations?.map((transformation, idx) => (
+                {chartSettings.activationTags && star.transformations?.map((transformation, idx) => (
                   <span
                     key={idx}
                     className={`text-3xs xs:text-2xs sm:text-xs mb-0.5 ${
@@ -688,7 +691,7 @@ const Palace: React.FC<PalaceProps> = ({
                       : transformation}
                   </span>
                 ))}
-                {star.selfInfluence && (
+                {star.selfInfluence && chartSettings.selfInfluenceIcon && (
                   <span className="mb-0.5">
                     <FaSyncAlt
                       className={`${getTransformationColor(
