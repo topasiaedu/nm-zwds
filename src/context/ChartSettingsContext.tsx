@@ -32,9 +32,9 @@ const DEFAULT_SETTINGS: Record<PageType, ChartSettings> = {
   result: {
     transformationLines: false,
     palaceClickInteraction: false,
-    daXianClickInteraction: false,
+    daXianClickInteraction: true,
     palaceNameClickInteraction: true,
-    selfInfluenceIcon: true,
+    selfInfluenceIcon: false,
     liuNianTag: true,
     yearAgeClickInteraction: true,
     activationTags: true,
@@ -43,9 +43,9 @@ const DEFAULT_SETTINGS: Record<PageType, ChartSettings> = {
   "free-result": {
     transformationLines: false,
     palaceClickInteraction: false,
-    daXianClickInteraction: false,
+    daXianClickInteraction: true,
     palaceNameClickInteraction: true,
-    selfInfluenceIcon: true,
+    selfInfluenceIcon: false,
     liuNianTag: true,
     yearAgeClickInteraction: true,
     activationTags: true,
