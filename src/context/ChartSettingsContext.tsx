@@ -32,7 +32,7 @@ const DEFAULT_SETTINGS: Record<PageType, ChartSettings> = {
   result: {
     transformationLines: false,
     palaceClickInteraction: false,
-    daXianClickInteraction: true,
+    daXianClickInteraction: false,
     palaceNameClickInteraction: true,
     selfInfluenceIcon: true,
     liuNianTag: true,
@@ -43,7 +43,7 @@ const DEFAULT_SETTINGS: Record<PageType, ChartSettings> = {
   "free-result": {
     transformationLines: false,
     palaceClickInteraction: false,
-    daXianClickInteraction: true,
+    daXianClickInteraction: false,
     palaceNameClickInteraction: true,
     selfInfluenceIcon: true,
     liuNianTag: true,
