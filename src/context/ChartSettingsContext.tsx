@@ -31,7 +31,7 @@ const DEFAULT_SETTINGS: Record<PageType, ChartSettings> = {
   // Result page - most features enabled by default
   result: {
     transformationLines: false,
-    palaceClickInteraction: false,
+    palaceClickInteraction: true,
     daXianClickInteraction: true,
     palaceNameClickInteraction: true,
     selfInfluenceIcon: false,
@@ -43,11 +43,11 @@ const DEFAULT_SETTINGS: Record<PageType, ChartSettings> = {
   "free-result": {
     transformationLines: false,
     palaceClickInteraction: false,
-    daXianClickInteraction: true,
-    palaceNameClickInteraction: true,
+    daXianClickInteraction: false,
+    palaceNameClickInteraction: false,
     selfInfluenceIcon: false,
-    liuNianTag: true,
-    yearAgeClickInteraction: true,
+    liuNianTag: false,
+    yearAgeClickInteraction: false,
     activationTags: true,
   },
   // Timing chart page - selective features enabled
