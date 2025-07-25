@@ -30,8 +30,8 @@ export type PageType = "result" | "free-result" | "timing-chart";
 const DEFAULT_SETTINGS: Record<PageType, ChartSettings> = {
   // Result page - most features enabled by default
   result: {
-    transformationLines: true,
-    palaceClickInteraction: true,
+    transformationLines: false,
+    palaceClickInteraction: false,
     daXianClickInteraction: true,
     palaceNameClickInteraction: true,
     selfInfluenceIcon: true,
@@ -43,11 +43,11 @@ const DEFAULT_SETTINGS: Record<PageType, ChartSettings> = {
   "free-result": {
     transformationLines: false,
     palaceClickInteraction: false,
-    daXianClickInteraction: false,
-    palaceNameClickInteraction: false,
-    selfInfluenceIcon: false,
-    liuNianTag: false,
-    yearAgeClickInteraction: false,
+    daXianClickInteraction: true,
+    palaceNameClickInteraction: true,
+    selfInfluenceIcon: true,
+    liuNianTag: true,
+    yearAgeClickInteraction: true,
     activationTags: true,
   },
   // Timing chart page - selective features enabled

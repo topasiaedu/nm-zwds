@@ -677,7 +677,7 @@ const FreeResultContent: React.FC = () => {
                   </div>
 
                   {/* Chart Settings Button */}
-                  <div className="mt-6">
+                  {/* <div className="mt-6">
                     <button
                       onClick={toggleModal}
                       className="w-full px-4 py-2 text-white font-medium rounded-lg transition-all 
@@ -705,7 +705,7 @@ const FreeResultContent: React.FC = () => {
                       </svg>
                       Chart Settings
                     </button>
-                  </div>
+                  </div> */}
 
                   {/* PDF Export Button */}
                   <div className="mt-3">
