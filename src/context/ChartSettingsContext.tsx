@@ -35,7 +35,7 @@ const DEFAULT_SETTINGS: Record<PageType, ChartSettings> = {
     daXianClickInteraction: true,
     palaceNameClickInteraction: true,
     selfInfluenceIcon: false,
-    liuNianTag: false,
+    liuNianTag: true,
     yearAgeClickInteraction: true,
     activationTags: true,
   },

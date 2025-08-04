@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  useMemo,
+} from "react";
 import { useLanguage } from "../context/LanguageContext";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import PageTransition from "../components/PageTransition";
@@ -22,7 +28,10 @@ import {
   DestinyCompass,
   AreasOfLife,
 } from "../components/analysis_v2";
-import { ChartSettingsProvider, useChartSettings } from "../context/ChartSettingsContext";
+import {
+  ChartSettingsProvider,
+  useChartSettings,
+} from "../context/ChartSettingsContext";
 import ChartSettingsModal from "../components/ChartSettingsModal";
 
 /**
@@ -144,7 +153,12 @@ const ResultContent: React.FC = () => {
   // Add debug logs to help identify issues
   useEffect(() => {
     // Add debug logs only in development for missing profiles
-    if (process.env.NODE_ENV === "development" && id && !profileToShow && profiles.length > 0) {
+    if (
+      process.env.NODE_ENV === "development" &&
+      id &&
+      !profileToShow &&
+      profiles.length > 0
+    ) {
       console.log("Profile not found in context:", id);
       console.log(
         "Available profiles:",
@@ -354,7 +368,8 @@ const ResultContent: React.FC = () => {
     // Check if PDF export is supported
     if (!isPdfExportSupported()) {
       showAlert(
-        t("pdfExport.notSupported") || "PDF export is not supported in this browser",
+        t("pdfExport.notSupported") ||
+          "PDF export is not supported in this browser",
         "error"
       );
       return;
@@ -378,7 +393,7 @@ const ResultContent: React.FC = () => {
         formatDate,
         language,
         (progress) => {
-          setPdfExportModal(prev => ({
+          setPdfExportModal((prev) => ({
             ...prev,
             progress: {
               ...progress,
@@ -397,7 +412,7 @@ const ResultContent: React.FC = () => {
       );
     } catch (error) {
       console.error("PDF export error:", error);
-      setPdfExportModal(prev => ({
+      setPdfExportModal((prev) => ({
         ...prev,
         progress: {
           step: t("pdfExport.failed") || "Export failed",
@@ -407,7 +422,15 @@ const ResultContent: React.FC = () => {
         },
       }));
     }
-  }, [chartData, calculatedChartData, hasAnalyticsAccess, formatDate, language, showAlert, t]);
+  }, [
+    chartData,
+    calculatedChartData,
+    hasAnalyticsAccess,
+    formatDate,
+    language,
+    showAlert,
+    t,
+  ]);
 
   // If loading profiles from context
   if (profilesLoading) {
@@ -619,7 +642,10 @@ const ResultContent: React.FC = () => {
                             ? "calc(100vh - 150px)"
                             : undefined,
                       }}>
-                      <ZWDSChart chartData={calculatedChartData} isPdfExport={isCapturingForPdf} />
+                      <ZWDSChart
+                        chartData={calculatedChartData}
+                        isPdfExport={isCapturingForPdf}
+                      />
                     </div>
                   ) : (
                     <div className="absolute inset-0 flex items-center justify-center bg-white dark:bg-gray-800">
@@ -775,8 +801,6 @@ const ResultContent: React.FC = () => {
                     </button>
                   </div>
 
-
-
                   {/* Timing Chart Button - Hidden */}
                   {/* <div className="mt-6">
                     <Link
@@ -808,8 +832,6 @@ const ResultContent: React.FC = () => {
           )
         )}
 
-
-
         {/* Analysis Section - Always show Overview, but other components require Tier 2+ */}
         {calculatedChartData && !loading && !error && (
           <div className="mt-8">
@@ -827,52 +849,17 @@ const ResultContent: React.FC = () => {
 
             <div className="space-y-8">
               {/* Overview - Always available */}
-              <Overview chartData={calculatedChartData} />
-              
+
               {/* Premium Analytics - Tier 2+ only */}
               {hasAnalyticsAccess && (
                 <>
+                  <Overview chartData={calculatedChartData} />
                   <Career chartData={calculatedChartData} />
                   <Health chartData={calculatedChartData} />
                   <AreasOfLife chartData={calculatedChartData} />
                   <FourKeyPalace chartData={calculatedChartData} />
                   <DestinyCompass chartData={calculatedChartData} />
                 </>
-              )}
-
-              {/* Tier Access Prompt for Basic Users */}
-              {!hasAnalyticsAccess && (
-                <div className="mt-8 p-6 bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20 rounded-xl border border-purple-200 dark:border-purple-800">
-                  <div className="text-center">
-                    <h3 className="text-2xl font-bold text-purple-800 dark:text-purple-200 mb-2">
-                      Unlock Premium Analysis
-                    </h3>
-                    <p className="text-purple-600 dark:text-purple-300 mb-4">
-                      Get detailed insights into your career, health, relationships, and destiny patterns with our premium analysis suite.
-                    </p>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                      <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm">
-                        <h4 className="font-semibold text-gray-800 dark:text-gray-200 mb-2">Career Analysis</h4>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">Discover your professional strengths and optimal career paths</p>
-                      </div>
-                      <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm">
-                        <h4 className="font-semibold text-gray-800 dark:text-gray-200 mb-2">Health Insights</h4>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">Understand your health patterns and wellness guidance</p>
-                      </div>
-                      <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm">
-                        <h4 className="font-semibold text-gray-800 dark:text-gray-200 mb-2">Life Areas</h4>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">Comprehensive analysis of all major life domains</p>
-                      </div>
-                      <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm">
-                        <h4 className="font-semibold text-gray-800 dark:text-gray-200 mb-2">Destiny Compass</h4>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">Strategic guidance for your life&apos;s journey</p>
-                      </div>
-                    </div>
-                    <button className="px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold rounded-lg hover:from-purple-700 hover:to-indigo-700 transition-all duration-200 shadow-lg hover:shadow-xl">
-                      Upgrade to Premium
-                    </button>
-                  </div>
-                </div>
               )}
 
               {/* Summary Analysis */}

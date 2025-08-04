@@ -193,6 +193,9 @@ const TransformationLines: React.FC<TransformationLinesProps> = ({
   windowSize,
   disableAnimations = false
 }) => {
+
+  console.log("🎭 TransformationLines", transformations);
+  
   // Only log when there are issues for debugging
   if (selectedPalace && starRefs.current.size === 0) {
     console.log("🎭 Warning: Selected palace but no star refs available");
