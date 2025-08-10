@@ -5,6 +5,7 @@ import {
   Route,
   Navigate,
   useLocation,
+  Outlet,
 } from "react-router-dom";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { ProfileProvider } from "./context/ProfileContext";
@@ -26,6 +27,8 @@ import Result from "./pages/result";
 import TimingChart from "./pages/timing-chart";
 import CAEGPT from "./pages/caegpt";
 import UserManagement from "./pages/admin/user-management";
+import ChartOnly from "./pages/chart-only";
+import ChartTest from "./pages/chart-test";
 // Import new free test pages
 import FreeTest from "./pages/free-test";
 import FreeResult from "./pages/free-result";
@@ -54,6 +57,16 @@ const AuthRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 };
 
 /**
+ * Wrapper to render routes inside `MainLayout` with Outlet.
+ * This allows us to exclude certain paths (like /chart-only) from the layout/nav.
+ */
+const MainLayoutWrapper: React.FC = () => (
+  <MainLayout>
+    <Outlet />
+  </MainLayout>
+);
+
+/**
  * Check if free test feature is active based on config
  */
 const isFreeTestActive = (): boolean => {
@@ -74,8 +87,14 @@ const App: React.FC = () => {
             <ProfileProvider>
               <LanguageProvider>
                 <SidebarProvider>
-                  <MainLayout>
+                  {/* Single router switch. Some routes bypass MainLayout. */}
                   <Routes>
+                    {/* Routes WITHOUT MainLayout (no navbar) */}
+                    <Route path="/chart-only" element={<ChartOnly />} />
+                    <Route path="/chart-test" element={<ChartTest />} />
+
+                    {/* Routes WITH MainLayout */}
+                    <Route element={<MainLayoutWrapper />}>
                     {/* Authentication routes */}
                     <Route
                       path="/authentication/sign-in"
@@ -188,6 +207,8 @@ const App: React.FC = () => {
                       }
                     />
 
+                    
+
                     {/* Destiny Wealth Navigator AI Assistant - Tier 2+ Only */}
                     <Route
                       path="/destiny-wealth-navigator"
@@ -212,8 +233,8 @@ const App: React.FC = () => {
 
                     {/* 404 page */}
                     <Route path="*" element={<NotFoundPage />} />
+                    </Route>
                   </Routes>
-                </MainLayout>
                 </SidebarProvider>
               </LanguageProvider>
             </ProfileProvider>
