@@ -6,6 +6,7 @@ import {
   Navigate,
   useLocation,
   Outlet,
+  useParams,
 } from "react-router-dom";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { ProfileProvider } from "./context/ProfileContext";
@@ -40,6 +41,7 @@ import FreeTestEnded from "./pages/free-test-ended";
 import FREE_TEST_CONFIG from "./config/freeTestConfig";
 import { Analytics } from "@vercel/analytics/react"
 import { SpeedInsights } from "@vercel/speed-insights/react"
+import { useTierAccess } from "./context/TierContext";
 
 /**
  * Authentication route wrapper that redirects authenticated users to dashboard
@@ -68,6 +70,33 @@ const MainLayoutWrapper: React.FC = () => (
     <Outlet />
   </MainLayout>
 );
+
+/**
+ * Route element that redirects Tier3 (non-admin) users to the Tier3 result page for /chart
+ */
+const TierAwareChartRoute: React.FC = () => {
+  const { tier, isAdmin } = useTierAccess();
+  const isTier3Only = tier === "tier3" && !isAdmin;
+  if (isTier3Only) {
+    // Tier 3 users should always see the Tier3Result page instead of standard Result
+    return <Navigate to="/tier3-result" replace />;
+  }
+  return <Result />;
+};
+
+/**
+ * Route element that redirects Tier3 (non-admin) users to the Tier3 result page for /result/:id
+ */
+const TierAwareResultByIdRoute: React.FC = () => {
+  const { tier, isAdmin } = useTierAccess();
+  const params = useParams<{ id: string }>();
+  const isTier3Only = tier === "tier3" && !isAdmin;
+  if (isTier3Only) {
+    const target = params.id ? `/tier3-result/${params.id}` : "/tier3-result";
+    return <Navigate to={target} replace />;
+  }
+  return <Result />;
+};
 
 /**
  * Check if free test feature is active based on config
@@ -189,6 +218,14 @@ const App: React.FC = () => {
                       }
                     />
                     <Route
+                      path="/tier3-result/:id"
+                      element={
+                        <ProtectedRoute>
+                          <Tier3Result />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
                       path="/my-chart"
                       element={
                         <ProtectedRoute>
@@ -200,7 +237,7 @@ const App: React.FC = () => {
                       path="/chart"
                       element={
                         <ProtectedRoute>
-                          <Result />
+                          <TierAwareChartRoute />
                         </ProtectedRoute>
                       }
                     />
@@ -216,7 +253,7 @@ const App: React.FC = () => {
                       path="/result/:id"
                       element={
                         <ProtectedRoute>
-                          <Result />
+                          <TierAwareResultByIdRoute />
                         </ProtectedRoute>
                       }
                     />

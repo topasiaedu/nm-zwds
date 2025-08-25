@@ -76,8 +76,8 @@ const Dashboard: React.FC = () => {
                 </h2>
 
                 <div className="space-y-4">
-                  {/* Tier3 / Admin: Experimental Chart */}
-                  {(tier === "tier3" || isAdmin) && (
+                  {/* Admin: Experimental Chart */}
+                  {(isAdmin ) && (
                     <Link
                       to="/tier3-result"
                       className="block bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20 rounded-xl p-4 hover:from-purple-100 hover:to-indigo-100 dark:hover:from-purple-900/30 dark:hover:to-indigo-900/30 transition-colors border border-purple-200 dark:border-purple-800">
@@ -104,7 +104,7 @@ const Dashboard: React.FC = () => {
                   )}
                   {/* My Chart */}
                   <Link
-                    to="/chart"
+                    to={tier === "tier3" && !isAdmin ? "/tier3-result" : "/chart"}
                     className="block bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                     <div className="flex items-start justify-between">
                       <div className="flex items-center">
@@ -432,7 +432,7 @@ const Dashboard: React.FC = () => {
                             <td className="px-6 py-4 whitespace-nowrap text-sm">
                               <div className="flex items-center space-x-3">
                                 <Link
-                                  to={`/result/${profile.id}`}
+                                  to={tier === "tier3" && !isAdmin ? `/tier3-result/${profile.id}` : `/result/${profile.id}`}
                                   className="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 hover:bg-gray-50 dark:hover:bg-gray-700/50 px-3 py-1 rounded-lg transition-colors inline-block">
                                   {t("dashboard.table.view")}
                                 </Link>

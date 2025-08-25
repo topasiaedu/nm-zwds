@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import PageTransition from "../components/PageTransition";
 import ZWDSChart from "../components/ZWDSChart";
 import { ChartSettingsProvider, useChartSettings } from "../context/ChartSettingsContext";
@@ -20,7 +20,24 @@ const Tier3ResultContent: React.FC = () => {
   const { tier, isAdmin } = useTierAccess();
   const { updateSetting } = useChartSettings();
 
-  const profile = profiles.find(p => p.is_self) || profiles[0];
+  // Read optional :id route param to support viewing other profiles
+  const { id } = useParams<{ id?: string }>();
+
+  /**
+   * Resolve the target profile based on route param or default to self/first.
+   * - If :id provided, match by id
+   * - Else prefer self profile, fallback to first available
+   */
+  const profile = useMemo(() => {
+    if (id) {
+      const byId = profiles.find(p => String(p.id) === String(id));
+      if (byId) {
+        return byId;
+      }
+    }
+    const self = profiles.find(p => p.is_self);
+    return self || profiles[0];
+  }, [profiles, id]);
 
   const calculatedChartData = useMemo(() => {
     if (!profile) return null;
