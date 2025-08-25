@@ -20,12 +20,22 @@ export interface ChartSettings {
   yearAgeClickInteraction: boolean;
   /** Show activation tags beside stars */
   activationTags: boolean;
+  /** Show Da Yun (major limit) highlight/tag on the active palace */
+  showDaYunHighlight: boolean;
+  /** Show Da Ming corner tag badges in each palace */
+  showDaMingCornerTag: boolean;
+  /** Replace bottom palace name label with Da Ming tag when available */
+  showDaMingBottomLabel: boolean;
+  /** Replace bottom palace name label with Secondary palace name when available */
+  showSecondaryBottomLabel: boolean;
+  /** Show the secondary palace name overlay above the bottom row */
+  showSecondaryOverlayName: boolean;
 }
 
 /**
  * Page-specific default settings
  */
-export type PageType = "result" | "free-result" | "timing-chart";
+export type PageType = "result" | "free-result" | "timing-chart" | "tier3-result";
 
 const DEFAULT_SETTINGS: Record<PageType, ChartSettings> = {
   // Result page - most features enabled by default
@@ -38,6 +48,11 @@ const DEFAULT_SETTINGS: Record<PageType, ChartSettings> = {
     liuNianTag: true,
     yearAgeClickInteraction: true,
     activationTags: true,
+    showDaYunHighlight: true,
+    showDaMingCornerTag: true,
+    showDaMingBottomLabel: false,
+    showSecondaryBottomLabel: false,
+    showSecondaryOverlayName: true,
   },
   // Free result page - all features disabled by default except activation tags
   "free-result": {
@@ -49,6 +64,11 @@ const DEFAULT_SETTINGS: Record<PageType, ChartSettings> = {
     liuNianTag: true,
     yearAgeClickInteraction: true,
     activationTags: true,
+    showDaYunHighlight: true,
+    showDaMingCornerTag: true,
+    showDaMingBottomLabel: false,
+    showSecondaryBottomLabel: false,
+    showSecondaryOverlayName: true,
   },
   // Timing chart page - selective features enabled
   "timing-chart": {
@@ -60,6 +80,27 @@ const DEFAULT_SETTINGS: Record<PageType, ChartSettings> = {
     liuNianTag: true,
     yearAgeClickInteraction: false,
     activationTags: true,
+    showDaYunHighlight: true,
+    showDaMingCornerTag: true,
+    showDaMingBottomLabel: false,
+    showSecondaryBottomLabel: false,
+    showSecondaryOverlayName: true,
+  },
+  // Tier3 experimental result page - start with the cleanest view
+  "tier3-result": {
+    transformationLines: false,
+    palaceClickInteraction: true,
+    daXianClickInteraction: false,
+    palaceNameClickInteraction: false,
+    selfInfluenceIcon: true,
+    liuNianTag: false,
+    yearAgeClickInteraction: false,
+    activationTags: false,
+    showDaYunHighlight: false,
+    showDaMingCornerTag: false,
+    showDaMingBottomLabel: true,
+    showSecondaryBottomLabel: false,
+    showSecondaryOverlayName: false,
   },
 };
 

@@ -140,6 +140,7 @@ const Palace: React.FC<PalaceProps> = ({
   // Check if current age (or simulated age) falls within this palace's Major Limit (da xian) range
   const ageToCheck = simulatedAge !== undefined ? simulatedAge : currentAge;
   const isCurrentDaXian =
+    chartSettings.showDaYunHighlight &&
     palace.majorLimit &&
     palace.majorLimit.startAge <= ageToCheck &&
     palace.majorLimit.endAge >= ageToCheck;
@@ -427,6 +428,20 @@ const Palace: React.FC<PalaceProps> = ({
     );
   };
 
+  // Compute bottom label: prefer Da Ming tag when available, otherwise palace name
+  const resolvedPalaceName = (language === "en" && t(`zwds.palaces.${palace.name}`))
+    ? t(`zwds.palaces.${palace.name}`)
+    : palace.name;
+
+  const bottomLabel =
+    (chartSettings.showDaMingBottomLabel && palaceTag) ||
+    (chartSettings.showSecondaryBottomLabel && (
+      (language === "en" && secondaryPalaceName && t(`zwds.palaces.${secondaryPalaceName}`))
+        ? t(`zwds.palaces.${secondaryPalaceName}`)
+        : secondaryPalaceName
+    )) ||
+    resolvedPalaceName;
+
   return (
     <motion.div
       key={`palace-${palaceNumber}-${selectedPalace}`}
@@ -470,7 +485,7 @@ const Palace: React.FC<PalaceProps> = ({
       )}
 
       {/* Secondary palace name - centered but at Liu Nian height */}
-      {secondaryPalaceName && (
+      {secondaryPalaceName && chartSettings.showSecondaryOverlayName && (
         <div className={`absolute  xs:bottom-[53px] ${showAnnualFlow && isCurrentDaXian ? "bottom-[90px] sm:bottom-[75px]" : "bottom-[75px] sm:bottom-[51px]"} left-0 right-0 flex justify-center items-center z-20`}>
           <div className={`text-2xs xs:text-xs font-bold ${
             isSelected
@@ -505,7 +520,7 @@ const Palace: React.FC<PalaceProps> = ({
       </style>
 
       {/* Palace Tag (Da Ming) - only shown when a palace is selected for Da Xian */}
-      {palaceTag && (
+      {palaceTag && chartSettings.showDaMingCornerTag && chartSettings.daXianClickInteraction && (
         <div className="absolute top-0.5 xs:top-1 sm:top-2 right-0.5 xs:right-1 sm:right-2 z-30">
           <motion.div
             key={`palace-tag-${selectedPalace}-${palaceNumber}`}
@@ -731,11 +746,7 @@ const Palace: React.FC<PalaceProps> = ({
             className={`flex flex-col items-center justify-center py-1.5 border-r border-gray-200 dark:border-gray-700 ${
               isSelected ? "text-white dark:text-white" : ""
             }`}>
-            <div className="font-medium">
-              {language === "en" && t(`zwds.palaces.${palace.name}`)
-                ? t(`zwds.palaces.${palace.name}`)
-                : palace.name}
-            </div>
+            <div className="font-medium">{bottomLabel}</div>
             {palace.majorLimit && (
               <div
                 className={`text-zinc-500 dark:text-zinc-400 ${
@@ -836,9 +847,7 @@ const Palace: React.FC<PalaceProps> = ({
             <div 
               className="font-medium cursor-pointer hover:opacity-80"
               onClick={(e) => handlePalaceNameClick(palaceNumber, e)}>
-              {language === "en" && t(`zwds.palaces.${palace.name}`)
-                ? t(`zwds.palaces.${palace.name}`)
-                : palace.name}
+              {bottomLabel}
             </div>
             {palace.majorLimit && (
               <div

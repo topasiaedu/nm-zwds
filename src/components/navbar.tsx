@@ -48,7 +48,7 @@ const Navbar: React.FC = () => {
   }, []);
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 h-14 bg-transparent border-gray-200 px-2 sm:px-4 border-b border-white/10 dark:border-gray-800/50 backdrop-blur-md">
+    <nav className="fixed top-0 left-0 right-0 z-50 h-14 bg-white/10 dark:bg-gray-900/10 border-gray-200 px-2 sm:px-4 border-b border-white/10 dark:border-gray-800/50 backdrop-blur-md">
       <div className="h-full max-w-screen-xl flex flex-wrap items-center justify-between mx-auto">
         <div className="flex items-center space-x-1 sm:space-x-3">
           {/* Language toggle - Hidden to force English only */}
@@ -87,13 +87,14 @@ const Navbar: React.FC = () => {
               {dropdownOpen && (
                 <div
                   className="absolute left-0 mt-2 w-48 rounded-2xl shadow-xl
-                              border border-white/10
-                              backdrop-filter backdrop-blur-2xl 
-                              bg-white/10 hover:bg-white/15 
-                              dark:bg-black/80 dark:hover:bg-black/100
+                              border border-gray-200 dark:border-gray-600
+                              bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700
                               transition-all duration-300 z-50">
-                  <div className="px-4 py-3 text-sm border-b border-white/10 dark:border-gray-800/50">
+                  <div className="px-4 py-3 text-sm border-b border-gray-200 dark:border-gray-600">
                     <div className="font-medium truncate dark:text-white">
+                      {user.user_metadata?.display_name || user.email?.split("@")[0] || "User"}
+                    </div>
+                    <div className="text-xs text-gray-500 dark:text-gray-400 truncate">
                       {user.email}
                     </div>
                   </div>
@@ -101,7 +102,7 @@ const Navbar: React.FC = () => {
                     <li>
                       <Link
                         to="/profile"
-                        className="block px-4 py-2 hover:bg-white/20 dark:hover:bg-black/20 dark:text-white transition-all duration-200"
+                        className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-white transition-all duration-200"
                         onClick={() => setDropdownOpen(false)}>
                         {t("navbar.profile")}
                       </Link>
@@ -109,16 +110,16 @@ const Navbar: React.FC = () => {
                     <li>
                       <Link
                         to="/settings"
-                        className="block px-4 py-2 hover:bg-white/20 dark:hover:bg-black/20 dark:text-white transition-all duration-200"
+                        className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-white transition-all duration-200"
                         onClick={() => setDropdownOpen(false)}>
                         {t("navbar.settings")}
                       </Link>
                     </li>
                   </ul>
-                  <div className="py-2 border-t border-white/10 dark:border-gray-800/50">
+                  <div className="py-2 border-t border-gray-200 dark:border-gray-600">
                     <button
                       onClick={handleSignOut}
-                      className="block w-full px-4 py-2 text-left text-sm text-red-500 hover:bg-white/20 dark:hover:bg-black/20 transition-all duration-200">
+                      className="block w-full px-4 py-2 text-left text-sm text-red-500 hover:bg-gray-100 dark:hover:bg-gray-600 transition-all duration-200">
                       {t("navbar.signOut")}
                     </button>
                   </div>

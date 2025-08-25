@@ -20,6 +20,8 @@ const ChartOnly: React.FC = () => {
   const [chartData, setChartData] = useState<ChartData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  // Tracks which palace should have Da Ming (大命) tags initially
+  const [selectedDaXianPalace, setSelectedDaXianPalace] = useState<number | null>(null);
 
   useEffect(() => {
     // Force light mode globally on this route regardless of user/system preference
@@ -40,6 +42,8 @@ const ChartOnly: React.FC = () => {
         const hour = parseInt(searchParams.get("hour") || "");
         const gender = searchParams.get("gender") as "male" | "female";
         const name = searchParams.get("name") || "Unknown";
+        const damingParam = (searchParams.get("daming") || "").toLowerCase();
+        const enableDaming = damingParam === "true" || damingParam === "1" || damingParam === "yes";
 
         // Validate required parameters
         if (!year || !month || !day || !hour || !gender) {
@@ -76,6 +80,38 @@ const ChartOnly: React.FC = () => {
         // Calculate chart data
         const calculator = new ZWDSCalculator(chartInput);
         const calculatedChartData = calculator.calculate();
+
+        // If daming is enabled, auto-select the current Da Xian palace based on real age
+        if (enableDaming) {
+          try {
+            /**
+             * Compute current age using lunar birth year to match chart logic:
+             * age = currentYear - birthYear + 1
+             */
+            const birthYear: number = calculatedChartData.lunarDate.year;
+            const currentYear: number = new Date().getFullYear();
+            const currentAge: number = currentYear - birthYear + 1;
+
+            // Find the palace whose major limit range includes the current age
+            const currentDaXian = calculatedChartData.palaces.find(p => {
+              return Boolean(
+                p.majorLimit &&
+                currentAge >= p.majorLimit.startAge &&
+                currentAge <= p.majorLimit.endAge
+              );
+            });
+
+            if (currentDaXian && typeof currentDaXian.number === "number") {
+              setSelectedDaXianPalace(currentDaXian.number);
+            } else {
+              setSelectedDaXianPalace(null);
+            }
+          } catch {
+            setSelectedDaXianPalace(null);
+          }
+        } else {
+          setSelectedDaXianPalace(null);
+        }
 
         setChartData(calculatedChartData);
         setLoading(false);
@@ -120,6 +156,8 @@ const ChartOnly: React.FC = () => {
         <div className="w-[900px] h-[900px] flex items-center justify-center">
           <ZWDSChart
             chartData={chartData}
+            // Do not simulate age; use the real age logic only
+            selectedDaXianPalace={selectedDaXianPalace === null ? undefined : selectedDaXianPalace}
             disableInteraction={true}
             isPdfExport={true}
           />

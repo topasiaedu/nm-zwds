@@ -115,18 +115,23 @@ const ChartSettingsModal: React.FC<ChartSettingsModalProps> = ({ pageType }) => 
   /**
    * Handle enabling all features
    */
-     const handleEnableAll = () => {
-     const allEnabledSettings: ChartSettings = {
-       transformationLines: true,
-       palaceClickInteraction: true,
-       daXianClickInteraction: true,
-       palaceNameClickInteraction: true,
-       selfInfluenceIcon: true,
-       liuNianTag: true,
-       yearAgeClickInteraction: true,
-       activationTags: true,
-     };
-    
+  const handleEnableAll = () => {
+    const allEnabledSettings: ChartSettings = {
+      transformationLines: true,
+      palaceClickInteraction: true,
+      daXianClickInteraction: true,
+      palaceNameClickInteraction: true,
+      selfInfluenceIcon: true,
+      liuNianTag: true,
+      yearAgeClickInteraction: true,
+      activationTags: true,
+      showDaYunHighlight: true,
+      showDaMingCornerTag: true,
+      showDaMingBottomLabel: true,
+      showSecondaryBottomLabel: true,
+      showSecondaryOverlayName: true,
+    };
+
     Object.entries(allEnabledSettings).forEach(([key, value]) => {
       updateSetting(key as keyof ChartSettings, value);
     });
@@ -135,18 +140,23 @@ const ChartSettingsModal: React.FC<ChartSettingsModalProps> = ({ pageType }) => 
   /**
    * Handle disabling all features
    */
-     const handleDisableAll = () => {
-     const allDisabledSettings: ChartSettings = {
-       transformationLines: false,
-       palaceClickInteraction: false,
-       daXianClickInteraction: false,
-       palaceNameClickInteraction: false,
-       selfInfluenceIcon: false,
-       liuNianTag: false,
-       yearAgeClickInteraction: false,
-       activationTags: false,
-     };
-    
+  const handleDisableAll = () => {
+    const allDisabledSettings: ChartSettings = {
+      transformationLines: false,
+      palaceClickInteraction: false,
+      daXianClickInteraction: false,
+      palaceNameClickInteraction: false,
+      selfInfluenceIcon: false,
+      liuNianTag: false,
+      yearAgeClickInteraction: false,
+      activationTags: false,
+      showDaYunHighlight: false,
+      showDaMingCornerTag: false,
+      showDaMingBottomLabel: false,
+      showSecondaryBottomLabel: false,
+      showSecondaryOverlayName: false,
+    };
+
     Object.entries(allDisabledSettings).forEach(([key, value]) => {
       updateSetting(key as keyof ChartSettings, value);
     });
@@ -262,6 +272,36 @@ const ChartSettingsModal: React.FC<ChartSettingsModalProps> = ({ pageType }) => 
               onChange={(value) => updateSetting("activationTags", value)}
               label="Activation Tags"
               description="Show activation tags beside stars in palaces"
+            />
+            <ToggleSwitch
+              enabled={settings.showDaYunHighlight}
+              onChange={(value) => updateSetting("showDaYunHighlight", value)}
+              label="Da Yun Highlight"
+              description="Show golden Major Limit highlight and tag on the active palace"
+            />
+            <ToggleSwitch
+              enabled={settings.showDaMingCornerTag}
+              onChange={(value) => updateSetting("showDaMingCornerTag", value)}
+              label="Da Ming Corner Tag"
+              description="Show Da Ming tag badge in the top-right corner of each palace"
+            />
+            <ToggleSwitch
+              enabled={settings.showDaMingBottomLabel}
+              onChange={(value) => updateSetting("showDaMingBottomLabel", value)}
+              label="Da Ming Bottom Label"
+              description="Replace bottom palace name with Da Ming tag when available"
+            />
+            <ToggleSwitch
+              enabled={settings.showSecondaryOverlayName}
+              onChange={(value) => updateSetting("showSecondaryOverlayName", value)}
+              label="Secondary Palace Overlay"
+              description="Show the secondary palace name overlay above the bottom row"
+            />
+            <ToggleSwitch
+              enabled={settings.showSecondaryBottomLabel}
+              onChange={(value) => updateSetting("showSecondaryBottomLabel", value)}
+              label="Secondary Bottom Label"
+              description="Replace bottom palace name with secondary palace name when available"
             />
           </div>
         </div>

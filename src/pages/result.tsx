@@ -22,7 +22,7 @@ import {
   DestinyCompass,
   AreasOfLife,
 } from "../components/analysis_v2";
-import { ChartSettingsProvider, useChartSettings } from "../context/ChartSettingsContext";
+import { ChartSettingsProvider } from "../context/ChartSettingsContext";
 import ChartSettingsModal from "../components/ChartSettingsModal";
 
 /**
@@ -40,13 +40,14 @@ const ResultContent: React.FC = () => {
   const { profiles, loading: profilesLoading } = useProfileContext();
   const { hasAnalyticsAccess } = useTierAccess();
   const { showAlert } = useAlertContext();
-  const { toggleModal } = useChartSettings();
 
   // State for chart data
   const [chartData, setChartData] = useState<ChartData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [isCapturingForPdf, setIsCapturingForPdf] = useState<boolean>(false);
+  const [isCapturingForPdf] = useState<boolean>(false);
+
+  // Removed Tier3/Admin control pills from this page and moved to tier3-result
 
   // PDF export state
   const [pdfExportModal, setPdfExportModal] = useState({
@@ -619,7 +620,10 @@ const ResultContent: React.FC = () => {
                             ? "calc(100vh - 150px)"
                             : undefined,
                       }}>
-                      <ZWDSChart chartData={calculatedChartData} isPdfExport={isCapturingForPdf} />
+                      <ZWDSChart
+                        chartData={calculatedChartData}
+                        isPdfExport={isCapturingForPdf}
+                      />
                     </div>
                   ) : (
                     <div className="absolute inset-0 flex items-center justify-center bg-white dark:bg-gray-800">
@@ -778,7 +782,7 @@ const ResultContent: React.FC = () => {
 
 
                   {/* Timing Chart Button - Hidden */}
-                  {/* <div className="mt-6">
+                  <div className="mt-6">
                     <Link
                       to={`/timing-chart/${chartData.id}`}
                       className="w-full px-4 py-2 text-white font-medium rounded-lg transition-all 
@@ -788,7 +792,7 @@ const ResultContent: React.FC = () => {
                      
                       {"View Timing Analysis"}
                     </Link>
-                  </div> */}
+                  </div>
 
                   {isSelfProfile && (
                     <div className="mt-6">

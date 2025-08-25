@@ -14,7 +14,7 @@ import { LanguageProvider } from "./context/LanguageContext";
 import { AlertProvider } from "./context/AlertContext";
 import { SidebarProvider } from "./context/SidebarContext";
 import ProtectedRoute from "./components/ProtectedRoute";
-import TierProtectedRoute from "./components/TierProtectedRoute";
+
 import MainLayout from "./layouts/MainLayout";
 import Dashboard from "./pages/dashboard/index";
 import SignInPage from "./pages/authentication/sign-in";
@@ -29,6 +29,9 @@ import CAEGPT from "./pages/caegpt";
 import UserManagement from "./pages/admin/user-management";
 import ChartOnly from "./pages/chart-only";
 import ChartTest from "./pages/chart-test";
+import Tier3Result from "./pages/tier3-result";
+import Profile from "./pages/profile";
+import MembershipExpired from "./pages/membership-expired";
 // Import new free test pages
 import FreeTest from "./pages/free-test";
 import FreeResult from "./pages/free-result";
@@ -92,6 +95,7 @@ const App: React.FC = () => {
                     {/* Routes WITHOUT MainLayout (no navbar) */}
                     <Route path="/chart-only" element={<ChartOnly />} />
                     <Route path="/chart-test" element={<ChartTest />} />
+                    <Route path="/membership-expired" element={<MembershipExpired />} />
 
                     {/* Routes WITH MainLayout */}
                     <Route element={<MainLayoutWrapper />}>
@@ -165,7 +169,25 @@ const App: React.FC = () => {
                       }
                     />
 
+                    {/* Profile Route */}
+                    <Route
+                      path="/profile"
+                      element={
+                        <ProtectedRoute>
+                          <Profile />
+                        </ProtectedRoute>
+                      }
+                    />
+
                     {/* 紫微斗数 (Zi Wei Dou Shu) Routes */}
+                    <Route
+                      path="/tier3-result"
+                      element={
+                        <ProtectedRoute>
+                          <Tier3Result />
+                        </ProtectedRoute>
+                      }
+                    />
                     <Route
                       path="/my-chart"
                       element={

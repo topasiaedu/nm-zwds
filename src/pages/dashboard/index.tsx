@@ -59,7 +59,7 @@ const Dashboard: React.FC = () => {
           <div className="mb-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
             <div className="space-y-1">
               <h1 className="text-4xl font-bold text-gray-900 dark:text-white">
-                {t("dashboard.welcome")}, {user?.email?.split("@")[0] || "User"}
+                {t("dashboard.welcome")}, {user?.user_metadata?.display_name || user?.email?.split("@")[0] || "User"}
               </h1>
               <p className="text-base text-gray-600 dark:text-gray-400">
                 {t("dashboard.subtitle")}
@@ -76,6 +76,32 @@ const Dashboard: React.FC = () => {
                 </h2>
 
                 <div className="space-y-4">
+                  {/* Tier3 / Admin: Experimental Chart */}
+                  {(tier === "tier3" || isAdmin) && (
+                    <Link
+                      to="/tier3-result"
+                      className="block bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20 rounded-xl p-4 hover:from-purple-100 hover:to-indigo-100 dark:hover:from-purple-900/30 dark:hover:to-indigo-900/30 transition-colors border border-purple-200 dark:border-purple-800">
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-center">
+                          <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-purple-100 dark:bg-purple-900/50 flex items-center justify-center mr-3">
+                            <svg className="w-5 h-5 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                            </svg>
+                          </div>
+                          <div>
+                            <div className="flex items-center">
+                              <h3 className="text-lg font-medium text-gray-900 dark:text-white">Tier3 Experimental Chart</h3>
+                              <span className="ml-2 px-2 py-0.5 text-xs font-semibold bg-purple-100 text-purple-800 dark:bg-purple-900/40 dark:text-purple-300 rounded-full">Tier3</span>
+                            </div>
+                            <p className="text-sm text-gray-600 dark:text-gray-400">Clean natal chart + palace activation preview</p>
+                          </div>
+                        </div>
+                        <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      </div>
+                    </Link>
+                  )}
                   {/* My Chart */}
                   <Link
                     to="/chart"

@@ -113,6 +113,12 @@ interface ZWDSChartProps {
   selectedDaXianPalace?: number; // Optional prop to auto-select a palace for Da Ming tags
   disableInteraction?: boolean; // Optional prop to disable all user interactions
   isPdfExport?: boolean; // Optional prop to indicate PDF export mode
+  /** Optional controlled selected palace (1-12). When set, overrides internal selection. */
+  selectedPalaceControlled?: number | null;
+  /** Optional controlled selected Da Xian palace (1-12). When set, mimics Da Xian click to show Da Ming tags. */
+  selectedDaXianControlled?: number | null;
+  /** Optional controlled selected palace for secondary name computation (mimics palace name click). */
+  selectedPalaceNameControlled?: number | null;
 }
 
 /**
@@ -125,6 +131,9 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
   selectedDaXianPalace,
   disableInteraction = false,
   isPdfExport = false,
+  selectedPalaceControlled = null,
+  selectedDaXianControlled = null,
+  selectedPalaceNameControlled = null,
 }) => {
   // State to track the selected palace for transformations
   const [selectedPalace, setSelectedPalace] = useState<number | null>(null);
@@ -282,6 +291,35 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
     // Redraw counter removed to prevent flashing
   };
 
+  // Sync internal selection with controlled prop if provided
+  useEffect(() => {
+    if (selectedPalaceControlled !== null && selectedPalaceControlled !== undefined) {
+      setSelectedPalace(selectedPalaceControlled);
+      if (!refsReady) {
+        setRefsReady(true);
+      }
+    }
+  }, [selectedPalaceControlled, refsReady, setRefsReady]);
+
+  // Sync Da Xian selection with controlled prop if provided
+  useEffect(() => {
+    if (selectedDaXianControlled !== null && selectedDaXianControlled !== undefined) {
+      setSelectedDaXian(selectedDaXianControlled);
+    } else if (selectedDaXianControlled === null) {
+      setSelectedDaXian(null);
+    }
+  }, [selectedDaXianControlled]);
+
+  // Sync selectedPalaceName with controlled prop (mimic palace name click interaction)
+  useEffect(() => {
+    if (!settings.palaceNameClickInteraction) return;
+    if (selectedPalaceNameControlled !== undefined && selectedPalaceNameControlled !== null) {
+      setSelectedPalaceName(selectedPalaceNameControlled);
+    } else if (selectedPalaceNameControlled === null) {
+      setSelectedPalaceName(null);
+    }
+  }, [selectedPalaceNameControlled]);
+
   /**
    * Handle Da Xian click
    */
@@ -364,8 +402,15 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
       distance += 12; // Wrap around for negative distances
     }
 
-    // Return the palace name at this position
-    return PALACE_NAMES[distance];
+    // Return the palace name at this position translated to English if applicable
+    const nameCn = PALACE_NAMES[distance];
+    if (language === "en") {
+      // Try translate using i18n keys if available
+      // We expect t("zwds.palaces.<name>") to exist for English
+      // Fallback to Chinese if missing
+      // Note: we cannot call t here (not in this file), so fallback is handled in Palace overlay rendering
+    }
+    return nameCn;
   };
 
   /**
