@@ -378,7 +378,7 @@ export class ZWDSCalculator {
       this.input.day
     );
 
-    const year = lunarDate.year - 1900 - 23;
+    const year = lunarDate.year - 1900 - 23 -240;
     // const year = this.input.year;
     const yearBranch = year % 12;
     const yearStem = year % 10;

@@ -51,8 +51,8 @@ const ChartOnly: React.FC = () => {
         }
 
         // Validate parameter ranges
-        if (year < 1900 || year > 2100) {
-          throw new Error("Year must be between 1900 and 2100");
+        if (year < 1660 || year > 2100) {
+          throw new Error("Year must be between 1660 and 2100");
         }
         if (month < 1 || month > 12) {
           throw new Error("Month must be between 1 and 12");

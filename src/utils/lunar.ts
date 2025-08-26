@@ -32,8 +32,8 @@ interface SolarLunarResult {
 export const lunar = {
   convertSolarToLunar(year: number, month: number, day: number): LunarDate {
     // Validate input
-    if (year < 1900 || year > 2100) {
-      throw new Error("Year must be between 1900 and 2100");
+    if (year < 1660 || year > 2100) {
+      throw new Error("Year must be between 1660 and 2100");
     }
 
     const result = solarLunar.solar2lunar(year, month, day) as SolarLunarResult;
@@ -48,8 +48,8 @@ export const lunar = {
 
   getLunarYearDays(year: number): number {
     // Validate input
-    if (year < 1900 || year > 2100) {
-      throw new Error("Year must be between 1900 and 2100");
+    if (year < 1660 || year > 2100) {
+      throw new Error("Year must be between 1660 and 2100");
     }
     
     // Since solarlunar doesn't expose the exact function we need,
@@ -87,8 +87,8 @@ export const lunar = {
 
   getLeapMonth(year: number): number {
     // Validate input
-    if (year < 1900 || year > 2100) {
-      throw new Error("Year must be between 1900 and 2100");
+    if (year < 1660 || year > 2100) {
+      throw new Error("Year must be between 1660 and 2100");
     }
     
     // Use type assertion since TypeScript doesn't know about this method
@@ -110,8 +110,8 @@ export const lunar = {
 
   getLeapDays(year: number): number {
     // Validate input
-    if (year < 1900 || year > 2100) {
-      throw new Error("Year must be between 1900 and 2100");
+    if (year < 1660 || year > 2100) {
+      throw new Error("Year must be between 1660 and 2100");
     }
     
     const leapMonth = this.getLeapMonth(year);
@@ -130,8 +130,8 @@ export const lunar = {
 
   getLunarMonthDays(year: number, month: number): number {
     // Validate input
-    if (year < 1900 || year > 2100) {
-      throw new Error("Year must be between 1900 and 2100");
+    if (year < 1660 || year > 2100) {
+      throw new Error("Year must be between 1660 and 2100");
     }
     
     // Use type assertion since TypeScript doesn't know about this method

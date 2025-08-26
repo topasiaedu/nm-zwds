@@ -64,7 +64,7 @@ const ChartTest: React.FC = () => {
                 value={formData.year}
                 onChange={handleInputChange}
                 className="w-full px-3 py-2 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                min="1900"
+                min="1660"
                 max="2100"
               />
             </div>
@@ -167,7 +167,7 @@ const ChartTest: React.FC = () => {
               <strong>URL Parameters:</strong>
             </p>
             <ul className="list-disc list-inside space-y-1 ml-4">
-              <li><code>year</code> - Birth year (1900-2100)</li>
+              <li><code>year</code> - Birth year (1660-2100)</li>
               <li><code>month</code> - Birth month (1-12)</li>
               <li><code>day</code> - Birth day (1-31)</li>
               <li><code>hour</code> - Birth hour (0-23)</li>
