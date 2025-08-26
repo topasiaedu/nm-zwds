@@ -1,0 +1,10 @@
+[33ma78f61d[m[33m ([m[1;36mHEAD -> [m[1;32mstaging[m[33m, [m[1;31morigin/staging[m[33m)[m feat: Implement premium golden theme for tier3-result page
+[33md03dd01[m routing: redirect Tier3 users to tier3-result; dashboard links point to tier3-result; tier3-result supports optional :id
+[33m5d48b20[m feat: add membership expired route and tier gating updates; UI tweaks and fixes
+[33mae96264[m Merge branch 'staging' of https://github.com/topasiaedu/nm-zwds into staging
+[33m7a654ed[m feat: enhance routing and layout management in App component
+[33m6fe5dad[m hotfix: enable all chart features by default for free-result page
+[33m5852066[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmain[m[33m)[m feat: additional updates to result page
+[33m18103da[m hotfix: update chart settings and transformation lines
+[33maa21878[m Merge branch 'staging'
+[33ma75c21d[m hotfix: fix palace click interaction when transformation lines are disabled

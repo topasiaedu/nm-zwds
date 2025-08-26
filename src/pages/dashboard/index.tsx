@@ -90,8 +90,7 @@ const Dashboard: React.FC = () => {
                           </div>
                           <div>
                             <div className="flex items-center">
-                              <h3 className="text-lg font-medium text-gray-900 dark:text-white">Tier3 Experimental Chart</h3>
-                              <span className="ml-2 px-2 py-0.5 text-xs font-semibold bg-purple-100 text-purple-800 dark:bg-purple-900/40 dark:text-purple-300 rounded-full">Tier3</span>
+                              <h3 className="text-lg font-medium text-gray-900 dark:text-white">Advanced Chart Analysis</h3>
                             </div>
                             <p className="text-sm text-gray-600 dark:text-gray-400">Clean natal chart + palace activation preview</p>
                           </div>
