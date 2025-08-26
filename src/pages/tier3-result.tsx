@@ -72,17 +72,7 @@ const Tier3ResultContent: React.FC = () => {
         <div className="p-6 text-center">
           <h1 className="text-2xl font-bold">Access Restricted</h1>
           <p className="text-gray-600 dark:text-gray-400 mt-2">This page is available to Tier3 or Admin users.</p>
-          <Link to="/dashboard" className="inline-block mt-4 px-6 py-3 rounded-lg bg-white/80 dark:bg-gray-800/60 font-semibold uppercase tracking-wider transition-all duration-200" style={{
-            color: '#B8860B',
-            borderColor: '#B8860B',
-            borderWidth: '2px'
-          }} onMouseEnter={(e) => {
-            e.currentTarget.style.borderColor = '#D4AF37';
-            e.currentTarget.style.boxShadow = '0 4px 15px rgba(212, 175, 55, 0.4)';
-          }} onMouseLeave={(e) => {
-            e.currentTarget.style.borderColor = '#B8860B';
-            e.currentTarget.style.boxShadow = 'none';
-          }}>Back to Dashboard</Link>
+          <Link to="/dashboard" className="inline-block mt-4 px-4 py-2 rounded-lg bg-indigo-600 text-white">Back to Dashboard</Link>
         </div>
       </PageTransition>
     );
@@ -187,63 +177,8 @@ const Tier3ResultContent: React.FC = () => {
   };
 
   return (
-    <>
-      <style>{`
-        @keyframes gradient {
-          0% {
-            background-position: 0% 50%;
-          }
-          50% {
-            background-position: 100% 50%;
-          }
-          100% {
-            background-position: 0% 50%;
-          }
-        }
-
-        .gradient-border {
-          position: relative;
-          background: linear-gradient(-45deg, #D4AF37, #FFD700, #DAA520, #B8860B, #D4AF37, #FFD700, #DAA520);
-          background-size: 400% 400%;
-          animation: gradient 15s ease infinite;
-          padding: 3px;
-          border-radius: 1rem;
-        }
-        .gradient-border-inner {
-          background: rgba(255, 255, 255, 0.95);
-          border-radius: calc(1rem - 3px);
-          position: relative;
-          z-index: 1;
-        }
-        .dark .gradient-border-inner {
-          background: rgba(31, 41, 55, 0.95);
-        }
-
-        .button-gradient-border {
-          position: relative;
-          background: linear-gradient(-45deg, #D4AF37, #FFD700, #DAA520, #B8860B, #D4AF37, #FFD700, #DAA520);
-          background-size: 400% 400%;
-          animation: gradient 6s ease infinite;
-          padding: 2px;
-          border-radius: 1rem;
-        }
-        .button-gradient-inner {
-          background: linear-gradient(-45deg, #D4AF37, #FFD700, #DAA520, #B8860B, #D4AF37, #FFD700, #DAA520);
-          background-size: 200% 200%;
-          animation: gradient 6s ease infinite;
-          border-radius: 0.875rem;
-          position: relative;
-          z-index: 1;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          flex-direction: column;
-          color: #1a1a1a;
-          font-weight: 600;
-        }
-      `}</style>
-      <PageTransition>
-      <div className="min-h-screen ">
+    <PageTransition>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50 dark:from-gray-900 dark:via-gray-900 dark:to-indigo-900/20">
         <div className="container mx-auto px-4 py-8 max-w-7xl">
           {/* Header Section */}
           <div className="mb-8">
@@ -251,20 +186,7 @@ const Tier3ResultContent: React.FC = () => {
               <div className="flex items-center space-x-4">
                 <Link 
                   to="/dashboard" 
-                  className="inline-flex items-center px-4 py-2.5 text-sm font-semibold uppercase tracking-wider transition-colors group rounded-lg backdrop-blur-sm bg-white/80 dark:bg-gray-800/40"
-                  style={{
-                    color: '#B8860B',
-                    borderColor: '#B8860B',
-                    borderWidth: '1px'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.color = '#D4AF37';
-                    e.currentTarget.style.borderColor = '#D4AF37';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.color = '#B8860B';
-                    e.currentTarget.style.borderColor = '#B8860B';
-                  }}
+                  className="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors group"
                 >
                   <svg className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -272,24 +194,14 @@ const Tier3ResultContent: React.FC = () => {
                   Back to Dashboard
                 </Link>
                 <div className="h-6 w-px bg-gray-300 dark:bg-gray-600"></div>
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border"
-                      style={{
-                        background: 'linear-gradient(45deg, rgba(139,92,246,0.2), rgba(168,85,247,0.2))',
-                        color: '#8b5cf6',
-                        borderColor: '#a855f7'
-                      }}>
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gradient-to-r from-purple-100 to-indigo-100 text-purple-800 dark:from-purple-900/40 dark:to-indigo-900/40 dark:text-purple-300">
                   ZI WEI DOU SHU CHART ANALYSIS
                 </span>
               </div>
             </div>
             
             <div className="space-y-4">
-              <h1 className="text-4xl font-bold" style={{
-                background: 'linear-gradient(45deg, #D4AF37, #FFD700, #DAA520)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text'
-              }}>
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-900 via-indigo-900 to-purple-900 dark:from-white dark:via-indigo-100 dark:to-purple-100 bg-clip-text text-transparent">
                 Advanced Chart Analysis
               </h1>
               <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl">
@@ -302,13 +214,13 @@ const Tier3ResultContent: React.FC = () => {
 
           {/* Control Panel */}
           <div className="mb-8">
-            <div className="backdrop-blur-sm rounded-2xl shadow-lg border p-6" style={{borderColor: '#DAA520'}}>
+            <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-2xl shadow-sm border border-gray-200/50 dark:border-gray-700/50 p-6">
               <div className="space-y-6">
                 {/* Timing Controls */}
                 <div>
                   <div className="flex items-center mb-4">
-                    <div className="w-1.5 h-1.5 rounded-full mr-3" style={{backgroundColor: '#DAA520'}}></div>
-                    <h3 className="text-base font-semibold" style={{color: '#B8860B'}}>Timing Mode</h3>
+                    <div className="w-1.5 h-1.5 rounded-full bg-purple-500 mr-3"></div>
+                    <h3 className="text-base font-semibold text-gray-900 dark:text-white">Timing Mode</h3>
                   </div>
                   <div className="flex flex-wrap gap-3">
                     {([
@@ -322,7 +234,6 @@ const Tier3ResultContent: React.FC = () => {
                           key={opt.key}
                           type="button"
                           aria-pressed={active}
-                          style={{borderRadius: "1rem"}}
                           onClick={() => {
                             setViewMode(opt.key);
                             if (opt.key === "dayun") {
@@ -365,43 +276,16 @@ const Tier3ResultContent: React.FC = () => {
                               }
                             }
                           }}
-                          className={`group relative font-semibold uppercase tracking-wider overflow-hidden ${
+                          className={`group relative px-6 py-3 rounded-xl font-medium transition-all duration-200 ${
                             active 
-                              ? "text-white" 
-                              : "px-8 py-4 rounded-2xl bg-white/80 dark:bg-gray-800/60 backdrop-blur-sm font-semibold border-2"
-                          }
-                          style={!active ? {
-                            color: '#B8860B',
-                            borderColor: '#B8860B',
-                            borderWidth: '2px'
-                          } : {}}
-                          onMouseEnter={!active ? (e) => {
-                            e.currentTarget.style.borderColor = '#D4AF37';
-                            e.currentTarget.style.boxShadow = '0 4px 15px rgba(212, 175, 55, 0.4)';
-                          } : undefined}
-                          onMouseLeave={!active ? (e) => {
-                            e.currentTarget.style.borderColor = '#B8860B';
-                            e.currentTarget.style.boxShadow = 'none';
-                          } : undefined
+                              ? "bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg shadow-purple-500/25 scale-105" 
+                              : "bg-white/80 dark:bg-gray-700/80 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-600 hover:border-purple-300 dark:hover:border-purple-500 hover:bg-purple-50 dark:hover:bg-purple-900/20"
                           }`}
                         >
-                          {active ? (
-                            <div className="button-gradient-border">
-                              <div className="button-gradient-inner px-8 py-4">
-                                <div className="text-sm font-bold uppercase tracking-wide">{opt.label}</div>
-                                <div className="text-xs mt-0.5 text-gray-800">
-                                  {opt.desc}
-                                </div>
-                              </div>
-                            </div>
-                          ) : (
-                            <>
-                              <div className="text-sm font-bold uppercase tracking-wide">{opt.label}</div>
-                              <div className={`text-xs mt-0.5 text-gray-500 dark:text-gray-400`}>
-                                {opt.desc}
-                              </div>
-                            </>
-                          )}
+                          <div className="text-sm font-semibold">{opt.label}</div>
+                          <div className={`text-xs mt-0.5 ${active ? "text-purple-100" : "text-gray-500 dark:text-gray-400"}`}>
+                            {opt.desc}
+                          </div>
                         </button>
                       );
                     })}
@@ -411,8 +295,8 @@ const Tier3ResultContent: React.FC = () => {
                 {/* Aspect Controls */}
                 <div>
                   <div className="flex items-center mb-4">
-                    <div className="w-1.5 h-1.5 rounded-full mr-3" style={{backgroundColor: '#DAA520'}}></div>
-                    <h3 className="text-base font-semibold" style={{color: '#B8860B'}}>Aspect of Life</h3>
+                    <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 mr-3"></div>
+                    <h3 className="text-base font-semibold text-gray-900 dark:text-white">Aspect of Life</h3>
                     <div className="ml-auto text-xs text-gray-500 dark:text-gray-400">
                       Click to analyze transformation patterns
                     </div>
@@ -436,7 +320,6 @@ const Tier3ResultContent: React.FC = () => {
                           key={name}
                           type="button"
                           aria-pressed={active}
-                          style={{borderRadius: "1rem"}}
                           onClick={() => {
                             if (viewMode === "natal") {
                               const num = getPalaceNumberByEnglish(name);
@@ -477,35 +360,13 @@ const Tier3ResultContent: React.FC = () => {
                               return;
                             }
                           }}
-                          className={`text-sm font-semibold uppercase tracking-wider overflow-hidden ${
+                          className={`px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
                             active 
-                              ? "text-white" 
-                              : "px-5 py-3 rounded-xl bg-white/80 dark:bg-gray-800/60 backdrop-blur-sm font-semibold border-2"
-                          }
-                          style={!active ? {
-                            color: '#B8860B',
-                            borderColor: '#B8860B',
-                            borderWidth: '2px'
-                          } : {}}
-                          onMouseEnter={!active ? (e) => {
-                            e.currentTarget.style.borderColor = '#D4AF37';
-                            e.currentTarget.style.boxShadow = '0 4px 15px rgba(212, 175, 55, 0.4)';
-                          } : undefined}
-                          onMouseLeave={!active ? (e) => {
-                            e.currentTarget.style.borderColor = '#B8860B';
-                            e.currentTarget.style.boxShadow = 'none';
-                          } : undefined
+                              ? "bg-gradient-to-r from-indigo-600 to-blue-600 text-white shadow-lg shadow-indigo-500/25 scale-105 border-indigo-500" 
+                              : "bg-white/80 dark:bg-gray-700/80 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-600 hover:border-indigo-300 dark:hover:border-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-900/20"
                           }`}
                         >
-                          {active ? (
-                            <div className="button-gradient-border">
-                              <div className="button-gradient-inner px-5 py-3">
-                                {name}
-                              </div>
-                            </div>
-                          ) : (
-                            name
-                          )}
+                          {name}
                         </button>
                       );
                     })}
@@ -520,8 +381,7 @@ const Tier3ResultContent: React.FC = () => {
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
               {/* Chart Container - Left Side */}
               <div className="lg:col-span-3">
-                <div className="gradient-border">
-                  <div className="gradient-border-inner backdrop-blur-sm shadow-sm p-8 overflow-hidden bg-gray-900/60">
+                <div className="bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-2xl shadow-sm border border-gray-200/50 dark:border-gray-700/50 p-8">
                   <div className="flex justify-center">
                     <div className="w-full max-w-4xl">
                       <ZWDSChart
@@ -534,25 +394,24 @@ const Tier3ResultContent: React.FC = () => {
                       />
                     </div>
                   </div>
-                  </div>
                 </div>
               </div>
 
               {/* Profile Information Card - Right Side */}
               <div className="lg:col-span-1">
-                <div className="backdrop-blur-sm rounded-2xl shadow-lg border p-6 h-fit" style={{borderColor: '#DAA520'}}>
+                <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-2xl shadow-sm border border-gray-200/50 dark:border-gray-700/50 p-6 h-fit">
                   <div className="flex items-center mb-6">
-                    <div className="w-2 h-2 rounded-full mr-3" style={{background: 'linear-gradient(45deg, #DAA520, #FFD700)'}}></div>
-                    <h2 className="text-lg font-semibold" style={{color: '#B8860B'}}>Profile Details</h2>
+                    <div className="w-2 h-2 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 mr-3"></div>
+                    <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Profile Details</h2>
                   </div>
                   <div className="space-y-6">
                     <div className="space-y-2">
                       <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Name</p>
-                      <p className="text-base font-semibold text-black dark:text-white" >{profile.name}</p>
+                      <p className="text-base font-semibold text-gray-900 dark:text-white">{profile.name}</p>
                     </div>
                     <div className="space-y-2">
                       <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Birth Date</p>
-                      <p className="text-base font-semibold text-black dark:text-white" >
+                      <p className="text-base font-semibold text-gray-900 dark:text-white">
                         {new Date(profile.birthday).toLocaleDateString("en-US", { 
                           year: "numeric", 
                           month: "short", 
@@ -562,11 +421,11 @@ const Tier3ResultContent: React.FC = () => {
                     </div>
                     <div className="space-y-2">
                       <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Birth Time</p>
-                      <p className="text-base font-semibold text-black dark:text-white" >{String(profile.birth_time)}</p>
+                      <p className="text-base font-semibold text-gray-900 dark:text-white">{String(profile.birth_time)}</p>
                     </div>
                     <div className="space-y-2">
                       <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Gender</p>
-                      <p className="text-base font-semibold text-black dark:text-white" >
+                      <p className="text-base font-semibold text-gray-900 dark:text-white">
                         {profile.gender === "male" ? "Male" : "Female"}
                       </p>
                     </div>               
@@ -578,7 +437,6 @@ const Tier3ResultContent: React.FC = () => {
         </div>
       </div>
     </PageTransition>
-    </>
   );
 };
 
@@ -591,5 +449,3 @@ const Tier3Result: React.FC = () => {
 };
 
 export default Tier3Result;
-
-
