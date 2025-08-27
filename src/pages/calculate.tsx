@@ -64,10 +64,8 @@ const Calculate: React.FC = () => {
           {/* Saved profiles section */}
           <div className="lg:col-span-1 order-2 lg:order-1">
             <div className="rounded-2xl shadow-2xl overflow-hidden h-full
-                          border border-white/10
-                          backdrop-filter backdrop-blur-2xl 
-                          bg-white/10 hover:bg-white/15 
-                          dark:bg-black/10 dark:hover:bg-black/20 
+                          border border-gray-200 dark:border-gray-700
+                          bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 
                           transition-all duration-300 p-6">
               <h2 className="text-xl font-bold mb-4 dark:text-white flex items-center">
                 <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -87,7 +85,7 @@ const Calculate: React.FC = () => {
                   type="search" 
                   className="block w-full p-2 pl-10 pr-4 text-sm rounded-lg 
                           bg-white/20 dark:bg-gray-800/20
-                          border border-white/10 dark:border-gray-700/30
+                          border border-gray-200 dark:border-gray-700 dark:border-gray-700/30
                           text-gray-700 dark:text-gray-300
                           placeholder-gray-500 dark:placeholder-gray-400
                           focus:ring-2 focus:ring-blue-500 focus:outline-none"
@@ -159,10 +157,8 @@ const Calculate: React.FC = () => {
           {/* Chart calculation explanation */}
           <div className="lg:col-span-3 order-3">
             <div className="rounded-2xl shadow-2xl overflow-hidden
-                          border border-white/10
-                          backdrop-filter backdrop-blur-2xl 
-                          bg-white/10 hover:bg-white/15 
-                          dark:bg-black/10 dark:hover:bg-black/20 
+                          border border-gray-200 dark:border-gray-700
+                          bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 
                           transition-all duration-300 p-6">
               <h2 className="text-2xl font-bold mb-4 dark:text-white">
                 {t("calculate.aboutZiWei")}

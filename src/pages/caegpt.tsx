@@ -20,10 +20,8 @@ const CAEGPT: React.FC = () => {
           <div className="w-full max-w-5xl mx-auto mt-2">
             <div
               className="rounded-2xl shadow-2xl overflow-hidden
-                          border border-white/10
-                          backdrop-filter backdrop-blur-2xl 
-                          bg-white/10 hover:bg-white/15 
-                          dark:bg-black/10 dark:hover:bg-black/20 
+                          border border-gray-200 dark:border-gray-700
+                          bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 
                           transition-all duration-300">
               {/* Chat Header */}
               <div className="bg-gradient-to-r from-purple-600/20 to-indigo-600/20 px-2 sm:px-4 py-2 sm:py-3 border-b border-white/10">

@@ -5,6 +5,8 @@ import {
   Route,
   Navigate,
   useLocation,
+  Outlet,
+  useParams,
 } from "react-router-dom";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { ProfileProvider } from "./context/ProfileContext";
@@ -13,7 +15,7 @@ import { LanguageProvider } from "./context/LanguageContext";
 import { AlertProvider } from "./context/AlertContext";
 import { SidebarProvider } from "./context/SidebarContext";
 import ProtectedRoute from "./components/ProtectedRoute";
-import TierProtectedRoute from "./components/TierProtectedRoute";
+
 import MainLayout from "./layouts/MainLayout";
 import Dashboard from "./pages/dashboard/index";
 import SignInPage from "./pages/authentication/sign-in";
@@ -26,6 +28,11 @@ import Result from "./pages/result";
 import TimingChart from "./pages/timing-chart";
 import CAEGPT from "./pages/caegpt";
 import UserManagement from "./pages/admin/user-management";
+import ChartOnly from "./pages/chart-only";
+import ChartTest from "./pages/chart-test";
+import Tier3Result from "./pages/tier3-result";
+import Profile from "./pages/profile";
+import MembershipExpired from "./pages/membership-expired";
 // Import new free test pages
 import FreeTest from "./pages/free-test";
 import FreeResult from "./pages/free-result";
@@ -34,6 +41,7 @@ import FreeTestEnded from "./pages/free-test-ended";
 import FREE_TEST_CONFIG from "./config/freeTestConfig";
 import { Analytics } from "@vercel/analytics/react"
 import { SpeedInsights } from "@vercel/speed-insights/react"
+import { useTierAccess } from "./context/TierContext";
 
 /**
  * Authentication route wrapper that redirects authenticated users to dashboard
@@ -51,6 +59,43 @@ const AuthRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   }
 
   return <>{children}</>;
+};
+
+/**
+ * Wrapper to render routes inside `MainLayout` with Outlet.
+ * This allows us to exclude certain paths (like /chart-only) from the layout/nav.
+ */
+const MainLayoutWrapper: React.FC = () => (
+  <MainLayout>
+    <Outlet />
+  </MainLayout>
+);
+
+/**
+ * Route element that redirects Tier3 (non-admin) users to the Tier3 result page for /chart
+ */
+const TierAwareChartRoute: React.FC = () => {
+  const { tier, isAdmin } = useTierAccess();
+  const isTier3Only = tier === "tier3" && !isAdmin;
+  if (isTier3Only) {
+    // Tier 3 users should always see the Tier3Result page instead of standard Result
+    return <Navigate to="/tier3-result" replace />;
+  }
+  return <Result />;
+};
+
+/**
+ * Route element that redirects Tier3 (non-admin) users to the Tier3 result page for /result/:id
+ */
+const TierAwareResultByIdRoute: React.FC = () => {
+  const { tier, isAdmin } = useTierAccess();
+  const params = useParams<{ id: string }>();
+  const isTier3Only = tier === "tier3" && !isAdmin;
+  if (isTier3Only) {
+    const target = params.id ? `/tier3-result/${params.id}` : "/tier3-result";
+    return <Navigate to={target} replace />;
+  }
+  return <Result />;
 };
 
 /**
@@ -74,8 +119,15 @@ const App: React.FC = () => {
             <ProfileProvider>
               <LanguageProvider>
                 <SidebarProvider>
-                  <MainLayout>
+                  {/* Single router switch. Some routes bypass MainLayout. */}
                   <Routes>
+                    {/* Routes WITHOUT MainLayout (no navbar) */}
+                    <Route path="/chart-only" element={<ChartOnly />} />
+                    <Route path="/chart-test" element={<ChartTest />} />
+                    <Route path="/membership-expired" element={<MembershipExpired />} />
+
+                    {/* Routes WITH MainLayout */}
+                    <Route element={<MainLayoutWrapper />}>
                     {/* Authentication routes */}
                     <Route
                       path="/authentication/sign-in"
@@ -146,7 +198,33 @@ const App: React.FC = () => {
                       }
                     />
 
+                    {/* Profile Route */}
+                    <Route
+                      path="/profile"
+                      element={
+                        <ProtectedRoute>
+                          <Profile />
+                        </ProtectedRoute>
+                      }
+                    />
+
                     {/* 紫微斗数 (Zi Wei Dou Shu) Routes */}
+                    <Route
+                      path="/tier3-result"
+                      element={
+                        <ProtectedRoute>
+                          <Tier3Result />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/tier3-result/:id"
+                      element={
+                        <ProtectedRoute>
+                          <Tier3Result />
+                        </ProtectedRoute>
+                      }
+                    />
                     <Route
                       path="/my-chart"
                       element={
@@ -159,7 +237,7 @@ const App: React.FC = () => {
                       path="/chart"
                       element={
                         <ProtectedRoute>
-                          <Result />
+                          <TierAwareChartRoute />
                         </ProtectedRoute>
                       }
                     />
@@ -175,7 +253,7 @@ const App: React.FC = () => {
                       path="/result/:id"
                       element={
                         <ProtectedRoute>
-                          <Result />
+                          <TierAwareResultByIdRoute />
                         </ProtectedRoute>
                       }
                     />
@@ -187,6 +265,8 @@ const App: React.FC = () => {
                         </ProtectedRoute>
                       }
                     />
+
+                    
 
                     {/* Destiny Wealth Navigator AI Assistant - Tier 2+ Only */}
                     <Route
@@ -212,8 +292,8 @@ const App: React.FC = () => {
 
                     {/* 404 page */}
                     <Route path="*" element={<NotFoundPage />} />
+                    </Route>
                   </Routes>
-                </MainLayout>
                 </SidebarProvider>
               </LanguageProvider>
             </ProfileProvider>

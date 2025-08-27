@@ -3,6 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { Tilt } from "react-tilt";
 import { useLanguage } from "../context/LanguageContext";
 import { useProfileContext } from "../context/ProfileContext";
+import { ChartSettingsProvider } from "../context/ChartSettingsContext";
 import PageTransition from "../components/PageTransition";
 import ZWDSChart from "../components/zwds/ZWDSChart";
 import { ZWDSCalculator } from "../utils/zwds/calculator";
@@ -371,7 +372,7 @@ const getEffectiveStars = (palace: any, palaceName: string, chartData: ChartData
  * from the person's major limits (大限). Each chart highlights the corresponding
  * palace and shows the Da Ming tags for that period.
  */
-const TimingChart: React.FC = () => {
+const TimingChartContent: React.FC = () => {
   const { t } = useLanguage();
   const { id } = useParams<{ id: string }>();
   const { profiles } = useProfileContext();
@@ -1046,6 +1047,18 @@ const TimingChart: React.FC = () => {
         </div>
       </div>
     </PageTransition>
+  );
+};
+
+/**
+ * TimingChart page wrapper that provides chart settings context
+ * so that `ZWDSChart` can consume `useChartSettings` safely.
+ */
+const TimingChart: React.FC = () => {
+  return (
+    <ChartSettingsProvider defaultPageType="timing-chart">
+      <TimingChartContent />
+    </ChartSettingsProvider>
   );
 };
 

@@ -12,10 +12,8 @@ const DashboardPage: React.FC = () => {
   return (
     <div className="flex items-center justify-center min-h-[calc(100vh-100px)]">
       <Card className="w-full max-w-4xl relative z-10 rounded-2xl shadow-2xl 
-                     border border-white/10
-                     backdrop-filter backdrop-blur-2xl 
-                     bg-white/10 hover:bg-white/15 
-                     dark:bg-black/10 dark:hover:bg-black/20 
+                     border border-gray-200 dark:border-gray-700
+                     bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700
                      transition-all duration-300">
         <div className="space-y-4">
           <h1 className="text-2xl font-bold dark:text-white">
