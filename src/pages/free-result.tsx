@@ -453,6 +453,7 @@ const FreeResultContent: React.FC = () => {
     }
   }, [chartData, calculatedChartData, formatDate, language, showAlert, t]);
 
+
   // Prepare the limited time offer text
   const limitedTimeText = t("freeTest.limitedTime")
     .replace("{{startDate}}", FREE_TEST_CONFIG.startDate)

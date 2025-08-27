@@ -1,4 +1,5 @@
 import solarLunar from "solarlunar";
+import { SolarDay } from "tyme4ts";
 
 interface LunarDate {
   year: number;
@@ -30,20 +31,39 @@ interface SolarLunarResult {
 }
 
 export const lunar = {
+  /**
+   * Convert a solar (Gregorian) date to a Chinese lunar date using tyme4ts.
+   * Ensures strict validation and returns a normalized object.
+   */
   convertSolarToLunar(year: number, month: number, day: number): LunarDate {
-    // Validate input
+    // Basic validation for bounds first
     if (year < 1660 || year > 2100) {
       throw new Error("Year must be between 1660 and 2100");
     }
+    if (month < 1 || month > 12) {
+      throw new Error(`Month out of range: ${month}`);
+    }
+    if (day < 1 || day > 31) {
+      throw new Error(`Day out of range: ${day}`);
+    }
 
-    const result = solarLunar.solar2lunar(year, month, day) as SolarLunarResult;
-    
-    return {
-      year: result.lYear,
-      month: result.lMonth,
-      day: result.lDay,
-      isLeap: result.isLeap
-    };
+    try {
+      // Create a SolarDay instance and convert to LunarDay via tyme4ts
+      const solarDay: SolarDay = SolarDay.fromYmd(year, month, day);
+      const lunarDay = solarDay.getLunarDay();
+
+      // Map tyme4ts LunarDay to our LunarDate shape
+      return {
+        year: lunarDay.getYear(),
+        month: lunarDay.getMonth(),
+        day: lunarDay.getDay(),
+        isLeap: lunarDay.getLunarMonth().isLeap(),
+      };
+    } catch (error) {
+      // Provide a clear error if conversion fails
+      const message = error instanceof Error ? error.message : "Unknown conversion error";
+      throw new Error(`Failed to convert solar to lunar: ${message}`);
+    }
   },
 
   getLunarYearDays(year: number): number {
@@ -53,17 +73,7 @@ export const lunar = {
     }
     
     // Since solarlunar doesn't expose the exact function we need,
-    // we'll calculate using a workaround
-    // For simplicity, we'll use the solarlunar.lunar2solar to get information
-    // about the last day of the lunar year
-    const lastMonth = 12;
-    let lastDay = 29;
-    // Try 30 days if it's valid
-    if ((solarLunar as any).monthDays) {
-      lastDay = (solarLunar as any).monthDays(year, lastMonth);
-    }
-    
-    const nextYear = year + 1;
+    // we'll calculate using available monthDays and leapDays helpers when present.
     const leapMonth = this.getLeapMonth(year);
     
     // Calculate total days in the year

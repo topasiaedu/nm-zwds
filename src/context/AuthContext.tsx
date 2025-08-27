@@ -67,7 +67,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
       const {
         data: { session },
       } = await supabase.auth.getSession();
-      console.log("AuthContext - Initial session user ID:", session?.user.id);
+      // console.log("AuthContext - Initial session user ID:", session?.user.id);
     };
     getUserId();
   }, []);
@@ -88,7 +88,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
           console.error("AuthContext - Error getting session:", error);
         }
 
-        console.log("AuthContext - Initialize auth with session:", !!session);
+        // console.log("AuthContext - Initialize auth with session:", !!session);
         
         if (session) {
           setSession(session);
@@ -108,17 +108,17 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     // Set up auth state listener
     const { data: authListener } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        console.log("Auth state change:", event, "Session exists:", !!session, "User ID:", session?.user?.id);
+        // console.log("Auth state change:", event, "Session exists:", !!session, "User ID:", session?.user?.id);
         setSession(session);
         setUser(session?.user ?? null);
 
         // Don't redirect during initial load
         if (!initializedRef.current) {
-          console.log("AuthContext - Skipping redirect during initialization");
+          // console.log("AuthContext - Skipping redirect during initialization");
           return;
         }
 
-        console.log("Auth state change:", event, "Session exists:", !!session, "User ID:", session?.user?.id);
+        // console.log("Auth state change:", event, "Session exists:", !!session, "User ID:", session?.user?.id);
       }
     );
 

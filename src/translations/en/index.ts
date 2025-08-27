@@ -28,6 +28,8 @@ const en = {
     close: "Close",
     back: "Back",
     loadingText: "Loading...",
+    error: "Error",
+    retry: "Retry",
   }
 };
 

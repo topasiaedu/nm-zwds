@@ -1,4 +1,4 @@
-import { solar2lunar } from 'solarlunar';
+import { SolarDay } from "tyme4ts";
 
 /**
  * Utility functions for Zi Wei Dou Shu calculations
@@ -142,23 +142,33 @@ export function getHourBranch(hour: number): number {
  * @returns Lunar day string (e.g., "初一", "初二", etc.)
  */
 export function getLunarDayFromBirthday(year: number, month: number, day: number): string {
-  const lunarInfo = solar2lunar(year, month, day);
-
-  if (!lunarInfo || !lunarInfo.lDay) {
-    console.warn(`Failed to convert solar date ${year}-${month}-${day}`);
+  // Validate inputs to prevent runtime errors
+  if (month < 1 || month > 12) {
+    console.warn(`Month out of range when converting: ${month}`);
+    return "未知";
+  }
+  if (day < 1 || day > 31) {
+    console.warn(`Day out of range when converting: ${day}`);
     return "未知";
   }
 
-  // Lunar day names mapping
-  const lunarDayMap: string[] = [
-    "", "初一", "初二", "初三", "初四", "初五", "初六", "初七", "初八", "初九", "初十",
-    "十一", "十二", "十三", "十四", "十五", "十六", "十七", "十八", "十九", "二十",
-    "廿一", "廿二", "廿三", "廿四", "廿五", "廿六", "廿七", "廿八", "廿九", "三十"
-  ];
+  try {
+    const solarDay: SolarDay = SolarDay.fromYmd(year, month, day);
+    const lunarDay = solarDay.getLunarDay();
+    const d = lunarDay.getDay();
 
-  const lunarDay = lunarDayMap[lunarInfo.lDay];
+    // Lunar day names mapping
+    const lunarDayMap: string[] = [
+      "", "初一", "初二", "初三", "初四", "初五", "初六", "初七", "初八", "初九", "初十",
+      "十一", "十二", "十三", "十四", "十五", "十六", "十七", "十八", "十九", "二十",
+      "廿一", "廿二", "廿三", "廿四", "廿五", "廿六", "廿七", "廿八", "廿九", "三十"
+    ];
 
-  return lunarDay || "未知";
+    return lunarDayMap[d] || "未知";
+  } catch (error) {
+    console.warn(`Failed to convert solar date ${year}-${month}-${day}`);
+    return "未知";
+  }
 }
 
 /**

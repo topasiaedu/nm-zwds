@@ -62,7 +62,7 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
           return;
         }
 
-        console.log("ProfileContext - Fetched free test profiles:", profiles?.length);
+        // console.log("ProfileContext - Fetched free test profiles:", profiles?.length);
 
         setProfiles((prev) => {
           if (isEqual(prev, profiles)) {
@@ -109,10 +109,10 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
 
     // Fetch profiles regardless of auth state to support free test
     if (user) {
-      console.log("ProfileContext - Fetching profiles for authenticated user:", user.id);
+      // console.log("ProfileContext - Fetching profiles for authenticated user:", user.id);
       fetchProfiles();
     } else {
-      console.log("ProfileContext - Fetching free test profiles (no auth required)");
+      // console.log("ProfileContext - Fetching free test profiles (no auth required)");
       fetchProfileWithoutUser();
     }
 
@@ -174,7 +174,7 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
   }, [user]); // Only depend on user, not profiles
 
   const addProfile = useCallback(async (profile: ProfileInsert) => {
-    console.log("ProfileContext - addProfile called with:", profile);
+    // console.log("ProfileContext - addProfile called with:", profile);
     setLoading(true);
 
     const { data, error } = await supabase
@@ -191,12 +191,12 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
       return null;
     }
 
-    console.log("ProfileContext - Profile created successfully:", data?.[0]);
+    // console.log("ProfileContext - Profile created successfully:", data?.[0]);
     
     // We add to the array of Profiles
     setProfiles((prev) => {
       const newProfiles = [...prev, data?.[0]];
-      console.log("ProfileContext - Updated profiles in context:", newProfiles.map(p => ({ id: p.id, name: p.name })));
+      // console.log("ProfileContext - Updated profiles in context:", newProfiles.map(p => ({ id: p.id, name: p.name })));
       return newProfiles;
     });
     setLoading(false);
@@ -231,7 +231,7 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
   const setCurrentProfileById = useCallback(
     (profileId: string) => {
       const profile = profiles.find((profile) => profile.id === profileId);
-      console.log("Setting current profile by ID:", profileId, profile);
+      // console.log("Setting current profile by ID:", profileId, profile);
       if (profile) {
         setCurrentProfile(profile);
       }

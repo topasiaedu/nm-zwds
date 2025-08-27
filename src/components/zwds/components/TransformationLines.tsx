@@ -194,11 +194,11 @@ const TransformationLines: React.FC<TransformationLinesProps> = ({
   disableAnimations = false
 }) => {
 
-  console.log("🎭 TransformationLines", transformations);
+  // console.log("🎭 TransformationLines", transformations);
   
   // Only log when there are issues for debugging
   if (selectedPalace && starRefs.current.size === 0) {
-    console.log("🎭 Warning: Selected palace but no star refs available");
+    // console.log("🎭 Warning: Selected palace but no star refs available");
   }
 
   if (!chartRef.current || !refsReady) {
@@ -248,7 +248,7 @@ const TransformationLines: React.FC<TransformationLinesProps> = ({
       
       if (!fromPalaceRef || !toStarRef) {
         if (selectedPalace) {
-          console.log("🎭 Missing ref for transformation:", toStarKey);
+          // console.log("🎭 Missing ref for transformation:", toStarKey);
         }
         return null;
       }
@@ -431,7 +431,7 @@ const TransformationLines: React.FC<TransformationLinesProps> = ({
   
   // Only log if there are issues
   if (selectedPalace && regularLines.length === 0 && regularTransformations.length > 0) {
-    console.log("🎭 Warning: Expected transformation lines but none created");
+    // console.log("🎭 Warning: Expected transformation lines but none created");
   }
   
   // Render opposite palace influences with no redraw logic
