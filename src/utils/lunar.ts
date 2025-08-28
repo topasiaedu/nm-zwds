@@ -55,7 +55,7 @@ export const lunar = {
       // Map tyme4ts LunarDay to our LunarDate shape
       return {
         year: lunarDay.getYear(),
-        month: lunarDay.getMonth(),
+        month:  Math.abs(lunarDay.getMonth()) ,
         day: lunarDay.getDay(),
         isLeap: lunarDay.getLunarMonth().isLeap(),
       };

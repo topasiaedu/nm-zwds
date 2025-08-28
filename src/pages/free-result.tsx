@@ -105,11 +105,6 @@ const FreeResultContent: React.FC = () => {
     const checkEventStatus = () => {
       const status = FREE_TEST_CONFIG.getStatusReason();
       
-      console.log("Free test status:", status);
-      console.log("Start date:", FREE_TEST_CONFIG.startDate);
-      console.log("End date:", FREE_TEST_CONFIG.endDate);
-      console.log("Is enabled:", FREE_TEST_CONFIG.isEnabled);
-      
       // Set active only if status is "active"
       setIsEventActive(status === "active");
     };
@@ -208,12 +203,12 @@ const FreeResultContent: React.FC = () => {
                 return;
               }
               
-              console.log("FreeResult fetchData - Profile not found even with direct fetch, showing error");
+              // console.log("FreeResult fetchData - Profile not found even with direct fetch, showing error");
               setError(`Profile with ID ${id} not found.`);
               setLoading(false);
             }
           } else {
-            console.log("FreeResult fetchData - No profiles loaded yet, waiting...");
+            // console.log("FreeResult fetchData - No profiles loaded yet, waiting...");
             // If profiles aren't loaded yet, wait longer and show loading state
             await new Promise((resolve) => setTimeout(resolve, 2500)); // Increased from 1500ms to 2500ms
             if (isMounted) {
@@ -223,7 +218,7 @@ const FreeResultContent: React.FC = () => {
               );
               
               if (retryProfileCheck) {
-                console.log("FreeResult fetchData - Profile found after wait:", retryProfileCheck.id);
+                // console.log("FreeResult fetchData - Profile found after wait:", retryProfileCheck.id);
                 const profile = retryProfileCheck;
                 const chartData: ChartData = {
                   id: profile.id,
@@ -239,7 +234,7 @@ const FreeResultContent: React.FC = () => {
               
               // Additional retry attempt after longer wait
               if (!profileLoadAttempts.current) {
-                console.log("FreeResult fetchData - Final retry attempt after long wait");
+                // console.log("FreeResult fetchData - Final retry attempt after long wait");
                 profileLoadAttempts.current = 1;
                 await new Promise((resolve) => setTimeout(resolve, 2000));
                 if (isMounted) {
@@ -247,7 +242,7 @@ const FreeResultContent: React.FC = () => {
                     (profile) => String(profile.id) === String(id)
                   );
                   if (finalRetryCheck) {
-                    console.log("FreeResult fetchData - Profile found in final retry:", finalRetryCheck.id);
+                    // console.log("FreeResult fetchData - Profile found in final retry:", finalRetryCheck.id);
                     const profile = finalRetryCheck;
                     const chartData: ChartData = {
                       id: profile.id,
@@ -262,10 +257,10 @@ const FreeResultContent: React.FC = () => {
                   }
                   
                   // Last resort: try direct database fetch
-                  console.log("FreeResult fetchData - Attempting direct database fetch as final fallback");
+                  // console.log("FreeResult fetchData - Attempting direct database fetch as final fallback");
                   const directProfile = await fetchProfileDirectly(id);
                   if (directProfile) {
-                    console.log("FreeResult fetchData - Profile found via direct fetch:", directProfile.id);
+                    // console.log("FreeResult fetchData - Profile found via direct fetch:", directProfile.id);
                     const chartData: ChartData = {
                       id: directProfile.id,
                       name: directProfile.name,
@@ -280,7 +275,7 @@ const FreeResultContent: React.FC = () => {
                 }
               }
               
-              console.log("FreeResult fetchData - All retries exhausted, showing error");
+              // console.log("FreeResult fetchData - All retries exhausted, showing error");
               setError(
                 "Unable to find the requested profile. It may have expired or been removed."
               );
@@ -466,7 +461,7 @@ const FreeResultContent: React.FC = () => {
    */
   const fetchProfileDirectly = async (profileId: string) => {
     try {
-      console.log("FreeResult - Attempting direct database fetch for profile:", profileId);
+      // console.log("FreeResult - Attempting direct database fetch for profile:", profileId);
       const { data: profile, error } = await supabase
         .from("profiles")
         .select("*")
@@ -478,7 +473,7 @@ const FreeResultContent: React.FC = () => {
         return null;
       }
 
-      console.log("FreeResult - Profile fetched directly from database:", profile);
+      // console.log("FreeResult - Profile fetched directly from database:", profile);
       return profile;
     } catch (error) {
       console.error("FreeResult - Exception during direct fetch:", error);
