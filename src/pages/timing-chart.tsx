@@ -24,14 +24,7 @@ interface TimingCycle {
   palaceName: string;
 }
 
-/**
- * Palace categorization mapping
- */
-const PALACE_CATEGORIES: Record<string, string[]> = {
-  "Relationship Palaces": ["命宫", "兄弟", "夫妻", "子女", "交友", "父母"],
-  "Prosperity Palaces": ["财帛", "官禄"], 
-  "Environmental Palaces": ["疾厄", "福德", "迁移", "田宅"]
-};
+// Removed PALACE_CATEGORIES as category display was removed
 
 /**
  * Da Ming tag to palace name mapping (correct order)
@@ -100,17 +93,7 @@ const PALACE_NAME_MAP: Record<string, string> = {
   "父母": "Parents"
 };
 
-/**
- * Get palace category for a given palace name
- */
-const getPalaceCategory = (palaceName: string): string => {
-  for (const [category, palaces] of Object.entries(PALACE_CATEGORIES)) {
-    if (palaces.includes(palaceName)) {
-      return category;
-    }
-  }
-  return "Unknown Category";
-};
+// Removed getPalaceCategory function as category display was removed
 
 /**
  * Type for activation data
@@ -462,7 +445,7 @@ const TimingChartContent: React.FC = () => {
   const renderTimingChart = useCallback((cycle: TimingCycle, index: number) => {
     if (!chartData) return null;
 
-    const palaceCategory = getPalaceCategory(cycle.palaceName);
+    // const palaceCategory = getPalaceCategory(cycle.palaceName); // Removed category display
     const englishPalaceName = PALACE_NAME_MAP[cycle.palaceName] || cycle.palaceName;
     const isExpanded = expandedCycles.has(index);
 
@@ -494,12 +477,9 @@ const TimingChartContent: React.FC = () => {
               
               {/* Right Side: Palace Tags */}
               <div className="flex items-center gap-3">
-                <div className="inline-flex items-center px-3 py-2 rounded-lg text-sm font-semibold bg-gradient-to-r from-yellow-400 to-yellow-500 text-white shadow-md">
-                  {palaceCategory.replace(" Palaces", "")}
-                </div>
-                <div className="inline-flex items-center px-6 py-3 rounded-xl text-xl font-bold bg-gradient-to-r from-purple-500 to-purple-600 text-white shadow-lg border-2 border-purple-300">
+                <div className="inline-flex items-center px-6 py-3 rounded-xl text-xl font-bold bg-gradient-to-r from-yellow-500 to-yellow-600 text-white shadow-lg border-2 border-yellow-300">
                   {englishPalaceName} Palace
-                  <span className="ml-2 text-purple-200 text-base">({cycle.palaceName})</span>
+                  <span className="ml-2 text-yellow-200 text-base">({cycle.palaceName})</span>
                 </div>
               </div>
             </div>
@@ -532,7 +512,7 @@ const TimingChartContent: React.FC = () => {
                   </div>
                   
                   {/* Quick Stats */}
-                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
                     <div className="bg-white dark:bg-gray-700 rounded-lg p-4 border-l-4 border-purple-500">
                       <h4 className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">
                         Duration
@@ -559,15 +539,6 @@ const TimingChartContent: React.FC = () => {
                         {englishPalaceName}
                       </p>
                     </div>
-                    
-                    <div className="bg-white dark:bg-gray-700 rounded-lg p-4 border-l-4 border-yellow-500">
-                      <h4 className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">
-                        Category
-                      </h4>
-                      <p className="text-xl font-bold text-gray-900 dark:text-white">
-                        {palaceCategory.replace(" Palaces", "")}
-                      </p>
-                    </div>
                   </div>
 
                   {/* Activations Section */}
@@ -579,7 +550,7 @@ const TimingChartContent: React.FC = () => {
                         </svg>
                       </div>
                       <h4 className="text-xl font-bold text-gray-900 dark:text-white">
-                        Activations
+                        Four Activations (Lu, Quan, Ke, Ji)
                       </h4>
                     </div>
                     
@@ -606,19 +577,9 @@ const TimingChartContent: React.FC = () => {
                             <div className="relative z-10 h-full flex flex-col">
                               {/* Palace Name Header */}
                               <div className="mb-4 flex-shrink-0">
-                                <div className="flex items-center justify-between">
-                                  <h5 className="text-lg font-bold text-gray-800 dark:text-white">
-                                    {PALACE_NAME_MAP[activation.palaceKey] ? `${PALACE_NAME_MAP[activation.palaceKey]} Palace` : activation.palaceKey}
-                                  </h5>
-                                  <div className="flex items-center gap-2">
-                                    <span className={`text-sm font-semibold ${getTransformationColor(activation.activation)}`}>
-                                      {getTransformationName(activation.activation)}
-                                    </span>
-                                    <span className={`text-lg font-bold ${getTransformationColor(activation.activation)}`}>
-                                      {getTransformationChar(activation.activation)}
-                                    </span>
-                                  </div>
-                                </div>
+                                <h5 className="text-lg font-bold text-gray-800 dark:text-white">
+                                  {PALACE_NAME_MAP[activation.palaceKey] ? `${PALACE_NAME_MAP[activation.palaceKey]} Palace` : activation.palaceKey} ({getTransformationName(activation.activation)}):
+                                </h5>
                               </div>
 
                               {/* Description */}
@@ -641,7 +602,7 @@ const TimingChartContent: React.FC = () => {
                         </svg>
                       </div>
                       <h4 className="text-xl font-bold text-gray-900 dark:text-white">
-                        Palace Analysis
+                        12 Palace Analysis
                       </h4>
                     </div>
                     
@@ -811,7 +772,7 @@ const TimingChartContent: React.FC = () => {
                                                           <ul className="text-sm text-gray-700 dark:text-gray-300 space-y-3">
                                                             {entry.actionPoints.slice(0, 3).map((point, pi) => (
                                                               <li key={pi} className="flex items-start gap-3">
-                                                                <div className="w-2 h-2 bg-amber-500 rounded-full mt-2 flex-shrink-0"></div>
+                                                                <div className="w-2 h-2 bg-amber-500 rounded-full mt-2 flex-shrink-0 bg-blue-500"></div>
                                                                 <span className="leading-relaxed">{point}</span>
                                                               </li>
                                                             ))}

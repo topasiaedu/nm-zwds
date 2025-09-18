@@ -49,6 +49,7 @@ export type CycleActivation = {
   activation: ActivationKey;
   palaceKey: PalaceKey;
   paragraphs: ReadonlyArray<string>;
+  keyTakeaways: ReadonlyArray<string>;
 };
 
 /**
@@ -126,7 +127,16 @@ export const getCycleActivations = (
     const targetPalaceKey = found.palace.name as PalaceKey;
     const entry = ACTIVATION_PALACE_MEANINGS[item.key][targetPalaceKey];
     if (entry && entry.paragraphs && entry.paragraphs.length > 0) {
-      results.push({ activation: item.key, palaceKey: targetPalaceKey, paragraphs: entry.paragraphs });
+      // Extract key takeaways from the second paragraph if it exists
+      const keyTakeaways = entry.paragraphs.length > 1 ? 
+        entry.paragraphs[1].split(/[.!?]+/).filter(s => s.trim().length > 10).slice(0, 3) : 
+        [];
+      results.push({ 
+        activation: item.key, 
+        palaceKey: targetPalaceKey, 
+        paragraphs: entry.paragraphs,
+        keyTakeaways 
+      });
     }
   }
 
