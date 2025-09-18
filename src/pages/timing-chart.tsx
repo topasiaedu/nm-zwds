@@ -1,14 +1,16 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Tilt } from "react-tilt";
-import { useLanguage } from "../context/LanguageContext";
+// import { useLanguage } from "../context/LanguageContext";
 import { useProfileContext } from "../context/ProfileContext";
 import { ChartSettingsProvider } from "../context/ChartSettingsContext";
 import PageTransition from "../components/PageTransition";
 import ZWDSChart from "../components/zwds/ZWDSChart";
 import { ZWDSCalculator } from "../utils/zwds/calculator";
 import { ChartData } from "../utils/zwds/types";
-import { TIMING_CHART_ANALYSIS_CONSTANTS } from "../utils/zwds/analysis_constants/timing_chart_analysis";
+// import { TIMING_CHART_ANALYSIS_CONSTANTS } from "../utils/zwds/analysis_constants/timing_chart_analysis";
+import { getCycleActivations } from "../utils/zwds/decade_cycle_analysis/activation_utils";
+import { mapDaMingTagToCycleKey, getDaMingMeaningsForPalace } from "../utils/zwds/decade_cycle_analysis/daming_utils";
 
 /**
  * Interface for timing cycle data
@@ -51,18 +53,7 @@ const DA_MING_TO_PALACE_MAP: Record<string, string> = {
 /**
  * Da Ming tag to Chinese character mapping
  */
-const DA_MING_TO_CHINESE_MAP: Record<string, string> = {
-  "Da Ming": "命",
-  "Da Xiong": "兄", 
-  "Da Fu": "夫", // Will be context-specific: 夫 (spouse), 福 (wellbeing), 父 (parents)
-  "Da Zi": "子",
-  "Da Cai": "财",
-  "Da Ji": "疾",
-  "Da Qian": "迁",
-  "Da You": "友",
-  "Da Guan": "官",
-  "Da Tian": "田"
-};
+// Display helpers trimmed to keep only used utilities.
 
 /**
  * Opposite palace mapping for empty palaces
@@ -124,12 +115,7 @@ const getPalaceCategory = (palaceName: string): string => {
 /**
  * Type for activation data
  */
-interface ActivationData {
-  name: string;
-  description: string;
-  quote: string;
-  transformation: string;
-}
+// ActivationData interface removed as mock data was removed.
 
 /**
  * Extracts the Chinese character without the "hua" part
@@ -203,84 +189,60 @@ const getHighlightColor = (transformation: string): string => {
 };
 
 /**
+ * Split a paragraph into two parts based on sentence count
+ */
+const splitParagraphInHalf = (text: string): { firstHalf: string; secondHalf: string } => {
+  // Split by sentence endings (., !, ?) but keep the punctuation
+  const sentences = text.match(/[^.!?]*[.!?]+/g) || [text];
+  
+  if (sentences.length <= 1) {
+    return { firstHalf: text, secondHalf: "" };
+  }
+  
+  const midPoint = Math.ceil(sentences.length / 2);
+  const firstHalf = sentences.slice(0, midPoint).join(" ").trim();
+  const secondHalf = sentences.slice(midPoint).join(" ").trim();
+  
+  return { firstHalf, secondHalf };
+};
+
+/**
  * Get emoji icon for each palace type
  */
 const getPalaceIcon = (palaceName: string): React.ReactNode => {
-  switch (palaceName) {
-    case "Life Palace":
-      return (
-        <span className="text-2xl">🧬</span>
-      );
-    case "Siblings Palace":
-      return (
-        <span className="text-2xl">👫</span>
-      );
-    case "Spouse Palace":
-      return (
-        <span className="text-2xl">💕</span>
-      );
-    case "Children Palace":
-      return (
-        <span className="text-2xl">🧒</span>
-      );
-    case "Wealth Palace":
-      return (
-        <span className="text-2xl">💰</span>
-      );
-    case "Health Palace":
-      return (
-        <span className="text-2xl">🏥</span>
-      );
-    case "Travel Palace":
-      return (
-        <span className="text-2xl">🌍</span>
-      );
-    case "Friends Palace":
-      return (
-        <span className="text-2xl">🤝</span>
-      );
-    case "Career Palace":
-      return (
-        <span className="text-2xl">💼</span>
-      );
-    case "Property Palace":
-      return (
-        <span className="text-2xl">🏠</span>
-      );
-    case "Wellbeing Palace":
-      return (
-        <span className="text-2xl">🌈</span>
-      );
-    case "Parents Palace":
-      return (
-        <span className="text-2xl">👨‍👩‍👧</span>
-      );
-    default:
-      return (
-        <span className="text-2xl">❓</span>
-      );
+  // Map English palace names to image filenames in src/assets/palace
+  const map: Record<string, string> = {
+    "Life Palace": "Life.png",
+    "Siblings Palace": "Siblings.png",
+    "Spouse Palace": "Spouse.png",
+    "Children Palace": "Children.png",
+    "Wealth Palace": "Wealth.png",
+    "Health Palace": "Health.png",
+    "Travel Palace": "Travel.png",
+    "Friends Palace": "Friends.png",
+    "Career Palace": "Career.png",
+    "Property Palace": "Property.png",
+    "Wellbeing Palace": "Wellbeing.png",
+    "Parents Palace": "Parents.png",
+  };
+  const filename = map[palaceName];
+  if (!filename) {
+    return <span className="text-2xl">?</span>;
+  }
+  // Use public path resolution via import; fallback to img tag with relative path
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  try {
+    const src = require("../assets/palace/" + filename);
+    return <img src={src} alt={palaceName} className="w-28 h-28 object-contain opacity-90" />;
+  } catch (e) {
+    return <img src={`../assets/palace/${filename}`} alt={palaceName} className="w-28 h-28 object-contain opacity-90" />;
   }
 };
 
 /**
  * Get mock activations for demonstration (randomly picks 4 palaces with transformations)
  */
-const getMockActivations = (): ActivationData[] => {
-  const palaceKeys = Object.keys(TIMING_CHART_ANALYSIS_CONSTANTS);
-  const shuffled = [...palaceKeys].sort(() => 0.5 - Math.random());
-  const selected = shuffled.slice(0, 4);
-  const transformations = ["化禄", "化权", "化科", "化忌"];
-  
-  return selected.map((key, index) => {
-    const data = TIMING_CHART_ANALYSIS_CONSTANTS[key as keyof typeof TIMING_CHART_ANALYSIS_CONSTANTS];
-    return {
-      name: data.name,
-      description: data.description,
-      quote: data.quote,
-      transformation: transformations[index]
-    };
-  });
-};
+// Removed mock activations. Real data is provided via getCycleActivations.
 
 /**
  * Get Da Ming tag for a palace number relative to the cycle's selected palace
@@ -323,14 +285,7 @@ const getCategoryForDaMingTag = (daMingTag: string, tagIndex: number): string =>
 /**
  * Get Chinese character for Da Ming tag, handling duplicate Da Fu cases
  */
-const getChineseCharForDaMingTag = (daMingTag: string, tagIndex: number): string => {
-  if (daMingTag.startsWith("Da Fu")) {
-    if (daMingTag.includes("大夫")) return "夫"; // Spouse Palace (大夫)
-    if (daMingTag.includes("大福")) return "福"; // Wellbeing Palace (大福)  
-    if (daMingTag.includes("大父")) return "父"; // Parents Palace (大父)
-  }
-  return DA_MING_TO_CHINESE_MAP[daMingTag] || "宮";
-};
+// Unused helper removed to reduce bundle and silence lints.
 
 /**
  * Check if palace has no significant stars
@@ -373,7 +328,7 @@ const getEffectiveStars = (palace: any, palaceName: string, chartData: ChartData
  * palace and shows the Da Ming tags for that period.
  */
 const TimingChartContent: React.FC = () => {
-  const { t } = useLanguage();
+  // const { t } = useLanguage();
   const { id } = useParams<{ id: string }>();
   const { profiles } = useProfileContext();
   const [loading, setLoading] = useState<boolean>(true);
@@ -384,7 +339,7 @@ const TimingChartContent: React.FC = () => {
   /**
    * Toggle expansion state for a cycle
    */
-  const toggleCycleExpansion = (cycleIndex: number) => {
+  const toggleCycleExpansion = useCallback((cycleIndex: number) => {
     setExpandedCycles(prev => {
       const newSet = new Set(prev);
       if (newSet.has(cycleIndex)) {
@@ -394,7 +349,7 @@ const TimingChartContent: React.FC = () => {
       }
       return newSet;
     });
-  };
+  }, []);
 
   // Find the profile based on the ID
   useEffect(() => {
@@ -554,8 +509,8 @@ const TimingChartContent: React.FC = () => {
           {isExpanded && (
             <div className="border-t border-gray-200 dark:border-gray-600">
               {/* Chart Section - Centered with Max Width */}
-              <div className="mb-10 flex justify-center p-6">
-                <div className="w-full max-w-[1000px] p-4" style={{ height: "1000px" }}>
+              <div className="mb-10 flex justify-center p-2 sm:p-6">
+                <div className="w-full max-w-[1000px] p-1 sm:p-4" style={{ height: "1000px" }}>
                   <div className="w-full h-full">
                     {renderChart(cycle, chartData)}
                   </div>
@@ -563,8 +518,8 @@ const TimingChartContent: React.FC = () => {
               </div>
 
               {/* Analysis Section - Below Chart */}
-              <div className="mb-12 px-6 pb-6">
-                <div className="dark:from-gray-800 dark:to-gray-900 rounded-xl p-8">
+              <div className="mb-12 px-2 sm:px-6 pb-6">
+                <div className="dark:from-gray-800 dark:to-gray-900 rounded-xl p-4 sm:p-8">
                   <div className="flex items-center mb-6">
                     <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg flex items-center justify-center mr-3">
                       <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
@@ -628,20 +583,20 @@ const TimingChartContent: React.FC = () => {
                       </h4>
                     </div>
                     
-                    {/* 2x2 Activation Cards Grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      {getMockActivations().map((activation, index) => (
+                  {/* Activation Cards Grid (single column) */}
+                  <div className="grid grid-cols-1 gap-6">
+                      {getCycleActivations(chartData, cycle.palaceNumber).map((activation, index) => (
                         <Tilt key={index} options={{ scale: 1.02, speed: 1000, max: 5, glare: true, "max-glare": 0.3 }} className="w-full h-full">
-                          <div className={`relative rounded-xl p-6 shadow-lg border-2 ${getHighlightColor(activation.transformation)} h-full flex flex-col min-h-[300px] overflow-hidden`}>
+                          <div className={`relative rounded-xl p-6 shadow-lg border-2 ${getHighlightColor(activation.activation)} h-full flex flex-col min-h-[300px] overflow-hidden`}>
                             {/* Background transformation character */}
                             <div className="absolute inset-0 pointer-events-none z-0">
                               <div className="flex items-end justify-end h-full">
                                 <div className="opacity-[0.08] dark:opacity-[0.05] transform scale-[3] mr-2 mb-2">
                                   <span
                                     className={`text-6xl font-bold ${getTransformationColor(
-                                      activation.transformation
+                                      activation.activation
                                     )}`}>
-                                    {getTransformationChar(activation.transformation)}
+                                    {getTransformationChar(activation.activation)}
                                   </span>
                                 </div>
                               </div>
@@ -653,14 +608,14 @@ const TimingChartContent: React.FC = () => {
                               <div className="mb-4 flex-shrink-0">
                                 <div className="flex items-center justify-between">
                                   <h5 className="text-lg font-bold text-gray-800 dark:text-white">
-                                    {activation.name}
+                                    {PALACE_NAME_MAP[activation.palaceKey] ? `${PALACE_NAME_MAP[activation.palaceKey]} Palace` : activation.palaceKey}
                                   </h5>
                                   <div className="flex items-center gap-2">
-                                    <span className={`text-sm font-semibold ${getTransformationColor(activation.transformation)}`}>
-                                      {getTransformationName(activation.transformation)}
+                                    <span className={`text-sm font-semibold ${getTransformationColor(activation.activation)}`}>
+                                      {getTransformationName(activation.activation)}
                                     </span>
-                                    <span className={`text-lg font-bold ${getTransformationColor(activation.transformation)}`}>
-                                      {getTransformationChar(activation.transformation)}
+                                    <span className={`text-lg font-bold ${getTransformationColor(activation.activation)}`}>
+                                      {getTransformationChar(activation.activation)}
                                     </span>
                                   </div>
                                 </div>
@@ -668,7 +623,7 @@ const TimingChartContent: React.FC = () => {
 
                               {/* Description */}
                               <div className="text-gray-600 dark:text-gray-300 text-sm flex-1 overflow-y-auto leading-relaxed">
-                                {activation.description}
+                                {activation.paragraphs && activation.paragraphs.length > 0 ? activation.paragraphs[0] : ""}
                               </div>
                             </div>
                           </div>
@@ -728,7 +683,7 @@ const TimingChartContent: React.FC = () => {
                         categoryPalaces.sort((a, b) => a.tagIndex - b.tagIndex);
                         
                         return (
-                          <div key={categoryName} className="rounded-lg p-6">
+                          <div key={categoryName} className="rounded-lg p-2 sm:p-4">
                             <h5 className="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center">
                               <div className={`w-4 h-4 rounded-full mr-3 ${
                                 categoryName === "Relationship Palaces" ? "bg-pink-500" :
@@ -739,10 +694,10 @@ const TimingChartContent: React.FC = () => {
                               <span className="ml-2 text-sm text-gray-500 dark:text-gray-400">({categoryPalaces.length} palaces)</span>
                             </h5>
                             
-                            {/* Palace Grid */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {/* Palace Grid (single column) */}
+                            <div className="grid grid-cols-1 gap-4">
                               {categoryPalaces.map(({ palaceNumber, daMingTag, palaceName, palace, tagIndex }) => (
-                                <div key={palaceNumber} className={`relative rounded-xl p-6 shadow-lg border-2 overflow-hidden ${
+                                <div key={palaceNumber} className={`relative rounded-xl p-2 sm:p-4 shadow-lg border-2 overflow-hidden ${
                                   categoryName === "Relationship Palaces" ? 
                                     "border-pink-200 dark:border-pink-800 bg-gradient-to-br from-white to-pink-50 dark:from-gray-800 dark:to-pink-950/20" :
                                   categoryName === "Prosperity Palaces" ? 
@@ -766,105 +721,118 @@ const TimingChartContent: React.FC = () => {
 
                                   {/* Content */}
                                   <div className="relative z-10">
-                                    {/* Da Ming Tag Header - Main Emphasis */}
-                                    <div className="flex items-center gap-3 mb-5">
-                                      <div className={`text-xl font-bold px-5 py-3 rounded-xl shadow-md ${
+                                    {/* Da Ming Tag Header - Enhanced Design */}
+                                    <div className="mb-6">
+                                      <div className="flex items-center gap-3 mb-3">
+                                        <div className={`text-xl font-bold px-5 py-3 rounded-xl shadow-md ${
+                                          categoryName === "Relationship Palaces" ? 
+                                            "bg-gradient-to-r from-pink-500 to-pink-600 text-white" :
+                                          categoryName === "Prosperity Palaces" ? 
+                                            "bg-gradient-to-r from-yellow-500 to-yellow-600 text-white" :
+                                            "bg-gradient-to-r from-orange-700 to-red-700 text-white"
+                                        }`}>
+                                          {daMingTag}
+                                        </div>
+                                        <div className="text-sm bg-white/80 dark:bg-gray-700/80 text-gray-700 dark:text-gray-300 px-4 py-2 rounded-full shadow-sm border border-gray-200 dark:border-gray-600">
+                                          {palaceName}
+                                        </div>
+                                      </div>
+                                      
+                                      {/* Decorative divider */}
+                                      <div className={`h-1 w-full rounded-full bg-gradient-to-r ${
                                         categoryName === "Relationship Palaces" ? 
-                                          "bg-gradient-to-r from-pink-500 to-pink-600 text-white" :
+                                          "from-pink-200 via-pink-400 to-pink-200" :
                                         categoryName === "Prosperity Palaces" ? 
-                                          "bg-gradient-to-r from-yellow-500 to-yellow-600 text-white" :
-                                          "bg-gradient-to-r from-orange-700 to-red-700 text-white"
-                                      }`}>
-                                        {daMingTag}
-                                      </div>
-                                      <div className="text-sm bg-white/80 dark:bg-gray-700/80 text-gray-700 dark:text-gray-300 px-4 py-2 rounded-full shadow-sm border border-gray-200 dark:border-gray-600">
-                                        {palaceName}
-                                      </div>
+                                          "from-yellow-200 via-yellow-400 to-yellow-200" :
+                                          "from-orange-300 via-red-400 to-orange-300"
+                                      } opacity-60`}></div>
                                     </div>
                                   
-                                    {/* Star Analysis Section */}
+                                    {/* Star Analysis Section (Da Ming → Star paragraphs) */}
                                     <div className="space-y-4">
                                       {(() => {
-                                        const effectiveStars = getEffectiveStars(palace, palaceName.replace(" Palace", ""), chartData);
-                                        const isUsingOppositePalace = effectiveStars !== palace;
-                                        
+                                        const effectivePalace = getEffectiveStars(palace, palaceName.replace(" Palace", ""), chartData) as any;
+                                        const daMingKey = mapDaMingTagToCycleKey(daMingTag);
+                                        const starEntries = daMingKey
+                                          ? getDaMingMeaningsForPalace(daMingKey, effectivePalace, 2)
+                                          : [];
+
+                                        if (starEntries.length > 0) {
+                                          return (
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                              {starEntries.map((entry, i) => (
+                                                <div key={`${entry.starName}-${i}`} className="bg-white/50 dark:bg-gray-800/50 rounded-lg p-3 border border-gray-200 dark:border-gray-600 hover:shadow-md transition-shadow duration-200">
+                                                  {/* Star Header with Icon */}
+                                                  <div className="flex items-center gap-3 mb-4">
+                                                    <div className="w-8 h-8 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full flex items-center justify-center flex-shrink-0">
+                                                      <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                                      </svg>
+                                                    </div>
+                                                    <h6 className="text-lg font-bold text-gray-800 dark:text-gray-200">{entry.englishStarName}</h6>
+                                                  </div>
+                                                  
+                                                  {/* Main Content */}
+                                                  <div className="space-y-4">
+                                                    {/* Paragraph with better formatting - Split in half */}
+                                                    <div className="relative space-y-3">
+                                                      <div className="absolute left-0 top-0 w-1 h-full bg-gradient-to-b from-indigo-400 to-purple-400 rounded-full"></div>
+                                                      {(() => {
+                                                        const fullText = entry.paragraphs && entry.paragraphs.length > 0 ? entry.paragraphs[0] : "";
+                                                        const { firstHalf, secondHalf } = splitParagraphInHalf(fullText);
+                                                        
+                                                        return (
+                                                          <div className="pl-4 space-y-3">
+                                                            <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
+                                                              {firstHalf}
+                                                            </p>
+                                                            {secondHalf && (
+                                                              <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                                                                {secondHalf}
+                                                              </p>
+                                                            )}
+                                                          </div>
+                                                        );
+                                                      })()}
+                                                    </div>
+                                                    
+                                                    {/* Action Points with Enhanced Design */}
+                                                    {entry.actionPoints && entry.actionPoints.length > 0 && (
+                                                      <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-600">
+                                                        <div className="flex items-center gap-2 mb-3">
+                                                          <svg className="w-4 h-4 text-amber-500" fill="currentColor" viewBox="0 0 20 20">
+                                                            <path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clipRule="evenodd" />
+                                                          </svg>
+                                                          <div className="text-sm font-semibold text-amber-600 dark:text-amber-400 uppercase tracking-wide">
+                                                            {entry.actionPointsTitle || "Action Points"}
+                                                          </div>
+                                                        </div>
+                                                        <div className="bg-amber-50 dark:bg-amber-900/20 rounded-md p-3">
+                                                          <ul className="text-sm text-gray-700 dark:text-gray-300 space-y-3">
+                                                            {entry.actionPoints.slice(0, 3).map((point, pi) => (
+                                                              <li key={pi} className="flex items-start gap-3">
+                                                                <div className="w-2 h-2 bg-amber-500 rounded-full mt-2 flex-shrink-0"></div>
+                                                                <span className="leading-relaxed">{point}</span>
+                                                              </li>
+                                                            ))}
+                                                          </ul>
+                                                        </div>
+                                                      </div>
+                                                    )}
+                                                  </div>
+                                                </div>
+                                              ))}
+                                            </div>
+                                          );
+                                        }
+
+                                        // Fallback: generic narrative if no specific entries
                                         return (
-                                          <>
-                                            {/* Main Star Analysis */}
-                                            {effectiveStars?.mainStar && effectiveStars.mainStar.length > 0 && (
-                                              <div>
-                                                <h6 className="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-2">Primary Influences:</h6>
-                                                {effectiveStars.mainStar.map((star: any, index: number) => (
-                                                  <div key={index} className="mb-3 last:mb-0">
-                                                    <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
-                                                      <span className="font-medium text-purple-700 dark:text-purple-300">{star.name}</span> brings leadership qualities and determination during this cycle. You&apos;ll find yourself taking charge of important decisions and inspiring others around you. This period emphasizes personal growth through responsibility and achievement.
-                                                      {star.transformations && star.transformations.length > 0 && (
-                                                        <span className="block mt-1 text-xs italic">
-                                                          Enhanced by {star.transformations.join(", ")} - amplifying your natural abilities and creating opportunities for advancement.
-                                                        </span>
-                                                      )}
-                                                    </p>
-                                                  </div>
-                                                ))}
-                                              </div>
-                                            )}
-                                            
-                                            {/* Minor Star Analysis */}
-                                            {effectiveStars?.minorStars && effectiveStars.minorStars.length > 0 && (
-                                              <div>
-                                                <h6 className="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-2">Supporting Influences:</h6>
-                                                {effectiveStars.minorStars.slice(0, 2).map((star: any, index: number) => (
-                                                  <div key={index} className="mb-3 last:mb-0">
-                                                    <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-                                                      <span className="font-medium">{star.name}</span> provides subtle but important support in your endeavors. This influence helps you navigate challenges with grace and find creative solutions to complex problems. It encourages patience and strategic thinking.
-                                                    </p>
-                                                  </div>
-                                                ))}
-                                                {effectiveStars.minorStars.length > 2 && (
-                                                  <p className="text-xs text-gray-500 dark:text-gray-500 italic">
-                                                    Additional stars: {effectiveStars.minorStars.slice(2).map((s: any) => s.name).join(", ")} also contribute to this period&apos;s energy.
-                                                  </p>
-                                                )}
-                                              </div>
-                                            )}
-                                            
-                                            {/* Auxiliary & Time Star Analysis */}
-                                            {((effectiveStars?.auxiliaryStars && effectiveStars.auxiliaryStars.length > 0) ||
-                                              (effectiveStars?.yearStars && effectiveStars.yearStars.length > 0)) && (
-                                              <div>
-                                                <h6 className="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-2">Temporal Influences:</h6>
-                                                <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-                                                  The supporting celestial influences during this period bring opportunities for networking, learning, and expanding your horizons. These energies favor collaboration, education, and building lasting relationships that will benefit your long-term goals.
-                                                </p>
-                                              </div>
-                                            )}
-                                            
-                                            {/* Special Star Analysis */}
-                                            {(effectiveStars?.bodyStar || effectiveStars?.lifeStar) && (
-                                              <div>
-                                                <h6 className="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-2">Destined Path:</h6>
-                                                <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
-                                                  {effectiveStars.bodyStar && (
-                                                    <span>Your <span className="font-medium text-indigo-600 dark:text-indigo-400">{effectiveStars.bodyStar.name}</span> influence suggests this is a pivotal period for physical and material manifestation. </span>
-                                                  )}
-                                                  {effectiveStars.lifeStar && (
-                                                    <span>The <span className="font-medium text-violet-600 dark:text-violet-400">{effectiveStars.lifeStar.name}</span> energy indicates significant spiritual or philosophical developments. </span>
-                                                  )}
-                                                  This cycle is marked by destiny and important life changes that align with your soul&apos;s purpose.
-                                                </p>
-                                              </div>
-                                            )}
-                                            
-                                            {/* Default message if no significant stars */}
-                                            {(!effectiveStars?.mainStar || effectiveStars.mainStar.length === 0) &&
-                                             (!effectiveStars?.minorStars || effectiveStars.minorStars.length === 0) && (
-                                              <div>
-                                                <p className="text-sm text-gray-500 dark:text-gray-400 italic leading-relaxed">
-                                                  This period represents a time of quiet preparation and internal development. While major stellar influences may be minimal, this creates space for personal reflection, consolidation of past experiences, and setting foundations for future growth.
-                                                </p>
-                                              </div>
-                                            )}
-                                          </>
+                                          <div>
+                                            <p className="text-sm text-gray-500 dark:text-gray-400 italic leading-relaxed">
+                                              This period represents a time of quiet preparation and internal development. While major stellar influences may be minimal, this creates space for personal reflection, consolidation of past experiences, and setting foundations for future growth.
+                                            </p>
+                                          </div>
                                         );
                                       })()}
                                     </div>
@@ -956,7 +924,7 @@ const TimingChartContent: React.FC = () => {
 
   return (
     <PageTransition>
-      <div className="p-6">
+      <div className="p-2 sm:p-6">
         <div className="max-w-7xl mx-auto">
           {/* Navigation Breadcrumb */}
           <div className="mb-6">
