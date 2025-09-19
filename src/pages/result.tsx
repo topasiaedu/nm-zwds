@@ -75,18 +75,18 @@ const ResultContent: React.FC = () => {
     // Map hour to time range
     const getTimeRange = (hour: number): string => {
       const timeRanges = [
-        { start: 23, end: 1, range: "23:00-01:59" },
-        { start: 1, end: 3, range: "01:00-03:59" },
-        { start: 3, end: 5, range: "03:00-05:59" },
-        { start: 5, end: 7, range: "05:00-07:59" },
-        { start: 7, end: 9, range: "07:00-09:59" },
-        { start: 9, end: 11, range: "09:00-11:59" },
-        { start: 11, end: 13, range: "11:00-13:59" },
+        { start: 23, end: 1, range: "23:00-00:59" },
+        { start: 1, end: 3, range: "01:00-02:59" },
+        { start: 3, end: 5, range: "03:00-04:59" },
+        { start: 5, end: 7, range: "05:00-06:59" },
+        { start: 7, end: 9, range: "07:00-08:59" },
+        { start: 9, end: 11, range: "09:00-10:59" },
+        { start: 11, end: 13, range: "11:00-12:59" },
         { start: 13, end: 15, range: "13:00-15:59" },
-        { start: 15, end: 17, range: "15:00-17:59" },
-        { start: 17, end: 19, range: "17:00-19:59" },
-        { start: 19, end: 21, range: "19:00-21:59" },
-        { start: 21, end: 23, range: "21:00-23:59" },
+        { start: 15, end: 17, range: "15:00-16:59" },
+        { start: 17, end: 19, range: "17:00-18:59" },
+        { start: 19, end: 21, range: "19:00-20:59" },
+        { start: 21, end: 23, range: "21:00-22:59" },
       ];
 
       // Handle special case for 23:00-01:59
@@ -782,7 +782,7 @@ const ResultContent: React.FC = () => {
 
 
                   {/* Timing Chart Button - Hidden */}
-                  <div className="mt-6">
+                  {/* <div className="mt-6">
                     <Link
                       to={`/timing-chart/${chartData.id}`}
                       className="w-full px-4 py-2 text-white font-medium rounded-lg transition-all 
@@ -792,7 +792,7 @@ const ResultContent: React.FC = () => {
                      
                       {"View Timing Analysis"}
                     </Link>
-                  </div>
+                  </div> */}
 
                   {isSelfProfile && (
                     <div className="mt-6">
