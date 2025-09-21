@@ -782,7 +782,7 @@ const ResultContent: React.FC = () => {
 
 
                   {/* Timing Chart Button - Hidden */}
-                  {/* <div className="mt-6">
+                  <div className="mt-6">
                     <Link
                       to={`/timing-chart/${chartData.id}`}
                       className="w-full px-4 py-2 text-white font-medium rounded-lg transition-all 
@@ -792,7 +792,7 @@ const ResultContent: React.FC = () => {
                      
                       {"View Timing Analysis"}
                     </Link>
-                  </div> */}
+                  </div>
 
                   {isSelfProfile && (
                     <div className="mt-6">
