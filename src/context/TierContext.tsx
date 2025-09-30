@@ -58,11 +58,6 @@ export function TierProvider({ children }: { children: ReactNode }) {
         return;
       }
 
-      // Don't re-fetch if we already have user details for this user
-      if (userDetails && userDetails.user_id === user.id) {
-        return;
-      }
-
       try {
         setLoading(true);
         

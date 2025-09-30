@@ -298,7 +298,7 @@ export const DATASET_1 = {
         "你是来发光的。你身上有一种天生的温暖、领导气场与承担力。别人犹豫时，你已经点燃自己照亮别人。",
       strengths:
         "Decisive under pressure, Deeply responsible, Grounded in strong principles, Natural leadership ability, Guided by a compelling vision",
-      cautions: "Over-giving, Guarded",
+      cautions: "Overgiving, Guarded",
       quote:
         "You are not a person who lights up the world, you are also worth being lit.",
     },
@@ -333,7 +333,7 @@ export const DATASET_1 = {
         "你是安静的力量，是默默观察、稳定输出、从细节中见深度的人。你拥有强大的情感洞察力，是天生的倾听者与照顾者。",
       strengths:
         "Delicate, Gentle, Calm And Patient, Thoughtful, Emotionally Balanced",
-      cautions: "Emotion-Suppressing, Over-accommodating, Conflict-Averse",
+      cautions: "Emotion-Suppressing, Overaccommodating, Conflict-Averse",
       quote: "You are not fragile, you are the ocean of deep inner energy.",
     },
     财帛宫: {
@@ -369,7 +369,7 @@ export const DATASET_1 = {
         "Boldly Honest, Logical Thinker, Highly Observant, Impactful Communicator, Direct and Clear",
       cautions: "Misinterpreted, Blunt",
 
-      quote: "You are not a quarrel king, you are the antidote of language.",
+      quote: "You are not a quarrel king, you are the解毒剂 of language.",
     },
     财帛宫: {
       title: "🌪️ 巨门（财帛宫）｜说话能量星",
@@ -378,7 +378,7 @@ export const DATASET_1 = {
       earning_methods: "深度访谈／心灵咨询／品牌策略／犀利文案／犀利自媒体",
       financial_risks: "说得多做得少、表达越界失客户",
       focus_areas: "打造“敢说真话的变现模型”，建立高信任社群",
-      quote: "You are not a quarrel king, you are the antidote of language.",
+      quote: "You are not a quarrel king, you are the解毒剂 of language.",
     },
     官禄宫: {
       title: "🌪️ 巨门（官禄宫）｜说话能量星",
