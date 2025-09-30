@@ -1,7 +1,5 @@
 import React, { ReactNode } from "react";
-import { useLocation } from "react-router-dom";
 import PageTransition from "../components/PageTransition";
-import { AnimatePresence } from "framer-motion";
 // Removed StarryBackground import to fix memory leak
 import Navbar from "../components/navbar";
 
@@ -17,7 +15,8 @@ interface MainLayoutProps {
  * and handles the theme switching and page transitions
  */
 export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
-  const location = useLocation();
+  // Note: Removed popstate handler as it was causing performance issues
+  // The ErrorBoundary and optimized context loading should handle navigation issues
 
   return (
     <div className="relative min-h-screen w-full overflow-hidden bg-gray-50 dark:bg-gray-900 transition-colors duration-500">
@@ -29,11 +28,9 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
       {/* Main content */}
       <div className="relative z-10 container mx-auto px-4 pt-16">
         {/* Page content with transitions */}
-        <AnimatePresence mode="wait">
-          <PageTransition key={location.pathname}>
-            {children}
-          </PageTransition>
-        </AnimatePresence>
+        <PageTransition>
+          {children}
+        </PageTransition>
       </div>
     </div>
   );

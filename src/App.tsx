@@ -42,6 +42,7 @@ import FREE_TEST_CONFIG from "./config/freeTestConfig";
 import { Analytics } from "@vercel/analytics/react"
 import { SpeedInsights } from "@vercel/speed-insights/react"
 import { useTierAccess } from "./context/TierContext";
+import ErrorBoundary from "./components/ErrorBoundary";
 
 /**
  * Authentication route wrapper that redirects authenticated users to dashboard
@@ -110,15 +111,16 @@ const isFreeTestActive = (): boolean => {
  */
 const App: React.FC = () => {
   return (
-    <Router>
-      <Analytics />
-      <SpeedInsights />
-      <AlertProvider>
-        <AuthProvider>
-          <TierProvider>
-            <ProfileProvider>
-              <LanguageProvider>
-                <SidebarProvider>
+    <ErrorBoundary>
+      <Router>
+        <Analytics />
+        <SpeedInsights />
+        <AlertProvider>
+          <AuthProvider>
+            <TierProvider>
+              <ProfileProvider>
+                <LanguageProvider>
+                  <SidebarProvider>
                   {/* Single router switch. Some routes bypass MainLayout. */}
                   <Routes>
                     {/* Routes WITHOUT MainLayout (no navbar) */}
@@ -301,6 +303,7 @@ const App: React.FC = () => {
         </AuthProvider>
       </AlertProvider>
     </Router>
+    </ErrorBoundary>
   );
 };
 

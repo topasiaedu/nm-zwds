@@ -73,6 +73,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   }, []);
 
   useEffect(() => {
+    // Only initialize if not already initialized
+    if (initializedRef.current) {
+      return;
+    }
+
     // Get session from local storage and set states
     const initializeAuth = async () => {
       setLoading(true);
@@ -262,13 +267,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
 
   return (
     <AuthContext.Provider value={value}>
-      {!loading ? (
-        children
-      ) : (
-        <div className="flex items-center justify-center h-screen w-screen">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500"></div>
-        </div>
-      )}
+      {children}
     </AuthContext.Provider>
   );
 };
