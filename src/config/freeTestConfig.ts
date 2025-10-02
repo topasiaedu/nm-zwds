@@ -31,12 +31,15 @@ const isValidDate = (dateString: string): boolean => {
 };
 
 // Check if the free test is currently active based on date range
+// NOTE: Date restriction removed - always returns true
 const isActiveByDate = (): boolean => {
-  const today = new Date();
-  const startDate = new Date(`${FREE_TEST_CONFIG.startDate}T00:00:00`);
-  const endDate = new Date(`${FREE_TEST_CONFIG.endDate}T23:59:59`);
+  // Original date check logic (now disabled):
+  // const today = new Date();
+  // const startDate = new Date(`${FREE_TEST_CONFIG.startDate}T00:00:00`);
+  // const endDate = new Date(`${FREE_TEST_CONFIG.endDate}T23:59:59`);
+  // return today >= startDate && today <= endDate;
   
-  return today >= startDate && today <= endDate;
+  return true; // Always active, no date restriction
 };
 
 // Helper function to get the overall active status
@@ -45,24 +48,24 @@ const isActive = (): boolean => {
 };
 
 // Helper function to get the status reason
+// NOTE: Date restriction removed - always returns "active" if enabled
 const getStatusReason = (): "active" | "disabled" | "not-started" | "ended" => {
   if (!FREE_TEST_CONFIG.isEnabled) {
     return "disabled";
   }
   
-  const today = new Date();
-  const startDate = new Date(`${FREE_TEST_CONFIG.startDate}T00:00:00`);
-  const endDate = new Date(`${FREE_TEST_CONFIG.endDate}T23:59:59`);
+  // Original date check logic (now disabled):
+  // const today = new Date();
+  // const startDate = new Date(`${FREE_TEST_CONFIG.startDate}T00:00:00`);
+  // const endDate = new Date(`${FREE_TEST_CONFIG.endDate}T23:59:59`);
+  // if (today < startDate) {
+  //   return "not-started";
+  // }
+  // if (today > endDate) {
+  //   return "ended";
+  // }
   
-  if (today < startDate) {
-    return "not-started";
-  }
-  
-  if (today > endDate) {
-    return "ended";
-  }
-  
-  return "active";
+  return "active"; // Always active if enabled, no date restriction
 };
 
 // Warn in development if configuration issues are detected

@@ -10,10 +10,9 @@ import FREE_TEST_CONFIG from "../config/freeTestConfig";
 const FreeTestPromo: React.FC = () => {
   const { t } = useLanguage();
   const [isActive, setIsActive] = useState<boolean>(true);
-  const [daysLeft, setDaysLeft] = useState<number>(0);
   
   /**
-   * Check if the free test event is currently active and calculate days remaining
+   * Check if the free test event is currently active
    */
   useEffect(() => {
     const checkEventStatus = () => {
@@ -25,32 +24,16 @@ const FreeTestPromo: React.FC = () => {
         return;
       }
       
-      // Calculate days left until end date
-      const today = new Date();
-      const endDate = new Date(`${FREE_TEST_CONFIG.endDate}T23:59:59`);
-      
-      const timeDiff = endDate.getTime() - today.getTime();
-      const daysRemaining = Math.ceil(timeDiff / (1000 * 3600 * 24));
-      
-      setDaysLeft(daysRemaining > 0 ? daysRemaining : 0);
       setIsActive(true);
     };
     
     checkEventStatus();
-    
-    // Update days left daily
-    const intervalId = setInterval(checkEventStatus, 86400000); // 24 hours
-    
-    return () => clearInterval(intervalId);
   }, []);
   
   // If the promotion isn't active, don't render anything
   if (!isActive) {
     return null;
   }
-  
-  // Format the days left text
-  const daysLeftText = t("freeTestPromo.daysLeft").replace("{{days}}", daysLeft.toString());
   
   // WhatsApp link
   const whatsappLink = "https://wa.me/601158639269";
@@ -71,7 +54,7 @@ const FreeTestPromo: React.FC = () => {
               {t("freeTestPromo.limitedOffer")}
             </span>
             <span className="bg-white text-indigo-700 text-xs font-bold px-3 py-1 rounded-full">
-              {daysLeftText}
+              {t("freeTestPromo.daysLeft")}
             </span>
           </div>
           

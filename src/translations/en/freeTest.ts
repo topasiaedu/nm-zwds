@@ -5,8 +5,8 @@ const freeTest = {
   freeTest: {
     // Free test page
     title: "Free Purple Star Astrology Chart Visualization",
-    subtitle: "Try our Purple Star Astrology chart for free for a limited time only!",
-    limitedTime: "Limited time offer - Available from {{startDate}} to {{endDate}}",
+    subtitle: "Try our Purple Star Astrology chart for free!",
+    limitedTime: "FREE TEST - No Account Required",
     aboutTitle: "About This Free Test",
     aboutDescription: "This free test allows you to experience the power of Purple Star Astrology chart analysis without creating an account.",
     whatYouGet: "What You'll Get",
@@ -36,8 +36,8 @@ const freeTest = {
   
   // Free test ended page
   freeTestEnded: {
-    title: "Free Test Period Has Ended",
-    description: "Our promotional free test period ({{startDate}} to {{endDate}}) has ended. Thank you for your interest in our 紫微斗数 (Zi Wei Dou Shu) chart analysis!",
+    title: "Free Test Currently Unavailable",
+    description: "The free test is currently unavailable. Thank you for your interest in our 紫微斗数 (Zi Wei Dou Shu) chart analysis!",
     whatNow: "What Now?",
     createAccount: "You can still access all our features by contacting us on WhatsApp. Our full service offers:",
     feature1: "Full 紫微斗数 chart visualization and analysis",
@@ -53,7 +53,7 @@ const freeTest = {
   // Free test not started page
   freeTestNotStarted: {
     title: "Free Test Coming Soon",
-    description: "Our promotional free test period will be available from {{startDate}} to {{endDate}}. Please check back on the start date!",
+    description: "Our promotional free test will be available soon. Please check back later!",
   },
   
   // Free test disabled page
@@ -64,10 +64,10 @@ const freeTest = {
   
   // Promotional component
   freeTestPromo: {
-    limitedOffer: "LIMITED TIME OFFER",
-    daysLeft: "{{days}} DAYS LEFT",
+    limitedOffer: "FREE TEST",
+    daysLeft: "NO ACCOUNT NEEDED",
     title: "Free 紫微斗数 Chart Reading",
-    description: "Experience the power of 紫微斗数 (Zi Wei Dou Shu) chart analysis for free during our promotional period. No account required!",
+    description: "Experience the power of 紫微斗数 (Zi Wei Dou Shu) chart analysis for free. No account required!",
     tryNow: "Try It Now",
     createAccount: "Contact on WhatsApp",
   }

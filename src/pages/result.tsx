@@ -82,7 +82,7 @@ const ResultContent: React.FC = () => {
         { start: 7, end: 9, range: "07:00-08:59" },
         { start: 9, end: 11, range: "09:00-10:59" },
         { start: 11, end: 13, range: "11:00-12:59" },
-        { start: 13, end: 15, range: "13:00-15:59" },
+        { start: 13, end: 15, range: "13:00-14:59" },
         { start: 15, end: 17, range: "15:00-16:59" },
         { start: 17, end: 19, range: "17:00-18:59" },
         { start: 19, end: 21, range: "19:00-20:59" },

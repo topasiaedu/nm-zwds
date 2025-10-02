@@ -23,9 +23,7 @@ const FreeTestEnded: React.FC = () => {
   switch (status) {
     case "not-started":
       titleKey = "freeTestNotStarted.title";
-      descriptionText = t("freeTestNotStarted.description")
-        .replace("{{startDate}}", FREE_TEST_CONFIG.startDate)
-        .replace("{{endDate}}", FREE_TEST_CONFIG.endDate);
+      descriptionText = t("freeTestNotStarted.description");
       break;
     case "disabled":
       titleKey = "freeTestDisabled.title";
@@ -34,9 +32,7 @@ const FreeTestEnded: React.FC = () => {
     case "ended":
     default:
       titleKey = "freeTestEnded.title";
-      descriptionText = t("freeTestEnded.description")
-        .replace("{{startDate}}", FREE_TEST_CONFIG.startDate)
-        .replace("{{endDate}}", FREE_TEST_CONFIG.endDate);
+      descriptionText = t("freeTestEnded.description");
       break;
   }
   

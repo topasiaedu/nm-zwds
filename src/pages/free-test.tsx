@@ -76,13 +76,6 @@ const FreeTest: React.FC = () => {
     return null;
   }
 
-  // Format the limited time offer text with the date range
-  const limitedTimeText = t("freeTest.limitedTime")
-    .replace("{{startDate}}", FREE_TEST_CONFIG.startDate)
-    .replace("{{endDate}}", FREE_TEST_CONFIG.endDate);
-
-
-
   return (  
     <PageTransition>
       <div className="container mx-auto px-4 py-8">
@@ -96,9 +89,9 @@ const FreeTest: React.FC = () => {
             {t("freeTest.subtitle")}
           </p>
 
-          {/* Limited time offer badge */}
-          <div className="mt-4 inline-block bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-4 py-2 rounded-full text-sm font-bold">
-            {limitedTimeText}
+          {/* Free test badge */}
+          <div className="mt-4 inline-block bg-gradient-to-r from-purple-500 to-indigo-600 text-white px-4 py-2 rounded-full text-sm font-bold">
+            {t("freeTest.limitedTime")}
           </div>
         </div>
 

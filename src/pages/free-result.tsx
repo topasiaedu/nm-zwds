@@ -119,15 +119,48 @@ const FreeResultContent: React.FC = () => {
     }
   }, [isEventActive, navigate]);
 
-  // Memoize formatBirthTime function to prevent it from changing on every render
+  /**
+   * Memoized formatBirthTime function to prevent unnecessary re-renders
+   * Maps hour to time range (e.g., "23:00-00:59")
+   */
   const formatBirthTime = useCallback((birthTimeString: string): string => {
     const hour = parseInt(birthTimeString);
     if (isNaN(hour)) return "Unknown";
 
-    const hourIn12Format = hour % 12 || 12;
-    const period = hour >= 12 ? "PM" : "AM";
+    // Map hour to time range
+    const getTimeRange = (hour: number): string => {
+      const timeRanges = [
+        { start: 23, end: 1, range: "23:00-00:59" },
+        { start: 1, end: 3, range: "01:00-02:59" },
+        { start: 3, end: 5, range: "03:00-04:59" },
+        { start: 5, end: 7, range: "05:00-06:59" },
+        { start: 7, end: 9, range: "07:00-08:59" },
+        { start: 9, end: 11, range: "09:00-10:59" },
+        { start: 11, end: 13, range: "11:00-12:59" },
+        { start: 13, end: 15, range: "13:00-14:59" },
+        { start: 15, end: 17, range: "15:00-16:59" },
+        { start: 17, end: 19, range: "17:00-18:59" },
+        { start: 19, end: 21, range: "19:00-20:59" },
+        { start: 21, end: 23, range: "21:00-22:59" },
+      ];
 
-    return `${hourIn12Format}:00 ${period}`;
+      // Handle special case for 23:00-01:59
+      if (hour >= 23 || hour < 1) {
+        return timeRanges[0].range;
+      }
+
+      // Find the correct time range
+      for (const timeRange of timeRanges) {
+        if (hour >= timeRange.start && hour < timeRange.end) {
+          return timeRange.range;
+        }
+      }
+
+      // Fallback to first range if no match found
+      return timeRanges[0].range;
+    };
+
+    return getTimeRange(hour);
   }, []);
 
   // Find profile in context to display - memoized to prevent infinite re-renders
@@ -448,12 +481,6 @@ const FreeResultContent: React.FC = () => {
     }
   }, [chartData, calculatedChartData, formatDate, language, showAlert, t]);
 
-
-  // Prepare the limited time offer text
-  const limitedTimeText = t("freeTest.limitedTime")
-    .replace("{{startDate}}", FREE_TEST_CONFIG.startDate)
-    .replace("{{endDate}}", FREE_TEST_CONFIG.endDate);
-
   /**
    * Fetch profile directly from database as final fallback
    * @param profileId - ID of the profile to fetch
@@ -532,9 +559,9 @@ const FreeResultContent: React.FC = () => {
             </p>
           )}
 
-          {/* Limited time offer badge */}
-          <div className="mt-4 inline-block bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-4 py-2 rounded-full text-sm font-bold">
-            {limitedTimeText}
+          {/* Free test badge */}
+          <div className="mt-4 inline-block bg-gradient-to-r from-purple-500 to-indigo-600 text-white px-4 py-2 rounded-full text-sm font-bold">
+            {t("freeTest.limitedTime")}
           </div>
         </div>
 

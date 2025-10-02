@@ -369,7 +369,7 @@ export const DATASET_1 = {
         "Boldly Honest, Logical Thinker, Highly Observant, Impactful Communicator, Direct and Clear",
       cautions: "Misinterpreted, Blunt",
 
-      quote: "You are not a quarrel king, you are the解毒剂 of language.",
+      quote: "You are not a quarrel king, you are the antidote of language.",
     },
     财帛宫: {
       title: "🌪️ 巨门（财帛宫）｜说话能量星",
@@ -378,7 +378,7 @@ export const DATASET_1 = {
       earning_methods: "深度访谈／心灵咨询／品牌策略／犀利文案／犀利自媒体",
       financial_risks: "说得多做得少、表达越界失客户",
       focus_areas: "打造“敢说真话的变现模型”，建立高信任社群",
-      quote: "You are not a quarrel king, you are the解毒剂 of language.",
+      quote: "You are not a quarrel king, you are the antidote of language.",
     },
     官禄宫: {
       title: "🌪️ 巨门（官禄宫）｜说话能量星",

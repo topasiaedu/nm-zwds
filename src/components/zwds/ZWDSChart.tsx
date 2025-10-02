@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useMemo, useCallback } from "react";
 import { motion } from "framer-motion";
 import { ChartData } from "../../utils/zwds/types";
 
@@ -191,8 +191,9 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
 
   /**
    * Calculate all activation lines to draw, including opposite palace influences
+   * Memoized to prevent expensive recalculations on every render
    */
-  const getAllTransformations = () => {
+  const getAllTransformations = useMemo(() => {
     // Get regular transformations when a palace is selected
     const regularTransformations = selectedPalace
       ? calculateTransformations()
@@ -229,7 +230,7 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
     }
 
     return allTransformations;
-  };
+  }, [selectedPalace, settings.palaceClickInteraction, settings.transformationLines, calculateTransformations, calculateOppositePalaceInfluences]);
 
   /**
    * Calculate palace tag for a given palace based on the selected Da Xian
@@ -271,8 +272,9 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
 
   /**
    * Handle palace click
+   * Memoized to prevent unnecessary re-renders of Palace components
    */
-  const handlePalaceClick = (palaceNumber: number) => {
+  const handlePalaceClick = useCallback((palaceNumber: number) => {
     if (disableInteraction || !settings.palaceClickInteraction) return;
 
     console.log("🏰 Palace clicked:", palaceNumber);
@@ -289,7 +291,7 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
     }
 
     // Redraw counter removed to prevent flashing
-  };
+  }, [disableInteraction, settings.palaceClickInteraction, selectedPalace, refsReady, setRefsReady]);
 
   // Sync internal selection with controlled prop if provided
   useEffect(() => {
@@ -318,43 +320,47 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
     } else if (selectedPalaceNameControlled === null) {
       setSelectedPalaceName(null);
     }
-  }, [selectedPalaceNameControlled]);
+  }, [selectedPalaceNameControlled, settings.palaceNameClickInteraction]);
 
   /**
    * Handle Da Xian click
+   * Memoized to prevent unnecessary re-renders
    */
-  const handleDaXianClick = (palaceNumber: number) => {
+  const handleDaXianClick = useCallback((palaceNumber: number) => {
     if (disableInteraction || !settings.daXianClickInteraction) return;
 
     setSelectedDaXian(selectedDaXian === palaceNumber ? null : palaceNumber);
-  };
+  }, [disableInteraction, settings.daXianClickInteraction, selectedDaXian]);
 
   /**
    * Handle year click to show months
+   * Memoized to prevent unnecessary re-renders
    */
-  const handleYearClick = (palaceNumber: number, e: React.MouseEvent) => {
+  const handleYearClick = useCallback((palaceNumber: number, e: React.MouseEvent) => {
     if (disableInteraction || !settings.yearAgeClickInteraction) return;
 
     e.stopPropagation();
     setShowMonths(showMonths === palaceNumber ? null : palaceNumber);
-  };
+  }, [disableInteraction, settings.yearAgeClickInteraction, showMonths]);
 
   /**
    * Handle palace name click to show secondary palace name
+   * Memoized to prevent unnecessary re-renders
    */
-  const handlePalaceNameClick = (palaceNumber: number, e: React.MouseEvent) => {
+  const handlePalaceNameClick = useCallback((palaceNumber: number, e: React.MouseEvent) => {
     if (disableInteraction || !settings.palaceNameClickInteraction) return;
 
     e.stopPropagation();
     setSelectedPalaceName(
       selectedPalaceName === palaceNumber ? null : palaceNumber
     );
-  };
+  }, [disableInteraction, settings.palaceNameClickInteraction, selectedPalaceName]);
 
   /**
    * Get month for a palace based on the clicked palace number
+   * Memoized to prevent recalculations on every render
    */
-  const getMonthForPalace = (
+  const getMonthForPalace = useCallback((
     clickedPalaceNumber: number,
     currentPalaceNumber: number
   ): string | null => {
@@ -385,12 +391,13 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
     // Calculate the final month index
     const monthIndex = (startingMonthIndex + distance) % 12;
     return months[monthIndex];
-  };
+  }, [showMonths, settings.yearAgeClickInteraction, chartData.palaces, language]);
 
   /**
    * Get secondary palace name based on clicked palace
+   * Memoized to prevent recalculations on every render
    */
-  const getSecondaryPalaceName = (
+  const getSecondaryPalaceName = useCallback((
     currentPalaceNumber: number
   ): string | null => {
     if (!selectedPalaceName || !settings.palaceNameClickInteraction)
@@ -411,7 +418,7 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
       // Note: we cannot call t here (not in this file), so fallback is handled in Palace overlay rendering
     }
     return nameCn;
-  };
+  }, [selectedPalaceName, settings.palaceNameClickInteraction, language]);
 
   /**
    * Render a single palace in the chart
@@ -528,7 +535,7 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
 
       {/* Render transformation lines as overlay */}
       <TransformationLines
-        transformations={getAllTransformations()}
+        transformations={getAllTransformations}
         chartRef={chartRef}
         palaceRefs={palaceRefs}
         starRefs={starRefs}

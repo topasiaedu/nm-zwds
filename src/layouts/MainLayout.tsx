@@ -1,7 +1,4 @@
 import React, { ReactNode } from "react";
-import { useLocation } from "react-router-dom";
-import PageTransition from "../components/PageTransition";
-import { AnimatePresence } from "framer-motion";
 // Removed StarryBackground import to fix memory leak
 import Navbar from "../components/navbar";
 
@@ -14,11 +11,14 @@ interface MainLayoutProps {
 
 /**
  * Main layout component that wraps the entire application
- * and handles the theme switching and page transitions
+ * 
+ * Note: AnimatePresence and PageTransition removed from here to fix:
+ * 1. Blank page issue on back navigation (caused by double-nesting)
+ * 2. Laggy transitions (caused by AnimatePresence mode="wait" coordination issues)
+ * 
+ * Each individual page component now handles its own PageTransition independently.
  */
 export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
-  const location = useLocation();
-
   return (
     <div className="relative min-h-screen w-full overflow-hidden bg-gray-50 dark:bg-gray-900 transition-colors duration-500">
       {/* Background animation removed to fix memory leak */}
@@ -26,14 +26,9 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
       {/* Navbar with circular buttons */}
       <Navbar />
       
-      {/* Main content */}
+      {/* Main content - No animation wrapper, pages handle their own transitions */}
       <div className="relative z-10 container mx-auto px-4 pt-16">
-        {/* Page content with transitions */}
-        <AnimatePresence mode="wait">
-          <PageTransition key={location.pathname}>
-            {children}
-          </PageTransition>
-        </AnimatePresence>
+        {children}
       </div>
     </div>
   );
