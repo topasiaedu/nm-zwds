@@ -1,18 +1,17 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { analyzeCareerLegacy as analyzeCareer, getStarsInPalace } from "../../utils/zwds/analysis";
 import { useLanguage } from "../../context/LanguageContext";
-import { ResponsiveBar } from "@nivo/bar";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Cell,
+} from "recharts";
 import AnimatedWrapper from "./AnimatedWrapper";
-
-/**
- * Interface for custom tick renderer props
- */
-interface TickProps {
-  x: number;
-  y: number;
-  value: string | number;
-  format?: (value: string | number) => string;
-}
 
 /**
  * Props interface for the CareerAnalysis component
@@ -289,146 +288,93 @@ const CareerAnalysis: React.FC<CareerAnalysisProps> = ({ chartData }) => {
           {careerAptitudes.length > 0 ? (
             <div className="h-96">
               {careerBarData.length > 0 ? (
-                <ResponsiveBar
-                  data={careerBarData}
-                  keys={["value"]}
-                  indexBy="category"
-                  margin={{
-                    top: 10,
-                    right: 20,
-                    bottom: 40,
-                    left: containerWidth < 500 ? 80 : 120,
-                  }}
-                  padding={0.3}
-                  layout="horizontal"
-                  valueScale={{ type: "linear" }}
-                  indexScale={{ type: "band", round: true }}
-                  colors={({ data }) => data.color}
-                  borderRadius={4}
-                  borderColor={{ from: "color", modifiers: [["darker", 1.6]] }}
-                  axisTop={null}
-                  axisRight={null}
-                  axisBottom={{
-                    tickSize: 5,
-                    tickPadding: 5,
-                    tickRotation: 0,
-                    legend: t("analysis.career.careerCount"),
-                    legendPosition: "middle",
-                    legendOffset: 32,
-                  }}
-                  axisLeft={{
-                    tickSize: 5,
-                    tickPadding: 5,
-                    tickRotation: 0,
-                    truncateTickAt: containerWidth < 600 ? 15 : undefined,
-                    renderTick: containerWidth < 500 ? 
-                      (props: TickProps) => {
-                        const { x, y, value } = props;
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart
+                    data={careerBarData}
+                    layout="horizontal"
+                    margin={{
+                      top: 10,
+                      right: 20,
+                      bottom: 40,
+                      left: containerWidth < 500 ? 80 : 120,
+                    }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                    <XAxis 
+                      type="number" 
+                      stroke="#718096"
+                      style={{ fontSize: containerWidth < 500 ? 10 : 12 }}
+                    />
+                    <YAxis 
+                      type="category" 
+                      dataKey="category"
+                      stroke="#718096"
+                      width={containerWidth < 500 ? 70 : 110}
+                      style={{ fontSize: containerWidth < 500 ? 10 : 12 }}
+                      tick={{fill: "#718096"}}
+                    />
+                    <Tooltip
+                      content={(props) => {
+                        if (!props.active || !props.payload || !props.payload[0]) {
+                          return null;
+                        }
+                        
+                        const data = props.payload[0].payload as any;
+                        const value = data.value;
+                        const color = data.color;
+                        const englishCategory = data.englishCategory || "";
+                        
+                        const careersInThisCategory = englishCategory === "其他" 
+                          ? careerAptitudes.filter(career => {
+                              for (const [cat, careerList] of Object.entries(categories)) {
+                                if (careerList.includes(career)) {
+                                  return false;
+                                }
+                              }
+                              return true;
+                            })
+                          : careersInCategories[englishCategory] || [];
+
+                        const displayCategory = englishCategory === "其他" 
+                          ? (language === "en" ? "Others" : "其他")
+                          : (language === "en" 
+                            ? englishCategory.split(" ")[0]
+                            : englishCategory.split(" ")[1]
+                          );
+
                         return (
-                          <g transform={`translate(${x},${y})`}>
-                            <text
-                              textAnchor="end"
-                              dominantBaseline="middle"
-                              style={{
-                                fill: "#718096",
-                                fontSize: "11px",
-                              }}
-                              x={-10}
-                              y={0}
-                            >
-                              {typeof value === "string" && value.length > 12 
-                                ? `${value.substring(0, 11)}...` 
-                                : value}
-                            </text>
-                          </g>
-                        );
-                      } : undefined,
-                  }}
-                  enableGridX={true}
-                  enableGridY={false}
-                  labelSkipWidth={12}
-                  labelSkipHeight={12}
-                  labelTextColor={{ from: "color", modifiers: [["darker", 1.6]] }}
-                  animate={true}
-                  tooltip={({ id, value, color, indexValue, data }) => {
-                    const englishCategory = data.englishCategory || "";
-                    
-                    const careersInThisCategory = englishCategory === "其他" 
-                      ? careerAptitudes.filter(career => {
-                          for (const [cat, careerList] of Object.entries(categories)) {
-                            if (careerList.includes(career)) {
-                              return false;
-                            }
-                          }
-                          return true;
-                        })
-                      : careersInCategories[englishCategory] || [];
-
-                    // Get display category name based on current language
-                    const displayCategory = englishCategory === "其他" 
-                      ? (language === "en" ? "Others" : "其他")
-                      : (language === "en" 
-                        ? englishCategory.split(" ")[0]  // English part
-                        : englishCategory.split(" ")[1]  // Chinese part
-                      );
-
-                    return (
-                      <div className="backdrop-blur-md bg-gray-800/80 text-white p-3 rounded-md shadow-lg text-sm max-w-xs border border-gray-700/50">
-                        <div className="font-bold border-b border-gray-600/50 pb-1 mb-2">
-                          <div className="flex items-center mb-1.5">
-                            <span className="w-3 h-3 rounded-full mr-2" style={{ backgroundColor: color }}></span>
-                            <span>{displayCategory}</span>
-                            <span className="ml-auto">
-                              {value} {value > 1 ? (language === "en" ? "options" : "选项") : (language === "en" ? "option" : "选项")}
-                            </span>
-                          </div>
-                        </div>
-                        <div className="grid grid-cols-1 gap-1 mt-1">
-                          {careersInThisCategory.map((career, i) => {
-                            // Get the translated career name
-                            const translatedCareer = translateCareer(career);
-                            
-                            return (
-                              <div key={i} className="flex items-center">
-                                <span className="w-1.5 h-1.5 rounded-full mr-1.5" style={{ backgroundColor: color }}></span>
-                                <span>{language === "en" ? translatedCareer : career}</span>
+                          <div className="backdrop-blur-md bg-gray-800/80 text-white p-3 rounded-md shadow-lg text-sm max-w-xs border border-gray-700/50">
+                            <div className="font-bold border-b border-gray-600/50 pb-1 mb-2">
+                              <div className="flex items-center mb-1.5">
+                                <span className="w-3 h-3 rounded-full mr-2" style={{ backgroundColor: color }}></span>
+                                <span>{displayCategory}</span>
+                                <span className="ml-auto">
+                                  {value} {value > 1 ? (language === "en" ? "options" : "选项") : (language === "en" ? "option" : "选项")}
+                                </span>
                               </div>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    );
-                  }}
-                  theme={{
-                    tooltip: {
-                      container: {
-                        background: "transparent",
-                        boxShadow: "none",
-                        padding: 0
-                      }
-                    },
-                    axis: {
-                      ticks: {
-                        text: {
-                          fill: "#718096", // text-gray-500
-                          fontSize: containerWidth < 500 ? 10 : 12,
-                        },
-                      },
-                      legend: {
-                        text: {
-                          fill: "#4a5568", // text-gray-700
-                          fontSize: containerWidth < 500 ? 10 : 12,
-                        },
-                      },
-                    },
-                    grid: {
-                      line: {
-                        stroke: "#e2e8f0", // text-gray-200
-                        strokeWidth: 1,
-                      },
-                    },
-                  }}
-                />
+                            </div>
+                            <div className="grid grid-cols-1 gap-1 mt-1">
+                              {careersInThisCategory.map((career, i) => {
+                                const translatedCareer = translateCareer(career);
+                                
+                                return (
+                                  <div key={i} className="flex items-center">
+                                    <span className="w-1.5 h-1.5 rounded-full mr-1.5" style={{ backgroundColor: color }}></span>
+                                    <span>{language === "en" ? translatedCareer : career}</span>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        );
+                      }}
+                    />
+                    <Bar dataKey="value" radius={[0, 4, 4, 0]}>
+                      {careerBarData.map((entry, index) => (
+                        <Cell key={`cell-${entry.category}`} fill={entry.color} />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
               ) : (
                 <div className="flex items-center justify-center h-full text-gray-500">
                   {t("analysis.career.noData")}

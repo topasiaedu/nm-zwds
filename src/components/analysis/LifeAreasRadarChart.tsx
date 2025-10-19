@@ -1,10 +1,16 @@
 import React, { useMemo } from "react";
-import { ResponsiveRadar } from "@nivo/radar";
+import {
+  RadarChart,
+  PolarGrid,
+  PolarAngleAxis,
+  PolarRadiusAxis,
+  Radar,
+  ResponsiveContainer,
+} from "recharts";
 import { useLanguage } from "../../context/LanguageContext";
 import { 
   calculateLifeAreaScores, 
-  type ChartDataType, 
-  type RadarDataPoint 
+  type ChartDataType
 } from "../../utils/zwds/analysis";
 import AnimatedWrapper from "./AnimatedWrapper";
 
@@ -54,50 +60,28 @@ const LifeAreasRadarChart: React.FC<LifeAreasRadarChartProps> = ({ chartData }) 
         <div className="p-6">
           <div className="w-full h-80 md:h-96">
             {lifeAreaScores.length > 0 ? (
-              <ResponsiveRadar
-                data={lifeAreaScores}
-                keys={["score"]}
-                indexBy="area"
-                maxValue={100}
-                margin={{ top: 70, right: 80, bottom: 40, left: 80 }}
-                borderWidth={2}
-                gridLabelOffset={36}
-                dotSize={10}
-                dotColor={{ theme: "background" }}
-                dotBorderWidth={2}
-                colors={["#60a5fa"]}
-                fillOpacity={0.6}
-                borderColor={{ from: "color" }}
-                gridShape="circular"
-                gridLevels={5}
-                enableDots={true}
-                theme={{
-                  text: {
-                    fontSize: 12,
-                    fill: "#94a3b8" // text-slate-400 works in both light and dark modes
-                  },
-                  axis: {
-                    domain: {
-                      line: {
-                        stroke: "#64748b", // text-slate-500
-                        strokeWidth: 1
-                      }
-                    },
-                    ticks: {
-                      line: {
-                        stroke: "#64748b", // text-slate-500
-                        strokeWidth: 1
-                      }
-                    }
-                  },
-                  grid: {
-                    line: {
-                      stroke: "#475569", // text-slate-600 for dark mode
-                      strokeWidth: 1
-                    }
-                  }
-                }}
-              />
+              <ResponsiveContainer width="100%" height="100%">
+                <RadarChart data={lifeAreaScores}>
+                  <PolarGrid stroke="#475569" />
+                  <PolarAngleAxis 
+                    dataKey="area" 
+                    tick={{ fill: "#94a3b8", fontSize: 12 }}
+                  />
+                  <PolarRadiusAxis 
+                    angle={90} 
+                    domain={[0, 100]}
+                    tick={{ fill: "#94a3b8", fontSize: 10 }}
+                  />
+                  <Radar
+                    name="Score"
+                    dataKey="score"
+                    stroke="#60a5fa"
+                    fill="#60a5fa"
+                    fillOpacity={0.6}
+                    strokeWidth={2}
+                  />
+                </RadarChart>
+              </ResponsiveContainer>
             ) : (
               <div className="flex items-center justify-center h-full">
                 <p className="text-gray-500 dark:text-gray-400">{t("analysis.noDataAvailable") || "No data available"}</p>

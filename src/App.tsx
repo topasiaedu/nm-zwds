@@ -28,6 +28,7 @@ import Result from "./pages/result";
 import TimingChart from "./pages/timing-chart";
 import CAEGPT from "./pages/caegpt";
 import UserManagement from "./pages/admin/user-management";
+import NumerologyAnalytics from "./pages/admin/numerology-analytics";
 import ChartOnly from "./pages/chart-only";
 import ChartTest from "./pages/chart-test";
 import Tier3Result from "./pages/tier3-result";
@@ -286,6 +287,14 @@ const App: React.FC = () => {
                       element={
                         <ProtectedRoute>
                             <UserManagement />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/admin/numerology-analytics"
+                      element={
+                        <ProtectedRoute>
+                            <NumerologyAnalytics />
                         </ProtectedRoute>
                       }
                     />
