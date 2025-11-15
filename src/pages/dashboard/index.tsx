@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useLanguage } from "../../context/LanguageContext";
 import { useAuth } from "../../context/AuthContext";
 import { useProfileContext } from "../../context/ProfileContext";
@@ -6,6 +6,7 @@ import { useTierAccess } from "../../context/TierContext";
 import { Link } from "react-router-dom";
 import PageTransition from "../../components/PageTransition";
 import { useAlertContext } from "../../context/AlertContext";
+import ConfirmationModal from "../../components/ConfirmationModal";
 
 /**
  * Dashboard component for 紫微斗数 (Zi Wei Dou Shu/Purple Star Astrology) application
@@ -17,6 +18,15 @@ const Dashboard: React.FC = () => {
   const { profiles, loading, deleteProfile } = useProfileContext();
   const { showAlert } = useAlertContext();
   const { hasDestinyNavigatorAccess, isAdmin, tier } = useTierAccess();
+  const [deleteConfirmation, setDeleteConfirmation] = useState<{
+    isOpen: boolean;
+    profileId: string;
+    profileName: string;
+  }>({
+    isOpen: false,
+    profileId: "",
+    profileName: "",
+  });
 
   /**
    * Get recent profiles sorted by last_viewed
@@ -33,22 +43,40 @@ const Dashboard: React.FC = () => {
   }, [profiles]);
 
   /**
-   * Handle profile deletion
+   * Open delete confirmation dialog
+   * @param profileId - ID of the profile to delete
+   * @param profileName - Name of the profile to delete
    */
-  const handleDeleteProfile = async (
-    profileId: string,
-    profileName: string
-  ) => {
+  const handleDeleteClick = (profileId: string, profileName: string) => {
+    setDeleteConfirmation({
+      isOpen: true,
+      profileId,
+      profileName,
+    });
+  };
+
+  /**
+   * Handle confirmed profile deletion
+   */
+  const handleConfirmDelete = async () => {
     try {
-      await deleteProfile(profileId);
+      await deleteProfile(deleteConfirmation.profileId);
       showAlert(
-        t("dashboard.deleteSuccess").replace("{{name}}", profileName),
+        t("dashboard.deleteSuccess").replace("{{name}}", deleteConfirmation.profileName),
         "success"
       );
+      setDeleteConfirmation({ isOpen: false, profileId: "", profileName: "" });
     } catch (error) {
       console.error("Error deleting profile:", error);
       showAlert(t("dashboard.deleteError"), "error");
     }
+  };
+
+  /**
+   * Handle cancel delete
+   */
+  const handleCancelDelete = () => {
+    setDeleteConfirmation({ isOpen: false, profileId: "", profileName: "" });
   };
 
   return (
@@ -488,7 +516,7 @@ const Dashboard: React.FC = () => {
                                 </Link>
                                 <button
                                   onClick={() =>
-                                    handleDeleteProfile(
+                                    handleDeleteClick(
                                       profile.id,
                                       profile.name
                                     )
@@ -560,6 +588,23 @@ const Dashboard: React.FC = () => {
             </div>
           </div>
         </div>
+
+        {/* Delete Confirmation Modal */}
+        <ConfirmationModal
+          isOpen={deleteConfirmation.isOpen}
+          title={t("dashboard.deleteConfirmTitle") || "Delete Profile"}
+          message={
+            t("dashboard.deleteConfirmMessage")?.replace(
+              "{{name}}",
+              deleteConfirmation.profileName
+            ) || `Are you sure you want to delete "${deleteConfirmation.profileName}"? This action cannot be undone.`
+          }
+          confirmText={t("dashboard.table.delete") || "Delete"}
+          cancelText={t("general.cancel") || "Cancel"}
+          onConfirm={handleConfirmDelete}
+          onCancel={handleCancelDelete}
+          type="danger"
+        />
       </div>
     </PageTransition>
   );

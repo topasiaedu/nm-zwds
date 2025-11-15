@@ -4,15 +4,27 @@ import { useProfileContext } from "../context/ProfileContext";
 import { Link, useNavigate } from "react-router-dom";
 import PageTransition from "../components/PageTransition";
 import ProfileForm from "../components/ProfileForm";
+import ConfirmationModal from "../components/ConfirmationModal";
+import { useAlertContext } from "../context/AlertContext";
 
 /**
  * Calculate component for creating 紫微斗数 (Zi Wei Dou Shu) charts for other people
  */
 const Calculate: React.FC = () => {
   const { t } = useLanguage();
-  const { profiles, loading } = useProfileContext();
+  const { profiles, loading, deleteProfile } = useProfileContext();
+  const { showAlert } = useAlertContext();
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
+  const [deleteConfirmation, setDeleteConfirmation] = useState<{
+    isOpen: boolean;
+    profileId: string;
+    profileName: string;
+  }>({
+    isOpen: false,
+    profileId: "",
+    profileName: "",
+  });
   
   /**
    * Handle successful profile creation
@@ -23,6 +35,43 @@ const Calculate: React.FC = () => {
     if (profileId) {
       navigate(`/result/${profileId}`);
     }
+  };
+
+  /**
+   * Open delete confirmation dialog
+   * @param profileId - ID of the profile to delete
+   * @param profileName - Name of the profile to delete
+   */
+  const handleDeleteClick = (profileId: string, profileName: string) => {
+    setDeleteConfirmation({
+      isOpen: true,
+      profileId,
+      profileName,
+    });
+  };
+
+  /**
+   * Handle confirmed profile deletion
+   */
+  const handleConfirmDelete = async () => {
+    try {
+      await deleteProfile(deleteConfirmation.profileId);
+      showAlert(
+        t("dashboard.deleteSuccess").replace("{{name}}", deleteConfirmation.profileName),
+        "success"
+      );
+      setDeleteConfirmation({ isOpen: false, profileId: "", profileName: "" });
+    } catch (error) {
+      console.error("Error deleting profile:", error);
+      showAlert(t("dashboard.deleteError"), "error");
+    }
+  };
+
+  /**
+   * Handle cancel delete
+   */
+  const handleCancelDelete = () => {
+    setDeleteConfirmation({ isOpen: false, profileId: "", profileName: "" });
   };
   
   // Filter out self profiles - we only want to show profiles of others
@@ -106,23 +155,48 @@ const Calculate: React.FC = () => {
                 <>
                   <div className="space-y-3 max-h-96 overflow-y-auto custom-scrollbar pr-2">
                     {filteredProfiles.map((profile) => (
-                      <Link 
+                      <div 
                         key={profile.id}
-                        to={`/result/${profile.id}`}
-                        className="block p-3 rounded-lg bg-white/20 dark:bg-gray-800/20 hover:bg-white/30 dark:hover:bg-gray-800/30 transition-all"
+                        className="p-3 rounded-lg bg-white/20 dark:bg-gray-800/20 hover:bg-white/30 dark:hover:bg-gray-800/30 transition-all"
                       >
-                        <div className="flex justify-between items-center">
-                          <div>
-                            <h3 className="text-sm font-medium dark:text-white">{profile.name}</h3>
-                            <p className="text-xs text-gray-500 dark:text-gray-400">
-                              {t("dashboard.table.other")} • {new Date(profile.birthday).toLocaleDateString()}
-                            </p>
-                          </div>
-                          <span className="text-xs text-gray-500 dark:text-gray-400">
-                            {new Date(profile.last_viewed || profile.created_at).toLocaleDateString()}
-                          </span>
+                        <div className="flex justify-between items-start">
+                          <Link 
+                            to={`/result/${profile.id}`}
+                            className="flex-1"
+                          >
+                            <div>
+                              <h3 className="text-sm font-medium dark:text-white">{profile.name}</h3>
+                              <p className="text-xs text-gray-500 dark:text-gray-400">
+                                {t("dashboard.table.other")} • {new Date(profile.birthday).toLocaleDateString()}
+                              </p>
+                              <span className="text-xs text-gray-500 dark:text-gray-400">
+                                {new Date(profile.last_viewed || profile.created_at).toLocaleDateString()}
+                              </span>
+                            </div>
+                          </Link>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDeleteClick(profile.id, profile.name);
+                            }}
+                            className="flex-shrink-0 ml-2 text-red-600 hover:text-red-900 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 p-1.5 rounded-lg transition-colors"
+                            title={t("dashboard.table.delete")}
+                          >
+                            <svg
+                              className="w-4 h-4"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24">
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                              />
+                            </svg>
+                          </button>
                         </div>
-                      </Link>
+                      </div>
                     ))}
                   </div>
                   {filteredProfiles.length === 0 && (
@@ -195,6 +269,23 @@ const Calculate: React.FC = () => {
             </div>
           </div>
         </div>
+
+        {/* Delete Confirmation Modal */}
+        <ConfirmationModal
+          isOpen={deleteConfirmation.isOpen}
+          title={t("dashboard.deleteConfirmTitle") || "Delete Profile"}
+          message={
+            t("dashboard.deleteConfirmMessage")?.replace(
+              "{{name}}",
+              deleteConfirmation.profileName
+            ) || `Are you sure you want to delete "${deleteConfirmation.profileName}"? This action cannot be undone.`
+          }
+          confirmText={t("dashboard.table.delete") || "Delete"}
+          cancelText={t("general.cancel") || "Cancel"}
+          onConfirm={handleConfirmDelete}
+          onCancel={handleCancelDelete}
+          type="danger"
+        />
       </div>
     </PageTransition>
   );

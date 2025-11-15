@@ -24,6 +24,17 @@ const zh = {
   ...zwds,
   ...misc,
   ...freeTest,
+  general:{
+    back: "返回",
+    cancel: "取消",
+    close: "关闭",
+    confirm: "确认",
+    error: "错误",
+    loadingText: "加载中...",
+    noSearchResults: "没有符合搜索条件的结果",
+    retry: "重试",
+    search: "搜索",
+  }
 };
 
 export default zh; 

@@ -22,8 +22,11 @@ const common = {
   
   general: {
     back: "Back",
+    cancel: "Cancel",
+    confirm: "Confirm",
     error: "Error",
     loadingText: "Loading...",
+    noSearchResults: "No results match your search",
     retry: "Retry",
     search: "Search",
   },

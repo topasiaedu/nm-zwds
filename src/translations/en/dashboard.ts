@@ -48,12 +48,17 @@ const dashboard = {
       type: "Type",
       action: "Action",
       view: "View",
+      delete: "Delete",
       gender: "Gender",
       male: "Male",
       female: "Female",
       self: "Self",
       other: "Other"
     },
+    deleteConfirmTitle: "Delete Profile",
+    deleteConfirmMessage: "Are you sure you want to delete \"{{name}}\"? This action cannot be undone.",
+    deleteSuccess: "Profile \"{{name}}\" has been deleted successfully.",
+    deleteError: "Failed to delete profile. Please try again.",
     emptyState: {
       title: "No results yet",
       description: "Get started by creating a new chart calculation.",

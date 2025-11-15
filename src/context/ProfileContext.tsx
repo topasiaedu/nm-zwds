@@ -20,8 +20,8 @@ interface ProfileContextProps {
   loading: boolean;
   profiles: Profile[];
   addProfile: (profile: ProfileInsert) => Promise<Profile | null>;
-  updateProfile: (profile: Profile) => void;
-  deleteProfile: (profileId: string) => void;
+  updateProfile: (profile: Profile) => Promise<void>;
+  deleteProfile: (profileId: string) => Promise<void>;
   currentProfile: Profile | null;
   setCurrentProfile: (profile: Profile) => void;
   setCurrentProfileById: (profileId: string) => void;

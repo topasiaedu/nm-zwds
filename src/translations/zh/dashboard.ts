@@ -48,12 +48,17 @@ const dashboard = {
       type: "类型",
       action: "操作",
       view: "查看",
+      delete: "删除",
       gender: "性别",
       male: "男",
       female: "女",
       self: "自己",
       other: "他人"
     },
+    deleteConfirmTitle: "删除档案",
+    deleteConfirmMessage: "您确定要删除 \"{{name}}\" 吗？此操作无法撤销。",
+    deleteSuccess: "档案 \"{{name}}\" 已成功删除。",
+    deleteError: "删除档案失败。请重试。",
     emptyState: {
       title: "暂无结果",
       description: "从创建新的星盘计算开始。",

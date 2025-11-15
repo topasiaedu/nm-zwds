@@ -25,11 +25,15 @@ const en = {
   ...misc,
   ...freeTest,
   general:{
-    close: "Close",
     back: "Back",
-    loadingText: "Loading...",
+    cancel: "Cancel",
+    close: "Close",
+    confirm: "Confirm",
     error: "Error",
+    loadingText: "Loading...",
+    noSearchResults: "No results match your search",
     retry: "Retry",
+    search: "Search",
   }
 };
 
