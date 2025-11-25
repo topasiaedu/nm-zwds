@@ -26,6 +26,57 @@ import { ChartSettingsProvider } from "../context/ChartSettingsContext";
 import ChartSettingsModal from "../components/ChartSettingsModal";
 
 /**
+ * Chinese Earthly Branches for time periods (地支)
+ */
+const EarthlyBranches = [
+  "子", // 23-1
+  "丑", // 1-3
+  "寅", // 3-5
+  "卯", // 5-7
+  "辰", // 7-9
+  "巳", // 9-11
+  "午", // 11-13
+  "未", // 13-15
+  "申", // 15-17
+  "酉", // 17-19
+  "戌", // 19-21
+  "亥", // 21-23
+];
+
+/**
+ * Get branch index from hour (0-23)
+ * @param hour - Hour in 24-hour format
+ * @returns Branch index (0-11)
+ */
+const getBranchIndexFromHour = (hour: number): number => {
+  // Adjust for 子时 starting at 23:00
+  const adjustedHour = (hour + 1) % 24;
+  return Math.floor(adjustedHour / 2);
+};
+
+/**
+ * Get hour from branch index
+ * @param branchIndex - Branch index (0-11)
+ * @returns Starting hour for that branch
+ */
+const getHourFromBranchIndex = (branchIndex: number): number => {
+  return (23 + (branchIndex * 2)) % 24;
+};
+
+/**
+ * Get time range string for a branch
+ * @param branchIndex - Branch index (0-11)
+ * @returns Time range string like "23:00-00:59"
+ */
+const getTimeRangeForBranch = (branchIndex: number): string => {
+  const startHour = (23 + (branchIndex * 2)) % 24;
+  const endHour = (startHour + 2) % 24;
+  const formattedStartHour = startHour.toString().padStart(2, "0");
+  const formattedEndHour = (endHour - 1).toString().padStart(2, "0");
+  return `${formattedStartHour}:00-${formattedEndHour}:59`;
+};
+
+/**
  * ChartData interface for chart information - using PdfChartData for consistency
  */
 type ChartData = PdfChartData;
@@ -38,7 +89,7 @@ const ResultContent: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { profiles, loading: profilesLoading } = useProfileContext();
-  const { hasAnalyticsAccess } = useTierAccess();
+  const { hasAnalyticsAccess, isAdmin } = useTierAccess();
   const { showAlert } = useAlertContext();
 
   // State for chart data
@@ -46,6 +97,9 @@ const ResultContent: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [isCapturingForPdf] = useState<boolean>(false);
+  
+  // State for branch adjustment (allows users to cycle through the 12 time branches)
+  const [branchOffset, setBranchOffset] = useState<number>(0);
 
   // Removed Tier3/Admin control pills from this page and moved to tier3-result
 
@@ -134,6 +188,48 @@ const ResultContent: React.FC = () => {
       },
     });
   }, []);
+
+  /**
+   * Get current branch display info based on chartData and branchOffset
+   */
+  const getCurrentBranchInfo = useCallback((): { branch: string; timeRange: string } | null => {
+    if (!chartData) return null;
+
+    try {
+      // Parse original hour
+      const timeMatch = chartData.birthTime.match(/(\d+):(\d+)\s*(AM|PM)?/i);
+      let hour = timeMatch ? parseInt(timeMatch[1]) : 12;
+
+      if (
+        timeMatch &&
+        timeMatch[3] &&
+        timeMatch[3].toUpperCase() === "PM" &&
+        hour < 12
+      ) {
+        hour += 12;
+      }
+      if (
+        timeMatch &&
+        timeMatch[3] &&
+        timeMatch[3].toUpperCase() === "AM" &&
+        hour === 12
+      ) {
+        hour = 0;
+      }
+
+      // Calculate current branch with offset
+      const originalBranchIndex = getBranchIndexFromHour(hour);
+      const currentBranchIndex = (originalBranchIndex + branchOffset + 12) % 12;
+      
+      return {
+        branch: EarthlyBranches[currentBranchIndex],
+        timeRange: getTimeRangeForBranch(currentBranchIndex),
+      };
+    } catch (error) {
+      console.error("Error getting branch info:", error);
+      return null;
+    }
+  }, [chartData, branchOffset]);
 
   // Find the user's self profile if no id is provided
   const isSelfProfile = !id;
@@ -275,7 +371,7 @@ const ResultContent: React.FC = () => {
 
   /**
    * Memoized chart calculation to prevent unnecessary recalculations
-   * Only recalculates when chartData changes
+   * Recalculates when chartData or branchOffset changes
    */
   const calculatedChartData = useMemo(() => {
     if (!chartData) return null;
@@ -302,6 +398,13 @@ const ResultContent: React.FC = () => {
         hour === 12
       ) {
         hour = 0;
+      }
+
+      // Apply branch offset for temporary adjustment (cycles through 12 branches)
+      if (branchOffset !== 0) {
+        const originalBranchIndex = getBranchIndexFromHour(hour);
+        const newBranchIndex = (originalBranchIndex + branchOffset + 12) % 12;
+        hour = getHourFromBranchIndex(newBranchIndex);
       }
 
       // Parse birth date - handle potential timezone issues
@@ -337,7 +440,7 @@ const ResultContent: React.FC = () => {
       setError(`Failed to calculate chart data: ${error}`);
       return null;
     }
-  }, [chartData]);
+  }, [chartData, branchOffset]);
 
   /**
    * Handle PDF export with progress modal (currently disabled)
@@ -720,6 +823,126 @@ const ResultContent: React.FC = () => {
                       </div>
                     </div>
                   </div>
+
+                  {/* Hour Adjustment Controls - Admin Only */}
+                  {isAdmin && (() => {
+                    const currentBranchInfo = getCurrentBranchInfo();
+                    return (
+                      <div className="mt-6 p-4 bg-gradient-to-br from-amber-50/50 to-orange-50/50 dark:bg-gradient-to-br dark:from-gray-800/50 dark:to-gray-700/50 rounded-lg border border-amber-200/50 dark:border-gray-600/50">
+                        <h3 className="text-sm font-semibold mb-3 text-gray-800 dark:text-white flex items-center">
+                          <svg
+                            className="w-4 h-4 mr-2 text-amber-600 dark:text-blue-400"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                            />
+                          </svg>
+                          {t("result.hourAdjustment.title") || "Adjust Birth Hour"}
+                        </h3>
+                        <p className="text-xs text-gray-600 dark:text-gray-300 mb-3">
+                          {t("result.hourAdjustment.description") || "Cycle through the 12 time branches (地支) to explore chart variations"}
+                        </p>
+                      
+                        <div className="flex items-center justify-between gap-3">
+                          {/* Previous Branch Button */}
+                          <button
+                            onClick={() => setBranchOffset(prev => prev - 1)}
+                            className="flex-1 px-3 py-2 bg-white dark:bg-gray-700/50 border border-gray-300 dark:border-gray-600 
+                                       rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600/50 
+                                       transition-colors font-medium text-sm text-gray-700 dark:text-gray-200
+                                       flex items-center justify-center gap-1">
+                            <svg
+                              className="w-4 h-4"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                              xmlns="http://www.w3.org/2000/svg">
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M15 19l-7-7 7-7"
+                              />
+                            </svg>
+                            <span>{t("result.hourAdjustment.previous") || "Prev"}</span>
+                          </button>
+
+                          {/* Current Branch Display */}
+                          <div className="flex-[2] text-center">
+                            <div className={`px-3 py-2 rounded-lg font-bold text-sm ${
+                              branchOffset === 0 
+                                ? "bg-green-100 dark:bg-green-500/20 text-green-800 dark:text-green-300 border border-green-200 dark:border-green-500/30" 
+                                : "bg-amber-100 dark:bg-blue-500/20 text-amber-800 dark:text-blue-300 border border-amber-200 dark:border-blue-500/30"
+                            }`}>
+                              {currentBranchInfo ? (
+                                <div className="flex flex-col">
+                                  <span className="text-lg">{currentBranchInfo.branch}</span>
+                                  <span className="text-xs font-normal opacity-80">
+                                    {currentBranchInfo.timeRange}
+                                  </span>
+                                </div>
+                              ) : (
+                                <span>{t("result.hourAdjustment.original") || "Original"}</span>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Next Branch Button */}
+                          <button
+                            onClick={() => setBranchOffset(prev => prev + 1)}
+                            className="flex-1 px-3 py-2 bg-white dark:bg-gray-700/50 border border-gray-300 dark:border-gray-600 
+                                       rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600/50 
+                                       transition-colors font-medium text-sm text-gray-700 dark:text-gray-200
+                                       flex items-center justify-center gap-1">
+                            <span>{t("result.hourAdjustment.next") || "Next"}</span>
+                            <svg
+                              className="w-4 h-4"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                              xmlns="http://www.w3.org/2000/svg">
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M9 5l7 7-7 7"
+                              />
+                            </svg>
+                          </button>
+                        </div>
+
+                        {/* Reset Button */}
+                        {branchOffset !== 0 && (
+                          <button
+                            onClick={() => setBranchOffset(0)}
+                            className="w-full mt-3 px-3 py-2 bg-gradient-to-r from-gray-500 to-gray-600 dark:from-gray-600 dark:to-gray-700
+                                       hover:from-gray-600 hover:to-gray-700 dark:hover:from-gray-500 dark:hover:to-gray-600 text-white rounded-lg 
+                                       transition-all text-sm font-medium flex items-center justify-center gap-2 shadow-sm">
+                            <svg
+                              className="w-4 h-4"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                              xmlns="http://www.w3.org/2000/svg">
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                              />
+                            </svg>
+                            {t("result.hourAdjustment.reset") || "Reset to Original"}
+                          </button>
+                        )}
+                      </div>
+                    );
+                  })()}
 
                   {/* Chart Settings Button */}
                   {/* <div className="mt-6">

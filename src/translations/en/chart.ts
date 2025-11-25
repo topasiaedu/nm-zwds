@@ -62,6 +62,14 @@ const chart = {
       generated: "Generated"
     },
     exportPdf: "Export PDF",
+    hourAdjustment: {
+      title: "Adjust Birth Hour",
+      description: "Cycle through the 12 time branches (地支) to explore chart variations",
+      original: "Original",
+      reset: "Reset to Original",
+      previous: "Prev",
+      next: "Next"
+    },
    
     
   },

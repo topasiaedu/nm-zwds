@@ -99,6 +99,14 @@ const chart = {
       lifeLessonsText: "平衡，情感表达，信任"
     },
     exportPdf: "导出PDF",
+    hourAdjustment: {
+      title: "调整出生时辰",
+      description: "循环浏览12个时辰（地支）以探索命盘变化",
+      original: "原始",
+      reset: "重置为原始时辰",
+      previous: "上一个",
+      next: "下一个"
+    },
   },
   
   pdfExport: {
