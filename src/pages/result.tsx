@@ -217,9 +217,9 @@ const ResultContent: React.FC = () => {
         hour = 0;
       }
 
-      // Calculate current branch with offset
+      // Calculate current branch with offset (ensure positive result with double modulo)
       const originalBranchIndex = getBranchIndexFromHour(hour);
-      const currentBranchIndex = (originalBranchIndex + branchOffset + 12) % 12;
+      const currentBranchIndex = ((originalBranchIndex + branchOffset) % 12 + 12) % 12;
       
       return {
         branch: EarthlyBranches[currentBranchIndex],
@@ -403,7 +403,8 @@ const ResultContent: React.FC = () => {
       // Apply branch offset for temporary adjustment (cycles through 12 branches)
       if (branchOffset !== 0) {
         const originalBranchIndex = getBranchIndexFromHour(hour);
-        const newBranchIndex = (originalBranchIndex + branchOffset + 12) % 12;
+        // Use double modulo to ensure positive result: ((value % 12) + 12) % 12
+        const newBranchIndex = ((originalBranchIndex + branchOffset) % 12 + 12) % 12;
         hour = getHourFromBranchIndex(newBranchIndex);
       }
 
