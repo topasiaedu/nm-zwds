@@ -42,12 +42,12 @@ The app will open at [http://localhost:3000](http://localhost:3000)
 
 Comprehensive documentation is available in the [`docs/`](./docs/) folder:
 
+- [**Documentation Index**](./docs/INDEX.md) - Complete documentation index
 - [**Quick Start Guide**](./docs/guides/QUICK_START.md) - Get up and running
 - [**Project Overview**](./docs/architecture/PROJECT_OVERVIEW.md) - Architecture and design
 - [**Folder Structure**](./docs/architecture/FOLDER_STRUCTURE.md) - Codebase organization
 - [**ZWDS Engine**](./docs/zwds/OVERVIEW.md) - Understanding the calculation engine
 - [**API Documentation**](./docs/api/CHART_ONLY.md) - Backend integration
-- [**Contributing Guide**](./docs/guides/CONTRIBUTING.md) - How to contribute
 
 ## 🔧 Environment Variables
 
@@ -75,7 +75,7 @@ See [Environment Variables Guide](./docs/guides/ENVIRONMENT.md) for details.
 - **Deployment**: Vercel
 - **Build Tool**: Create React App
 
-See [Tech Stack Documentation](./docs/architecture/TECH_STACK.md) for details.
+See [Project Overview](./docs/architecture/PROJECT_OVERVIEW.md) for details.
 
 ## 📦 Available Scripts
 
@@ -112,7 +112,7 @@ The app supports multiple languages:
 - **English** (`en`)
 - **Chinese Traditional** (`zh`)
 
-To add a new language, see [Translation Guide](./docs/guides/TRANSLATIONS.md).
+Translation files are located in `src/translations/`.
 
 ## 🧪 Testing
 
@@ -127,19 +127,6 @@ npm test -- --watch
 npm test -- --coverage
 ```
 
-## 📝 Contributing
-
-We welcome contributions! Please see our [Contributing Guide](./docs/guides/CONTRIBUTING.md) for details.
-
-### Development Workflow
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Make your changes
-4. Run tests and linting
-5. Commit your changes (`git commit -m 'Add amazing feature'`)
-6. Push to the branch (`git push origin feature/amazing-feature`)
-7. Open a Pull Request
 
 ## 📄 License
 
@@ -156,15 +143,6 @@ This project is proprietary software. All rights reserved.
 
 For questions or support, please contact the development team.
 
-## 🗺️ Roadmap
-
-- [ ] Mobile app (React Native)
-- [ ] More languages (Japanese, Korean)
-- [ ] Advanced timing analysis
-- [ ] Compatibility analysis
-- [ ] AI-powered insights
-
-See [Project Roadmap](./docs/ROADMAP.md) for details.
 
 ---
 

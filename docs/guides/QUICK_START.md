@@ -128,7 +128,6 @@ Now that you're up and running:
 1. **Explore the App**: Try creating different profiles
 2. **Read the Docs**: Check out [Project Overview](../architecture/PROJECT_OVERVIEW.md)
 3. **Understand ZWDS**: Learn about the [ZWDS Engine](../zwds/OVERVIEW.md)
-4. **Start Developing**: See [Contributing Guide](./CONTRIBUTING.md)
 
 ## Development Tips
 
@@ -195,10 +194,9 @@ See [Folder Structure](../architecture/FOLDER_STRUCTURE.md) for details.
 
 ## What's Next?
 
-- [Setup Guide](./SETUP.md) - Detailed setup instructions
 - [Environment Variables](./ENVIRONMENT.md) - Configuration options
-- [Contributing](./CONTRIBUTING.md) - How to contribute
-- [Code Style](./CODE_STYLE.md) - Coding standards
+- [Project Overview](../architecture/PROJECT_OVERVIEW.md) - Understanding the system
+- [ZWDS Engine](../zwds/OVERVIEW.md) - Learn about ZWDS
 
 Happy coding! 🎉
 

@@ -21,10 +21,9 @@ docs/
 ├── api/                        # API documentation (1 file)
 │   └── CHART_ONLY.md           # Chart-only endpoint (moved from root)
 │
-├── guides/                     # How-to guides (3 files)
+├── guides/                     # How-to guides (2 files)
 │   ├── QUICK_START.md          # 5-minute setup guide
-│   ├── ENVIRONMENT.md          # Environment variables
-│   └── CONTRIBUTING.md         # Contribution guidelines
+│   └── ENVIRONMENT.md          # Environment variables
 │
 ├── refactoring/                # Refactoring plans (4 files)
 │   ├── OVERVIEW.md             # Refactoring overview
@@ -36,9 +35,9 @@ docs/
     └── OVERVIEW.md             # Comprehensive ZWDS guide
 ```
 
-**Total Files Created**: 15 documentation files
-**Total Words**: ~25,000 words
-**Total Lines**: ~2,500 lines
+**Total Files Created**: 12 documentation files
+**Total Words**: ~20,000 words
+**Total Lines**: ~2,000 lines
 
 ### 2. Root Directory Cleaned
 
@@ -278,10 +277,6 @@ docs/
 3. Explore [Folder Structure](docs/architecture/FOLDER_STRUCTURE.md)
 4. Learn about [ZWDS Engine](docs/zwds/OVERVIEW.md)
 
-### For Contributors
-1. Read [Contributing Guide](docs/guides/CONTRIBUTING.md)
-2. Check [Known Issues](docs/KNOWN_ISSUES.md)
-3. Review [Refactoring Plans](docs/refactoring/OVERVIEW.md)
 
 ### For Maintainers
 1. Review [Refactoring Overview](docs/refactoring/OVERVIEW.md)

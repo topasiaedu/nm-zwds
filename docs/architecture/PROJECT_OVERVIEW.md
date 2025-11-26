@@ -157,6 +157,6 @@ npm run format      # Format code with Prettier
 ## Related Documentation
 
 - [Folder Structure](./FOLDER_STRUCTURE.md) - Detailed codebase organization
-- [Tech Stack](./TECH_STACK.md) - Technologies and libraries
-- [Data Flow](./DATA_FLOW.md) - How data moves through the app
+- [ZWDS Overview](../zwds/OVERVIEW.md) - Understanding the ZWDS engine
+- [Refactoring Plans](../refactoring/OVERVIEW.md) - Planned improvements
 

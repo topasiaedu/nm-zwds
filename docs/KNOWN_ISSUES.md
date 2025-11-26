@@ -194,5 +194,4 @@ Issues that have been resolved will be moved here with version number.
 
 - [Changelog](./CHANGELOG.md) - Version history
 - [Refactoring Overview](./refactoring/OVERVIEW.md) - Planned improvements
-- [Contributing Guide](./guides/CONTRIBUTING.md) - How to help fix issues
 

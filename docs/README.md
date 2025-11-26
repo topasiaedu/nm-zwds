@@ -17,19 +17,12 @@ Welcome to the NM-ZWDS (紫微斗数) project documentation. This directory cont
 
 ### ZWDS Engine
 - [**ZWDS Overview**](./zwds/OVERVIEW.md) - Understanding the ZWDS calculation engine
-- [**Calculator Logic**](./zwds/CALCULATOR.md) - How charts are calculated
-- [**Analysis System**](./zwds/ANALYSIS.md) - Analysis algorithms explained
-- [**Data Structure**](./zwds/DATA_STRUCTURE.md) - Content and constants organization
 
 ### API Documentation
 - [**Chart-Only Endpoint**](./api/CHART_ONLY.md) - Backend integration for screenshots
-- [**Supabase Integration**](./api/SUPABASE.md) - Database schema and queries
 
 ### Development Guides
-- [**Contributing**](./guides/CONTRIBUTING.md) - How to contribute
-- [**Code Style**](./guides/CODE_STYLE.md) - Coding standards
-- [**Testing**](./guides/TESTING.md) - Testing guidelines
-- [**Translation Management**](./guides/TRANSLATIONS.md) - Adding/editing translations
+- [**Environment Variables**](./guides/ENVIRONMENT.md) - Configuration guide
 
 ### Refactoring Plans
 - [**Refactoring Overview**](./refactoring/OVERVIEW.md) - Current refactoring initiatives
@@ -40,6 +33,8 @@ Welcome to the NM-ZWDS (紫微斗数) project documentation. This directory cont
 ## 🚀 Quick Links
 
 - [Project README](../README.md) - Main project README
+- [Project Summary](./PROJECT_SUMMARY.md) - Quick reference guide
+- [Documentation Index](./INDEX.md) - Complete documentation index
 - [Change Log](./CHANGELOG.md) - Version history
 - [Known Issues](./KNOWN_ISSUES.md) - Current bugs and limitations
 

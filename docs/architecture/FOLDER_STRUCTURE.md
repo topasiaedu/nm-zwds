@@ -362,6 +362,6 @@ import { ZWDSCalculator } from "../../zwds/core/calculator";
 ## Related Documentation
 
 - [Project Overview](./PROJECT_OVERVIEW.md) - High-level architecture
-- [Tech Stack](./TECH_STACK.md) - Technologies used
+- [ZWDS Overview](../zwds/OVERVIEW.md) - Understanding the ZWDS engine
 - [Refactoring Plans](../refactoring/OVERVIEW.md) - Planned improvements
 

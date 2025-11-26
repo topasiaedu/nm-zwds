@@ -148,10 +148,6 @@ See [Quick Start Guide](./guides/QUICK_START.md) for details.
 3. [Folder Structure](./architecture/FOLDER_STRUCTURE.md) - Navigate the code
 4. [ZWDS Overview](./zwds/OVERVIEW.md) - Understand ZWDS engine
 
-### For Contributors
-1. [Contributing Guide](./guides/CONTRIBUTING.md) - How to contribute
-2. [Code Style](./guides/CODE_STYLE.md) - Coding standards
-3. [Testing Guide](./guides/TESTING.md) - Testing practices
 
 ### For Maintainers
 1. [Refactoring Overview](./refactoring/OVERVIEW.md) - Current initiatives
@@ -241,29 +237,6 @@ See [Changelog](./CHANGELOG.md) for version history.
 - Clean architecture
 - Content management system
 
-## 🤝 Contributing
-
-We welcome contributions! See [Contributing Guide](./guides/CONTRIBUTING.md).
-
-### How to Help
-1. **Report bugs**: Create GitHub issues
-2. **Fix bugs**: Submit pull requests
-3. **Add features**: Propose and implement
-4. **Improve docs**: Update documentation
-5. **Test**: Help with testing
-
-### Development Workflow
-1. Fork repository
-2. Create feature branch
-3. Make changes
-4. Run tests and linting
-5. Submit pull request
-
-## 📞 Contact
-
-- **Issues**: [GitHub Issues](https://github.com/your-username/nm-zwds/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/your-username/nm-zwds/discussions)
-- **Email**: [Contact development team]
 
 ## 📝 License
 

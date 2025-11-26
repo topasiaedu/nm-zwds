@@ -82,7 +82,7 @@ Each chart has 12 palaces representing different life areas:
 ## Major Stars
 
 ### Primary Stars (主星)
-The most important stars that define personality:
+The 14 main stars that define personality and life patterns:
 
 **Leadership Group (领导型)**
 - 紫微 (Zi Wei): Emperor Star
@@ -112,10 +112,6 @@ Supporting stars that modify the main stars:
 - 右弼 (You Bi): Right Assistant
 - 文昌 (Wen Chang): Literary Star
 - 文曲 (Wen Qu): Literary Melody
-- 天魁 (Tian Kui): Heavenly Leader
-- 天钺 (Tian Yue): Heavenly Halberd
-- 禄存 (Lu Cun): Wealth Preservation
-- 天马 (Tian Ma): Heavenly Horse
 
 ### Transformation Stars (化星)
 Four transformations that modify star energy:
@@ -123,15 +119,6 @@ Four transformations that modify star energy:
 - 化权 (Hua Quan): Transform to Power
 - 化科 (Hua Ke): Transform to Fame
 - 化忌 (Hua Ji): Transform to Obstruction
-
-### Inauspicious Stars (煞星)
-Challenging stars that create obstacles:
-- 擎羊 (Qing Yang): Goat Blade
-- 陀罗 (Tuo Luo): Spinning Top
-- 火星 (Huo Xing): Fire Star
-- 铃星 (Ling Xing): Bell Star
-- 地空 (Di Kong): Earth Void
-- 地劫 (Di Jie): Earth Robbery
 
 ## Four Transformations (四化)
 
@@ -188,15 +175,15 @@ If Life Palace is in 子 (Rat) position:
 2. Check Life Palace stars (personality fit)
 3. Analyze transformations
 4. Map to 9 career archetypes:
-   - Visionaries (创新者)
-   - Strategists (战略家)
-   - Guardians (守护者)
-   - Advisors (顾问)
-   - Architects (建筑师)
-   - Educators (教育者)
-   - Stewards (管家)
+   - Visionaries (灵感者)
    - Lifekeepers (生命守护者)
-   - Vanguards (先锋)
+   - Educators (教育者)
+   - Strategists (策略者)
+   - Architects (架构者)
+   - Stewards (执行者)
+   - Guardians (守护者)
+   - Vanguards (先锋者)
+   - Advisors (筹策者)
 
 ### Health Analysis
 1. Identify stars in Health Palace (疾厄宫)
@@ -357,8 +344,6 @@ interface Palace {
 
 ## Related Documentation
 
-- [Calculator Logic](./CALCULATOR.md) - Detailed calculation steps
-- [Analysis System](./ANALYSIS.md) - Analysis algorithms
-- [Data Structure](./DATA_STRUCTURE.md) - Data organization
 - [Project Overview](../architecture/PROJECT_OVERVIEW.md) - High-level architecture
+- [Folder Structure](../architecture/FOLDER_STRUCTURE.md) - Codebase organization
 

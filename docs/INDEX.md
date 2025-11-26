@@ -12,24 +12,16 @@ Complete index of all NM-ZWDS documentation.
 ### 🏗️ Architecture
 - [Project Overview](./architecture/PROJECT_OVERVIEW.md) - High-level system design
 - [Folder Structure](./architecture/FOLDER_STRUCTURE.md) - Codebase organization
-- [Tech Stack](./architecture/TECH_STACK.md) - Technologies and libraries *(planned)*
-- [Data Flow](./architecture/DATA_FLOW.md) - How data moves through the app *(planned)*
 
 ### 🔮 ZWDS Engine
 - [ZWDS Overview](./zwds/OVERVIEW.md) - Understanding the ZWDS calculation engine
-- [Calculator Logic](./zwds/CALCULATOR.md) - Detailed calculation steps *(planned)*
-- [Analysis System](./zwds/ANALYSIS.md) - Analysis algorithms explained *(planned)*
-- [Data Structure](./zwds/DATA_STRUCTURE.md) - Content organization *(planned)*
 
 ### 🔌 API Documentation
 - [Chart-Only Endpoint](./api/CHART_ONLY.md) - Backend integration for screenshots
-- [Supabase Integration](./api/SUPABASE.md) - Database schema and queries *(planned)*
 
 ### 👨‍💻 Development Guides
-- [Contributing Guide](./guides/CONTRIBUTING.md) - How to contribute
-- [Code Style](./guides/CODE_STYLE.md) - Coding standards *(planned)*
-- [Testing Guide](./guides/TESTING.md) - Testing guidelines *(planned)*
-- [Translation Management](./guides/TRANSLATIONS.md) - Adding/editing translations *(planned)*
+- [Quick Start Guide](./guides/QUICK_START.md) - Get up and running in 5 minutes
+- [Environment Variables](./guides/ENVIRONMENT.md) - Configuration guide
 
 ### 🔧 Refactoring Plans
 - [Refactoring Overview](./refactoring/OVERVIEW.md) - Current refactoring initiatives
@@ -50,21 +42,7 @@ Complete index of all NM-ZWDS documentation.
 1. [Quick Start Guide](./guides/QUICK_START.md)
 2. [Project Overview](./architecture/PROJECT_OVERVIEW.md)
 3. [Folder Structure](./architecture/FOLDER_STRUCTURE.md)
-
-**Then Learn:**
 4. [ZWDS Overview](./zwds/OVERVIEW.md)
-5. [Contributing Guide](./guides/CONTRIBUTING.md)
-
-### For Contributors
-
-**Before Contributing:**
-1. [Contributing Guide](./guides/CONTRIBUTING.md)
-2. [Code Style](./guides/CODE_STYLE.md) *(planned)*
-3. [Testing Guide](./guides/TESTING.md) *(planned)*
-
-**While Contributing:**
-4. [Known Issues](./KNOWN_ISSUES.md)
-5. [Refactoring Overview](./refactoring/OVERVIEW.md)
 
 ### For Maintainers
 
@@ -83,14 +61,11 @@ Complete index of all NM-ZWDS documentation.
 
 **Integration:**
 1. [Chart-Only Endpoint](./api/CHART_ONLY.md)
-2. [Supabase Integration](./api/SUPABASE.md) *(planned)*
 
 ### For Understanding ZWDS
 
 **Learn ZWDS:**
 1. [ZWDS Overview](./zwds/OVERVIEW.md)
-2. [Calculator Logic](./zwds/CALCULATOR.md) *(planned)*
-3. [Analysis System](./zwds/ANALYSIS.md) *(planned)*
 
 ## 📂 Documentation Structure
 
@@ -104,21 +79,14 @@ docs/
 │
 ├── architecture/               # System architecture
 │   ├── PROJECT_OVERVIEW.md
-│   ├── FOLDER_STRUCTURE.md
-│   ├── TECH_STACK.md          # Planned
-│   └── DATA_FLOW.md           # Planned
+│   └── FOLDER_STRUCTURE.md
 │
 ├── api/                        # API documentation
-│   ├── CHART_ONLY.md
-│   └── SUPABASE.md            # Planned
+│   └── CHART_ONLY.md
 │
 ├── guides/                     # How-to guides
 │   ├── QUICK_START.md
-│   ├── ENVIRONMENT.md
-│   ├── CONTRIBUTING.md
-│   ├── CODE_STYLE.md          # Planned
-│   ├── TESTING.md             # Planned
-│   └── TRANSLATIONS.md        # Planned
+│   └── ENVIRONMENT.md
 │
 ├── refactoring/                # Refactoring plans
 │   ├── OVERVIEW.md
@@ -127,63 +95,21 @@ docs/
 │   └── DEAD_CODE.md
 │
 └── zwds/                       # ZWDS engine docs
-    ├── OVERVIEW.md
-    ├── CALCULATOR.md          # Planned
-    ├── ANALYSIS.md            # Planned
-    └── DATA_STRUCTURE.md      # Planned
+    └── OVERVIEW.md
 ```
 
-## ✅ Completed Documentation
+## ✅ Documentation Status
 
-### Architecture
-- ✅ Project Overview
-- ✅ Folder Structure
+**Total Files**: 12 documentation files
+**Status**: Core documentation complete
 
-### ZWDS
-- ✅ ZWDS Overview (comprehensive)
-
-### API
-- ✅ Chart-Only Endpoint
-
-### Guides
-- ✅ Quick Start Guide
-- ✅ Environment Variables
-- ✅ Contributing Guide
-
-### Refactoring
-- ✅ Refactoring Overview
-- ✅ ZWDS Cleanup Plan
-- ✅ Component Reorganization
-- ✅ Dead Code Removal
-
-### Project Management
-- ✅ Changelog
-- ✅ Known Issues
-- ✅ Project Summary
-
-## 📋 Planned Documentation
-
-### Architecture
-- [ ] Tech Stack - Detailed technology documentation
-- [ ] Data Flow - How data moves through the system
-
-### ZWDS
-- [ ] Calculator Logic - Step-by-step calculation process
-- [ ] Analysis System - Detailed analysis algorithms
-- [ ] Data Structure - Content organization and format
-
-### API
-- [ ] Supabase Integration - Database schema and queries
-
-### Guides
-- [ ] Code Style - Detailed coding standards
-- [ ] Testing Guide - Testing practices and examples
-- [ ] Translation Management - i18n workflow
-- [ ] Setup Guide - Detailed setup instructions
-- [ ] Deployment Guide - Production deployment
-
-### Project Management
-- [ ] Roadmap - Future features and plans
+### Completed
+- ✅ Project Overview & Folder Structure
+- ✅ ZWDS Engine Overview (comprehensive)
+- ✅ Chart-Only API Endpoint
+- ✅ Quick Start & Environment Setup
+- ✅ Complete Refactoring Plans
+- ✅ Project Management (Changelog, Known Issues, Summary)
 
 ## 🔍 Finding Documentation
 
@@ -191,20 +117,15 @@ docs/
 
 **Chart Calculation:**
 - [ZWDS Overview](./zwds/OVERVIEW.md)
-- [Calculator Logic](./zwds/CALCULATOR.md) *(planned)*
 
 **Analysis:**
-- [ZWDS Overview](./zwds/OVERVIEW.md) - Overview section
-- [Analysis System](./zwds/ANALYSIS.md) *(planned)*
+- [ZWDS Overview](./zwds/OVERVIEW.md) - Analysis section
 
 **PDF Export:**
 - [Component Reorganization](./refactoring/COMPONENTS.md) - PDF section
 
-**Authentication:**
-- [Supabase Integration](./api/SUPABASE.md) *(planned)*
-
 **Translations:**
-- [Translation Management](./guides/TRANSLATIONS.md) *(planned)*
+- Translation files in `src/translations/`
 
 ### By Task
 
@@ -212,72 +133,18 @@ docs/
 - [Quick Start Guide](./guides/QUICK_START.md)
 - [Environment Variables](./guides/ENVIRONMENT.md)
 
-**Contributing:**
-- [Contributing Guide](./guides/CONTRIBUTING.md)
-- [Code Style](./guides/CODE_STYLE.md) *(planned)*
-
 **Refactoring:**
 - [Refactoring Overview](./refactoring/OVERVIEW.md)
 - [ZWDS Cleanup](./refactoring/ZWDS_CLEANUP.md)
 - [Component Reorganization](./refactoring/COMPONENTS.md)
 
-**Deploying:**
-- [Deployment Guide](./guides/DEPLOYMENT.md) *(planned)*
-
-**Testing:**
-- [Testing Guide](./guides/TESTING.md) *(planned)*
-
 ## 📊 Documentation Stats
 
-### Completed
-- **Total Files**: 13
-- **Total Words**: ~25,000
-- **Total Lines**: ~2,500
-- **Coverage**: ~60% of planned docs
+- **Total Files**: 12
+- **Total Words**: ~20,000
+- **Total Lines**: ~2,000
+- **Status**: Core documentation complete
 
-### Planned
-- **Remaining Files**: 10
-- **Estimated Words**: ~15,000
-- **Estimated Time**: 10-15 hours
-
-## 🎯 Documentation Goals
-
-### Short Term (Completed)
-- ✅ Core documentation structure
-- ✅ Getting started guides
-- ✅ Architecture overview
-- ✅ Refactoring plans
-- ✅ ZWDS engine overview
-
-### Medium Term (Next)
-- [ ] Complete all planned guides
-- [ ] Add code examples
-- [ ] Add diagrams
-- [ ] Add screenshots
-
-### Long Term (Future)
-- [ ] Video tutorials
-- [ ] Interactive examples
-- [ ] API reference
-- [ ] Community contributions
-
-## 🤝 Contributing to Docs
-
-Documentation contributions are welcome!
-
-**How to Help:**
-1. Fix typos or unclear sections
-2. Add missing examples
-3. Create new guides
-4. Add diagrams or screenshots
-5. Translate to other languages
-
-**Guidelines:**
-- Use clear, concise language
-- Include code examples
-- Add screenshots for UI
-- Keep consistent formatting
-- Update this index when adding docs
 
 ## 📝 Documentation Standards
 
@@ -319,13 +186,6 @@ Documentation contributions are welcome!
 - [Purple Star Astrology](https://en.wikipedia.org/wiki/Zi_Wei_Dou_Shu)
 - Classical ZWDS texts (Chinese)
 
-## 📧 Documentation Feedback
-
-Found an issue or have a suggestion?
-
-- **Typos/Errors**: Create a GitHub issue
-- **Missing Docs**: Request in GitHub discussions
-- **Improvements**: Submit a pull request
 
 ---
 
