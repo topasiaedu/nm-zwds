@@ -34,28 +34,15 @@ REACT_APP_SUPABASE_ANON_KEY=your-anon-key-here
 
 ```env
 REACT_APP_FREE_TEST_ENABLED=true
-REACT_APP_FREE_TEST_START_DATE=2025-01-01
-REACT_APP_FREE_TEST_END_DATE=2025-08-11
 ```
 
 #### `REACT_APP_FREE_TEST_ENABLED`
 - **Purpose**: Enable/disable free test feature
 - **Required**: No
-- **Default**: `false`
+- **Default**: `true`
 - **Values**: `true`, `false`, `1`, `0`
 - **Usage**: Set to `false` or `0` to disable free test
-
-#### `REACT_APP_FREE_TEST_START_DATE`
-- **Purpose**: Start date for free test period
-- **Required**: No (if free test enabled)
-- **Format**: `YYYY-MM-DD`
-- **Example**: `2025-01-01`
-
-#### `REACT_APP_FREE_TEST_END_DATE`
-- **Purpose**: End date for free test period
-- **Required**: No (if free test enabled)
-- **Format**: `YYYY-MM-DD`
-- **Example**: `2025-08-11`
+- **Note**: Date restrictions have been removed - the feature is always available when enabled
 
 ## Setup Instructions
 
@@ -77,8 +64,6 @@ REACT_APP_SUPABASE_ANON_KEY=your-anon-key-here
 
 # Free Test Configuration (Optional)
 REACT_APP_FREE_TEST_ENABLED=true
-REACT_APP_FREE_TEST_START_DATE=2025-01-01
-REACT_APP_FREE_TEST_END_DATE=2025-08-11
 ```
 
 ### 3. Get Supabase Credentials
@@ -134,7 +119,7 @@ For production deployment on Vercel:
 ### ✅ Safe to Expose
 - `REACT_APP_SUPABASE_URL` (public URL)
 - `REACT_APP_SUPABASE_ANON_KEY` (public key with RLS)
-- `REACT_APP_FREE_TEST_*` (public configuration)
+- `REACT_APP_FREE_TEST_ENABLED` (public configuration)
 
 ### ❌ Never Expose
 - Supabase **service role** key (not used in frontend)
@@ -179,9 +164,8 @@ npm start
 
 **Solutions**:
 1. Check `REACT_APP_FREE_TEST_ENABLED=true`
-2. Verify dates are in correct format (`YYYY-MM-DD`)
-3. Ensure current date is within test period
-4. Restart development server
+2. Restart development server
+3. Clear browser cache
 
 ### Build Errors
 
@@ -201,6 +185,7 @@ npm start
 // ✅ Correct way
 const supabaseUrl = process.env.REACT_APP_SUPABASE_URL;
 const supabaseKey = process.env.REACT_APP_SUPABASE_ANON_KEY;
+const freeTestEnabled = process.env.REACT_APP_FREE_TEST_ENABLED;
 
 // ❌ Wrong way (TypeScript will complain)
 const url = process.env.SUPABASE_URL; // Missing REACT_APP_ prefix
@@ -216,8 +201,6 @@ declare global {
       REACT_APP_SUPABASE_URL: string;
       REACT_APP_SUPABASE_ANON_KEY: string;
       REACT_APP_FREE_TEST_ENABLED?: string;
-      REACT_APP_FREE_TEST_START_DATE?: string;
-      REACT_APP_FREE_TEST_END_DATE?: string;
     }
   }
 }
@@ -244,8 +227,6 @@ if (!process.env.REACT_APP_SUPABASE_ANON_KEY) {
 REACT_APP_SUPABASE_URL=https://dev-project.supabase.co
 REACT_APP_SUPABASE_ANON_KEY=dev-anon-key-here
 REACT_APP_FREE_TEST_ENABLED=true
-REACT_APP_FREE_TEST_START_DATE=2025-01-01
-REACT_APP_FREE_TEST_END_DATE=2025-12-31
 ```
 
 ### Production (Vercel)
@@ -253,7 +234,7 @@ REACT_APP_FREE_TEST_END_DATE=2025-12-31
 ```env
 REACT_APP_SUPABASE_URL=https://prod-project.supabase.co
 REACT_APP_SUPABASE_ANON_KEY=prod-anon-key-here
-REACT_APP_FREE_TEST_ENABLED=false
+REACT_APP_FREE_TEST_ENABLED=true
 ```
 
 ### Testing (CI/CD)
@@ -262,8 +243,6 @@ REACT_APP_FREE_TEST_ENABLED=false
 REACT_APP_SUPABASE_URL=https://test-project.supabase.co
 REACT_APP_SUPABASE_ANON_KEY=test-anon-key-here
 REACT_APP_FREE_TEST_ENABLED=true
-REACT_APP_FREE_TEST_START_DATE=2020-01-01
-REACT_APP_FREE_TEST_END_DATE=2030-12-31
 ```
 
 ## Related Documentation

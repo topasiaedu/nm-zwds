@@ -16,25 +16,9 @@ const FreeTestEnded: React.FC = () => {
   // Get current status and format description accordingly
   const status = FREE_TEST_CONFIG.getStatusReason();
   
-  // Format the description based on the status
-  let descriptionText: string;
-  let titleKey: string;
-  
-  switch (status) {
-    case "not-started":
-      titleKey = "freeTestNotStarted.title";
-      descriptionText = t("freeTestNotStarted.description");
-      break;
-    case "disabled":
-      titleKey = "freeTestDisabled.title";
-      descriptionText = t("freeTestDisabled.description");
-      break;
-    case "ended":
-    default:
-      titleKey = "freeTestEnded.title";
-      descriptionText = t("freeTestEnded.description");
-      break;
-  }
+  // Simple status check: either active or disabled
+  const titleKey = status === "disabled" ? "freeTestDisabled.title" : "freeTestEnded.title";
+  const descriptionText = status === "disabled" ? t("freeTestDisabled.description") : t("freeTestEnded.description");
   
   // WhatsApp icon SVG component
   const WhatsAppIcon = () => (

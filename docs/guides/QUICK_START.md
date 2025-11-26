@@ -38,14 +38,12 @@ cp .env.example .env.local
 Edit `.env.local` with your configuration:
 
 ```env
-# Free Test Configuration
-REACT_APP_FREE_TEST_START_DATE=2025-01-01
-REACT_APP_FREE_TEST_END_DATE=2025-08-11
-REACT_APP_FREE_TEST_ENABLED=true
-
 # Supabase Configuration
 REACT_APP_SUPABASE_URL=https://your-project.supabase.co
 REACT_APP_SUPABASE_ANON_KEY=your-anon-key-here
+
+# Optional: Free Test Feature
+REACT_APP_FREE_TEST_ENABLED=true
 ```
 
 ### Getting Supabase Credentials

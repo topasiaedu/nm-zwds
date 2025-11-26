@@ -54,14 +54,12 @@ Comprehensive documentation is available in the [`docs/`](./docs/) folder:
 Create a `.env.local` file in the root directory:
 
 ```env
-# Free Test Configuration
-REACT_APP_FREE_TEST_START_DATE=2025-01-01
-REACT_APP_FREE_TEST_END_DATE=2025-08-11
-REACT_APP_FREE_TEST_ENABLED=true
-
 # Supabase Configuration
 REACT_APP_SUPABASE_URL=your_supabase_url_here
 REACT_APP_SUPABASE_ANON_KEY=your_supabase_anon_key_here
+
+# Optional: Free Test Feature
+REACT_APP_FREE_TEST_ENABLED=true
 ```
 
 See [Environment Variables Guide](./docs/guides/ENVIRONMENT.md) for details.

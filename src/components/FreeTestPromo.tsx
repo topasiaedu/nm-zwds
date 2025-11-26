@@ -12,22 +12,10 @@ const FreeTestPromo: React.FC = () => {
   const [isActive, setIsActive] = useState<boolean>(true);
   
   /**
-   * Check if the free test event is currently active
+   * Check if the free test feature is currently enabled
    */
   useEffect(() => {
-    const checkEventStatus = () => {
-      const status = FREE_TEST_CONFIG.getStatusReason();
-      
-      // Only show promo if status is "active"
-      if (status !== "active") {
-        setIsActive(false);
-        return;
-      }
-      
-      setIsActive(true);
-    };
-    
-    checkEventStatus();
+    setIsActive(FREE_TEST_CONFIG.isActive());
   }, []);
   
   // If the promotion isn't active, don't render anything
@@ -49,12 +37,9 @@ const FreeTestPromo: React.FC = () => {
         </div>
         
         <div className="relative z-10">
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center mb-4">
             <span className="bg-yellow-500 text-yellow-900 text-xs font-bold px-3 py-1 rounded-full">
               {t("freeTestPromo.limitedOffer")}
-            </span>
-            <span className="bg-white text-indigo-700 text-xs font-bold px-3 py-1 rounded-full">
-              {t("freeTestPromo.daysLeft")}
             </span>
           </div>
           

@@ -18,22 +18,10 @@ const FreeTest: React.FC = () => {
 
 
   /**
-   * Check if the free test event is currently active
+   * Check if the free test feature is currently enabled
    */
   useEffect(() => {
-    const checkEventStatus = () => {
-      const status = FREE_TEST_CONFIG.getStatusReason();
-      
-      console.log("Free test status:", status);
-      console.log("Start date:", FREE_TEST_CONFIG.startDate);
-      console.log("End date:", FREE_TEST_CONFIG.endDate);
-      console.log("Is enabled:", FREE_TEST_CONFIG.isEnabled);
-      
-      // Set active only if status is "active"
-      setIsEventActive(status === "active");
-    };
-
-    checkEventStatus();
+    setIsEventActive(FREE_TEST_CONFIG.isActive());
   }, []);
 
   /**
@@ -62,17 +50,9 @@ const FreeTest: React.FC = () => {
     }
   };
 
-  // If event is not active, redirect to the appropriate page
+  // If feature is not enabled, redirect to the ended page
   if (!isEventActive) {
-    const status = FREE_TEST_CONFIG.getStatusReason();
-    if (status === "not-started") {
-      // Could redirect to a "coming soon" page or show a message
-      // For now, redirect to the ended page with appropriate messaging
-      navigate("/free-test-ended");
-    } else {
-      // For "ended" or "disabled" status
-      navigate("/free-test-ended");
-    }
+    navigate("/free-test-ended");
     return null;
   }
 
