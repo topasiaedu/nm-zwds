@@ -1,10 +1,57 @@
-# Getting Started with Create React App
+# NM-ZWDS (紫微斗数)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A modern web application for calculating and analyzing **Zi Wei Dou Shu (紫微斗数)** charts, an ancient Chinese astrological system.
 
-## Environment Variables
+## 🌟 Features
 
-This project uses environment variables for configuration. Create a `.env.local` file in the root directory with the following variables:
+- **Accurate Chart Calculation**: Generate ZWDS charts based on birth date, time, and gender
+- **Interactive Visualization**: Beautiful, interactive chart display with zodiac symbols
+- **Comprehensive Analysis**: Personality, career, health, and life timing insights
+- **Multi-language Support**: English and Chinese (Traditional)
+- **PDF Export**: Professional PDF reports with full analysis
+- **Profile Management**: Save and manage multiple profiles
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+- Node.js 16+ and npm
+- Supabase account (for authentication and database)
+
+### Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/your-username/nm-zwds.git
+cd nm-zwds
+
+# Install dependencies
+npm install
+
+# Set up environment variables
+cp .env.example .env.local
+# Edit .env.local with your configuration
+
+# Start development server
+npm start
+```
+
+The app will open at [http://localhost:3000](http://localhost:3000)
+
+## 📚 Documentation
+
+Comprehensive documentation is available in the [`docs/`](./docs/) folder:
+
+- [**Quick Start Guide**](./docs/guides/QUICK_START.md) - Get up and running
+- [**Project Overview**](./docs/architecture/PROJECT_OVERVIEW.md) - Architecture and design
+- [**Folder Structure**](./docs/architecture/FOLDER_STRUCTURE.md) - Codebase organization
+- [**ZWDS Engine**](./docs/zwds/OVERVIEW.md) - Understanding the calculation engine
+- [**API Documentation**](./docs/api/CHART_ONLY.md) - Backend integration
+- [**Contributing Guide**](./docs/guides/CONTRIBUTING.md) - How to contribute
+
+## 🔧 Environment Variables
+
+Create a `.env.local` file in the root directory:
 
 ```env
 # Free Test Configuration
@@ -17,54 +64,108 @@ REACT_APP_SUPABASE_URL=your_supabase_url_here
 REACT_APP_SUPABASE_ANON_KEY=your_supabase_anon_key_here
 ```
 
-### Free Test Configuration
-- `REACT_APP_FREE_TEST_START_DATE`: Start date for the free test feature (YYYY-MM-DD format)
-- `REACT_APP_FREE_TEST_END_DATE`: End date for the free test feature (YYYY-MM-DD format)
-- `REACT_APP_FREE_TEST_ENABLED`: Enable/disable free test feature (set to "false" or "0" to disable)
+See [Environment Variables Guide](./docs/guides/ENVIRONMENT.md) for details.
 
-### Supabase Configuration
-- `REACT_APP_SUPABASE_URL`: Your Supabase project URL
-- `REACT_APP_SUPABASE_ANON_KEY`: Your Supabase anonymous public API key
+## 🛠️ Tech Stack
 
-## Available Scripts
+- **Frontend**: React 18 + TypeScript
+- **Styling**: Tailwind CSS + Flowbite React
+- **State Management**: React Context
+- **Backend**: Supabase (Auth + Database)
+- **Deployment**: Vercel
+- **Build Tool**: Create React App
 
-In the project directory, you can run:
+See [Tech Stack Documentation](./docs/architecture/TECH_STACK.md) for details.
 
-### `npm start`
+## 📦 Available Scripts
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+```bash
+npm start          # Start development server
+npm test           # Run tests
+npm run build      # Build for production
+npm run lint       # Check code quality
+npm run format     # Format code with Prettier
+```
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## 🏗️ Project Structure
 
-### `npm test`
+```
+nm-zwds/
+├── docs/                   # 📚 Documentation
+├── src/
+│   ├── zwds/              # ZWDS calculation engine
+│   ├── components/        # React components
+│   ├── pages/             # Page components
+│   ├── context/           # React Context providers
+│   ├── translations/      # i18n translations
+│   └── utils/             # Utility functions
+├── public/                # Static assets
+└── package.json           # Dependencies
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+See [Folder Structure](./docs/architecture/FOLDER_STRUCTURE.md) for details.
 
-### `npm run build`
+## 🌐 Internationalization
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+The app supports multiple languages:
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- **English** (`en`)
+- **Chinese Traditional** (`zh`)
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+To add a new language, see [Translation Guide](./docs/guides/TRANSLATIONS.md).
 
-### `npm run eject`
+## 🧪 Testing
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+```bash
+# Run all tests
+npm test
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+# Run tests in watch mode
+npm test -- --watch
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+# Run tests with coverage
+npm test -- --coverage
+```
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+## 📝 Contributing
 
-## Learn More
+We welcome contributions! Please see our [Contributing Guide](./docs/guides/CONTRIBUTING.md) for details.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### Development Workflow
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Make your changes
+4. Run tests and linting
+5. Commit your changes (`git commit -m 'Add amazing feature'`)
+6. Push to the branch (`git push origin feature/amazing-feature`)
+7. Open a Pull Request
+
+## 📄 License
+
+This project is proprietary software. All rights reserved.
+
+## 🙏 Acknowledgments
+
+- Built with [Create React App](https://create-react-app.dev/)
+- UI components from [Flowbite React](https://flowbite-react.com/)
+- Hosted on [Vercel](https://vercel.com/)
+- Database and Auth by [Supabase](https://supabase.com/)
+
+## 📧 Contact
+
+For questions or support, please contact the development team.
+
+## 🗺️ Roadmap
+
+- [ ] Mobile app (React Native)
+- [ ] More languages (Japanese, Korean)
+- [ ] Advanced timing analysis
+- [ ] Compatibility analysis
+- [ ] AI-powered insights
+
+See [Project Roadmap](./docs/ROADMAP.md) for details.
+
+---
+
+**Note**: This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
