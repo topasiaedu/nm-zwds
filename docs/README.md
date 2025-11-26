@@ -18,6 +18,15 @@ Welcome to the NM-ZWDS (紫微斗数) project documentation. This directory cont
 ### ZWDS Engine
 - [**ZWDS Overview**](./zwds/OVERVIEW.md) - Understanding the ZWDS calculation engine
 
+### Performance Optimization
+- [**Performance Overview**](./performance/OVERVIEW.md) - Comprehensive optimization strategy
+- [**Data Structure**](./performance/DATA_STRUCTURE.md) - ChartData structure improvements
+- [**Calculator Optimization**](./performance/CALCULATOR_OPTIMIZATION.md) - Chart calculation improvements
+- [**Analysis Optimization**](./performance/ANALYSIS_OPTIMIZATION.md) - Analysis function improvements
+- [**UI Optimization**](./performance/UI_OPTIMIZATION.md) - Component rendering improvements
+- [**Testing Strategy**](./performance/TESTING_STRATEGY.md) - Comprehensive testing approach
+- [**Implementation Summary**](./performance/IMPLEMENTATION_SUMMARY.md) - Quick reference guide
+
 ### API Documentation
 - [**Chart-Only Endpoint**](./api/CHART_ONLY.md) - Backend integration for screenshots
 

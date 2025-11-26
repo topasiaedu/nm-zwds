@@ -16,6 +16,14 @@ Complete index of all NM-ZWDS documentation.
 ### 🔮 ZWDS Engine
 - [ZWDS Overview](./zwds/OVERVIEW.md) - Understanding the ZWDS calculation engine
 
+### ⚡ Performance Optimization
+- [Performance Overview](./performance/OVERVIEW.md) - Comprehensive optimization strategy
+- [Data Structure](./performance/DATA_STRUCTURE.md) - ChartData structure improvements
+- [Calculator Optimization](./performance/CALCULATOR_OPTIMIZATION.md) - Chart calculation improvements
+- [Analysis Optimization](./performance/ANALYSIS_OPTIMIZATION.md) - Analysis function improvements
+- [UI Optimization](./performance/UI_OPTIMIZATION.md) - Component rendering improvements
+- [Testing Strategy](./performance/TESTING_STRATEGY.md) - Comprehensive testing approach
+
 ### 🔌 API Documentation
 - [Chart-Only Endpoint](./api/CHART_ONLY.md) - Backend integration for screenshots
 
@@ -43,6 +51,16 @@ Complete index of all NM-ZWDS documentation.
 2. [Project Overview](./architecture/PROJECT_OVERVIEW.md)
 3. [Folder Structure](./architecture/FOLDER_STRUCTURE.md)
 4. [ZWDS Overview](./zwds/OVERVIEW.md)
+
+### For Performance Optimization
+
+**Optimization Plans:**
+1. [Performance Overview](./performance/OVERVIEW.md)
+2. [Data Structure Improvements](./performance/DATA_STRUCTURE.md)
+3. [Calculator Optimization](./performance/CALCULATOR_OPTIMIZATION.md)
+4. [Analysis Optimization](./performance/ANALYSIS_OPTIMIZATION.md)
+5. [UI Optimization](./performance/UI_OPTIMIZATION.md)
+6. [Testing Strategy](./performance/TESTING_STRATEGY.md)
 
 ### For Maintainers
 
@@ -88,6 +106,15 @@ docs/
 │   ├── QUICK_START.md
 │   └── ENVIRONMENT.md
 │
+├── performance/                # Performance optimization
+│   ├── OVERVIEW.md
+│   ├── DATA_STRUCTURE.md
+│   ├── CALCULATOR_OPTIMIZATION.md
+│   ├── ANALYSIS_OPTIMIZATION.md
+│   ├── UI_OPTIMIZATION.md
+│   ├── TESTING_STRATEGY.md
+│   └── IMPLEMENTATION_SUMMARY.md
+│
 ├── refactoring/                # Refactoring plans
 │   ├── OVERVIEW.md
 │   ├── ZWDS_CLEANUP.md
@@ -100,8 +127,8 @@ docs/
 
 ## ✅ Documentation Status
 
-**Total Files**: 12 documentation files
-**Status**: Core documentation complete
+**Total Files**: 19 documentation files
+**Status**: Core documentation complete + Performance optimization plans
 
 ### Completed
 - ✅ Project Overview & Folder Structure
@@ -110,6 +137,9 @@ docs/
 - ✅ Quick Start & Environment Setup
 - ✅ Complete Refactoring Plans
 - ✅ Project Management (Changelog, Known Issues, Summary)
+- ✅ Performance Optimization Plans (7 docs - NEW)
+- ✅ Data Structure Improvements (NEW)
+- ✅ Testing Strategy (NEW)
 
 ## 🔍 Finding Documentation
 
@@ -117,12 +147,20 @@ docs/
 
 **Chart Calculation:**
 - [ZWDS Overview](./zwds/OVERVIEW.md)
+- [Calculator Optimization](./performance/CALCULATOR_OPTIMIZATION.md)
 
 **Analysis:**
 - [ZWDS Overview](./zwds/OVERVIEW.md) - Analysis section
+- [Analysis Optimization](./performance/ANALYSIS_OPTIMIZATION.md)
+
+**UI/Rendering:**
+- [UI Optimization](./performance/UI_OPTIMIZATION.md)
 
 **PDF Export:**
 - [Component Reorganization](./refactoring/COMPONENTS.md) - PDF section
+
+**Testing:**
+- [Testing Strategy](./performance/TESTING_STRATEGY.md)
 
 **Translations:**
 - Translation files in `src/translations/`
@@ -138,12 +176,18 @@ docs/
 - [ZWDS Cleanup](./refactoring/ZWDS_CLEANUP.md)
 - [Component Reorganization](./refactoring/COMPONENTS.md)
 
+**Performance Optimization:**
+- [Performance Overview](./performance/OVERVIEW.md)
+- [Calculator Optimization](./performance/CALCULATOR_OPTIMIZATION.md)
+- [Analysis Optimization](./performance/ANALYSIS_OPTIMIZATION.md)
+- [UI Optimization](./performance/UI_OPTIMIZATION.md)
+
 ## 📊 Documentation Stats
 
-- **Total Files**: 12
-- **Total Words**: ~20,000
-- **Total Lines**: ~2,000
-- **Status**: Core documentation complete
+- **Total Files**: 19
+- **Total Words**: ~38,000
+- **Total Lines**: ~3,800
+- **Status**: Core documentation complete + Performance optimization plans
 
 
 ## 📝 Documentation Standards
