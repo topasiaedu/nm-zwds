@@ -38,6 +38,8 @@ import MembershipExpired from "./pages/membership-expired";
 import FreeTest from "./pages/free-test";
 import FreeResult from "./pages/free-result";
 import FreeTestEnded from "./pages/free-test-ended";
+// Import dev pages
+import WealthCodePreviewPage from "./pages/dev/wealth-code-preview";
 // Import centralized config
 import FREE_TEST_CONFIG from "./config/freeTestConfig";
 import { Analytics } from "@vercel/analytics/react"
@@ -126,6 +128,8 @@ const App: React.FC = () => {
                     <Route path="/chart-only" element={<ChartOnly />} />
                     <Route path="/chart-test" element={<ChartTest />} />
                     <Route path="/membership-expired" element={<MembershipExpired />} />
+                    {/* Dev-only routes */}
+                    <Route path="/dev/wealth-code-preview" element={<WealthCodePreviewPage />} />
 
                     {/* Routes WITH MainLayout */}
                     <Route element={<MainLayoutWrapper />}>
