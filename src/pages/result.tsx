@@ -21,9 +21,12 @@ import {
   Health,
   DestinyCompass,
   AreasOfLife,
+  WealthCode,
 } from "../components/analysis_v2";
 import { ChartSettingsProvider } from "../context/ChartSettingsContext";
 import ChartSettingsModal from "../components/ChartSettingsModal";
+import { DayunSection } from "../components/dayun";
+import { NoblemanSection } from "../components/nobleman";
 
 /**
  * Chinese Earthly Branches for time periods (地支)
@@ -1056,7 +1059,7 @@ const ResultContent: React.FC = () => {
             <div className="space-y-8">
               {/* Overview - Always available */}
               <Overview chartData={calculatedChartData} />
-              
+
               {/* Premium Analytics - Tier 2+ only */}
               {hasAnalyticsAccess && (
                 <>
@@ -1067,6 +1070,15 @@ const ResultContent: React.FC = () => {
                   <DestinyCompass chartData={calculatedChartData} />
                 </>
               )}
+
+              {/* Wealth Code Analysis - Admin only (testing phase) - Placed at bottom */}
+              {isAdmin && <WealthCode chartData={calculatedChartData} />}
+
+              {/* Dayun Season Analysis - 10-Year Life Cycle */}
+              {isAdmin && <DayunSection chartData={calculatedChartData} />}
+
+              {/* Nobleman Analysis - Key Supportive People */}
+              {isAdmin && <NoblemanSection chartData={calculatedChartData} />}
 
               {/* Summary Analysis */}
               {/* <SummaryAnalysis chartData={calculatedChartData} /> */}
