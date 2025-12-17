@@ -78,7 +78,7 @@ export const DayunSection: React.FC<DayunSectionProps> = ({
       <PhaseIntensityChart dayun={dayunWithGuidance} />
 
       {/* Decision Point Hero - Critical "NOW" moment with two paths (AFTER energy graph) */}
-      <DecisionPointHero dayun={dayunWithGuidance} />
+      {/* <DecisionPointHero dayun={dayunWithGuidance} /> */}
 
       {/* Guidance Cards - Key actions and warnings */}
       <DayunGuidanceCards dayun={dayunWithGuidance} />

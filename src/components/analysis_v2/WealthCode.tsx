@@ -382,11 +382,8 @@ const ModernCareerPaths: React.FC<{
                   key={idx}
                   className="p-3 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 hover:shadow-sm transition-shadow"
                 >
-                  <div className="font-semibold text-sm text-gray-900 dark:text-white mb-1">
+                  <div className="font-semibold text-sm text-gray-900 dark:text-white">
                     {item.role}
-                  </div>
-                  <div className="text-xs text-gray-600 dark:text-gray-400">
-                    {item.reason}
                   </div>
                 </div>
               ))}
@@ -411,11 +408,8 @@ const ModernCareerPaths: React.FC<{
                   key={idx}
                   className="p-3 rounded-lg bg-gray-50 dark:bg-gray-700/30 border border-gray-200 dark:border-gray-600 opacity-70 hover:opacity-90 transition-opacity"
                 >
-                  <div className="font-semibold text-sm text-gray-900 dark:text-white mb-1">
+                  <div className="font-semibold text-sm text-gray-900 dark:text-white">
                     {item.role}
-                  </div>
-                  <div className="text-xs text-gray-600 dark:text-gray-400">
-                    {item.reason}
                   </div>
                 </div>
               ))}

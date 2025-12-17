@@ -1021,6 +1021,33 @@ const ResultContent: React.FC = () => {
                     </Link>
                   </div>
 
+                  {/* Destiny Navigator Button - Admin Only */}
+                  {isAdmin && (
+                    <div className="mt-3">
+                      <Link
+                        to={`/destiny-navigator/${chartData.id}`}
+                        className="w-full px-4 py-2 text-white font-medium rounded-lg transition-all 
+                              bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700
+                              focus:ring-4 focus:ring-cyan-300 focus:outline-none block text-center
+                              flex items-center justify-center">
+                        <svg
+                          className="w-5 h-5 mr-2"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M13 10V3L4 14h7v7l9-11h-7z"
+                          />
+                        </svg>
+                        Destiny Navigator
+                      </Link>
+                    </div>
+                  )}
+
                   {isSelfProfile && (
                     <div className="mt-6">
                       <Link

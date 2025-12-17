@@ -119,6 +119,8 @@ interface ZWDSChartProps {
   selectedDaXianControlled?: number | null;
   /** Optional controlled selected palace for secondary name computation (mimics palace name click). */
   selectedPalaceNameControlled?: number | null;
+  /** Optional controlled showMonths state (1-12). When set, automatically shows months for that palace. */
+  showMonthsControlled?: number | null;
 }
 
 /**
@@ -134,6 +136,7 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
   selectedPalaceControlled = null,
   selectedDaXianControlled = null,
   selectedPalaceNameControlled = null,
+  showMonthsControlled = null,
 }) => {
   // State to track the selected palace for transformations
   const [selectedPalace, setSelectedPalace] = useState<number | null>(null);
@@ -147,6 +150,13 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
   const [selectedPalaceName, setSelectedPalaceName] = useState<number | null>(
     null
   );
+
+  // Sync showMonths with controlled prop
+  React.useEffect(() => {
+    if (showMonthsControlled !== undefined && showMonthsControlled !== null) {
+      setShowMonths(showMonthsControlled);
+    }
+  }, [showMonthsControlled]);
 
   const { language } = useLanguage();
   const { settings } = useChartSettings();

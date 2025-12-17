@@ -129,6 +129,31 @@ const Dashboard: React.FC = () => {
                       </div>
                     </Link>
                   )}
+                  {/* Admin: Destiny Navigator */}
+                  {(isAdmin && recentProfiles.length > 0) && (
+                    <Link
+                      to={`/destiny-navigator/${recentProfiles[0].id}`}
+                      className="block bg-gradient-to-r from-cyan-50 to-blue-50 dark:from-cyan-900/20 dark:to-blue-900/20 rounded-xl p-4 hover:from-cyan-100 hover:to-blue-100 dark:hover:from-cyan-900/30 dark:hover:to-blue-900/30 transition-colors border border-cyan-200 dark:border-cyan-800">
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-center">
+                          <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-cyan-100 dark:bg-cyan-900/50 flex items-center justify-center mr-3">
+                            <svg className="w-5 h-5 text-cyan-600 dark:text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                            </svg>
+                          </div>
+                          <div>
+                            <div className="flex items-center">
+                              <h3 className="text-lg font-medium text-gray-900 dark:text-white">Destiny Navigator</h3>
+                            </div>
+                            <p className="text-sm text-gray-600 dark:text-gray-400">Interactive timing analysis by life aspect</p>
+                          </div>
+                        </div>
+                        <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      </div>
+                    </Link>
+                  )}
                   {/* My Chart */}
                   <Link
                     to={tier === "tier3" && !isAdmin ? "/tier3-result" : "/chart"}
