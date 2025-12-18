@@ -146,3 +146,7 @@ Both issues are now resolved:
 
 **Note**: The orb designs (with their gradients and glows) work well in both modes since they use semi-transparent colors and blend effects.
 
+
+
+
+

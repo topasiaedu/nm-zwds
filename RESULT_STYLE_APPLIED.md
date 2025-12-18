@@ -180,3 +180,7 @@ The Analysis page now perfectly matches the design pattern from `result.tsx`:
 
 **No more custom design** - everything follows the established result.tsx pattern!
 
+
+
+
+

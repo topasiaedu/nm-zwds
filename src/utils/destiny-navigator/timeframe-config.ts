@@ -45,3 +45,7 @@ export const getTimeframeConfig = (key: string): TimeframeConfig | undefined => 
   return TIMEFRAME_CONFIGS.find(timeframe => timeframe.key === key);
 };
 
+
+
+
+

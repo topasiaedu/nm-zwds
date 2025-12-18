@@ -6,7 +6,6 @@
  */
 
 import React from "react";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, AreaChart } from "recharts";
 import type { DayunCycleExtended } from "../../types/dayun";
 import { SEASON_COLORS } from "../../utils/dayun/seasonMapper";
 
@@ -85,95 +84,20 @@ export const PhaseIntensityChart: React.FC<PhaseIntensityChartProps> = ({ dayun 
   ];
 
   /**
-   * Calculate intensity value based on year position in cycle
-   * Year 1: starts slightly below mid (45%)
-   * Year 4: lowest point (30%)
-   * Year 10: highest point (100%)
+   * Calculate bar height based on year position in cycle
+   * Creates clear visual differences between building, peak, and integration
    */
-  const getIntensityValue = (year: number): number => {
-    if (year === 1) {
-      // Starts slightly below mid
-      return 45;
-    } else if (year <= 4) {
-      // Drops from 45% to 30% (year 4 is lowest)
-      const startValue = 45;
-      const endValue = 30;
-      const progress = (year - 1) / 3; // 0 to 1 from year 1 to 4
-      return startValue - ((startValue - endValue) * progress);
-    } else if (year <= 10) {
-      // Rises from 30% (year 4) to 100% (year 10)
-      const startValue = 30;
-      const endValue = 100;
-      const progress = (year - 4) / 6; // 0 to 1 from year 4 to 10
-      return startValue + ((endValue - startValue) * progress);
+  const getBarHeight = (year: number): number => {
+    if (year <= 3) {
+      // Building phase: 75px, 90px, 105px
+      return 60 + (year * 15);
+    } else if (year >= 4 && year <= 6) {
+      // Peak phase: 150px, 170px, 190px (tallest)
+      return 130 + ((year - 3) * 20);
+    } else {
+      // Integration phase: 135px, 120px, 105px, 90px
+      return 150 - ((year - 6) * 15);
     }
-    
-    return 45;
-  };
-
-  /**
-   * Prepare chart data
-   */
-  const chartData = years.map((year) => ({
-    year: year,
-    intensity: Math.round(getIntensityValue(year)),
-    isCurrent: year === currentYear
-  }));
-
-  /**
-   * Custom dot component to highlight current year
-   */
-  const CustomDot = (props: any) => {
-    const { cx, cy, payload } = props;
-    
-    if (payload.isCurrent) {
-      return (
-        <g>
-          {/* Outer pulse ring */}
-          <circle
-            cx={cx}
-            cy={cy}
-            r={14}
-            fill="none"
-            stroke={seasonColor.primary}
-            strokeWidth={2}
-            opacity={0.2}
-          />
-          {/* Middle pulse ring */}
-          <circle
-            cx={cx}
-            cy={cy}
-            r={10}
-            fill="none"
-            stroke={seasonColor.primary}
-            strokeWidth={2}
-            opacity={0.4}
-          />
-          {/* Main dot */}
-          <circle
-            cx={cx}
-            cy={cy}
-            r={7}
-            fill={seasonColor.primary}
-            stroke="white"
-            strokeWidth={3}
-            filter="drop-shadow(0 2px 4px rgba(0,0,0,0.3))"
-          />
-        </g>
-      );
-    }
-    
-    return (
-      <circle
-        cx={cx}
-        cy={cy}
-        r={5}
-        fill="white"
-        stroke={seasonColor.primary}
-        strokeWidth={2.5}
-        opacity={0.8}
-      />
-    );
   };
 
   // Context-aware messaging based on current year
@@ -186,207 +110,124 @@ export const PhaseIntensityChart: React.FC<PhaseIntensityChartProps> = ({ dayun 
     : "Foundation established. Time to maximize returns and scale proven strategies. Execute with confidence and prepare for cycle transition.";
 
   return (
-    <div className="rounded-2xl shadow-xl border bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 border-gray-200 dark:border-gray-700 p-8 mb-6 overflow-hidden relative">
-      {/* Decorative background pattern */}
-      <div 
-        className="absolute top-0 right-0 w-64 h-64 rounded-full blur-3xl opacity-10"
-        style={{ background: seasonColor.primary }}
-      />
+    <div className="rounded-2xl shadow-lg border bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700 p-6 mb-6">
+      <h4 className="text-lg font-bold mb-2 text-gray-900 dark:text-white">
+        {contextualTitle}
+      </h4>
+      <p className="text-sm mb-5 text-gray-600 dark:text-gray-400">
+        {contextualDescription}
+      </p>
       
-      <div className="relative">
-        {/* Header Section */}
-        <div className="mb-6">
-          <div className="flex items-center justify-between flex-wrap gap-3 mb-3">
-            <div className="flex items-center gap-3">
-              <div 
-                className="w-12 h-12 rounded-xl flex items-center justify-center shadow-lg"
-                style={{ 
-                  backgroundColor: seasonColor.primary
-                }}
-              >
-                <span className="text-2xl">📈</span>
-              </div>
-              <div>
-                <h4 className="text-xl font-bold text-gray-900 dark:text-white">
-                  {contextualTitle}
-                </h4>
-                <div className="flex items-center gap-2 mt-1">
-                  <div className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: seasonColor.primary }} />
-                  <span className="text-xs font-medium text-gray-600 dark:text-gray-400">
-                    10-Year Cycle Energy Map
-                  </span>
-                </div>
-              </div>
-            </div>
+      {/* Intensity Chart */}
+      <div className="mb-6">
+        <div className="relative flex items-end justify-between gap-2 mb-3 px-2" style={{ height: "200px" }}>
+          {years.map((year) => {
+            const heightPx = getBarHeight(year);
+            const isCurrent = year === currentYear;
             
-            {/* Current Year Badge - Repositioned */}
-            <div className="relative overflow-hidden rounded-full shadow-lg">
-              <div 
-                className="absolute inset-0 opacity-90 dark:opacity-95"
-                style={{ 
-                  backgroundImage: getGradientColors(dayun.season).replace("to top", "to right")
-                }}
-              />
-              <span className="relative text-sm font-bold px-4 py-2 text-white drop-shadow-md flex items-center gap-2">
-                <span className="text-lg">📍</span>
-                Year {currentYear}
-              </span>
-            </div>
-          </div>
-          
-          <p className="text-sm leading-relaxed text-gray-600 dark:text-gray-400 max-w-3xl">
-            {contextualDescription}
-          </p>
-        </div>
-
-        {/* Chart Container with enhanced styling */}
-        <div className="rounded-xl bg-white dark:bg-gray-800/50 p-6 shadow-inner border border-gray-100 dark:border-gray-700 mb-6">
-          <div style={{ height: "300px" }}>
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart
-                data={chartData}
-                margin={{ top: 20, right: 20, left: -10, bottom: 10 }}
-              >
-                <defs>
-                  <linearGradient id={`colorIntensity-${dayun.season}`} x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor={seasonColor.primary} stopOpacity={0.3}/>
-                    <stop offset="95%" stopColor={seasonColor.primary} stopOpacity={0.05}/>
-                  </linearGradient>
-                </defs>
-                
-                <CartesianGrid 
-                  strokeDasharray="3 3" 
-                  stroke="currentColor"
-                  className="text-gray-200 dark:text-gray-700"
-                  opacity={0.5}
-                />
-                
-                <XAxis 
-                  dataKey="year" 
-                  stroke="currentColor"
-                  className="text-gray-600 dark:text-gray-400"
-                  tick={{ fill: "currentColor", fontSize: 12, fontWeight: 600 }}
-                  tickLine={{ stroke: "currentColor" }}
-                  axisLine={{ stroke: "currentColor", strokeWidth: 2 }}
-                />
-                
-                <YAxis 
-                  hide
-                  domain={[0, 110]}
-                />
-                
-                <Tooltip 
-                  contentStyle={{ 
-                    backgroundColor: "rgba(255, 255, 255, 0.98)",
-                    border: `2px solid ${seasonColor.primary}`,
-                    borderRadius: "12px",
-                    boxShadow: "0 10px 40px rgba(0,0,0,0.2)",
-                    padding: "12px 16px"
-                  }}
-                  labelStyle={{ 
-                    fontWeight: "bold",
-                    color: seasonColor.primary,
-                    marginBottom: "4px"
-                  }}
-                  formatter={(value: number) => [
-                    <span key="intensity-value" style={{ color: seasonColor.primary, fontWeight: "bold", fontSize: "16px" }}>
-                      {value}%
-                    </span>, 
-                    "Cycle Intensity"
-                  ]}
-                  labelFormatter={(label) => `Year ${label}`}
-                  cursor={{ stroke: seasonColor.primary, strokeWidth: 2, strokeDasharray: "5 5" }}
-                />
-                
-                <Area
-                  type="monotone"
-                  dataKey="intensity"
-                  stroke={seasonColor.primary}
-                  strokeWidth={4}
-                  fill={`url(#colorIntensity-${dayun.season})`}
-                  dot={<CustomDot />}
-                  activeDot={{ 
-                    r: 8, 
-                    stroke: "white", 
-                    strokeWidth: 3,
-                    fill: seasonColor.primary,
-                    filter: "drop-shadow(0 4px 6px rgba(0,0,0,0.2))"
-                  }}
-                />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
-          
-          {/* Chart Legend */}
-          <div className="flex items-center justify-center gap-6 mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full" style={{ backgroundColor: seasonColor.primary }} />
-              <span className="text-xs font-medium text-gray-600 dark:text-gray-400">
-                Energy Level
-              </span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full border-2" style={{ borderColor: seasonColor.primary }} />
-              <span className="text-xs font-medium text-gray-600 dark:text-gray-400">
-                Current Position
-              </span>
-            </div>
-          </div>
+            return (
+              <div key={year} className="flex-1 flex flex-col items-center gap-2 min-w-0">
+                <div className="relative w-full flex items-end justify-center" style={{ height: "100%" }}>
+                  <div
+                    className={`w-full rounded-t-lg transition-all duration-500 relative overflow-hidden ${
+                      isCurrent
+                        ? "shadow-xl"
+                        : "bg-gray-300 dark:bg-gray-600"
+                    }`}
+                    style={{ 
+                      height: `${heightPx}px`
+                    }}
+                  >
+                    {isCurrent && (
+                      <>
+                        {/* Season Gradient Background */}
+                        <div 
+                          className="absolute inset-0 opacity-90 dark:opacity-95"
+                          style={{ 
+                            backgroundImage: getGradientColors(dayun.season)
+                          }}
+                        />
+                        
+                        {/* Subtle Pattern Overlay */}
+                        <div 
+                          className="absolute inset-0" 
+                          style={{
+                            backgroundImage: `radial-gradient(circle at 20% 50%, rgba(255,255,255,.08) 1px, transparent 1px),
+                                             radial-gradient(circle at 80% 80%, rgba(255,255,255,.08) 1px, transparent 1px)`,
+                            backgroundSize: "20px 20px"
+                          }} 
+                        />
+                        
+                        {/* Year Label */}
+                        <div className="absolute -top-10 left-1/2 -translate-x-1/2 whitespace-nowrap z-10">
+                          <div className="relative overflow-hidden rounded-full shadow-lg">
+                            {/* Label Gradient Background */}
+                            <div 
+                              className="absolute inset-0 opacity-90 dark:opacity-95"
+                              style={{ 
+                                backgroundImage: getGradientColors(dayun.season).replace("to top", "to right")
+                              }}
+                            />
+                            
+                            {/* Label Content */}
+                            <span className="relative text-xs font-bold px-3 py-1.5 text-white drop-shadow-md flex items-center">
+                              Year {year}
+                            </span>
+                          </div>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </div>
+                <span 
+                  className={`text-xs ${isCurrent ? "font-bold" : ""} text-gray-600 dark:text-gray-400`}
+                  style={{ color: isCurrent ? seasonColor.primary : undefined }}
+                >
+                  {year}
+                </span>
+              </div>
+            );
+          })}
         </div>
         
-        {/* Phase Labels - Enhanced Design */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Phase Labels */}
+        <div className="grid grid-cols-2 gap-4 mt-6">
           {phases.map((phase) => {
             return (
               <div
                 key={phase.years}
-                className={`relative overflow-hidden rounded-xl p-5 transition-all duration-300 ${
+                className={`text-center p-4 rounded-xl border-2 transition-all ${
                   phase.isCurrent
-                    ? "shadow-lg border-2 bg-gradient-to-br from-white to-gray-50 dark:from-gray-700 dark:to-gray-800"
-                    : "bg-gray-50 dark:bg-gray-800/30 border border-gray-200 dark:border-gray-700 opacity-60 hover:opacity-80"
+                    ? "border-2 shadow-md bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-500"
+                    : "bg-gray-50 dark:bg-gray-700/30 border-gray-200 dark:border-gray-600 opacity-60"
                 }`}
-                style={phase.isCurrent ? { 
-                  borderColor: seasonColor.primary,
-                  boxShadow: `0 10px 30px ${seasonColor.primary}20`
-                } : undefined}
+                style={phase.isCurrent ? { borderColor: seasonColor.primary } : undefined}
               >
-                {/* Decorative element */}
+                {/* Current badge */}
                 {phase.isCurrent && (
-                  <div 
-                    className="absolute top-0 right-0 w-32 h-32 rounded-full blur-2xl opacity-10"
-                    style={{ background: seasonColor.primary }}
-                  />
+                  <div className="mb-2">
+                    <span 
+                      className="text-xs font-bold px-2 py-1 rounded-full text-white"
+                      style={{ backgroundColor: seasonColor.primary }}
+                    >
+                      YOU ARE HERE
+                    </span>
+                  </div>
                 )}
                 
-                <div className="relative">
-                  {/* Current badge */}
-                  {phase.isCurrent && (
-                    <div className="flex items-center justify-center mb-3">
-                      <span 
-                        className="text-xs font-bold px-3 py-1.5 rounded-full text-white shadow-md"
-                        style={{ backgroundColor: seasonColor.primary }}
-                      >
-                        ⭐ YOU ARE HERE
-                      </span>
-                    </div>
-                  )}
-                  
-                  <div className="text-center">
-                    <div className="text-sm font-bold mb-2 text-gray-900 dark:text-white">
-                      Years {phase.years}
-                    </div>
-                    <div 
-                      className={`text-base font-bold mb-2 ${
-                        phase.isCurrent ? "" : "text-gray-600 dark:text-gray-400"
-                      }`} 
-                      style={phase.isCurrent ? { color: seasonColor.primary } : undefined}
-                    >
-                      {phase.label}
-                    </div>
-                    <div className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-                      {phase.description}
-                    </div>
-                  </div>
+                <div className="text-sm font-bold mb-1 text-gray-900 dark:text-white">
+                  Years {phase.years}
+                </div>
+                <div 
+                  className={`text-xs font-semibold mb-1 ${
+                    phase.isCurrent ? "" : "text-gray-600 dark:text-gray-400"
+                  }`} 
+                  style={phase.isCurrent ? { color: seasonColor.primary } : undefined}
+                >
+                  {phase.label}
+                </div>
+                <div className="text-xs text-gray-600 dark:text-gray-400">
+                  {phase.description}
                 </div>
               </div>
             );
