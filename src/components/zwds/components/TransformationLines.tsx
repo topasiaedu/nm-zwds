@@ -352,8 +352,7 @@ const TransformationLines: React.FC<TransformationLinesProps> = ({
                 pathLength: [0, 1]
               }}
               transition={disableAnimations ? { duration: 0 } : { 
-                duration: 0.8, // Reduced from 1.5s to 0.8s
-                ease: "easeOut" 
+                duration: 0.8 // Reduced from 1.5s to 0.8s
               }}
             />
             <motion.polygon
@@ -409,8 +408,7 @@ const TransformationLines: React.FC<TransformationLinesProps> = ({
                 pathLength: [0, 1]
               }}
               transition={disableAnimations ? { duration: 0 } : { 
-                duration: 0.8, // Reduced from 1.5s to 0.8s
-                ease: "easeOut" 
+                duration: 0.8 // Reduced from 1.5s to 0.8s
               }}
             />
             <motion.polygon
@@ -562,7 +560,7 @@ const TransformationLines: React.FC<TransformationLinesProps> = ({
         style={{ overflow: "visible" }}
         initial={disableAnimations ? false : { opacity: 0 }}
         animate={disableAnimations ? false : { opacity: regularLines.length > 0 ? 1 : 0 }}
-        transition={disableAnimations ? { duration: 0 } : { duration: 0.2, ease: "easeOut" }}
+        transition={disableAnimations ? { duration: 0 } : { duration: 0.2 }}
       >
         {regularLines}
       </motion.svg>

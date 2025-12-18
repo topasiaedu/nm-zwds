@@ -43,8 +43,7 @@ const orbVariants = {
     opacity: 1,
     scale: 1,
     transition: {
-      duration: 0.5,
-      ease: "easeOut"
+      duration: 0.5
     }
   }
 };
@@ -167,7 +166,7 @@ const TimeframeSelector: React.FC<TimeframeSelectorProps> = ({
           <motion.div
             initial={{ scaleX: 0 }}
             animate={{ scaleX: 1 }}
-            transition={{ delay: 0.5, duration: 1, ease: "easeInOut" }}
+            transition={{ delay: 0.5, duration: 1 }}
             className="absolute top-1/2 left-0 right-0 h-1 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 opacity-30 transform -translate-y-1/2 hidden md:block"
             style={{ transformOrigin: "left" }}
           />

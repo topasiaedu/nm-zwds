@@ -60,8 +60,7 @@ const CosmicPortal: React.FC<CosmicPortalProps> = ({ onComplete }) => {
           animate={{ scale: 1, opacity: 1 }}
           transition={{
             delay: 0.2,
-            duration: 0.8,
-            ease: "easeOut"
+            duration: 0.8
           }}
           className="mb-8"
         >
@@ -116,6 +115,7 @@ const CosmicPortal: React.FC<CosmicPortalProps> = ({ onComplete }) => {
 };
 
 export default CosmicPortal;
+
 
 
 
