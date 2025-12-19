@@ -24,6 +24,7 @@ const PageTransition: React.FC<PageTransitionProps> = ({ children }) => {
       y: 0,
       transition: {
         duration: 0.4,
+        ease: "easeInOut",
       },
     },
     exit: {
@@ -31,6 +32,7 @@ const PageTransition: React.FC<PageTransitionProps> = ({ children }) => {
       y: -20,
       transition: {
         duration: 0.3,
+        ease: "easeInOut",
       },
     },
   };

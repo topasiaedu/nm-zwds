@@ -115,6 +115,7 @@ const WatchoutAnalysis: React.FC<WatchoutAnalysisProps> = ({ chartData }) => {
       opacity: 1, 
       y: 0,
       transition: {
+        type: "spring",
         stiffness: 150,
         damping: 15
       }

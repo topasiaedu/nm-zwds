@@ -81,24 +81,28 @@ const OtherLifeAreas: React.FC<OtherLifeAreasProps> = ({
             </div>
             
             {/* Content */}
-            <div className="p-4 space-y-4">
-              {/* Nobleman Type - MAIN FOCUS */}
-              <div>
-                <div className="text-xs font-semibold mb-2 text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  Nobleman Profile
+            <div className="p-4">
+              {/* Zodiac */}
+              <div className="mb-3">
+                <div className="text-xs font-semibold mb-1 text-gray-500 dark:text-gray-400">
+                  ZODIAC
                 </div>
-                <div className="text-base font-bold leading-snug text-gray-900 dark:text-white">
-                  {area.noblemanType}
+                <div className="text-lg font-bold text-gray-900 dark:text-white">
+                  {area.zodiac}
+                </div>
+                <div className="text-xs text-gray-500 dark:text-gray-400">
+                  {area.yearExamples}
                 </div>
               </div>
               
-              {/* Compact Zodiac Info - Secondary */}
-              <div className="pt-3 border-t border-gray-100 dark:border-gray-700">
-                <p className="text-xs text-gray-600 dark:text-gray-400">
-                  <span className="font-semibold">Look for {area.zodiac} people</span>
-                  <br />
-                  Born in: {area.yearExamples}
-                </p>
+              {/* Nobleman Type */}
+              <div>
+                <div className="text-xs font-semibold mb-1 text-gray-500 dark:text-gray-400">
+                  TYPE
+                </div>
+                <div className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  {area.noblemanType}
+                </div>
               </div>
             </div>
           </div>

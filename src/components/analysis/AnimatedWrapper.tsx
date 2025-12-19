@@ -42,6 +42,7 @@ const AnimatedWrapper: React.FC<AnimatedWrapperProps> = ({
       y: 0,
       transition: {
         duration: 0.5,
+        ease: "easeOut",
         delay
       }
     }

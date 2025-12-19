@@ -185,3 +185,4 @@ The Analysis page now perfectly matches the design pattern from `result.tsx`:
 
 
 
+
