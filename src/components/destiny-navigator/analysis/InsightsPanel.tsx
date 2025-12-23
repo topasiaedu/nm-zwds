@@ -294,16 +294,6 @@ const InsightsPanel: React.FC<InsightsPanelProps> = ({ profile, aspect, timefram
               borderLight: "border-teal-200",
               borderDark: "dark:border-teal-800",
               description: `In ${aspectName}, communication skills and intellectual pursuits flourish with ease.`
-            },
-            {
-              name: "Lu Cun",
-              icon: "💎",
-              gradient: "from-amber-500 to-yellow-500",
-              bgLight: "from-amber-50 to-yellow-50",
-              bgDark: "from-amber-900/20 to-yellow-900/20",
-              borderLight: "border-amber-200",
-              borderDark: "dark:border-amber-800",
-              description: `In ${aspectName}, resources accumulate steadily and financial stability is enhanced.`
             }
           ].map((star, index) => (
             <motion.div
