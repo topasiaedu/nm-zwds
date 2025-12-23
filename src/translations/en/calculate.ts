@@ -38,7 +38,9 @@ const calculate = {
     selectedDate: "Selected Date",
     selectTime: "Select Time",
     dateFormatHint: "Enter date in DD/MM/YYYY format (e.g., 31/12/1990)",
-    invalidDateFormat: "Invalid date format. Please use DD/MM/YYYY"
+    invalidDateFormat: "Invalid date format. Please use DD/MM/YYYY",
+    dontRememberBirthTime: "I don't remember my birth time",
+    submitting: "Creating..."
   },
 };
 

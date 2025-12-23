@@ -4,6 +4,7 @@ import { useProfileContext } from "../context/ProfileContext";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useAlertContext } from "../context/AlertContext";
+import { useTierAccess } from "../context/TierContext";
 import { Database } from "../../database.types";
 
 type ProfileInsert = Database["public"]["Tables"]["profiles"]["Insert"];
@@ -85,6 +86,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ isSelfProfile, onSuccess, dis
   const { user } = useAuth();
   const { addProfile } = useProfileContext();
   const { showAlert } = useAlertContext();
+  const { isAdmin } = useTierAccess();
   const navigate = useNavigate();
   
   const [formData, setFormData] = useState({
@@ -99,6 +101,35 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ isSelfProfile, onSuccess, dis
   );
   
   const [dateError, setDateError] = useState<string | null>(null);
+  const [dontRememberBirthTime, setDontRememberBirthTime] = useState<boolean>(false);
+  
+  /**
+   * Generate a random birth time from the available Earthly Branch options
+   * @returns Random birth time string in HH:00 format
+   */
+  const generateRandomBirthTime = (): string => {
+    const randomIndex = Math.floor(Math.random() * EarthlyBranches.length);
+    const startHour = (23 + (randomIndex * 2)) % 24;
+    const formattedStartHour = startHour.toString().padStart(2, "0");
+    return `${formattedStartHour}:00`;
+  };
+
+  /**
+   * Handle checkbox change for "don't remember birth time"
+   * @param e - Change event from checkbox
+   */
+  const handleDontRememberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const checked = e.target.checked;
+    setDontRememberBirthTime(checked);
+    
+    // Clear birth time selection when checkbox is checked
+    if (checked) {
+      setFormData({
+        ...formData,
+        birthTime: ""
+      });
+    }
+  };
   
   /**
    * Handle form input changes
@@ -152,14 +183,22 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ isSelfProfile, onSuccess, dis
     console.log("Form submission started:", {
       formData,
       isSelfProfile,
-      userId: user?.id
+      userId: user?.id,
+      dontRememberBirthTime
     });
+    
+    // Determine birth time: use form data or generate random if user doesn't remember
+    const birthTime = dontRememberBirthTime || !formData.birthTime 
+      ? generateRandomBirthTime() 
+      : formData.birthTime;
+
+    console.log("Birth time to use:", birthTime, "(random time used:", dontRememberBirthTime, ")");
     
     try {
       const newProfile: ProfileInsert = {
         name: formData.name,
         birthday: formData.birthDate,
-        birth_time: formData.birthTime,
+        birth_time: birthTime,
         gender: formData.gender as "male" | "female",
         is_self: isSelfProfile,
         user_id: user?.id || "2fdd8c60-fdb0-4ba8-a6e4-327a28179498",
@@ -282,13 +321,17 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ isSelfProfile, onSuccess, dis
             <label htmlFor="birthTime" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
               {t("form.birthTime")}
             </label>
+            
             <select
               id="birthTime"
               name="birthTime"
               value={formData.birthTime}
               onChange={handleChange}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
-              required
+              disabled={dontRememberBirthTime}
+              className={`bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white ${
+                dontRememberBirthTime ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+              required={!dontRememberBirthTime}
             >
               <option value="">{t("form.selectTime") || "Select time"}</option>
               {EarthlyBranches.map((branch, i) => {
@@ -304,6 +347,23 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ isSelfProfile, onSuccess, dis
                 );
               })}
             </select>
+
+            {/* Don't remember birth time checkbox - Admin only */}
+            {isAdmin && (
+              <div className="mt-3">
+                <label className="flex items-center cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={dontRememberBirthTime}
+                    onChange={handleDontRememberChange}
+                    className="w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 dark:focus:ring-purple-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                  />
+                  <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">
+                    {t("form.dontRememberBirthTime")}
+                  </span>
+                </label>
+              </div>
+            )}
           </div>
           
           <div className="flex gap-4 pt-4">
