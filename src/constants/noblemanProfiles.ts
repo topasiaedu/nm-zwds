@@ -8,6 +8,33 @@
 import type { NoblemanType, NoblemanProfile } from "../types/nobleman";
 
 /**
+ * Map nobleman types to their corresponding image filenames
+ */
+export const NOBLEMAN_TYPE_TO_IMAGE: Record<NoblemanType, string> = {
+  older_female: "Nurturing Mentor.png",
+  male: "Path Opener.png",
+  stable_resource: "Foundation Builder.png",
+  younger_junior: "Innovator.png",
+  same_generation: "Growth Partner.png",
+  authority_high_status: "Authority Figure.png",
+  practical_leader: "Execution Doer.png",
+  bold_aggressive: "Breakthrough Catalyst.png",
+  charismatic_expressive: "Connector.png",
+  refined_educated: "Strategist.png",
+};
+
+/**
+ * Get the image path for a nobleman type
+ * 
+ * @param noblemanType - The nobleman type identifier
+ * @returns Full path to the nobleman image
+ */
+export function getNoblemanImage(noblemanType: NoblemanType): string {
+  const filename = NOBLEMAN_TYPE_TO_IMAGE[noblemanType];
+  return `/assets/nobleman/${filename}`;
+}
+
+/**
  * Map star names (Chinese) to nobleman types
  * Each star has specific characteristics that define the type of nobleman they represent
  */
