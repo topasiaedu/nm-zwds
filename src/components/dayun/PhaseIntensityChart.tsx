@@ -6,7 +6,7 @@
  */
 
 import React from "react";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from "recharts";
+import { AreaChart, Area, XAxis, ResponsiveContainer } from "recharts";
 import type { DayunCycleExtended } from "../../types/dayun";
 import { SEASON_COLORS } from "../../utils/dayun/seasonMapper";
 
@@ -181,31 +181,32 @@ export const PhaseIntensityChart: React.FC<PhaseIntensityChartProps> = ({ dayun 
         {/* Chart - Right Side */}
         <div className="w-full" style={{ height: "400px" }}>
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart
+            <AreaChart
               data={chartData}
               margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
             >
-              <CartesianGrid strokeDasharray="3 3" className="stroke-gray-300 dark:stroke-gray-600" />
+              <defs>
+                <linearGradient id={`areaGradient-${dayun.season}`} x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor={lineColor} stopOpacity={0.8} />
+                  <stop offset="95%" stopColor={lineColor} stopOpacity={0.1} />
+                </linearGradient>
+              </defs>
               <XAxis 
                 dataKey="year"
                 label={{ value: "Year", position: "insideBottom", offset: -10, className: "fill-gray-600 dark:fill-gray-400" }}
                 tick={{ className: "fill-gray-600 dark:fill-gray-400" }}
                 tickFormatter={(value) => `${value}`}
               />
-              <YAxis 
-                domain={[0, 1000]}
-                label={{ value: "Intensity", angle: -90, position: "insideLeft", className: "fill-gray-600 dark:fill-gray-400" }}
-                tick={{ className: "fill-gray-600 dark:fill-gray-400" }}
-              />
-              <Line 
+              <Area 
                 type="monotone"
                 dataKey="intensity"
                 stroke={lineColor}
                 strokeWidth={3}
+                fill={`url(#areaGradient-${dayun.season})`}
                 dot={{ fill: lineColor, r: 6 }}
                 activeDot={{ r: 8 }}
               />
-            </LineChart>
+            </AreaChart>
           </ResponsiveContainer>
         </div>
       </div>
