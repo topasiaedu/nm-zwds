@@ -373,7 +373,7 @@ const ModernCareerPaths: React.FC<{
                 <span className="text-white text-xs">✓</span>
               </div>
               <h4 className="font-semibold text-gray-900 dark:text-white">
-                Best Fit Roles
+                Ideal Career
               </h4>
             </div>
             <div className="space-y-3">
@@ -402,7 +402,7 @@ const ModernCareerPaths: React.FC<{
                 <span className="text-white text-xs">-</span>
               </div>
               <h4 className="font-semibold text-gray-900 dark:text-white">
-                Less Aligned Roles
+                Non-Ideal Career
               </h4>
             </div>
             <div className="space-y-3">

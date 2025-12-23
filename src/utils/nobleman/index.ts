@@ -23,3 +23,11 @@ export {
   getAllNoblemanTypes,
   hasNoblemanStars,
 } from "./profileMatcher";
+
+export {
+  calculateMainZodiacInsights,
+  calculateMiniZodiacInsights,
+  getFullZodiacInsights,
+} from "./zodiacInsightsCalculator";
+
+export type { ZodiacMiniData } from "./zodiacInsightsCalculator";

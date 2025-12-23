@@ -62,8 +62,7 @@ interface TransformationData {
   borderLight: string;
   borderDark: string;
   textColor: string;
-  insight1: string;
-  insight2: string;
+  insights: string[]; // Array of 4 concise, single-sentence insights
 }
 
 const generateTransformations = (aspect: LifeAspect, timeframe: TimeFrame): TransformationData[] => {
@@ -73,8 +72,8 @@ const generateTransformations = (aspect: LifeAspect, timeframe: TimeFrame): Tran
   return [
     {
       type: "禄",
-      star: "武曲",
-      chineseName: "化禄",
+      star: "Wu Qu",
+      chineseName: "Hua Lu",
       targetPalace: "Wealth",
       icon: "💰",
       gradient: "from-green-500 to-emerald-500",
@@ -83,13 +82,17 @@ const generateTransformations = (aspect: LifeAspect, timeframe: TimeFrame): Tran
       borderLight: "border-green-200",
       borderDark: "dark:border-green-800",
       textColor: "text-green-600 dark:text-green-400",
-      insight1: `Your efforts in ${aspectName.toLowerCase()} naturally attract financial rewards and resources. This energy flow creates favorable circumstances where investments yield tangible returns with less resistance.`,
-      insight2: "This is a favorable period to invest time and energy into wealth-building activities connected to this aspect. Returns are amplified by cosmic support."
+      insights: [
+        `Financial rewards flow naturally from ${aspectName.toLowerCase()} activities.`,
+        "Resources and opportunities arrive with less effort and resistance.",
+        "Investments in this area yield tangible, amplified returns.",
+        "Cosmic support creates favorable circumstances for wealth accumulation."
+      ]
     },
     {
       type: "权",
-      star: "天机",
-      chineseName: "化权",
+      star: "Tian Ji",
+      chineseName: "Hua Quan",
       targetPalace: "Career",
       icon: "👑",
       gradient: "from-purple-500 to-violet-500",
@@ -98,13 +101,17 @@ const generateTransformations = (aspect: LifeAspect, timeframe: TimeFrame): Tran
       borderLight: "border-purple-200",
       borderDark: "dark:border-purple-800",
       textColor: "text-purple-600 dark:text-purple-400",
-      insight1: `Your actions in ${aspectName.toLowerCase()} command authority and influence in professional matters. Others naturally look to you for leadership and trust your judgment in career decisions.`,
-      insight2: "This is the time to step into roles requiring decisive action. Your capacity to direct outcomes and shape professional direction is significantly enhanced."
+      insights: [
+        `${aspectName} actions command professional authority and influence.`,
+        "Others naturally seek your leadership and trust your judgment.",
+        "Decisive action in career matters yields exceptional results.",
+        "Capacity to direct outcomes and shape direction is enhanced."
+      ]
     },
     {
       type: "科",
-      star: "紫微",
-      chineseName: "化科",
+      star: "Zi Wei",
+      chineseName: "Hua Ke",
       targetPalace: "Life",
       icon: "⭐",
       gradient: "from-blue-500 to-cyan-500",
@@ -113,13 +120,17 @@ const generateTransformations = (aspect: LifeAspect, timeframe: TimeFrame): Tran
       borderLight: "border-blue-200",
       borderDark: "dark:border-blue-800",
       textColor: "text-blue-600 dark:text-blue-400",
-      insight1: `Your personal brand and reputation receive a significant boost through ${aspectName.toLowerCase()}. Achievements gain visibility and attract positive attention, opening doors to new opportunities.`,
-      insight2: "Pursue mastery in this domain and document your progress. Recognition for your contributions and expertise is assured during this period."
+      insights: [
+        `Personal brand receives significant boost through ${aspectName.toLowerCase()}.`,
+        "Achievements gain visibility and attract positive attention.",
+        "New doors open as your expertise becomes recognized.",
+        "Excellence and contributions are acknowledged and rewarded."
+      ]
     },
     {
       type: "忌",
-      star: "太阳",
-      chineseName: "化忌",
+      star: "Tai Yang",
+      chineseName: "Hua Ji",
       targetPalace: "Health",
       icon: "⚠️",
       gradient: "from-red-500 to-orange-500",
@@ -128,8 +139,12 @@ const generateTransformations = (aspect: LifeAspect, timeframe: TimeFrame): Tran
       borderLight: "border-red-200",
       borderDark: "dark:border-red-800",
       textColor: "text-red-600 dark:text-red-400",
-      insight1: `Health matters connected to ${aspectName.toLowerCase()} need extra care and preventive measures. Don't ignore warning signs - addressing issues early prevents complications.`,
-      insight2: "Challenges here serve as teachers, prompting you to build lasting wellness habits. Approach with patience and thoroughness to develop resilience."
+      insights: [
+        `${aspectName} health matters require extra care and attention.`,
+        "Early intervention prevents complications and builds resilience.",
+        "Challenges serve as teachers for lasting wellness habits.",
+        "Patient, thorough approach transforms obstacles into growth."
+      ]
     }
   ];
 };
@@ -225,73 +240,106 @@ const InsightsPanel: React.FC<InsightsPanelProps> = ({ profile, aspect, timefram
         </p>
       </div>
 
-      {/* Energy Overview */}
+      {/* Stars in Palace Section */}
       <div className="rounded-2xl shadow-2xl overflow-hidden border border-white/10 backdrop-filter backdrop-blur-2xl bg-white/10 hover:bg-white/15 dark:bg-black/10 dark:hover:bg-black/20 transition-all duration-300 p-6">
-        <div className="flex items-start gap-4">
-          <div className="w-12 h-12 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-xl flex items-center justify-center shadow-lg flex-shrink-0">
-            <span className="text-2xl">🎯</span>
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-10 h-10 bg-gradient-to-br from-amber-500 to-yellow-500 rounded-lg flex items-center justify-center shadow-md">
+            <span className="text-white text-lg">✨</span>
           </div>
-          <div className="flex-1">
-            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">Energy Pattern Overview</h3>
-            
-            <div className="space-y-3">
-              <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
-                Your <strong>{aspectName}</strong> palace generates <strong>four distinct energy flows</strong> that influence different areas of your life. Each transformation carries specific qualities that either amplify opportunities or signal areas requiring attention.
-              </p>
-              
-              <div className="grid grid-cols-2 gap-3">
-                <div className="p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="text-lg">💰</span>
-                    <span className="text-xs font-semibold text-green-600 dark:text-green-400">Abundance (禄)</span>
-                  </div>
-                  <p className="text-xs text-gray-600 dark:text-gray-400">Smooth flow, favorable outcomes</p>
+          <div>
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white">Stars in {aspectName} Palace</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-400">Core stars residing in this palace</p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {/* Mock star data - replace with actual data from chart */}
+          {[
+            {
+              name: "Zi Wei",
+              icon: "👑",
+              gradient: "from-purple-500 to-indigo-500",
+              bgLight: "from-purple-50 to-indigo-50",
+              bgDark: "from-purple-900/20 to-indigo-900/20",
+              borderLight: "border-purple-200",
+              borderDark: "dark:border-purple-800",
+              description: `In ${aspectName}, this star brings natural authority and the ability to command respect in this area of life.`
+            },
+            {
+              name: "Tian Ji",
+              icon: "🧠",
+              gradient: "from-blue-500 to-cyan-500",
+              bgLight: "from-blue-50 to-cyan-50",
+              bgDark: "from-blue-900/20 to-cyan-900/20",
+              borderLight: "border-blue-200",
+              borderDark: "dark:border-blue-800",
+              description: `In ${aspectName}, strategic thinking and quick adaptability become your greatest strengths.`
+            },
+            {
+              name: "Zuo Fu",
+              icon: "🤝",
+              gradient: "from-green-500 to-emerald-500",
+              bgLight: "from-green-50 to-emerald-50",
+              bgDark: "from-green-900/20 to-emerald-900/20",
+              borderLight: "border-green-200",
+              borderDark: "dark:border-green-800",
+              description: `In ${aspectName}, helpful people and strong support networks naturally gravitate toward you.`
+            },
+            {
+              name: "Wen Chang",
+              icon: "📚",
+              gradient: "from-teal-500 to-cyan-500",
+              bgLight: "from-teal-50 to-cyan-50",
+              bgDark: "from-teal-900/20 to-cyan-900/20",
+              borderLight: "border-teal-200",
+              borderDark: "dark:border-teal-800",
+              description: `In ${aspectName}, communication skills and intellectual pursuits flourish with ease.`
+            },
+            {
+              name: "Lu Cun",
+              icon: "💎",
+              gradient: "from-amber-500 to-yellow-500",
+              bgLight: "from-amber-50 to-yellow-50",
+              bgDark: "from-amber-900/20 to-yellow-900/20",
+              borderLight: "border-amber-200",
+              borderDark: "dark:border-amber-800",
+              description: `In ${aspectName}, resources accumulate steadily and financial stability is enhanced.`
+            }
+          ].map((star, index) => (
+            <motion.div
+              key={star.name}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 * (index + 1) }}
+              className={`bg-gradient-to-br ${star.bgLight} dark:${star.bgDark} border ${star.borderLight} ${star.borderDark} rounded-xl p-4 hover:shadow-lg transition-all`}
+            >
+              <div className="flex items-start gap-3">
+                <div className={`w-10 h-10 bg-gradient-to-br ${star.gradient} rounded-lg flex items-center justify-center shadow-md flex-shrink-0`}>
+                  <span className="text-xl">{star.icon}</span>
                 </div>
-                
-                <div className="p-3 bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-lg">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="text-lg">👑</span>
-                    <span className="text-xs font-semibold text-purple-600 dark:text-purple-400">Authority (权)</span>
-                  </div>
-                  <p className="text-xs text-gray-600 dark:text-gray-400">Command, decisive influence</p>
-                </div>
-                
-                <div className="p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="text-lg">⭐</span>
-                    <span className="text-xs font-semibold text-blue-600 dark:text-blue-400">Recognition (科)</span>
-                  </div>
-                  <p className="text-xs text-gray-600 dark:text-gray-400">Enhanced reputation, visibility</p>
-                </div>
-                
-                <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="text-lg">⚠️</span>
-                    <span className="text-xs font-semibold text-red-600 dark:text-red-400">Challenge (忌)</span>
-                  </div>
-                  <p className="text-xs text-gray-600 dark:text-gray-400">Growth catalyst, mindful care</p>
+                <div className="flex-1">
+                  <h4 className="text-base font-bold text-gray-900 dark:text-white mb-2">
+                    {star.name}
+                  </h4>
+                  <p className="text-xs text-gray-700 dark:text-gray-300 leading-relaxed">
+                    {star.description}
+                  </p>
                 </div>
               </div>
-              
-              <div className="pt-3 border-t border-white/10">
-                <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
-                  <strong className="text-cyan-600 dark:text-cyan-400">Key insight:</strong> Understanding where each energy lands helps you navigate opportunities and challenges with greater awareness and strategic timing.
-                </p>
-              </div>
-            </div>
-          </div>
+            </motion.div>
+          ))}
         </div>
       </div>
 
-      {/* Energy Transformations Analysis */}
+      {/* Flying Stars Analysis */}
       <div className="rounded-2xl shadow-2xl overflow-hidden border border-white/10 backdrop-filter backdrop-blur-2xl bg-white/10 hover:bg-white/15 dark:bg-black/10 dark:hover:bg-black/20 transition-all duration-300 p-6">
         <div className="flex items-center gap-3 mb-6">
           <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-lg flex items-center justify-center shadow-md">
             <span className="text-white text-lg">⚡</span>
           </div>
           <div>
-            <h3 className="text-xl font-bold text-gray-900 dark:text-white">Energy Transformations from {aspectName}</h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400">Four activation energies emanating from this palace</p>
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white">Flying Stars from {aspectName}</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-400">Four flying stars emanating from this palace</p>
           </div>
         </div>
 
@@ -302,41 +350,35 @@ const InsightsPanel: React.FC<InsightsPanelProps> = ({ profile, aspect, timefram
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 * (index + 1) }}
-              className={`bg-gradient-to-br ${transformation.bgLight} dark:${transformation.bgDark} border ${transformation.borderLight} ${transformation.borderDark} rounded-xl p-5 hover:shadow-lg transition-all`}
+              className="bg-white/60 dark:bg-black/30 border border-white/20 dark:border-white/10 rounded-xl p-5 hover:shadow-lg transition-all"
             >
               <div className="flex items-start gap-4">
                 <div className={`w-12 h-12 bg-gradient-to-br ${transformation.gradient} rounded-xl flex items-center justify-center shadow-lg flex-shrink-0`}>
                   <span className="text-2xl">{transformation.icon}</span>
                 </div>
                 <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-2">
+                  <div className="flex items-center gap-3 mb-4">
                     <h4 className="text-lg font-bold text-gray-900 dark:text-white">
                       {transformation.star} {transformation.chineseName}
                     </h4>
                     <div className="flex items-center gap-1.5">
                       <span className="text-sm text-gray-500 dark:text-gray-400">→</span>
-                      <span className={`text-sm font-semibold px-2.5 py-0.5 bg-${transformation.type === '禄' ? 'green' : transformation.type === '权' ? 'purple' : transformation.type === '科' ? 'blue' : 'red'}-100 dark:bg-${transformation.type === '禄' ? 'green' : transformation.type === '权' ? 'purple' : transformation.type === '科' ? 'blue' : 'red'}-900/40 ${transformation.textColor} rounded-full`}>
+                      <span className={`text-sm font-semibold px-2.5 py-0.5 bg-white/80 dark:bg-black/40 ${transformation.textColor} rounded-full border ${transformation.textColor.replace('text-', 'border-')}`}>
                         {transformation.targetPalace}
                       </span>
                     </div>
                   </div>
-                  <div className="space-y-2">
-                    <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
-                      <strong className={transformation.textColor}>
-                        {transformation.type === '禄' ? 'Abundance flows naturally:' : 
-                         transformation.type === '权' ? 'Command and influence:' :
-                         transformation.type === '科' ? 'Enhanced reputation:' :
-                         'Mindful attention required:'}
-                      </strong> {transformation.insight1}
-                    </p>
-                    <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
-                      <strong className={transformation.textColor}>
-                        {transformation.type === '禄' ? 'Strategic timing:' : 
-                         transformation.type === '权' ? 'Leadership potential:' :
-                         transformation.type === '科' ? 'Excellence shines:' :
-                         'Growth through awareness:'}
-                      </strong> {transformation.insight2}
-                    </p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {transformation.insights.map((insight, idx) => (
+                      <div 
+                        key={idx} 
+                        className="p-4 bg-white/80 dark:bg-black/40 rounded-lg border-l-4 border-white/40 dark:border-white/30 hover:shadow-md transition-all duration-200 cursor-default"
+                      >
+                        <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
+                          {insight}
+                        </p>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>

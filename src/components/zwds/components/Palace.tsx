@@ -174,7 +174,7 @@ const Palace: React.FC<PalaceProps> = ({
       boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
       transition: {
         duration: 0.4,
-        ease: "easeOut",
+        ease: [0.4, 0, 0.2, 1] as const,
       },
     },
     hover: {
@@ -202,7 +202,7 @@ const Palace: React.FC<PalaceProps> = ({
       transition: {
         duration: 2,
         repeat: Infinity,
-        ease: "easeInOut",
+        ease: [0.4, 0, 0.6, 1] as const,
         opacity: { duration: 0 },
       },
     },
@@ -218,7 +218,7 @@ const Palace: React.FC<PalaceProps> = ({
         boxShadow: {
           duration: 2,
           repeat: Infinity,
-          ease: "easeInOut",
+          ease: [0.4, 0, 0.6, 1] as const,
         },
         // Keep other properties stable
         opacity: { duration: 0 },
@@ -230,7 +230,7 @@ const Palace: React.FC<PalaceProps> = ({
       scale: 1,
       transition: {
         duration: 0.3,
-        ease: "easeOut",
+        ease: [0.4, 0, 0.2, 1] as const,
       },
     },
     daxian: {
@@ -239,7 +239,7 @@ const Palace: React.FC<PalaceProps> = ({
       boxShadow: "0 0 0 2px rgba(124, 58, 237, 0.7)",
       transition: {
         duration: 0.3,
-        ease: "easeOut",
+        ease: [0.4, 0, 0.2, 1] as const,
       },
     },
     reset: {
@@ -248,7 +248,7 @@ const Palace: React.FC<PalaceProps> = ({
       boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
       transition: {
         duration: 0.3,
-        ease: "easeOut",
+        ease: [0.4, 0, 0.2, 1] as const,
       },
     },
   };

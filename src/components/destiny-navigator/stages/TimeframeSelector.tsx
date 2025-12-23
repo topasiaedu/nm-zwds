@@ -44,7 +44,7 @@ const orbVariants = {
     scale: 1,
     transition: {
       duration: 0.5,
-      ease: "easeOut"
+      ease: [0.4, 0, 0.2, 1] as const
     }
   }
 };
@@ -151,10 +151,10 @@ const TimeframeSelector: React.FC<TimeframeSelectorProps> = ({
           className="text-center mb-16"
         >
           <h2 className="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4 leading-tight px-4">
-            In which temporal layer shall we examine your <span className="text-cyan-600 dark:text-cyan-300 font-extrabold">{aspectConfig?.label || "destiny"}</span>?
+            Which timeframe would you like to examine your <span className="text-cyan-600 dark:text-cyan-300 font-extrabold">{aspectConfig?.label || "aspect"}</span> today?
           </h2>
           <p className="text-gray-600 dark:text-cyan-200 text-lg md:text-xl font-light">
-            Choose your timeframe to continue
+            Select a timeframe to continue
           </p>
         </motion.div>
 

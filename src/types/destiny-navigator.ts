@@ -32,7 +32,12 @@ export type TimeFrame = "natal" | "dayun" | "liunian" | "liumonth";
 /**
  * Navigation stages in the Destiny Navigator flow
  */
-export type NavigatorStage = "portal" | "aspect" | "timeframe" | "analysis";
+export type NavigatorStage = "portal" | "aspect" | "timeframe" | "dayunPeriod" | "monthSelection" | "analysis";
+
+/**
+ * Dayun period selection (current or next 10-year cycle)
+ */
+export type DayunPeriod = "current" | "next";
 
 /**
  * State management interface for Navigator progression
@@ -41,6 +46,8 @@ export interface NavigatorState {
   currentStage: NavigatorStage;
   selectedAspect: LifeAspect | null;
   selectedTimeframe: TimeFrame | null;
+  selectedDayunPeriod?: DayunPeriod; // Only set when timeframe is "dayun"
+  selectedMonth?: number; // Only set when timeframe is "liumonth" (1-12)
   profileId: string;
 }
 

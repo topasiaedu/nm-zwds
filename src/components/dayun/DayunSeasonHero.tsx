@@ -75,7 +75,7 @@ export const DayunSeasonHero: React.FC<DayunSeasonHeroProps> = ({ dayun }) => {
               <div className="text-6xl drop-shadow-lg">{seasonIcon}</div>
               <div>
                 <h1 className="text-4xl font-bold text-white mb-1 tracking-tight drop-shadow-lg uppercase">
-                  {dayun.season}
+                  {dayun.season} SEASON
                 </h1>
                 <p className="text-xl text-white font-semibold drop-shadow-md">
                   {dayun.seasonTitle}

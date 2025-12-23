@@ -177,7 +177,7 @@ const FourKeyPalaceAnalysis: React.FC<FourKeyPalaceAnalysisProps> = ({ chartData
       y: 0, 
       scale: 1,
       transition: {
-        type: "spring",
+        type: "spring" as const,
         stiffness: 300,
         damping: 25
       }
@@ -191,7 +191,7 @@ const FourKeyPalaceAnalysis: React.FC<FourKeyPalaceAnalysisProps> = ({ chartData
       height: isOpen ? "auto" : 0,
       transition: {
         duration: 0.4,
-        ease: "easeInOut"
+        ease: [0.4, 0, 0.6, 1] as const
       }
     })
   };

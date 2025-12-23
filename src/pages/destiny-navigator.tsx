@@ -8,7 +8,10 @@ import { NavigatorState } from "../types/destiny-navigator";
 import CosmicPortal from "../components/destiny-navigator/stages/CosmicPortal";
 import AspectSelector from "../components/destiny-navigator/stages/AspectSelector";
 import TimeframeSelector from "../components/destiny-navigator/stages/TimeframeSelector";
+import DayunPeriodSelector from "../components/destiny-navigator/stages/DayunPeriodSelector";
+import MonthSelector from "../components/destiny-navigator/stages/MonthSelector";
 import AnalysisView from "../components/destiny-navigator/stages/AnalysisView";
+import type { DayunPeriod } from "../types/destiny-navigator";
 
 /**
  * DestinyNavigator - Admin-only interactive feature for analyzing life aspects
@@ -29,6 +32,8 @@ const DestinyNavigator: React.FC = () => {
     currentStage: "portal",
     selectedAspect: null,
     selectedTimeframe: null,
+    selectedDayunPeriod: undefined,
+    selectedMonth: undefined,
     profileId: id || "",
   });
 
@@ -172,9 +177,64 @@ const DestinyNavigator: React.FC = () => {
                   selectedTimeframe: null,
                   currentStage: "aspect"
                 }))}
-                onSelect={(timeframe) => setNavigatorState(prev => ({
+                onSelect={(timeframe) => {
+                  // If dayun selected, go to dayun period selection
+                  if (timeframe === "dayun") {
+                    setNavigatorState(prev => ({
+                      ...prev,
+                      selectedTimeframe: timeframe,
+                      currentStage: "dayunPeriod"
+                    }));
+                  }
+                  // If monthly selected, go to month selection
+                  else if (timeframe === "liumonth") {
+                    setNavigatorState(prev => ({
+                      ...prev,
+                      selectedTimeframe: timeframe,
+                      currentStage: "monthSelection"
+                    }));
+                  }
+                  // Otherwise go directly to analysis
+                  else {
+                    setNavigatorState(prev => ({
+                      ...prev,
+                      selectedTimeframe: timeframe,
+                      currentStage: "analysis"
+                    }));
+                  }
+                }}
+              />
+            )}
+            
+            {navigatorState.currentStage === "dayunPeriod" && (
+              <DayunPeriodSelector
+                key="dayunPeriod"
+                selectedAspect={navigatorState.selectedAspect}
+                onBack={() => setNavigatorState(prev => ({
                   ...prev,
-                  selectedTimeframe: timeframe,
+                  selectedDayunPeriod: undefined,
+                  currentStage: "timeframe"
+                }))}
+                onSelect={(period: DayunPeriod) => setNavigatorState(prev => ({
+                  ...prev,
+                  selectedDayunPeriod: period,
+                  currentStage: "analysis"
+                }))}
+              />
+            )}
+            
+            {navigatorState.currentStage === "monthSelection" && (
+              <MonthSelector
+                key="monthSelection"
+                selectedAspect={navigatorState.selectedAspect}
+                onBack={() => setNavigatorState(prev => ({
+                  ...prev,
+                  selectedMonth: undefined,
+                  currentStage: "timeframe"
+                }))}
+                onSelect={(month: number) => setNavigatorState(prev => ({
+                  ...prev,
+                  selectedMonth: month,
                   currentStage: "analysis"
                 }))}
               />
@@ -185,15 +245,32 @@ const DestinyNavigator: React.FC = () => {
                 key="analysis"
                 navigatorState={navigatorState}
                 profile={profile}
-                onBack={() => setNavigatorState(prev => ({
-                  ...prev,
-                  currentStage: "timeframe"
-                }))}
+                onBack={() => {
+                  // Go back to appropriate stage based on selected timeframe
+                  if (navigatorState.selectedTimeframe === "dayun") {
+                    setNavigatorState(prev => ({
+                      ...prev,
+                      currentStage: "dayunPeriod"
+                    }));
+                  } else if (navigatorState.selectedTimeframe === "liumonth") {
+                    setNavigatorState(prev => ({
+                      ...prev,
+                      currentStage: "monthSelection"
+                    }));
+                  } else {
+                    setNavigatorState(prev => ({
+                      ...prev,
+                      currentStage: "timeframe"
+                    }));
+                  }
+                }}
                 onChangeSelection={() => setNavigatorState(prev => ({
                   ...prev,
                   currentStage: "aspect",
                   selectedAspect: null,
-                  selectedTimeframe: null
+                  selectedTimeframe: null,
+                  selectedDayunPeriod: undefined,
+                  selectedMonth: undefined
                 }))}
               />
             )}

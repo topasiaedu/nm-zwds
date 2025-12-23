@@ -97,7 +97,7 @@ export const CycleTimeline: React.FC<CycleTimelineProps> = ({ dayun }) => {
                     )}
                   </div>
                   <div className="text-sm font-bold text-gray-900 dark:text-white">
-                    {cycle.years} • {cycle.season.toUpperCase()}
+                    {cycle.years} • {cycle.season.toUpperCase()} SEASON
                   </div>
                   <div className="text-xs text-gray-600 dark:text-gray-400">
                     {cycle.palace}

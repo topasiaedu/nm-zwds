@@ -1,11 +1,12 @@
 /**
  * Phase Intensity Chart Component
  * 
- * Visualizes the 10-year energy curve showing building, peak, and integration phases.
- * Current year is highlighted with gradient colors.
+ * Visualizes the 10-year energy curve as a line chart.
+ * Uses specific intensity values for each year showing U-shaped progression.
  */
 
 import React from "react";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from "recharts";
 import type { DayunCycleExtended } from "../../types/dayun";
 import { SEASON_COLORS } from "../../utils/dayun/seasonMapper";
 
@@ -24,34 +25,63 @@ type Phase = {
  * PhaseIntensityChart component displays the energy curve across the 10-year cycle
  */
 export const PhaseIntensityChart: React.FC<PhaseIntensityChartProps> = ({ dayun }) => {
-  const seasonColor = SEASON_COLORS[dayun.season];
-  
   const currentYear = dayun.currentYear - dayun.startYear + 1;
-  const years = Array.from({ length: 10 }, (_, i) => i + 1);
   
   /**
    * Get gradient colors matching hero card style
    */
-  const getGradientColors = (season: string) => {
+  const getGradientColors = (season: string): string => {
     switch (season) {
       case "spring":
-        return "linear-gradient(to top, #10b981, #059669)"; // emerald-500 to emerald-600
+        return "#10b981"; // emerald-500
       case "summer":
-        return "linear-gradient(to top, #f59e0b, #eab308)"; // amber-500 to yellow-500
+        return "#f59e0b"; // amber-500
       case "autumn":
-        return "linear-gradient(to top, #f97316, #ef4444)"; // orange-500 to red-500
+        return "#f97316"; // orange-500
       case "winter":
-        return "linear-gradient(to top, #3b82f6, #06b6d4)"; // blue-500 to cyan-500
+        return "#3b82f6"; // blue-500
       default:
-        return "linear-gradient(to top, #6b7280, #4b5563)";
+        return "#6b7280"; // gray-500
     }
   };
+  
+  /**
+   * Get specific intensity value for each year
+   * U-shaped curve with lowest point at year 4
+   */
+  const getIntensityValue = (year: number): number => {
+    const intensityValues: Record<number, number> = {
+      1: 550,  // Start
+      2: 289,  // Declining
+      3: 144,  // Near bottom
+      4: 100,  // Lowest point
+      5: 139,  // Beginning ascent
+      6: 244,  // Rising
+      7: 400,  // Accelerating
+      8: 589,  // Strong rise
+      9: 794,  // Near peak
+      10: 1000 // Peak
+    };
+    return intensityValues[year] || 550;
+  };
+  
+  /**
+   * Prepare chart data
+   */
+  const chartData = Array.from({ length: 10 }, (_, i) => {
+    const year = i + 1;
+    return {
+      year: year,
+      intensity: getIntensityValue(year),
+      name: `Year ${year}`
+    };
+  });
   
   // Determine which strategic phase the user is currently in
   const isInFoundationPhase = currentYear <= 5;
   
   /**
-   * Conditional phases based on current year position
+   * Strategic phases for the 10-year cycle:
    * Years 1-5: Strategic Foundation (can't afford wrong decisions)
    * Years 6-10: Maximize & Scale (execute and expand)
    */
@@ -83,23 +113,6 @@ export const PhaseIntensityChart: React.FC<PhaseIntensityChartProps> = ({ dayun 
     },
   ];
 
-  /**
-   * Calculate bar height based on year position in cycle
-   * Creates clear visual differences between building, peak, and integration
-   */
-  const getBarHeight = (year: number): number => {
-    if (year <= 3) {
-      // Building phase: 75px, 90px, 105px
-      return 60 + (year * 15);
-    } else if (year >= 4 && year <= 6) {
-      // Peak phase: 150px, 170px, 190px (tallest)
-      return 130 + ((year - 3) * 20);
-    } else {
-      // Integration phase: 135px, 120px, 105px, 90px
-      return 150 - ((year - 6) * 15);
-    }
-  };
-
   // Context-aware messaging based on current year
   const contextualTitle = isInFoundationPhase 
     ? "Years 1-5: Strategic Foundation Phase" 
@@ -108,6 +121,8 @@ export const PhaseIntensityChart: React.FC<PhaseIntensityChartProps> = ({ dayun 
   const contextualDescription = isInFoundationPhase
     ? "You're in the critical foundation years. Wrong starting point = wasted 10 years. Focus on finding your exact money path and core strengths before expanding."
     : "Foundation established. Time to maximize returns and scale proven strategies. Execute with confidence and prepare for cycle transition.";
+
+  const lineColor = getGradientColors(dayun.season);
 
   return (
     <div className="rounded-2xl shadow-lg border bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700 p-6 mb-6">
@@ -118,120 +133,80 @@ export const PhaseIntensityChart: React.FC<PhaseIntensityChartProps> = ({ dayun 
         {contextualDescription}
       </p>
       
-      {/* Intensity Chart */}
-      <div className="mb-6">
-        <div className="relative flex items-end justify-between gap-2 mb-3 px-2" style={{ height: "200px" }}>
-          {years.map((year) => {
-            const heightPx = getBarHeight(year);
-            const isCurrent = year === currentYear;
-            
-            return (
-              <div key={year} className="flex-1 flex flex-col items-center gap-2 min-w-0">
-                <div className="relative w-full flex items-end justify-center" style={{ height: "100%" }}>
-                  <div
-                    className={`w-full rounded-t-lg transition-all duration-500 relative overflow-hidden ${
-                      isCurrent
-                        ? "shadow-xl"
-                        : "bg-gray-300 dark:bg-gray-600"
-                    }`}
-                    style={{ 
-                      height: `${heightPx}px`
-                    }}
-                  >
-                    {isCurrent && (
-                      <>
-                        {/* Season Gradient Background */}
-                        <div 
-                          className="absolute inset-0 opacity-90 dark:opacity-95"
-                          style={{ 
-                            backgroundImage: getGradientColors(dayun.season)
-                          }}
-                        />
-                        
-                        {/* Subtle Pattern Overlay */}
-                        <div 
-                          className="absolute inset-0" 
-                          style={{
-                            backgroundImage: `radial-gradient(circle at 20% 50%, rgba(255,255,255,.08) 1px, transparent 1px),
-                                             radial-gradient(circle at 80% 80%, rgba(255,255,255,.08) 1px, transparent 1px)`,
-                            backgroundSize: "20px 20px"
-                          }} 
-                        />
-                        
-                        {/* Year Label */}
-                        <div className="absolute -top-10 left-1/2 -translate-x-1/2 whitespace-nowrap z-10">
-                          <div className="relative overflow-hidden rounded-full shadow-lg">
-                            {/* Label Gradient Background */}
-                            <div 
-                              className="absolute inset-0 opacity-90 dark:opacity-95"
-                              style={{ 
-                                backgroundImage: getGradientColors(dayun.season).replace("to top", "to right")
-                              }}
-                            />
-                            
-                            {/* Label Content */}
-                            <span className="relative text-xs font-bold px-3 py-1.5 text-white drop-shadow-md flex items-center">
-                              Year {year}
-                            </span>
-                          </div>
-                        </div>
-                      </>
+      {/* Layout: Phase labels on left, chart on right */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
+        {/* Phase Labels - Left Side */}
+        <div className="space-y-4">
+          {phases.map((phase) => (
+            <div
+              key={phase.years}
+              className={`p-4 rounded-xl border transition-all duration-300 ${
+                phase.isCurrent
+                  ? "bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-blue-300 dark:border-blue-700 shadow-md"
+                  : "bg-gray-50 dark:bg-gray-700/50 border-gray-200 dark:border-gray-600"
+              }`}
+            >
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className={`text-sm font-bold ${
+                      phase.isCurrent 
+                        ? "text-blue-700 dark:text-blue-400" 
+                        : "text-gray-600 dark:text-gray-400"
+                    }`}>
+                      Years {phase.years}
+                    </span>
+                    {phase.isCurrent && (
+                      <span className="px-2 py-0.5 text-xs font-bold bg-blue-600 text-white rounded-full">
+                        NOW
+                      </span>
                     )}
                   </div>
-                </div>
-                <span 
-                  className={`text-xs ${isCurrent ? "font-bold" : ""} text-gray-600 dark:text-gray-400`}
-                  style={{ color: isCurrent ? seasonColor.primary : undefined }}
-                >
-                  {year}
-                </span>
-              </div>
-            );
-          })}
-        </div>
-        
-        {/* Phase Labels */}
-        <div className="grid grid-cols-2 gap-4 mt-6">
-          {phases.map((phase) => {
-            return (
-              <div
-                key={phase.years}
-                className={`text-center p-4 rounded-xl border-2 transition-all ${
-                  phase.isCurrent
-                    ? "border-2 shadow-md bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-500"
-                    : "bg-gray-50 dark:bg-gray-700/30 border-gray-200 dark:border-gray-600 opacity-60"
-                }`}
-                style={phase.isCurrent ? { borderColor: seasonColor.primary } : undefined}
-              >
-                {/* Current badge */}
-                {phase.isCurrent && (
-                  <div className="mb-2">
-                    <span 
-                      className="text-xs font-bold px-2 py-1 rounded-full text-white"
-                      style={{ backgroundColor: seasonColor.primary }}
-                    >
-                      YOU ARE HERE
-                    </span>
+                  <div className={`text-base font-semibold mb-1 ${
+                    phase.isCurrent 
+                      ? "text-gray-900 dark:text-white" 
+                      : "text-gray-700 dark:text-gray-300"
+                  }`}>
+                    {phase.label}
                   </div>
-                )}
-                
-                <div className="text-sm font-bold mb-1 text-gray-900 dark:text-white">
-                  Years {phase.years}
-                </div>
-                <div 
-                  className={`text-xs font-semibold mb-1 ${
-                    phase.isCurrent ? "" : "text-gray-600 dark:text-gray-400"
-                  }`} 
-                  style={phase.isCurrent ? { color: seasonColor.primary } : undefined}
-                >
-                  {phase.label}
-                </div>
-                <div className="text-xs text-gray-600 dark:text-gray-400">
-                  {phase.description}
+                  <p className="text-xs text-gray-600 dark:text-gray-400">
+                    {phase.description}
+                  </p>
                 </div>
               </div>
-            );
-          })}
+            </div>
+          ))}
+        </div>
+
+        {/* Chart - Right Side */}
+        <div className="w-full" style={{ height: "400px" }}>
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart
+              data={chartData}
+              margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" className="stroke-gray-300 dark:stroke-gray-600" />
+              <XAxis 
+                dataKey="year"
+                label={{ value: "Year", position: "insideBottom", offset: -10, className: "fill-gray-600 dark:fill-gray-400" }}
+                tick={{ className: "fill-gray-600 dark:fill-gray-400" }}
+                tickFormatter={(value) => `${value}`}
+              />
+              <YAxis 
+                domain={[0, 1000]}
+                label={{ value: "Intensity", angle: -90, position: "insideLeft", className: "fill-gray-600 dark:fill-gray-400" }}
+                tick={{ className: "fill-gray-600 dark:fill-gray-400" }}
+              />
+              <Line 
+                type="monotone"
+                dataKey="intensity"
+                stroke={lineColor}
+                strokeWidth={3}
+                dot={{ fill: lineColor, r: 6 }}
+                activeDot={{ r: 8 }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
         </div>
       </div>
     </div>

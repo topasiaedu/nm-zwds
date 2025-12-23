@@ -41,7 +41,7 @@ const cardVariants = {
     opacity: 1,
     y: 0,
     scale: 1,
-    transition: { duration: 0.4, ease: "easeOut" }
+    transition: { duration: 0.4, ease: [0.4, 0, 0.2, 1] as const }
   }
 };
 
@@ -86,14 +86,14 @@ const AspectSelector: React.FC<AspectSelectorProps> = ({ onSelect }) => {
           className="text-center mb-12"
         >
           <h2 className="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4 leading-tight">
-            Which dimension of your destiny
+            Which life aspect
             <br />
             <span className="text-cyan-600 dark:text-cyan-300 font-extrabold">
-              would you like to explore?
+              would you like to examine today?
             </span>
           </h2>
           <p className="text-gray-600 dark:text-cyan-200 text-lg md:text-xl font-light">
-            Select an aspect to begin your journey
+            Select an aspect to view your analysis
           </p>
         </motion.div>
 

@@ -89,12 +89,12 @@ const SummaryAnalysis: React.FC<SummaryAnalysisProps> = ({ chartData }) => {
   // Animation variants for text
   const textVariants = {
     hidden: { opacity: 0 },
-    visible: { 
+    visible: {
       opacity: 1,
-      transition: { 
+      transition: {
         duration: 0.8,
-        ease: "easeOut"
-      } 
+        ease: [0.4, 0, 0.2, 1] as const
+      }
     }
   };
 
