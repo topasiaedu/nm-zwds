@@ -41,6 +41,7 @@ interface PalaceProps {
   selectedPalace: number | null;
   birthYear: number;
   targetYear: number;
+  palaceYear: number; // The calculated year for this palace
   palaceTag: string | null;
   registerStarRef: (palaceNumber: number, starName: string, element: HTMLDivElement | null) => void;
   handlePalaceClick: (palaceNumber: number) => void;
@@ -70,6 +71,7 @@ const Palace: React.FC<PalaceProps> = ({
   selectedPalace,
   birthYear,
   targetYear,
+  palaceYear,
   palaceTag,
   registerStarRef,
   handlePalaceClick,
@@ -144,26 +146,6 @@ const Palace: React.FC<PalaceProps> = ({
     palace.majorLimit &&
     palace.majorLimit.startAge <= ageToCheck &&
     palace.majorLimit.endAge >= ageToCheck;
-
-  // Calculate the year to display for this palace
-  const calculateYearForPalace = (): number => {
-    // If this is the starting palace (with annual flow), return the target year
-    if (palaceNumber === 1) {
-      return targetYear;
-    }
-
-    // Calculate how many positions away from the starting palace
-    let distance = palaceNumber - 1;
-    if (distance <= 0) {
-      distance += 12; // Wrap around for a complete circle of 12 palaces
-    }
-
-    // Return the year that is 'distance' years after the target year
-    return targetYear + distance;
-  };
-
-  // Get the year for this palace
-  const palaceYear = calculateYearForPalace();
 
   // Animation variants for palaces
   const palaceVariants = isPdfExport ? undefined : {

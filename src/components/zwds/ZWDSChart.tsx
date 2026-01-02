@@ -367,6 +367,34 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
   }, [disableInteraction, settings.palaceNameClickInteraction, selectedPalaceName]);
 
   /**
+   * Calculate the year for a given palace based on the annual flow position
+   * Memoized to prevent recalculations on every render
+   */
+  const calculateYearForPalace = useCallback((palaceNum: number): number => {
+    // Find which palace has the target year (annual flow)
+    const annualFlowPalace = chartData.palaces.find(
+      (p) => p.annualFlow && p.annualFlow.year === targetYear
+    );
+    
+    if (!annualFlowPalace) {
+      // Fallback: calculate from palace 1
+      let distance = palaceNum - 1;
+      if (distance < 0) {
+        distance += 12;
+      }
+      return targetYear + distance;
+    }
+    
+    // Calculate how many positions away from the annual flow palace
+    let distance = palaceNum - annualFlowPalace.number;
+    if (distance < 0) {
+      distance += 12;
+    }
+    
+    return targetYear + distance;
+  }, [chartData.palaces, targetYear]);
+
+  /**
    * Get month for a palace based on the clicked palace number
    * Memoized to prevent recalculations on every render
    */
@@ -465,6 +493,9 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
     // Get the secondary palace name if a palace was clicked
     const secondaryPalaceName = getSecondaryPalaceName(palaceNumber);
 
+    // Calculate the year for this palace
+    const palaceYear = calculateYearForPalace(palaceNumber);
+
     return (
       <Palace
         key={palaceNumber}
@@ -476,6 +507,7 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
         selectedPalace={selectedPalace}
         birthYear={chartData.lunarDate.year}
         targetYear={targetYear}
+        palaceYear={palaceYear}
         palaceTag={palaceTag}
         registerStarRef={registerStarRef}
         handlePalaceClick={handlePalaceClick}
