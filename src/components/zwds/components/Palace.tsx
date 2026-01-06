@@ -41,6 +41,7 @@ interface PalaceProps {
   selectedPalace: number | null;
   birthYear: number;
   targetYear: number;
+  palaceYear: number; // The calculated year for this palace
   palaceTag: string | null;
   registerStarRef: (palaceNumber: number, starName: string, element: HTMLDivElement | null) => void;
   handlePalaceClick: (palaceNumber: number) => void;
@@ -70,6 +71,7 @@ const Palace: React.FC<PalaceProps> = ({
   selectedPalace,
   birthYear,
   targetYear,
+  palaceYear,
   palaceTag,
   registerStarRef,
   handlePalaceClick,
@@ -145,26 +147,6 @@ const Palace: React.FC<PalaceProps> = ({
     palace.majorLimit.startAge <= ageToCheck &&
     palace.majorLimit.endAge >= ageToCheck;
 
-  // Calculate the year to display for this palace
-  const calculateYearForPalace = (): number => {
-    // If this is the starting palace (with annual flow), return the target year
-    if (palaceNumber === 1) {
-      return targetYear;
-    }
-
-    // Calculate how many positions away from the starting palace
-    let distance = palaceNumber - 1;
-    if (distance <= 0) {
-      distance += 12; // Wrap around for a complete circle of 12 palaces
-    }
-
-    // Return the year that is 'distance' years after the target year
-    return targetYear + distance;
-  };
-
-  // Get the year for this palace
-  const palaceYear = calculateYearForPalace();
-
   // Animation variants for palaces
   const palaceVariants = isPdfExport ? undefined : {
     hidden: { opacity: 0, scale: 0.96 },
@@ -174,7 +156,7 @@ const Palace: React.FC<PalaceProps> = ({
       boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
       transition: {
         duration: 0.4,
-        ease: "easeOut",
+        ease: [0.4, 0, 0.2, 1] as const,
       },
     },
     hover: {
@@ -202,7 +184,7 @@ const Palace: React.FC<PalaceProps> = ({
       transition: {
         duration: 2,
         repeat: Infinity,
-        ease: "easeInOut",
+        ease: [0.4, 0, 0.6, 1] as const,
         opacity: { duration: 0 },
       },
     },
@@ -218,7 +200,7 @@ const Palace: React.FC<PalaceProps> = ({
         boxShadow: {
           duration: 2,
           repeat: Infinity,
-          ease: "easeInOut",
+          ease: [0.4, 0, 0.6, 1] as const,
         },
         // Keep other properties stable
         opacity: { duration: 0 },
@@ -230,7 +212,7 @@ const Palace: React.FC<PalaceProps> = ({
       scale: 1,
       transition: {
         duration: 0.3,
-        ease: "easeOut",
+        ease: [0.4, 0, 0.2, 1] as const,
       },
     },
     daxian: {
@@ -239,7 +221,7 @@ const Palace: React.FC<PalaceProps> = ({
       boxShadow: "0 0 0 2px rgba(124, 58, 237, 0.7)",
       transition: {
         duration: 0.3,
-        ease: "easeOut",
+        ease: [0.4, 0, 0.2, 1] as const,
       },
     },
     reset: {
@@ -248,7 +230,7 @@ const Palace: React.FC<PalaceProps> = ({
       boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
       transition: {
         duration: 0.3,
-        ease: "easeOut",
+        ease: [0.4, 0, 0.2, 1] as const,
       },
     },
   };

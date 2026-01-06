@@ -312,6 +312,28 @@ const MOCK_DAYUN: DayunCycleExtended = {
   phase: "peak",
 };
 
+
+/**
+ * Mock nobleman data for the report
+ */
+const MOCK_NOBLEMAN_DATA = {
+  palaceName: "Spouse Palace",
+  zodiac: "Tiger",
+  yearExamples: [1974, 1986, 1998, 2010, 2022],
+  matchedProfiles: [
+    {
+      type: "Authority / High-Status Nobleman",
+      characteristics: "Boss, manager, or senior leader with authoritative presence. They are strategic decision-makers who can open doors through their influence and network. They help by providing high-level guidance, introductions to key people, and opportunities that require their endorsement.",
+      stars: "Zi Wei",
+    },
+    {
+      type: "Stable & Resource Nobleman",
+      characteristics: "Reliable individuals who provide stability, resources, and long-term support. They are typically well-established with strong systems in place. They help by offering consistent backing, access to resources, and a stable foundation for your growth.",
+      stars: "Tian Fu",
+    },
+  ],
+};
+
 /**
  * Theme toggle button
  */
@@ -1162,6 +1184,306 @@ const ReflectionQuestions: React.FC<{ questions: string[] }> = ({ questions }) =
 };
 
 /**
+ * Nobleman Hero Card Component
+ */
+const NoblemanHeroCard: React.FC = () => {
+  const { theme } = useContext(ThemeContext);
+  
+  return (
+    <div className="relative overflow-hidden rounded-2xl mb-6 shadow-xl">
+      {/* Gradient Background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500" style={{ opacity: theme === "dark" ? 0.95 : 0.9 }} />
+      
+      {/* Pattern Overlay */}
+      <div className="absolute inset-0" style={{
+        backgroundImage: theme === "dark" 
+          ? `radial-gradient(circle at 20% 50%, rgba(255,255,255,.05) 1px, transparent 1px),
+             radial-gradient(circle at 80% 80%, rgba(255,255,255,.05) 1px, transparent 1px)`
+          : `radial-gradient(circle at 20% 50%, rgba(255,255,255,.15) 1px, transparent 1px),
+             radial-gradient(circle at 80% 80%, rgba(255,255,255,.15) 1px, transparent 1px)`,
+        backgroundSize: "50px 50px"
+      }} />
+      
+      {/* Content */}
+      <div className="relative px-8 py-10">
+        <div className="flex items-start justify-between flex-wrap gap-4">
+          <div className="flex-1 min-w-[300px]">
+            <div className="inline-flex items-center gap-2 bg-black/20 backdrop-blur-sm rounded-full px-4 py-1.5 mb-4 border border-white/20">
+              <div className="w-2 h-2 rounded-full bg-white animate-pulse" />
+              <span className="text-white text-xs font-bold uppercase tracking-wider drop-shadow-lg">
+                Nobleman Analysis
+              </span>
+            </div>
+            <h1 className="text-4xl font-bold text-white mb-3 tracking-tight drop-shadow-lg">
+              Your Key People
+            </h1>
+            <p className="text-white text-sm leading-relaxed max-w-xl drop-shadow-md">
+              Based on your current life cycle and chart structure, here are the people who will be most beneficial to you during this period.
+            </p>
+          </div>
+          
+          {/* Cycle Badge */}
+          <div className="flex-shrink-0">
+            <div className="bg-black/20 backdrop-blur-md rounded-2xl p-6 border border-white/30 shadow-2xl min-w-[180px]">
+              <div className="text-center">
+                <div className="text-white/80 text-xs font-semibold uppercase tracking-wider mb-2">
+                  Current 10-Year Cycle
+                </div>
+                <div className="text-white text-lg font-bold mb-1">
+                  Spouse Palace
+                </div>
+                <div className="text-white/90 text-sm mb-3">
+                  2020-2029
+                </div>
+                <div className="pt-3 border-t border-white/20">
+                  <div className="text-white/80 text-xs mb-1">Priority Focus</div>
+                  <div className="text-white text-sm font-semibold">Partnership & Collaboration</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+
+
+/**
+ * Nobleman Profile Card - Main Focus Component
+ */
+const NoblemanProfileCard: React.FC<{
+  palaceName: string;
+  zodiac: string;
+  yearExamples: number[];
+  matchedProfiles: Array<{
+    type: string;
+    characteristics: string;
+    stars: string;
+  }>;
+}> = ({ palaceName, zodiac, yearExamples, matchedProfiles }) => {
+  const { theme } = useContext(ThemeContext);
+  
+  return (
+    <div className={`rounded-2xl shadow-xl border overflow-hidden mb-6 ${
+      theme === "dark"
+        ? "bg-gray-800 border-gray-700"
+        : "bg-white border-gray-200"
+    }`}>
+      {/* Header Section */}
+      <div className={`p-6 border-b ${
+        theme === "dark" ? "border-gray-700 bg-gradient-to-r from-purple-900/30 to-indigo-900/30" : "border-gray-200 bg-gradient-to-r from-purple-50 to-indigo-50"
+      }`}>
+        <h3 className={`text-2xl font-bold mb-2 ${theme === "dark" ? "text-white" : "text-gray-900"}`}>
+          Your Nobleman Profile
+        </h3>
+        <p className={`text-sm ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
+          Based on {palaceName} analysis
+        </p>
+      </div>
+      
+      {/* Zodiac Section */}
+      <div className={`p-6 border-b ${theme === "dark" ? "border-gray-700" : "border-gray-200"}`}>
+        <div className="grid md:grid-cols-2 gap-6">
+          {/* Left: Zodiac Info */}
+          <div>
+            <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full mb-3 ${
+              theme === "dark" ? "bg-purple-900/30 text-purple-300" : "bg-purple-100 text-purple-700"
+            }`}>
+              <span className="text-xs font-bold uppercase tracking-wider">Chinese Zodiac</span>
+            </div>
+            <div className={`text-4xl font-bold mb-2 ${theme === "dark" ? "text-white" : "text-gray-900"}`}>
+              {zodiac}
+            </div>
+            <div className={`text-sm mb-4 ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
+              Look for people born in these years:
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {yearExamples.map((year) => (
+                <div
+                  key={year}
+                  className={`px-4 py-2 rounded-lg font-semibold ${
+                    theme === "dark"
+                      ? "bg-gray-700 text-gray-200"
+                      : "bg-gray-100 text-gray-800"
+                  }`}
+                >
+                  {year}
+                </div>
+              ))}
+            </div>
+          </div>
+          
+          {/* Right: Visual Element */}
+          <div className={`flex items-center justify-center p-6 rounded-xl ${
+            theme === "dark" ? "bg-gradient-to-br from-purple-900/20 to-indigo-900/20" : "bg-gradient-to-br from-purple-50 to-indigo-50"
+          }`}>
+            <div className="text-center">
+              <div className={`w-32 h-32 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center shadow-lg`}>
+                <svg className="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+              </div>
+              <div className={`text-sm font-medium ${theme === "dark" ? "text-gray-300" : "text-gray-700"}`}>
+                {matchedProfiles.length} Nobleman {matchedProfiles.length > 1 ? "Types" : "Type"} Identified
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      {/* Nobleman Types Section */}
+      <div className="p-6">
+        <div className={`text-xs font-bold uppercase tracking-wider mb-4 ${
+          theme === "dark" ? "text-gray-400" : "text-gray-600"
+        }`}>
+          Nobleman Characteristics
+        </div>
+        <div className="space-y-4">
+          {matchedProfiles.map((profile, idx) => (
+            <div
+              key={idx}
+              className={`p-5 rounded-xl border-l-4 ${
+                idx === 0
+                  ? "border-l-purple-500 bg-gradient-to-r from-purple-50/50 to-transparent dark:from-purple-900/20"
+                  : "border-l-indigo-500 bg-gradient-to-r from-indigo-50/50 to-transparent dark:from-indigo-900/20"
+              } ${theme === "dark" ? "" : "bg-white"}`}
+            >
+              <div className="flex items-start justify-between gap-4 mb-2">
+                <div className={`text-lg font-bold ${theme === "dark" ? "text-white" : "text-gray-900"}`}>
+                  {profile.type}
+                </div>
+                <div className={`px-2 py-1 rounded text-xs font-semibold ${
+                  theme === "dark" ? "bg-gray-700 text-gray-300" : "bg-gray-100 text-gray-600"
+                }`}>
+                  {profile.stars}
+                </div>
+              </div>
+              <p className={`text-sm leading-relaxed ${theme === "dark" ? "text-gray-300" : "text-gray-700"}`}>
+                {profile.characteristics}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/**
+ * Other Life Areas Component - Visual, Simple
+ */
+const OtherLifeAreas: React.FC = () => {
+  const { theme } = useContext(ThemeContext);
+  
+  const otherAreas = [
+    {
+      area: "Career Growth",
+      palace: "Career Palace",
+      zodiac: "Rat",
+      years: "1972, 1984, 1996",
+      noblemanType: "Practical Leader",
+      icon: "💼",
+      gradient: "from-blue-500 to-cyan-500",
+    },
+    {
+      area: "Wealth Building",
+      palace: "Wealth Palace",
+      zodiac: "Dragon",
+      years: "1976, 1988, 2000",
+      noblemanType: "Bold & Aggressive",
+      icon: "💰",
+      gradient: "from-amber-500 to-yellow-500",
+    },
+    {
+      area: "Health & Wellness",
+      palace: "Health Palace",
+      zodiac: "Rabbit",
+      years: "1975, 1987, 1999",
+      noblemanType: "Older Female",
+      icon: "🏥",
+      gradient: "from-green-500 to-emerald-500",
+    },
+    {
+      area: "Learning & Growth",
+      palace: "Life Palace",
+      zodiac: "Monkey",
+      years: "1980, 1992, 2004",
+      noblemanType: "Refined & Educated",
+      icon: "📚",
+      gradient: "from-purple-500 to-pink-500",
+    },
+  ];
+  
+  return (
+    <div className={`rounded-2xl shadow-lg border p-6 mb-6 ${
+      theme === "dark"
+        ? "bg-gray-800 border-gray-700"
+        : "bg-white border-gray-100"
+    }`}>
+      <div className="mb-5">
+        <h3 className={`text-xl font-bold mb-2 ${theme === "dark" ? "text-white" : "text-gray-900"}`}>
+          Other Life Areas
+        </h3>
+        <p className={`text-sm ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
+          Quick reference for nobleman in other areas of your life
+        </p>
+      </div>
+      
+      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {otherAreas.map((area, idx) => (
+          <div
+            key={idx}
+            className={`rounded-xl overflow-hidden border transition-all hover:shadow-lg ${
+              theme === "dark"
+                ? "bg-gray-750 border-gray-700 hover:border-gray-600"
+                : "bg-white border-gray-200 hover:border-gray-300"
+            }`}
+          >
+            {/* Header with gradient */}
+            <div className={`p-4 bg-gradient-to-r ${area.gradient}`}>
+              <div className="text-3xl mb-2">{area.icon}</div>
+              <div className="text-white font-bold text-sm">{area.area}</div>
+              <div className="text-white/80 text-xs">{area.palace}</div>
+            </div>
+            
+            {/* Content */}
+            <div className="p-4">
+              <div className="mb-3">
+                <div className={`text-xs font-semibold mb-1 ${
+                  theme === "dark" ? "text-gray-400" : "text-gray-500"
+                }`}>
+                  ZODIAC
+                </div>
+                <div className={`text-lg font-bold ${theme === "dark" ? "text-white" : "text-gray-900"}`}>
+                  {area.zodiac}
+                </div>
+                <div className={`text-xs ${theme === "dark" ? "text-gray-500" : "text-gray-500"}`}>
+                  {area.years}
+                </div>
+              </div>
+              
+              <div>
+                <div className={`text-xs font-semibold mb-1 ${
+                  theme === "dark" ? "text-gray-400" : "text-gray-500"
+                }`}>
+                  TYPE
+                </div>
+                <div className={`text-sm font-medium ${theme === "dark" ? "text-gray-300" : "text-gray-700"}`}>
+                  {area.noblemanType}
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+
+/**
  * Main Wealth Code Preview Page Component with Theme Provider
  * Premium, modern design with wow factor and theme toggle
  */
@@ -1169,6 +1491,7 @@ const WealthCodePreviewPage: React.FC = () => {
   const [theme, setTheme] = useState<Theme>("light");
   const profile = MOCK_WEALTH_PROFILE;
   const dayun = MOCK_DAYUN;
+  const noblemanData = MOCK_NOBLEMAN_DATA;
 
   const toggleTheme = () => {
     setTheme((prev) => (prev === "light" ? "dark" : "light"));
@@ -1216,6 +1539,23 @@ const WealthCodePreviewPage: React.FC = () => {
             
             {/* Reflection Questions */}
             <ReflectionQuestions questions={dayun.reflectionQuestions} />
+          </div>
+
+          {/* 7. Nobleman Analysis Section - NEW */}
+          <div className="mt-8">
+            {/* Nobleman Hero Card */}
+            <NoblemanHeroCard />
+            
+            {/* Nobleman Profile Card - Main Focus */}
+            <NoblemanProfileCard 
+              palaceName={noblemanData.palaceName}
+              zodiac={noblemanData.zodiac}
+              yearExamples={noblemanData.yearExamples}
+              matchedProfiles={noblemanData.matchedProfiles}
+            />
+            
+            {/* Other Life Areas - Simple Visual Reference */}
+            <OtherLifeAreas />
           </div>
         </div>
       </div>

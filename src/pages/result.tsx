@@ -21,9 +21,12 @@ import {
   Health,
   DestinyCompass,
   AreasOfLife,
+  WealthCode,
 } from "../components/analysis_v2";
 import { ChartSettingsProvider } from "../context/ChartSettingsContext";
 import ChartSettingsModal from "../components/ChartSettingsModal";
+import { DayunSection } from "../components/dayun";
+import { NoblemanSection } from "../components/nobleman";
 
 /**
  * Chinese Earthly Branches for time periods (地支)
@@ -1018,6 +1021,33 @@ const ResultContent: React.FC = () => {
                     </Link>
                   </div>
 
+                  {/* Destiny Navigator Button - Admin Only */}
+                  {isAdmin && (
+                    <div className="mt-3">
+                      <Link
+                        to={`/destiny-navigator/${chartData.id}`}
+                        className="w-full px-4 py-2 text-white font-medium rounded-lg transition-all 
+                              bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700
+                              focus:ring-4 focus:ring-cyan-300 focus:outline-none block text-center
+                              flex items-center justify-center">
+                        <svg
+                          className="w-5 h-5 mr-2"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M13 10V3L4 14h7v7l9-11h-7z"
+                          />
+                        </svg>
+                        Destiny Navigator
+                      </Link>
+                    </div>
+                  )}
+
                   {isSelfProfile && (
                     <div className="mt-6">
                       <Link
@@ -1056,7 +1086,7 @@ const ResultContent: React.FC = () => {
             <div className="space-y-8">
               {/* Overview - Always available */}
               <Overview chartData={calculatedChartData} />
-              
+
               {/* Premium Analytics - Tier 2+ only */}
               {hasAnalyticsAccess && (
                 <>
@@ -1067,6 +1097,15 @@ const ResultContent: React.FC = () => {
                   <DestinyCompass chartData={calculatedChartData} />
                 </>
               )}
+
+              {/* Wealth Code Analysis - Admin only (testing phase) - Placed at bottom */}
+              {isAdmin && <WealthCode chartData={calculatedChartData} />}
+
+              {/* Dayun Season Analysis - 10-Year Life Cycle */}
+              {isAdmin && <DayunSection chartData={calculatedChartData} />}
+
+              {/* Nobleman Analysis - Key Supportive People */}
+              {isAdmin && <NoblemanSection chartData={calculatedChartData} />}
 
               {/* Summary Analysis */}
               {/* <SummaryAnalysis chartData={calculatedChartData} /> */}

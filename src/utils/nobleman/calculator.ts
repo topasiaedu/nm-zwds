@@ -1,0 +1,231 @@
+/**
+ * Nobleman Calculator
+ * 
+ * Main nobleman analysis calculator that implements the 3-step methodology:
+ * 1. Get current Dayun palace (from existing Dayun analysis)
+ * 2. Extract earthly branch → map to Chinese zodiac
+ * 3. Identify stars in that palace → match to nobleman profiles
+ */
+
+import type { ChartData, Palace } from "../zwds/types";
+import type { NoblemanData, OtherAreaData } from "../../types/nobleman";
+import { findCurrentDayunPalace } from "../dayun/calculator";
+import { mapEarthlyBranchToZodiac, generateRecentYears, formatYearExamples } from "./zodiacMapper";
+import { matchStarsToProfiles, hasNoblemanStars } from "./profileMatcher";
+import { KEY_LIFE_AREAS, PALACE_NAME_TRANSLATIONS } from "../../constants/noblemanProfiles";
+import { OPPOSITE_PALACE_INFLUENCE } from "../zwds/constants";
+
+/**
+ * Check if a palace has ANY stars at all (not just nobleman stars)
+ * 
+ * @param palace - Palace to check
+ * @returns True if the palace has any main stars or auxiliary stars
+ */
+function hasAnyStars(palace: Palace): boolean {
+  const hasMainStars = palace.mainStar && palace.mainStar.length > 0;
+  const hasAuxiliaryStars = palace.auxiliaryStars && palace.auxiliaryStars.length > 0;
+  
+  return hasMainStars || hasAuxiliaryStars;
+}
+
+/**
+ * Get stars for nobleman analysis, with fallback to opposite palace stars
+ * 
+ * If the primary palace has NO stars at all, uses opposite palace stars.
+ * Note: This only returns stars for matching, NOT the full palace data.
+ * The original palace's name/zodiac should still be used.
+ * 
+ * @param chartData - Complete ZWDS chart data
+ * @param palace - Primary palace to check
+ * @returns Palace whose stars should be used for nobleman matching
+ */
+function getStarsForMatching(chartData: ChartData, palace: Palace): Palace {
+  // Check if palace has ANY stars (not just nobleman stars)
+  if (hasAnyStars(palace)) {
+    // Palace has stars, use them even if none are nobleman stars
+    return palace;
+  }
+  
+  // Palace has NO stars at all, check opposite palace
+  const oppositePalaceName = OPPOSITE_PALACE_INFLUENCE[palace.name as keyof typeof OPPOSITE_PALACE_INFLUENCE];
+  
+  if (oppositePalaceName) {
+    const oppositePalace = chartData.palaces.find((p) => p.name === oppositePalaceName);
+    if (oppositePalace && hasAnyStars(oppositePalace)) {
+      // Return opposite palace only for star matching
+      return oppositePalace;
+    }
+  }
+  
+  // Return original palace if no opposite palace found or it also has no stars
+  return palace;
+}
+
+/**
+ * Calculate nobleman data for the current Dayun palace
+ * 
+ * This is the main function that implements the complete 3-step nobleman
+ * identification methodology. If the Dayun palace has no stars, it checks
+ * the opposite palace.
+ * 
+ * @param chartData - Complete ZWDS chart data
+ * @param currentAge - User's current age
+ * @returns NoblemanData for the current Dayun palace, or null if not available
+ */
+export function calculateNoblemanData(
+  chartData: ChartData,
+  currentAge: number
+): NoblemanData | null {
+  // Step 1: Get current Dayun palace
+  const dayunPalace = findCurrentDayunPalace(chartData, currentAge);
+  
+  if (!dayunPalace) {
+    // No Dayun palace found for current age
+    return null;
+  }
+  
+  // Step 2: Extract earthly branch and map to zodiac (always use original Dayun palace)
+  const zodiacData = mapEarthlyBranchToZodiac(dayunPalace.earthlyBranch);
+  const yearExamples = generateRecentYears(dayunPalace.earthlyBranch);
+  
+  // Step 3: Get stars for matching (may use opposite palace stars as fallback)
+  const starsSource = getStarsForMatching(chartData, dayunPalace);
+  const matchedProfiles = matchStarsToProfiles(starsSource);
+  
+  // Debug: Log if no profiles matched but palace has stars
+  if (matchedProfiles.length === 0) {
+    console.log("Nobleman Debug - No profiles matched:", {
+      palaceName: dayunPalace.name,
+      mainStars: dayunPalace.mainStar?.map(s => s.name),
+      auxiliaryStars: dayunPalace.auxiliaryStars?.map(s => s.name),
+      minorStars: dayunPalace.minorStars?.map(s => s.name),
+      yearStars: dayunPalace.yearStars?.map(s => s.name),
+      starsSourcePalace: starsSource.name,
+      starsSourceMainStars: starsSource.mainStar?.map(s => s.name),
+      starsSourceAuxiliaryStars: starsSource.auxiliaryStars?.map(s => s.name),
+      starsSourceMinorStars: starsSource.minorStars?.map(s => s.name),
+      starsSourceYearStars: starsSource.yearStars?.map(s => s.name),
+    });
+  }
+  
+  // Get palace name in English (always use original Dayun palace name)
+  const palaceName = PALACE_NAME_TRANSLATIONS[dayunPalace.name] || dayunPalace.name;
+  
+  return {
+    palaceName,
+    palaceChinese: dayunPalace.name,
+    zodiac: zodiacData.english,
+    zodiacChinese: zodiacData.chinese,
+    yearExamples,
+    matchedProfiles,
+    earthlyBranch: dayunPalace.earthlyBranch,
+  };
+}
+
+/**
+ * Calculate nobleman data for other key life areas
+ * 
+ * Returns nobleman information for 4 key palaces:
+ * - Career Palace (Career Growth)
+ * - Wealth Palace (Wealth Building)
+ * - Health Palace (Health & Wellness)
+ * - Life Palace (Personal Growth)
+ * 
+ * @param chartData - Complete ZWDS chart data
+ * @returns Array of OtherAreaData for 4 key life areas
+ */
+export function calculateOtherLifeAreas(chartData: ChartData): OtherAreaData[] {
+  const areas: OtherAreaData[] = [];
+  
+  for (const area of KEY_LIFE_AREAS) {
+    // Find the palace (check both simplified and traditional names)
+    const palace = chartData.palaces.find(
+      (p) => p.name === area.palaceName || p.name === area.palaceNameTraditional
+    );
+    
+    if (!palace) {
+      // Log warning but add placeholder to maintain grid structure
+      console.warn(`Palace not found for ${area.objective}: ${area.palaceName}/${area.palaceNameTraditional}`);
+      
+      // Add placeholder data to maintain 4-card layout
+      areas.push({
+        objective: area.objective,
+        palaceName: PALACE_NAME_TRANSLATIONS[area.palaceName] || area.palaceName,
+        palaceChinese: area.palaceName,
+        zodiac: "Unknown",
+        yearExamples: "N/A",
+        noblemanType: "General Support",
+        gradient: area.gradient,
+      });
+      continue;
+    }
+    
+    // Get zodiac and years (always use original palace)
+    const zodiacData = mapEarthlyBranchToZodiac(palace.earthlyBranch);
+    const years = generateRecentYears(palace.earthlyBranch);
+    const yearsFormatted = formatYearExamples(years);
+    
+    // Get stars for matching (may use opposite palace stars as fallback)
+    const starsSource = getStarsForMatching(chartData, palace);
+    const profiles = matchStarsToProfiles(starsSource);
+    const noblemanType = profiles.length > 0 ? profiles[0].type : "General Support";
+    
+    // Get English palace name (always use original palace)
+    const englishPalaceName = PALACE_NAME_TRANSLATIONS[palace.name] || palace.name;
+    
+    areas.push({
+      objective: area.objective,
+      palaceName: englishPalaceName,
+      palaceChinese: palace.name,
+      zodiac: zodiacData.english,
+      yearExamples: yearsFormatted,
+      noblemanType,
+      gradient: area.gradient,
+    });
+  }
+  
+  return areas;
+}
+
+/**
+ * Calculate nobleman data for a specific palace by name
+ * 
+ * Useful for getting nobleman information for any palace in the chart.
+ * If the specified palace has no nobleman stars, checks the opposite palace.
+ * 
+ * @param chartData - Complete ZWDS chart data
+ * @param palaceName - Chinese palace name (e.g., "官禄", "财帛")
+ * @returns NoblemanData for the specified palace, or null if not found
+ */
+export function calculateNoblemanForPalace(
+  chartData: ChartData,
+  palaceName: string
+): NoblemanData | null {
+  // Find the palace
+  const palace = chartData.palaces.find((p) => p.name === palaceName);
+  
+  if (!palace) {
+    return null;
+  }
+  
+  // Get zodiac and years (always use original palace)
+  const zodiacData = mapEarthlyBranchToZodiac(palace.earthlyBranch);
+  const yearExamples = generateRecentYears(palace.earthlyBranch);
+  
+  // Get stars for matching (may use opposite palace stars as fallback)
+  const starsSource = getStarsForMatching(chartData, palace);
+  const matchedProfiles = matchStarsToProfiles(starsSource);
+  
+  // Get English palace name (always use original palace)
+  const englishPalaceName = PALACE_NAME_TRANSLATIONS[palace.name] || palace.name;
+  
+  return {
+    palaceName: englishPalaceName,
+    palaceChinese: palace.name,
+    zodiac: zodiacData.english,
+    zodiacChinese: zodiacData.chinese,
+    yearExamples,
+    matchedProfiles,
+    earthlyBranch: palace.earthlyBranch,
+  };
+}

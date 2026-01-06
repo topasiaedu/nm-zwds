@@ -32,6 +32,7 @@ import NumerologyAnalytics from "./pages/admin/numerology-analytics";
 import ChartOnly from "./pages/chart-only";
 import ChartTest from "./pages/chart-test";
 import Tier3Result from "./pages/tier3-result";
+import DestinyNavigator from "./pages/destiny-navigator";
 import Profile from "./pages/profile";
 import MembershipExpired from "./pages/membership-expired";
 // Import new free test pages
@@ -267,6 +268,14 @@ const App: React.FC = () => {
                       element={
                         <ProtectedRoute>
                           <TimingChart />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/destiny-navigator/:id"
+                      element={
+                        <ProtectedRoute>
+                          <DestinyNavigator />
                         </ProtectedRoute>
                       }
                     />
