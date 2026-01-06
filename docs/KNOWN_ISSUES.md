@@ -117,15 +117,29 @@ None currently.
 
 ## Security Considerations
 
+⚠️ **CRITICAL:** See [Security Audit 2025](./security/SECURITY_AUDIT_2025.md) for detailed security findings
+
 ### Authentication
 - ✅ Using Supabase Auth (secure)
-- ✅ Row Level Security enabled
+- ❌ **Row Level Security NOT IMPLEMENTED** (Critical - see Security Audit)
 - ✅ API keys in environment variables
+- ⚠️ Client-side only authorization (needs server-side enforcement)
 
 ### Data Privacy
 - ✅ User data encrypted at rest
 - ✅ HTTPS enforced
 - ✅ No sensitive data in logs
+- ❌ Database currently accessible to all authenticated users (RLS needed)
+
+### Action Required
+- [ ] Implement RLS policies on profiles table
+- [ ] Implement RLS policies on user_details table
+- [ ] Add XSS protection (DOMPurify)
+- [ ] Add security headers
+- [ ] Move admin authorization to database level
+
+**Priority:** 🔴 Must fix before scaling to 1,000+ users  
+**See:** [Security Audit](./security/SECURITY_AUDIT_2025.md) for implementation details
 
 ## Limitations
 
