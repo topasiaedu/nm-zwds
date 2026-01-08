@@ -10,6 +10,7 @@ import analysis from "./analysis/index";
 import zwds from "./zwds";
 import misc from "./misc";
 import freeTest from "./freeTest";
+import membership from "./membership";
 
 const en = {
   ...common,
@@ -24,6 +25,7 @@ const en = {
   ...zwds,
   ...misc,
   ...freeTest,
+  ...membership,
   general:{
     back: "Back",
     cancel: "Cancel",

@@ -10,8 +10,8 @@ import FREE_TEST_CONFIG from "../config/freeTestConfig";
 const FreeTestEnded: React.FC = () => {
   const { t } = useLanguage();
   
-  // WhatsApp link
-  const whatsappLink = "https://wa.me/601158639269";
+  // WhatsApp link (Jessica)
+  const whatsappLink = "https://wa.me/601168349851";
   
   // Get current status and format description accordingly
   const status = FREE_TEST_CONFIG.getStatusReason();

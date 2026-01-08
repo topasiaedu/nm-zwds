@@ -28,7 +28,9 @@ interface TierContextProps {
   tier: UserTier;
   isAdmin: boolean;
   isTier2OrHigher: boolean;
+  isPaused: boolean;
   updateUserTier: (userId: string, newTier: UserTier) => Promise<boolean>;
+  toggleUserPause: (userId: string, isPaused: boolean) => Promise<boolean>;
   getAllUserDetails: () => Promise<UserDetailsWithEmail[]>;
 }
 
@@ -171,6 +173,34 @@ export function TierProvider({ children }: { children: ReactNode }) {
   }, [userDetails]);
 
   /**
+   * Toggle user pause status - Admin only function
+   */
+  const toggleUserPause = useCallback(async (userId: string, isPaused: boolean): Promise<boolean> => {
+    if (!userDetails || userDetails.tier !== "admin") {
+      console.error("TierContext - Unauthorized pause toggle attempt");
+      return false;
+    }
+
+    try {
+      const { error } = await supabase
+        .from("user_details")
+        .update({ is_paused: isPaused })
+        .eq("user_id", userId);
+
+      if (error) {
+        console.error("TierContext - Error toggling user pause:", error);
+        return false;
+      }
+
+      console.log("TierContext - Successfully toggled user pause:", userId, isPaused);
+      return true;
+    } catch (error) {
+      console.error("TierContext - Exception toggling user pause:", error);
+      return false;
+    }
+  }, [userDetails]);
+
+  /**
    * Get all user details with emails - Admin only function
    */
   const getAllUserDetails = useCallback(async (): Promise<UserDetailsWithEmail[]> => {
@@ -224,6 +254,7 @@ export function TierProvider({ children }: { children: ReactNode }) {
   const tier: UserTier = userDetails?.tier || "tier1";
   const isAdmin: boolean = tier === "admin";
   const isTier2OrHigher: boolean = tier === "tier2" || tier === "admin";
+  const isPaused: boolean = userDetails?.is_paused === true;
 
   const value: TierContextProps = {
     loading,
@@ -231,7 +262,9 @@ export function TierProvider({ children }: { children: ReactNode }) {
     tier,
     isAdmin,
     isTier2OrHigher,
+    isPaused,
     updateUserTier,
+    toggleUserPause,
     getAllUserDetails,
   };
 

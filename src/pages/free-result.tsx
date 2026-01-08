@@ -51,9 +51,9 @@ const FreeResultContent: React.FC = () => {
     },
   });
 
-  // WhatsApp link (currently unused)
+  // WhatsApp link (currently unused) - Jessica
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const whatsappLink = "https://wa.me/601158639269";
+  const whatsappLink = "https://wa.me/601168349851";
 
   // WhatsApp icon SVG component (currently unused)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

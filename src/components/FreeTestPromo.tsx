@@ -23,8 +23,8 @@ const FreeTestPromo: React.FC = () => {
     return null;
   }
   
-  // WhatsApp link
-  const whatsappLink = "https://wa.me/601158639269";
+  // WhatsApp link (Jessica)
+  const whatsappLink = "https://wa.me/601168349851";
   
   return (
     <div className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-2xl shadow-xl overflow-hidden">

@@ -10,6 +10,7 @@ import analysis from "./analysis/index";
 import zwds from "./zwds";
 import misc from "./misc";
 import freeTest from "./freeTest";
+import membership from "./membership";
 
 const zh = {
   ...common,
@@ -24,6 +25,7 @@ const zh = {
   ...zwds,
   ...misc,
   ...freeTest,
+  ...membership,
   general:{
     back: "返回",
     cancel: "取消",

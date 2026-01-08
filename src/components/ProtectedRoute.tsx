@@ -25,6 +25,14 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     return <Navigate to="/authentication/sign-in" state={{ from: location }} replace />;
   }
 
+  // Check if membership is paused
+  if (userDetails?.is_paused === true) {
+    // Don't redirect if already on membership-paused page to avoid infinite loop
+    if (location.pathname !== "/membership-paused") {
+      return <Navigate to="/membership-paused" replace />;
+    }
+  }
+
   // Check if membership has expired
   if (userDetails?.membership_expiration) {
     const expirationDate = new Date(userDetails.membership_expiration);

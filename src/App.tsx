@@ -35,6 +35,7 @@ import Tier3Result from "./pages/tier3-result";
 import DestinyNavigator from "./pages/destiny-navigator";
 import Profile from "./pages/profile";
 import MembershipExpired from "./pages/membership-expired";
+import MembershipPaused from "./pages/membership-paused";
 // Import new free test pages
 import FreeTest from "./pages/free-test";
 import FreeResult from "./pages/free-result";
@@ -125,11 +126,12 @@ const App: React.FC = () => {
                 <SidebarProvider>
                   {/* Single router switch. Some routes bypass MainLayout. */}
                   <Routes>
-                    {/* Routes WITHOUT MainLayout (no navbar) */}
-                    <Route path="/chart-only" element={<ChartOnly />} />
-                    <Route path="/chart-test" element={<ChartTest />} />
-                    <Route path="/membership-expired" element={<MembershipExpired />} />
-                    {/* Dev-only routes */}
+                  {/* Routes WITHOUT MainLayout (no navbar) */}
+                  <Route path="/chart-only" element={<ChartOnly />} />
+                  <Route path="/chart-test" element={<ChartTest />} />
+                  <Route path="/membership-expired" element={<MembershipExpired />} />
+                  <Route path="/membership-paused" element={<MembershipPaused />} />
+                  {/* Dev-only routes */}
                     <Route path="/dev/wealth-code-preview" element={<WealthCodePreviewPage />} />
 
                     {/* Routes WITH MainLayout */}

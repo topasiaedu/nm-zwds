@@ -9,12 +9,12 @@ import PageTransition from "../../components/PageTransition";
  */
 const UserManagement: React.FC = () => {
   const { t } = useLanguage();
-  const { getAllUserDetails, updateUserTier, isAdmin, loading: tierLoading } = useTierContext();
+  const { getAllUserDetails, updateUserTier, toggleUserPause, isAdmin, loading: tierLoading } = useTierContext();
   
   const [users, setUsers] = useState<UserDetailsWithEmail[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [updating, setUpdating] = useState<string | null>(null);
-  const [filter, setFilter] = useState<"all" | "tier1" | "tier2" | "admin">("all");
+  const [filter, setFilter] = useState<"all" | "tier1" | "tier2" | "admin" | "paused">("all");
   const [selectedUsers, setSelectedUsers] = useState<Set<string>>(new Set());
   const [batchUpdating, setBatchUpdating] = useState<boolean>(false);
 
@@ -65,6 +65,35 @@ const UserManagement: React.FC = () => {
     } catch (error) {
       console.error("Error updating tier:", error);
       alert("An error occurred while updating the tier.");
+    } finally {
+      setUpdating(null);
+    }
+  };
+
+  /**
+   * Handle pause toggle for a single user
+   */
+  const handlePauseToggle = async (userId: string, currentPauseState: boolean) => {
+    const newPauseState = !currentPauseState;
+    setUpdating(userId);
+    try {
+      const success = await toggleUserPause(userId, newPauseState);
+      if (success) {
+        // Update local state
+        setUsers(prev => 
+          prev.map(user => 
+            user.user_id === userId 
+              ? { ...user, is_paused: newPauseState }
+              : user
+          )
+        );
+        alert(`User ${newPauseState ? "paused" : "unpaused"} successfully!`);
+      } else {
+        alert("Failed to toggle pause status. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error toggling pause:", error);
+      alert("An error occurred while toggling pause status.");
     } finally {
       setUpdating(null);
     }
@@ -131,6 +160,66 @@ const UserManagement: React.FC = () => {
   };
 
   /**
+   * Handle batch pause/unpause
+   */
+  const handleBatchPauseToggle = async (shouldPause: boolean) => {
+    if (selectedUsers.size === 0) {
+      alert("Please select users to update.");
+      return;
+    }
+
+    const action = shouldPause ? "pause" : "unpause";
+    const confirmMessage = `Are you sure you want to ${action} ${selectedUsers.size} user(s)?`;
+    if (!window.confirm(confirmMessage)) {
+      return;
+    }
+
+    setBatchUpdating(true);
+    let successCount = 0;
+    let failCount = 0;
+
+    try {
+      for (const userId of selectedUsers) {
+        try {
+          const success = await toggleUserPause(userId, shouldPause);
+          if (success) {
+            successCount++;
+          } else {
+            failCount++;
+          }
+        } catch (error) {
+          console.error(`Error ${action}ing user ${userId}:`, error);
+          failCount++;
+        }
+      }
+
+      // Update local state for successful updates
+      setUsers(prev => 
+        prev.map(user => 
+          selectedUsers.has(user.user_id) && successCount > 0
+            ? { ...user, is_paused: shouldPause }
+            : user
+        )
+      );
+
+      // Clear selection
+      setSelectedUsers(new Set());
+
+      // Show result
+      if (failCount === 0) {
+        alert(`Successfully ${action}d ${successCount} user(s)!`);
+      } else {
+        alert(`${action}d ${successCount} user(s) successfully. ${failCount} failed.`);
+      }
+    } catch (error) {
+      console.error(`Batch ${action} error:`, error);
+      alert(`An error occurred during batch ${action}.`);
+    } finally {
+      setBatchUpdating(false);
+    }
+  };
+
+  /**
    * Handle checkbox selection
    */
   const handleSelectUser = (userId: string, isChecked: boolean) => {
@@ -173,9 +262,11 @@ const UserManagement: React.FC = () => {
   /**
    * Filter users based on selected filter
    */
-  const filteredUsers = users.filter(user => 
-    filter === "all" || user.tier === filter
-  );
+  const filteredUsers = users.filter(user => {
+    if (filter === "all") return true;
+    if (filter === "paused") return user.is_paused === true;
+    return user.tier === filter;
+  });
 
   // Redirect if not admin (this should be handled by route protection, but adding as extra security)
   if (!isAdmin) {
@@ -270,42 +361,70 @@ const UserManagement: React.FC = () => {
               >
                 Admins ({users.filter(u => u.tier === "admin").length})
               </button>
+              <button
+                onClick={() => setFilter("paused")}
+                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                  filter === "paused"
+                    ? "bg-indigo-600 text-white"
+                    : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+                }`}
+              >
+                Paused ({users.filter(u => u.is_paused === true).length})
+              </button>
             </div>
           </div>
 
           {/* Batch Actions */}
           {selectedUsers.size > 0 && (
             <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between flex-wrap gap-2">
                 <span className="text-blue-800 dark:text-blue-200 font-medium">
                   {selectedUsers.size} user(s) selected
                 </span>
-                <div className="flex space-x-2">
-                  <button
-                    onClick={() => handleBatchTierUpdate("tier1")}
-                    disabled={batchUpdating}
-                    className="px-3 py-1 bg-gray-100 text-gray-800 rounded hover:bg-gray-200 disabled:opacity-50"
-                  >
-                    → Tier 1
-                  </button>
-                  <button
-                    onClick={() => handleBatchTierUpdate("tier2")}
-                    disabled={batchUpdating}
-                    className="px-3 py-1 bg-purple-100 text-purple-800 rounded hover:bg-purple-200 disabled:opacity-50"
-                  >
-                    → Tier 2
-                  </button>
-                  <button
-                    onClick={() => handleBatchTierUpdate("admin")}
-                    disabled={batchUpdating}
-                    className="px-3 py-1 bg-red-100 text-red-800 rounded hover:bg-red-200 disabled:opacity-50"
-                  >
-                    → Admin
-                  </button>
+                <div className="flex flex-wrap gap-2">
+                  <div className="flex space-x-2">
+                    <button
+                      onClick={() => handleBatchTierUpdate("tier1")}
+                      disabled={batchUpdating}
+                      className="px-3 py-1 bg-gray-100 text-gray-800 rounded hover:bg-gray-200 disabled:opacity-50 text-sm"
+                    >
+                      → Tier 1
+                    </button>
+                    <button
+                      onClick={() => handleBatchTierUpdate("tier2")}
+                      disabled={batchUpdating}
+                      className="px-3 py-1 bg-purple-100 text-purple-800 rounded hover:bg-purple-200 disabled:opacity-50 text-sm"
+                    >
+                      → Tier 2
+                    </button>
+                    <button
+                      onClick={() => handleBatchTierUpdate("admin")}
+                      disabled={batchUpdating}
+                      className="px-3 py-1 bg-red-100 text-red-800 rounded hover:bg-red-200 disabled:opacity-50 text-sm"
+                    >
+                      → Admin
+                    </button>
+                  </div>
+                  <div className="flex space-x-2 border-l pl-2 border-blue-300 dark:border-blue-700">
+                    <button
+                      onClick={() => handleBatchPauseToggle(true)}
+                      disabled={batchUpdating}
+                      className="px-3 py-1 bg-orange-100 text-orange-800 rounded hover:bg-orange-200 disabled:opacity-50 text-sm"
+                    >
+                      ⏸ Pause
+                    </button>
+                    <button
+                      onClick={() => handleBatchPauseToggle(false)}
+                      disabled={batchUpdating}
+                      className="px-3 py-1 bg-green-100 text-green-800 rounded hover:bg-green-200 disabled:opacity-50 text-sm"
+                    >
+                      ▶ Unpause
+                    </button>
+                  </div>
                   <button
                     onClick={() => setSelectedUsers(new Set())}
                     disabled={batchUpdating}
-                    className="px-3 py-1 bg-gray-500 text-white rounded hover:bg-gray-600 disabled:opacity-50"
+                    className="px-3 py-1 bg-gray-500 text-white rounded hover:bg-gray-600 disabled:opacity-50 text-sm"
                   >
                     Clear
                   </button>
@@ -343,6 +462,9 @@ const UserManagement: React.FC = () => {
                       Current Tier
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      Status
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                       Created At
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
@@ -375,6 +497,17 @@ const UserManagement: React.FC = () => {
                           {user.tier.toUpperCase()}
                         </span>
                       </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        {user.is_paused ? (
+                          <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300">
+                            ⏸ PAUSED
+                          </span>
+                        ) : (
+                          <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300">
+                            ▶ ACTIVE
+                          </span>
+                        )}
+                      </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                         {new Date(user.created_at).toLocaleDateString()}
                       </td>
@@ -382,36 +515,51 @@ const UserManagement: React.FC = () => {
                         {new Date(user.updated_at).toLocaleDateString()}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <div className="flex space-x-2">
-                          {user.tier !== "tier1" && (
+                        <div className="flex flex-col space-y-1">
+                          <div className="flex space-x-2">
+                            {user.tier !== "tier1" && (
+                              <button
+                                onClick={() => handleTierUpdate(user.user_id, "tier1")}
+                                disabled={updating === user.user_id}
+                                className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100 disabled:opacity-50 text-xs"
+                              >
+                                → Tier 1
+                              </button>
+                            )}
+                            {user.tier !== "tier2" && (
+                              <button
+                                onClick={() => handleTierUpdate(user.user_id, "tier2")}
+                                disabled={updating === user.user_id}
+                                className="text-purple-600 hover:text-purple-900 dark:text-purple-400 dark:hover:text-purple-100 disabled:opacity-50 text-xs"
+                              >
+                                → Tier 2
+                              </button>
+                            )}
+                            {user.tier !== "admin" && (
+                              <button
+                                onClick={() => handleTierUpdate(user.user_id, "admin")}
+                                disabled={updating === user.user_id}
+                                className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-100 disabled:opacity-50 text-xs"
+                              >
+                                → Admin
+                              </button>
+                            )}
+                          </div>
+                          <div className="flex space-x-2 border-t pt-1 border-gray-200 dark:border-gray-700">
                             <button
-                              onClick={() => handleTierUpdate(user.user_id, "tier1")}
+                              onClick={() => handlePauseToggle(user.user_id, user.is_paused)}
                               disabled={updating === user.user_id}
-                              className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100 disabled:opacity-50"
+                              className={`${
+                                user.is_paused
+                                  ? "text-green-600 hover:text-green-900 dark:text-green-400 dark:hover:text-green-100"
+                                  : "text-orange-600 hover:text-orange-900 dark:text-orange-400 dark:hover:text-orange-100"
+                              } disabled:opacity-50 text-xs font-medium`}
                             >
-                              → Tier 1
+                              {user.is_paused ? "▶ Unpause" : "⏸ Pause"}
                             </button>
-                          )}
-                          {user.tier !== "tier2" && (
-                            <button
-                              onClick={() => handleTierUpdate(user.user_id, "tier2")}
-                              disabled={updating === user.user_id}
-                              className="text-purple-600 hover:text-purple-900 dark:text-purple-400 dark:hover:text-purple-100 disabled:opacity-50"
-                            >
-                              → Tier 2
-                            </button>
-                          )}
-                          {user.tier !== "admin" && (
-                            <button
-                              onClick={() => handleTierUpdate(user.user_id, "admin")}
-                              disabled={updating === user.user_id}
-                              className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-100 disabled:opacity-50"
-                            >
-                              → Admin
-                            </button>
-                          )}
+                          </div>
                           {updating === user.user_id && (
-                            <span className="text-blue-600 dark:text-blue-400">Updating...</span>
+                            <span className="text-blue-600 dark:text-blue-400 text-xs">Updating...</span>
                           )}
                         </div>
                       </td>
@@ -431,7 +579,7 @@ const UserManagement: React.FC = () => {
           </div>
 
           {/* Statistics */}
-          <div className="mt-8 grid grid-cols-1 md:grid-cols-4 gap-6">
+          <div className="mt-8 grid grid-cols-1 md:grid-cols-5 gap-6">
             <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow">
               <div className="text-2xl font-bold text-gray-900 dark:text-white">
                 {users.length}
@@ -455,6 +603,12 @@ const UserManagement: React.FC = () => {
                 {users.filter(u => u.tier === "admin").length}
               </div>
               <div className="text-gray-600 dark:text-gray-400">Admin Users</div>
+            </div>
+            <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow">
+              <div className="text-2xl font-bold text-orange-600 dark:text-orange-400">
+                {users.filter(u => u.is_paused === true).length}
+              </div>
+              <div className="text-gray-600 dark:text-gray-400">Paused Users</div>
             </div>
           </div>
         </div>
