@@ -1099,13 +1099,13 @@ const ResultContent: React.FC = () => {
               )}
 
               {/* Wealth Code Analysis - Admin only (testing phase) - Placed at bottom */}
-              {isAdmin && <WealthCode chartData={calculatedChartData} />}
+              <WealthCode chartData={calculatedChartData} />
 
               {/* Dayun Season Analysis - 10-Year Life Cycle */}
-              {isAdmin && <DayunSection chartData={calculatedChartData} />}
+              <DayunSection chartData={calculatedChartData} />
 
               {/* Nobleman Analysis - Key Supportive People */}
-              {isAdmin && <NoblemanSection chartData={calculatedChartData} />}
+              <NoblemanSection chartData={calculatedChartData} />
 
               {/* Summary Analysis */}
               {/* <SummaryAnalysis chartData={calculatedChartData} /> */}

@@ -16,6 +16,9 @@ import { PdfChartData } from "../components/PdfDocument";
 import { useAlertContext } from "../context/AlertContext";
 import { ChartSettingsProvider, useChartSettings } from "../context/ChartSettingsContext";
 import ChartSettingsModal from "../components/ChartSettingsModal";
+import { WealthCode } from "../components/analysis_v2";
+import { DayunSection } from "../components/dayun";
+import { NoblemanSection } from "../components/nobleman";
 
 /**
  * Interface for chart data - using PdfChartData for consistency
@@ -787,6 +790,31 @@ const FreeResultContent: React.FC = () => {
               </div>
             </div>
           )
+        )}
+
+        {/* Analysis Section - Public features for free test users */}
+        {calculatedChartData && !loading && !error && (
+          <div className="mt-8">
+            {/* <div className="flex flex-col justify-center items-center">
+              <h2 className="text-4xl mb-2 font-bold dark:text-white flex items-center text-center pt-4">
+                {t("analysis.title") || "Chart Analysis"}
+              </h2>
+              <p className="text-lg mb-6 dark:text-white text-center italic">
+                {t("freeTest.analysisSubtitle") || "Explore key insights from your chart"}
+              </p>
+            </div> */}
+
+            <div className="space-y-8">
+              {/* Wealth Code Analysis - Public for free users */}
+              <WealthCode chartData={calculatedChartData} />
+
+              {/* Dayun Season Analysis - 10-Year Life Cycle */}
+              <DayunSection chartData={calculatedChartData} />
+
+              {/* Nobleman Analysis - Key Supportive People */}
+              <NoblemanSection chartData={calculatedChartData} />
+            </div>
+          </div>
         )}
 
         {/* PDF Export Modal */}
