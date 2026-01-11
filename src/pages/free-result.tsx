@@ -806,13 +806,13 @@ const FreeResultContent: React.FC = () => {
 
             <div className="space-y-8">
               {/* Wealth Code Analysis - Public for free users */}
-              <WealthCode chartData={calculatedChartData} />
+              {/* <WealthCode chartData={calculatedChartData} /> */}
 
               {/* Dayun Season Analysis - 10-Year Life Cycle */}
-              <DayunSection chartData={calculatedChartData} />
+              {/* <DayunSection chartData={calculatedChartData} /> */}
 
               {/* Nobleman Analysis - Key Supportive People */}
-              <NoblemanSection chartData={calculatedChartData} />
+              {/* <NoblemanSection chartData={calculatedChartData} /> */}
             </div>
           </div>
         )}
