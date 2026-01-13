@@ -20,7 +20,39 @@ import {
  */
 interface WealthCodeProps {
   chartData: ChartData;
+  /**
+   * Optional header overrides.
+   *
+   * - If omitted, the component renders the legacy Wealth Code title/subtitle.
+   * - If provided, the component renders the given title/subtitle and can show a badge pill.
+   */
+  header?: WealthCodeHeaderConfig;
+  /**
+   * Whether to show the internal top divider line.
+   * Defaults to `true` to preserve legacy appearance (e.g. on `result.tsx`).
+   */
+  showTopDivider?: boolean;
 }
+
+/**
+ * Header configuration for the Wealth Code section.
+ */
+interface WealthCodeHeaderConfig {
+  /** Optional badge text shown before the title (e.g. "01"). */
+  badgeText?: string;
+  /** Section title text. */
+  title: string;
+  /** Section subtitle text. */
+  subtitle: string;
+}
+
+/**
+ * Default header copy to preserve legacy UI.
+ */
+const DEFAULT_HEADER: WealthCodeHeaderConfig = {
+  title: "WEALTH CODE ANALYSIS",
+  subtitle: "Your Natural Wealth-Building Strengths",
+};
 
 /**
  * Color configuration for each wealth code type
@@ -57,16 +89,6 @@ const WEALTH_CODE_COLORS: Record<
     gradient: "from-green-500 to-emerald-500",
     heroGradient: "from-green-600 via-green-500 to-emerald-500",
   },
-};
-
-/**
- * Short labels for wealth codes
- */
-const WEALTH_CODE_SHORT: Record<WealthCodeKey, string> = {
-  investmentBrain: "IB",
-  brandingMagnet: "BM",
-  strategyPlanner: "SP",
-  collaborator: "CO",
 };
 
 /**
@@ -159,6 +181,16 @@ const PremiumHeroCard: React.FC<{ profile: WealthCodeAnalysisResult }> = ({
 const ModernBarChart: React.FC<{ codes: WealthCodeScore[] }> = ({ codes }) => {
   const maxScore = 10;
 
+  /**
+   * Get a human-readable descriptor for a score percent.
+   */
+  const getScoreDescriptor = (scorePercent: number): string => {
+    if (scorePercent >= 80) return "Exceptional";
+    if (scorePercent >= 65) return "Strong";
+    if (scorePercent >= 50) return "Moderate";
+    return "Developing";
+  };
+
   return (
     <div className="rounded-2xl shadow-lg border bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700 p-8 mb-6">
       <div className="flex items-center justify-between mb-6">
@@ -173,7 +205,6 @@ const ModernBarChart: React.FC<{ codes: WealthCodeScore[] }> = ({ codes }) => {
       <div className="space-y-6">
         {codes.map((code, idx) => {
           const colorConfig = WEALTH_CODE_COLORS[code.key];
-          const shortLabel = WEALTH_CODE_SHORT[code.key];
           const widthPercent = (code.score / maxScore) * 100;
 
           return (
@@ -202,13 +233,7 @@ const ModernBarChart: React.FC<{ codes: WealthCodeScore[] }> = ({ codes }) => {
                       {code.label}
                     </div>
                     <div className="text-xs text-gray-500 dark:text-gray-400">
-                      {widthPercent >= 80
-                        ? "Exceptional"
-                        : widthPercent >= 65
-                        ? "Strong"
-                        : widthPercent >= 50
-                        ? "Moderate"
-                        : "Developing"}
+                      {getScoreDescriptor(widthPercent)}
                     </div>
                   </div>
                 </div>
@@ -277,7 +302,10 @@ const ModernInsights: React.FC<{
             </div>
             <ul className="space-y-2.5">
               {strengths.map((strength, idx) => (
-                <li key={idx} className="flex items-start gap-2.5">
+                <li
+                  key={`${strength}-${idx}`}
+                  className="flex items-start gap-2.5"
+                >
                   <div 
                     className="rounded-full flex items-center justify-center flex-shrink-0 shadow-md"
                     style={{ 
@@ -323,7 +351,10 @@ const ModernInsights: React.FC<{
             </div>
             <ul className="space-y-2.5">
               {blindSpots.map((blindSpot, idx) => (
-                <li key={idx} className="flex items-start gap-2.5">
+                <li
+                  key={`${blindSpot}-${idx}`}
+                  className="flex items-start gap-2.5"
+                >
                   <div 
                     className="rounded-full flex items-center justify-center flex-shrink-0 shadow-md"
                     style={{ 
@@ -379,7 +410,7 @@ const ModernCareerPaths: React.FC<{
             <div className="space-y-3">
               {idealRoles.map((item, idx) => (
                 <div
-                  key={idx}
+                  key={`${item.role}-${idx}`}
                   className="p-3 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 hover:shadow-sm transition-shadow"
                 >
                   <div className="font-semibold text-sm text-gray-900 dark:text-white mb-1">
@@ -408,7 +439,7 @@ const ModernCareerPaths: React.FC<{
             <div className="space-y-3">
               {nonIdealRoles.map((item, idx) => (
                 <div
-                  key={idx}
+                  key={`${item.role}-${idx}`}
                   className="p-3 rounded-lg bg-gray-50 dark:bg-gray-700/30 border border-gray-200 dark:border-gray-600 opacity-70 hover:opacity-90 transition-opacity"
                 >
                   <div className="font-semibold text-sm text-gray-900 dark:text-white mb-1">
@@ -440,9 +471,8 @@ const EmptyState: React.FC = () => {
         No Wealth Code Data Available
       </h3>
       <p className="text-sm text-gray-600 dark:text-gray-400 max-w-md mx-auto">
-        No recognized wealth-building stars found in your Wealth Palace. This
-        section analyzes major stars that directly influence your natural
-        money-making approach.
+        No wealth archetype data available. This analysis identifies your natural business model
+        based on Wealth Palace stars.
       </p>
     </div>
   );
@@ -451,29 +481,50 @@ const EmptyState: React.FC = () => {
 /**
  * Main Wealth Code Component
  */
-const WealthCode: React.FC<WealthCodeProps> = ({ chartData }) => {
+const WealthCode: React.FC<WealthCodeProps> = ({
+  chartData,
+  header,
+  showTopDivider,
+}) => {
   // Analyze wealth code
   const wealthProfile = analyzeWealthCode(chartData);
+  const resolvedHeader: WealthCodeHeaderConfig = header ?? DEFAULT_HEADER;
+  const shouldShowTopDivider = showTopDivider ?? true;
 
   return (
     <div className="p-6 dark:bg-gray-900">
       {/* Divider */}
-      <div className="w-full border-t border-gray-400 dark:border-gray-600 mb-6"></div>
+      {shouldShowTopDivider ? (
+        <div className="w-full border-t border-gray-400 dark:border-gray-600 mb-6"></div>
+      ) : null}
 
       {/* Section Title */}
       <div className="text-center mb-8">
-        <h2 className="text-4xl mb-2 dark:text-white font-bold">
-          WEALTH CODE ANALYSIS
-        </h2>
+        {resolvedHeader.badgeText ? (
+          <div className="flex items-center justify-center gap-3 mb-2">
+            <span
+              className="inline-flex items-center justify-center rounded-full px-3 py-1 text-xs font-bold tracking-wider
+                bg-gray-100 text-gray-800 border border-gray-200
+                dark:bg-gray-800 dark:text-gray-100 dark:border-gray-700"
+            >
+              {resolvedHeader.badgeText}
+            </span>
+            <h2 className="text-4xl dark:text-white font-bold">
+              {resolvedHeader.title}
+            </h2>
+          </div>
+        ) : (
+          <h2 className="text-4xl mb-2 dark:text-white font-bold">
+            {resolvedHeader.title}
+          </h2>
+        )}
         <p className="text-gray-600 dark:text-gray-400 text-sm">
-          Your Natural Wealth-Building Strengths
+          {resolvedHeader.subtitle}
         </p>
       </div>
 
       {/* Content */}
-      {!wealthProfile.hasRecognizedStars ? (
-        <EmptyState />
-      ) : (
+      {wealthProfile.hasRecognizedStars ? (
         <>
           {/* 1. Premium Hero - Immediate Wow Factor */}
           <PremiumHeroCard profile={wealthProfile} />
@@ -493,6 +544,8 @@ const WealthCode: React.FC<WealthCodeProps> = ({ chartData }) => {
             nonIdealRoles={wealthProfile.nonIdealRoles}
           />
         </>
+      ) : (
+        <EmptyState />
       )}
     </div>
   );

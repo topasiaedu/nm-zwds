@@ -11,7 +11,6 @@ import { calculateCurrentDayunCycle } from "../../utils/dayun/calculator";
 import { generateDayunGuidance } from "../../utils/dayun/guidanceGenerator";
 import {
   DayunSeasonHero,
-  DecisionPointHero,
   CycleTimeline,
   PhaseIntensityChart,
   DayunGuidanceCards,
@@ -24,6 +23,13 @@ interface DayunSectionProps {
   
   /** Optional current year override (defaults to current year) */
   currentYear?: number;
+
+  /**
+   * Whether to show the built-in Dayun section header.
+   * Defaults to `true` for standalone pages; set to `false` when embedding inside other reports
+   * that already provide their own section header (e.g. Founder Report section numbering).
+   */
+  showHeader?: boolean;
 }
 
 /**
@@ -43,8 +49,11 @@ interface DayunSectionProps {
  */
 export const DayunSection: React.FC<DayunSectionProps> = ({ 
   chartData, 
-  currentYear 
+  currentYear,
+  showHeader
 }) => {
+  const shouldShowHeader = showHeader ?? true;
+
   // Calculate current Dayun cycle
   const dayunCycle = calculateCurrentDayunCycle(chartData, currentYear);
 
@@ -59,14 +68,16 @@ export const DayunSection: React.FC<DayunSectionProps> = ({
   return (
     <section className="mb-8">
       {/* Section Header - Matching Wealth Code Analysis styling */}
-      <div className="text-center mb-8 pt-8 border-t border-gray-200 dark:border-gray-700">
-        <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-2 uppercase tracking-wide">
-          Dayun Season Analysis
-        </h2>
-        <p className="text-base md:text-lg text-gray-600 dark:text-gray-400">
-          Your Current 10-Year Life Cycle Strategy
-        </p>
-      </div>
+      {shouldShowHeader ? (
+        <div className="text-center mb-8 pt-8 border-t border-gray-200 dark:border-gray-700">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-2 uppercase tracking-wide">
+            Dayun Season Analysis
+          </h2>
+          <p className="text-base md:text-lg text-gray-600 dark:text-gray-400">
+            Your Current 10-Year Life Cycle Strategy
+          </p>
+        </div>
+      ) : null}
 
       {/* Season Hero - Large visual card (FIRST - most prominent) */}
       <DayunSeasonHero dayun={dayunWithGuidance} />

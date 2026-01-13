@@ -10,7 +10,7 @@ import {
 } from "react-router-dom";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { ProfileProvider } from "./context/ProfileContext";
-import { TierProvider } from "./context/TierContext";
+import { TierProvider, useTierAccess } from "./context/TierContext";
 import { LanguageProvider } from "./context/LanguageContext";
 import { AlertProvider } from "./context/AlertContext";
 import { SidebarProvider } from "./context/SidebarContext";
@@ -33,6 +33,7 @@ import ChartOnly from "./pages/chart-only";
 import ChartTest from "./pages/chart-test";
 import Tier3Result from "./pages/tier3-result";
 import DestinyNavigator from "./pages/destiny-navigator";
+import FounderReport from "./pages/founder-report";
 import Profile from "./pages/profile";
 import MembershipExpired from "./pages/membership-expired";
 import MembershipPaused from "./pages/membership-paused";
@@ -46,7 +47,6 @@ import WealthCodePreviewPage from "./pages/dev/wealth-code-preview";
 import FREE_TEST_CONFIG from "./config/freeTestConfig";
 import { Analytics } from "@vercel/analytics/react"
 import { SpeedInsights } from "@vercel/speed-insights/react"
-import { useTierAccess } from "./context/TierContext";
 
 /**
  * Authentication route wrapper that redirects authenticated users to dashboard
@@ -278,6 +278,14 @@ const App: React.FC = () => {
                       element={
                         <ProtectedRoute>
                           <DestinyNavigator />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/founder-report/:id"
+                      element={
+                        <ProtectedRoute>
+                          <FounderReport />
                         </ProtectedRoute>
                       }
                     />

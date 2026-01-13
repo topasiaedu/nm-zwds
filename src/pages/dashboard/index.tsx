@@ -154,6 +154,34 @@ const Dashboard: React.FC = () => {
                       </div>
                     </Link>
                   )}
+                  {/* Admin: Founder Timing Decision System Report */}
+                  {(isAdmin && recentProfiles.length > 0) && (
+                    <Link
+                      to={`/founder-report/${recentProfiles[0].id}`}
+                      className="block bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 rounded-xl p-4 hover:from-amber-100 hover:to-orange-100 dark:hover:from-amber-900/30 dark:hover:to-orange-900/30 transition-colors border border-amber-200 dark:border-amber-800">
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-center">
+                          <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-amber-100 dark:bg-amber-900/50 flex items-center justify-center mr-3">
+                            <svg className="w-5 h-5 text-amber-700 dark:text-amber-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                          </div>
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <h3 className="text-lg font-medium text-gray-900 dark:text-white">Founder Report</h3>
+                              <span className="inline-block bg-gradient-to-r from-amber-500 to-orange-600 text-white px-2 py-0.5 rounded-full text-xs font-bold">
+                                Premium
+                              </span>
+                            </div>
+                            <p className="text-sm text-gray-600 dark:text-gray-400">Founder Timing Decision System Report</p>
+                          </div>
+                        </div>
+                        <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      </div>
+                    </Link>
+                  )}
                   {/* My Chart */}
                   <Link
                     to={tier === "tier3" && !isAdmin ? "/tier3-result" : "/chart"}
