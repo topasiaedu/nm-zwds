@@ -236,137 +236,368 @@ export const BusinessCalendar: React.FC<BusinessCalendarProps> = ({ chartData })
     <div className="p-6 dark:bg-gray-900">
       <div className="w-full border-t border-gray-400 dark:border-gray-600 mb-6"></div>
 
-      {/* Section Header */}
-      <div className="text-center mb-8">
-        <h2 className="text-4xl dark:text-white font-bold mb-2">{"FOUNDER BUSINESS CALENDAR"}</h2>
-        <p className="text-gray-600 dark:text-gray-400 text-sm">
-          {"90-Day Strategic Roadmap · Launch → Invest → Hire → Pivot → Change"}
-        </p>
+      {/* Section Header with Gradient Background */}
+      <div className="relative rounded-3xl overflow-hidden mb-8" style={{
+        background: "linear-gradient(135deg, #fb923c 0%, #f97316 50%, #ea580c 100%)",
+        padding: "32px 40px",
+        boxShadow: "0 10px 40px rgba(251, 146, 60, 0.3)",
+      }}>
+        {/* Decorative elements */}
+        <div style={{
+          position: "absolute",
+          top: "20px",
+          right: "40px",
+          fontSize: "48px",
+          opacity: 0.2,
+        }}>✨</div>
+        <div style={{
+          position: "absolute",
+          bottom: "30px",
+          left: "60px",
+          fontSize: "24px",
+          opacity: 0.15,
+        }}>⭐</div>
+        
+        <div className="relative z-10">
+          <div className="flex items-center gap-3 mb-3">
+            <span style={{
+              background: "rgba(255, 255, 255, 0.9)",
+              color: "#ea580c",
+              padding: "4px 12px",
+              borderRadius: "8px",
+              fontSize: "18px",
+              fontWeight: "800",
+            }}>05</span>
+            <h2 style={{ 
+              fontSize: "32px", 
+              fontWeight: "800", 
+              color: "#ffffff",
+              textShadow: "0 2px 10px rgba(0,0,0,0.1)",
+            }}>
+              {"Founder Business Calendar"}
+            </h2>
+          </div>
+          <p style={{ 
+            color: "#fff",
+            fontSize: "15px",
+            fontWeight: "500",
+            marginTop: "8px",
+            opacity: 0.95,
+          }}>
+            {"What to prioritize in the next 90 days — no noise, only aligned moves"}
+          </p>
+        </div>
       </div>
 
 
-      {/* Month selector tabs */}
-      <div className="mb-6 flex gap-2 overflow-x-auto pb-2">
+      {/* Month selector tabs - Colorful style */}
+      <div className="mb-6 flex gap-3 overflow-x-auto pb-2">
         {[1, 2, 3].map((month) => (
           <button
             key={month}
             type="button"
             onClick={() => setSelectedMonth(month)}
-            className={[
-              "px-4 py-2 rounded-lg text-sm font-bold transition-all whitespace-nowrap",
-              selectedMonth === month
-                ? "bg-indigo-600 text-white shadow-md"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700",
-            ].join(" ")}
+            style={{
+              padding: "12px 24px",
+              borderRadius: "12px",
+              fontSize: "14px",
+              fontWeight: "700",
+              border: "none",
+              cursor: "pointer",
+              transition: "all 0.3s ease",
+              whiteSpace: "nowrap",
+              background: selectedMonth === month 
+                ? "linear-gradient(135deg, #f97316 0%, #ea580c 100%)"
+                : "#ffffff",
+              color: selectedMonth === month ? "#ffffff" : "#6b7280",
+              boxShadow: selectedMonth === month 
+                ? "0 4px 12px rgba(249, 115, 22, 0.4)"
+                : "0 2px 6px rgba(0, 0, 0, 0.08)",
+            }}
           >
             {monthLabels[month - 1]}
           </button>
         ))}
       </div>
 
-      {/* Calendar Grid - 4 weeks */}
+      {/* Calendar Grid - 4 weeks with colorful styling */}
       <div className="space-y-6">
         {weeks.map(({ weekNum, days }) => (
-          <div key={weekNum} className="rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden bg-white dark:bg-gray-800">
-            {/* Week header */}
-            <div className="bg-gray-50 dark:bg-gray-900/50 px-4 py-2 border-b border-gray-200 dark:border-gray-700">
-              <span className="text-sm font-bold text-gray-700 dark:text-gray-300">{`Week ${weekNum}`}</span>
+          <div key={weekNum} style={{
+            borderRadius: "16px",
+            border: "2px solid #fed7aa",
+            overflow: "hidden",
+            background: "#ffffff",
+            boxShadow: "0 4px 12px rgba(251, 146, 60, 0.1)",
+          }}>
+            {/* Week header - Colorful */}
+            <div style={{
+              background: "linear-gradient(90deg, #fed7aa 0%, #fef3c7 100%)",
+              padding: "12px 16px",
+              borderBottom: "2px solid #fed7aa",
+            }}>
+              <span style={{ fontSize: "14px", fontWeight: "800", color: "#ea580c" }}>
+                {`Week ${weekNum}`}
+              </span>
             </div>
 
-            {/* Day headers */}
-            <div className="grid grid-cols-7 border-b border-gray-200 dark:border-gray-700">
-              {dayLabels.map((day) => (
+            {/* Day headers - Vibrant */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", background: "linear-gradient(to right, #fb923c, #f97316)" }}>
+              {dayLabels.map((day, idx) => (
                 <div
                   key={day}
-                  className="px-2 py-2 text-center text-xs font-bold text-gray-600 dark:text-gray-400 border-r border-gray-200 dark:border-gray-700 last:border-r-0"
+                  style={{
+                    borderRight: idx < 6 ? "1px solid rgba(255,255,255,0.2)" : "none",
+                    padding: "10px 8px",
+                    textAlign: "center",
+                    fontSize: "11px",
+                    fontWeight: "800",
+                    color: "#ffffff",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.5px",
+                  }}
                 >
                   {day}
                 </div>
               ))}
             </div>
 
-            {/* Days with tasks - stacked within cells */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)" }}>
-              {days.map((absoluteDay, dayIndex) => {
-                // Find tasks that START on this day
-                const tasksStartingToday = monthTasks.filter((task) => task.startDay === absoluteDay);
+            {(() => {
+              // Pre-calculate task lanes to determine container height
+              const taskLanes: number[] = [];
+              monthTasks.forEach((task) => {
+                const startIdx = days.indexOf(task.startDay);
+                if (startIdx === -1) {
+                  taskLanes.push(-1);
+                  return;
+                }
+                
+                const endIdx = Math.min(startIdx + task.duration - 1, 6);
+                
+                // Find first available lane
+                let lane = 0;
+                const occupiedLanes = new Set<number>();
+                
+                monthTasks.forEach((otherTask, otherIdx) => {
+                  if (otherIdx >= monthTasks.indexOf(task)) return;
+                  const otherStartIdx = days.indexOf(otherTask.startDay);
+                  if (otherStartIdx === -1) return;
+                  const otherEndIdx = Math.min(otherStartIdx + otherTask.duration - 1, 6);
+                  
+                  // Check if tasks overlap
+                  if (!(endIdx < otherStartIdx || startIdx > otherEndIdx)) {
+                    occupiedLanes.add(taskLanes[otherIdx]);
+                  }
+                });
+                
+                while (occupiedLanes.has(lane)) {
+                  lane++;
+                }
+                taskLanes.push(lane);
+              });
 
-                return (
-                  <div
-                    key={absoluteDay}
-                    style={{
-                      borderRight: dayIndex < 6 ? "1px solid #e5e7eb" : "none",
-                      borderBottom: "1px solid #e5e7eb",
-                      padding: "6px",
-                      minHeight: "150px",
-                      backgroundColor: "#f9fafb",
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "4px",
-                    }}
-                  >
-                    {/* Day number */}
-                    <div style={{ fontSize: "12px", fontWeight: "600", color: "#374151", marginBottom: "4px" }}>
-                      {absoluteDay + 1}
+              const maxLane = taskLanes.length > 0 ? Math.max(...taskLanes.filter(l => l >= 0)) : 0;
+              const containerHeight = 80 + (maxLane + 1) * 48; // Base height + (lanes * task height)
+              
+              return (
+                <>
+                  {/* Calendar grid container - wrapper for both grid and absolute tasks */}
+                  <div style={{ position: "relative", minHeight: `${containerHeight}px` }}>
+                    {/* Day cells grid */}
+                    <div style={{ 
+                      display: "grid", 
+                      gridTemplateColumns: "repeat(7, 1fr)",
+                      minHeight: `${containerHeight}px`,
+                    }}>
+                      {days.map((absoluteDay, dayIndex) => (
+                        <div
+                          key={absoluteDay}
+                          style={{
+                            borderRight: dayIndex < 6 ? "1px solid rgba(254, 215, 170, 0.5)" : "none",
+                            borderBottom: "1px solid rgba(254, 215, 170, 0.5)",
+                            padding: "8px",
+                            background: "linear-gradient(180deg, rgba(255, 251, 235, 0.6) 0%, rgba(255, 255, 255, 0.4) 100%)",
+                            backdropFilter: "blur(5px)",
+                            WebkitBackdropFilter: "blur(5px)",
+                            position: "relative",
+                          }}
+                        >
+                          {/* Day number with subtle glassmorphism badge */}
+                          <div style={{ 
+                            fontSize: "13px", 
+                            fontWeight: "800", 
+                            color: "#ea580c",
+                            marginBottom: "4px",
+                            background: "rgba(255, 255, 255, 0.5)",
+                            backdropFilter: "blur(4px)",
+                            WebkitBackdropFilter: "blur(4px)",
+                            padding: "2px 6px",
+                            borderRadius: "6px",
+                            display: "inline-block",
+                            width: "fit-content",
+                            border: "1px solid rgba(234, 88, 12, 0.2)",
+                            boxShadow: "0 2px 4px rgba(234, 88, 12, 0.1)",
+                          }}>
+                            {absoluteDay + 1}
+                          </div>
+                        </div>
+                      ))}
                     </div>
                     
-                    {/* Tasks starting on this day */}
-                    {tasksStartingToday.map((task) => {
-                      const info = getStepInfo(task.step);
-                      const spanDays = Math.min(task.duration, 7 - dayIndex);
-                      
-                      // Get gradient background based on step
-                      let bgGradient = "linear-gradient(135deg, #10b981 0%, #059669 100%)"; // launch - emerald
-                      if (task.step === "invest") bgGradient = "linear-gradient(135deg, #f59e0b 0%, #d97706 100%)"; // amber
-                      if (task.step === "hire") bgGradient = "linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)"; // blue
-                      if (task.step === "pivot") bgGradient = "linear-gradient(135deg, #a855f7 0%, #9333ea 100%)"; // purple
-                      if (task.step === "change") bgGradient = "linear-gradient(135deg, #6b7280 0%, #4b5563 100%)"; // gray
+                    {/* Tasks rendered separately to span across columns */}
+                    {monthTasks.map((task, taskIndex) => {
+                  const startDayIndex = days.indexOf(task.startDay);
+                  if (startDayIndex === -1) return null;
 
-                      return (
-                        <div
-                          key={task.id}
-                          style={{
-                            background: bgGradient,
-                            color: "#ffffff",
-                            borderRadius: "4px",
-                            padding: "4px 6px",
-                            fontSize: "10px",
-                            fontWeight: "600",
-                            cursor: "pointer",
-                            boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
-                            position: "relative",
-                            width: spanDays > 1 ? `calc(${spanDays * 100}% + ${(spanDays - 1) * 100}%)` : "100%",
-                          }}
-                          title={task.title}
-                        >
-                          <div style={{ display: "flex", alignItems: "center", gap: "3px", marginBottom: "2px" }}>
-                            <span style={{ fontSize: "11px" }}>{info.icon}</span>
-                            <span style={{ fontSize: "8px", textTransform: "uppercase", letterSpacing: "0.3px" }}>
-                              {info.label}
-                            </span>
+                  const info = getStepInfo(task.step);
+                  const spanDays = Math.min(task.duration, 7 - startDayIndex);
+                  const lane = taskLanes[taskIndex];
+                
+                // Get accent colors based on step
+                let accentColor = "#10b981"; // launch - emerald
+                let lightAccent = "rgba(16, 185, 129, 0.1)";
+                let shadowColor = "rgba(16, 185, 129, 0.3)";
+                
+                if (task.step === "invest") {
+                  accentColor = "#f59e0b"; // amber
+                  lightAccent = "rgba(245, 158, 11, 0.1)";
+                  shadowColor = "rgba(245, 158, 11, 0.3)";
+                }
+                if (task.step === "hire") {
+                  accentColor = "#3b82f6"; // blue
+                  lightAccent = "rgba(59, 130, 246, 0.1)";
+                  shadowColor = "rgba(59, 130, 246, 0.3)";
+                }
+                if (task.step === "pivot") {
+                  accentColor = "#a855f7"; // purple
+                  lightAccent = "rgba(168, 85, 247, 0.1)";
+                  shadowColor = "rgba(168, 85, 247, 0.3)";
+                }
+                if (task.step === "change") {
+                  accentColor = "#6b7280"; // gray
+                  lightAccent = "rgba(107, 114, 128, 0.1)";
+                  shadowColor = "rgba(107, 114, 128, 0.3)";
+                }
+
+                  // Calculate position for absolute positioning
+                  const leftPercent = (startDayIndex / 7) * 100;
+                  const widthPercent = (spanDays / 7) * 100;
+                  const topPx = 35 + (lane * 50);
+
+                  return (
+                    <div
+                      key={task.id}
+                      style={{
+                        position: "absolute",
+                        left: `${leftPercent}%`,
+                        width: `calc(${widthPercent}% - 16px)`,
+                        top: `${topPx}px`,
+                        marginLeft: "8px",
+                        marginRight: "8px",
+                        zIndex: 10 + lane,
+                        background: "linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%)",
+                        backdropFilter: "blur(12px)",
+                        WebkitBackdropFilter: "blur(12px)",
+                        border: "1px solid rgba(255, 255, 255, 0.6)",
+                        borderLeft: `3px solid ${accentColor}`,
+                        color: "#1f2937",
+                        borderRadius: "8px",
+                        padding: "8px 10px",
+                        fontSize: "10px",
+                        fontWeight: "600",
+                        cursor: "pointer",
+                        boxShadow: `0 4px 12px ${shadowColor}, 0 2px 4px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.8)`,
+                        overflow: "hidden",
+                        transition: "all 0.3s ease",
+                      }}
+                    title={task.title}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = "translateY(-2px)";
+                      e.currentTarget.style.boxShadow = `0 6px 16px ${shadowColor}, 0 4px 6px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.9)`;
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = "translateY(0)";
+                      e.currentTarget.style.boxShadow = `0 4px 12px ${shadowColor}, 0 2px 4px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.8)`;
+                    }}
+                  >
+                          {/* Glassmorphism shine effect - covers full background */}
+                          <div style={{
+                            position: "absolute",
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            bottom: 0,
+                            background: `linear-gradient(135deg, ${lightAccent} 0%, rgba(255,255,255,0.05) 50%, rgba(255,255,255,0.1) 100%)`,
+                            borderRadius: "8px",
+                            pointerEvents: "none",
+                            zIndex: 1,
+                          }}></div>
+                          
+                          {/* Top shine */}
+                          <div style={{
+                            position: "absolute",
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            height: "40%",
+                            background: "linear-gradient(180deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 100%)",
+                            borderRadius: "8px 8px 0 0",
+                            pointerEvents: "none",
+                            zIndex: 2,
+                          }}></div>
+                          
+                          {/* Content wrapper with highest z-index */}
+                          <div style={{ position: "relative", zIndex: 3 }}>
+                            <div style={{ display: "flex", alignItems: "center", gap: "4px", marginBottom: "3px" }}>
+                              {/* Icon with colored background */}
+                              <span style={{ 
+                                fontSize: "10px",
+                                background: accentColor,
+                                color: "#ffffff",
+                                width: "16px",
+                                height: "16px",
+                                borderRadius: "4px",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                boxShadow: `0 2px 4px ${shadowColor}`,
+                              }}>
+                                {info.icon}
+                              </span>
+                              <span style={{ 
+                                fontSize: "8px", 
+                                textTransform: "uppercase", 
+                                letterSpacing: "0.5px",
+                                fontWeight: "700",
+                                color: accentColor,
+                              }}>
+                                {info.label}
+                              </span>
+                            </div>
+                            <div style={{ 
+                              fontSize: "10px", 
+                              fontWeight: "600", 
+                              lineHeight: "1.3",
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                              display: "-webkit-box",
+                              WebkitLineClamp: 2,
+                              WebkitBoxOrient: "vertical",
+                              color: "#374151",
+                            }}>
+                              {task.title}
+                            </div>
                           </div>
-                          <div style={{ 
-                            fontSize: "10px", 
-                            fontWeight: "600", 
-                            lineHeight: "1.2",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                            display: "-webkit-box",
-                            WebkitLineClamp: 2,
-                            WebkitBoxOrient: "vertical",
-                          }}>
-                            {task.title}
-                          </div>
-                          <div style={{ fontSize: "8px", opacity: 0.9, marginTop: "2px" }}>
+                          <div style={{ fontSize: "8px", opacity: 0.7, marginTop: "2px", color: "#6b7280" }}>
                             {task.duration}d
                           </div>
                         </div>
                       );
                     })}
                   </div>
-                );
-              })}
-            </div>
+                </>
+              );
+            })()}
           </div>
         ))}
       </div>
