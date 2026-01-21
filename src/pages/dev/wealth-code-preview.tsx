@@ -1017,12 +1017,6 @@ const PhaseIntensityChart: React.FC<{ dayun: DayunCycleExtended }> = ({ dayun })
   const currentYear = dayun.currentYear - dayun.startYear + 1;
   const years = Array.from({ length: 10 }, (_, i) => i + 1);
   
-  // Calculate intensity curve (bell curve peaking at years 5-6)
-  const getIntensity = (year: number) => {
-    const normalizedYear = (year - 5.5) / 2.5;
-    return Math.exp(-(normalizedYear * normalizedYear));
-  };
-
   const phases = [
     { years: "1-3", label: "Building", description: "Foundation phase" },
     { years: "4-6", label: "Peak", description: "Maximum energy" },
@@ -1046,7 +1040,6 @@ const PhaseIntensityChart: React.FC<{ dayun: DayunCycleExtended }> = ({ dayun })
       <div className="mb-6">
         <div className="relative flex items-end justify-between gap-2 mb-3 px-2" style={{ height: '200px' }}>
           {years.map((year) => {
-            const intensity = getIntensity(year);
             // Create clear visual differences: 30% min for building, 100% for peak, 50% for integration
             let heightPx;
             if (year <= 3) {

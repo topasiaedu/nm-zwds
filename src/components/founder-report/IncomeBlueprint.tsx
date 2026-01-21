@@ -14,7 +14,7 @@
  * - Deterministic scoring (no randomness)
  * - Gold/amber wealth theme; mobile responsive; founder-friendly copy
  */
-import React, { useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import type { ChartData } from "../../utils/zwds/types";
 import { calculateCurrentDayunCycle } from "../../utils/dayun/calculator";
 import type { DayunSeason } from "../../types/dayun";
@@ -23,7 +23,6 @@ import type { WealthProfileType } from "../../utils/zwds/analysis/wealthCodeAnal
 import type { WealthCodeKey } from "../../utils/zwds/analysis_constants/wealth_code_mapping";
 import {
   WEALTH_CODE_LABELS,
-  WEALTH_CODE_SHORT_LABELS,
 } from "../../utils/zwds/analysis_constants/wealth_code_mapping";
 
 /**
@@ -147,35 +146,6 @@ function getSeasonCue(season: DayunSeason | null): { title: string; action: stri
   return { title: "Unknown", action: "Align" };
 }
 
-/**
- * Determine if an idea is short-term or long-term based on its characteristics.
- */
-function getTermLabel(idea: WealthCodeIdea): "Short term" | "Long term" {
-  // Short-term: low capital, quick to start
-  const shortTermIds: ReadonlyArray<IdeaId> = [
-    "sp_coaching",
-    "sp_templates",
-    "sp_minicourse",
-    "bm_short_videos",
-    "co_referrals_affiliates",
-    "co_middleman_deals",
-  ];
-  
-  // Long-term: requires significant capital, time, or infrastructure
-  const longTermIds: ReadonlyArray<IdeaId> = [
-    "ib_rental_property",
-    "ib_dividend_stocks",
-    "ib_reits_staking",
-    "ib_store_agent",
-    "bm_book",
-  ];
-  
-  if (shortTermIds.includes(idea.id)) return "Short term";
-  if (longTermIds.includes(idea.id)) return "Long term";
-  
-  // Default: base on capital requirement
-  return idea.capital === "high" ? "Long term" : "Short term";
-}
 
 /**
  * Cyclical season distance (0 = same, 1 = adjacent, 2 = two steps).
@@ -681,86 +651,6 @@ const SectionCard: React.FC<{
   );
 };
 
-/**
- * Wealth Code Pathways card (supports hover tooltip + tap-to-expand on mobile).
- */
-const PathwayIdeaCard: React.FC<{
-  idea: WealthCodeIdea;
-  isDominantLane: boolean;
-  isExpanded: boolean;
-  onToggle: (id: IdeaId) => void;
-}> = ({ idea, isDominantLane, isExpanded, onToggle }) => {
-  const bestSeasons = idea.bestSeasons.map((s) => getSeasonCue(s).title).join(", ");
-  const capitalLabel = getCapitalLabel(idea.capital);
-  const effortLabel = getEffortLabel(idea.effort);
-
-  return (
-    <button
-      type="button"
-      onClick={() => onToggle(idea.id)}
-      className={[
-        "group relative text-left rounded-2xl border p-4 transition-all min-w-[240px] sm:min-w-[260px]",
-        "bg-white dark:bg-gray-800",
-        isDominantLane
-          ? "border-amber-300 dark:border-amber-700 hover:shadow-lg"
-          : "border-gray-200 dark:border-gray-700 hover:shadow-md",
-      ].join(" ")}
-      aria-expanded={isExpanded}
-    >
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <div className="text-sm font-extrabold text-gray-900 dark:text-white">{idea.title}</div>
-          <div className="text-xs text-gray-600 dark:text-gray-400 mt-1">{idea.oneLine}</div>
-        </div>
-        <span
-          className={[
-            "inline-flex items-center justify-center rounded-full px-2 py-1 text-[10px] font-bold tracking-wider border",
-            isDominantLane
-              ? "bg-amber-50 text-amber-900 border-amber-200 dark:bg-amber-900/20 dark:text-amber-200 dark:border-amber-800"
-              : "bg-gray-50 text-gray-700 border-gray-200 dark:bg-gray-900/20 dark:text-gray-300 dark:border-gray-700",
-          ].join(" ")}
-        >
-          {WEALTH_CODE_SHORT_LABELS[idea.code]}
-        </span>
-      </div>
-
-      <div className="mt-3 flex flex-wrap gap-2">
-        <span className="text-[11px] font-semibold px-2 py-1 rounded-full bg-gray-50 dark:bg-gray-900/20 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300">
-          {`Best in: ${bestSeasons}`}
-        </span>
-        <span className="text-[11px] font-semibold px-2 py-1 rounded-full bg-gray-50 dark:bg-gray-900/20 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300">
-          {capitalLabel}
-        </span>
-        <span className="text-[11px] font-semibold px-2 py-1 rounded-full bg-gray-50 dark:bg-gray-900/20 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300">
-          {effortLabel}
-        </span>
-      </div>
-
-      {/* Hover tooltip (desktop). */}
-      <div
-        className={[
-          "pointer-events-none hidden lg:block",
-          "absolute left-0 right-0 top-full mt-2 z-30",
-          "opacity-0 translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-150",
-        ].join(" ")}
-        aria-hidden="true"
-      >
-        <div className="rounded-2xl border border-amber-200 dark:border-amber-800 bg-white dark:bg-gray-900 shadow-2xl p-4">
-          <div className="text-xs font-bold text-amber-800 dark:text-amber-200 mb-1">{"Alignment note"}</div>
-          <div className="text-sm text-gray-800 dark:text-gray-200 leading-relaxed">{idea.details}</div>
-        </div>
-      </div>
-
-      {/* Tap-to-expand details (mobile + all sizes). */}
-      {isExpanded ? (
-        <div className="mt-4 rounded-xl border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/20 p-4">
-          <div className="text-xs font-bold text-amber-900 dark:text-amber-200 mb-1">{"Alignment note"}</div>
-          <div className="text-sm text-gray-800 dark:text-gray-200 leading-relaxed">{idea.details}</div>
-        </div>
-      ) : null}
-    </button>
-  );
-};
 
 /**
  * IncomeBlueprint — Section 05 component.
@@ -815,30 +705,6 @@ export const IncomeBlueprint: React.FC<IncomeBlueprintProps> = ({ chartData }) =
       isThirdPick: idx === 2,
     }));
   }, [dominantCode, wealthProfile.profileType, dayunSeason, ibScore]);
-
-  // Chart 2: lane scores and ideas
-  const lanes = useMemo(() => {
-    const allCodes: ReadonlyArray<WealthCodeKey> = [
-      "strategyPlanner",
-      "investmentBrain",
-      "brandingMagnet",
-      "collaborator",
-    ];
-    return allCodes.map((code) => ({
-      code,
-      label: WEALTH_CODE_LABELS[code],
-      shortLabel: WEALTH_CODE_SHORT_LABELS[code],
-      score: getCodeScore(wealthProfile.codes, code),
-      ideas: ideasForCode(code),
-      isDominant: dominantCode === code,
-    }));
-  }, [wealthProfile.codes, dominantCode]);
-
-  // Mobile-friendly tap expansion state (shared across all lanes)
-  const [expandedIdeaId, setExpandedIdeaId] = useState<IdeaId | null>(null);
-  const handleToggleIdea = (id: IdeaId): void => {
-    setExpandedIdeaId((prev) => (prev === id ? null : id));
-  };
 
   return (
     <div className="p-6 dark:bg-gray-900">

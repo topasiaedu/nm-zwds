@@ -28,8 +28,10 @@ if (process.env.NODE_ENV === "development") {
 }
 
 // Export the enhanced config with helper methods
-export default {
+const freeTestConfig = {
   ...FREE_TEST_CONFIG,
   isActive,
-  getStatusReason
-}; 
+  getStatusReason,
+};
+
+export default freeTestConfig;

@@ -14,41 +14,12 @@ import { calculateCurrentDayunCycle } from "../../utils/dayun/calculator";
 import type { DayunSeason } from "../../types/dayun";
 import { analyzeWealthCode } from "../../utils/zwds/analysis/wealthCodeAnalysis";
 import type { WealthCodeKey } from "../../utils/zwds/analysis_constants/wealth_code_mapping";
-import { WEALTH_CODE_LABELS } from "../../utils/zwds/analysis_constants/wealth_code_mapping";
 
 export interface BusinessCalendarProps {
   chartData: ChartData;
 }
 
 type ActionStep = "launch" | "invest" | "hire" | "pivot" | "change";
-
-type CalendarTask = {
-  id: string;
-  step: ActionStep;
-  title: string;
-  /** Absolute day in 90-day calendar (0-89) */
-  startDay: number;
-  /** How many days it spans */
-  duration: number;
-};
-
-/**
- * Get step styling.
- */
-function getStepColor(step: ActionStep): string {
-  switch (step) {
-    case "launch":
-      return "bg-emerald-500 border-emerald-600 text-white";
-    case "invest":
-      return "bg-amber-500 border-amber-600 text-white";
-    case "hire":
-      return "bg-blue-500 border-blue-600 text-white";
-    case "pivot":
-      return "bg-purple-500 border-purple-600 text-white";
-    case "change":
-      return "bg-gray-500 border-gray-600 text-white";
-  }
-}
 
 /**
  * Get step icon and label.
@@ -67,6 +38,342 @@ function getStepInfo(step: ActionStep): { icon: string; label: string } {
       return { icon: "🔄", label: "Change" };
   }
 }
+
+type ScoredTask = (typeof TASK_TEMPLATES)[number] & {
+  id: string;
+  score: number;
+};
+
+type TaskAccentColors = {
+  accentColor: string;
+  lightAccent: string;
+  shadowColor: string;
+};
+
+/**
+ * Derive accent colors for a task step.
+ */
+function getTaskAccentColors(step: ActionStep): TaskAccentColors {
+  if (step === "invest") {
+    return {
+      accentColor: "#f59e0b",
+      lightAccent: "rgba(245, 158, 11, 0.1)",
+      shadowColor: "rgba(245, 158, 11, 0.3)",
+    };
+  }
+  if (step === "hire") {
+    return {
+      accentColor: "#3b82f6",
+      lightAccent: "rgba(59, 130, 246, 0.1)",
+      shadowColor: "rgba(59, 130, 246, 0.3)",
+    };
+  }
+  if (step === "pivot") {
+    return {
+      accentColor: "#a855f7",
+      lightAccent: "rgba(168, 85, 247, 0.1)",
+      shadowColor: "rgba(168, 85, 247, 0.3)",
+    };
+  }
+  if (step === "change") {
+    return {
+      accentColor: "#6b7280",
+      lightAccent: "rgba(107, 114, 128, 0.1)",
+      shadowColor: "rgba(107, 114, 128, 0.3)",
+    };
+  }
+  return {
+    accentColor: "#10b981",
+    lightAccent: "rgba(16, 185, 129, 0.1)",
+    shadowColor: "rgba(16, 185, 129, 0.3)",
+  };
+}
+
+/**
+ * Build task lanes for a week, keeping overlapping tasks separated.
+ */
+function buildTaskLanes(
+  days: ReadonlyArray<number>,
+  monthTasks: ReadonlyArray<ScoredTask>
+): { lanes: number[]; containerHeight: number } {
+  const taskLanes: number[] = [];
+
+  monthTasks.forEach((task, taskIndex) => {
+    const startIdx = days.indexOf(task.startDay);
+    if (startIdx === -1) {
+      taskLanes.push(-1);
+      return;
+    }
+
+    const endIdx = Math.min(startIdx + task.duration - 1, 6);
+    const occupiedLanes = new Set<number>();
+
+    monthTasks.forEach((otherTask, otherIdx) => {
+      if (otherIdx >= taskIndex) return;
+      const otherStartIdx = days.indexOf(otherTask.startDay);
+      if (otherStartIdx === -1) return;
+      const otherEndIdx = Math.min(otherStartIdx + otherTask.duration - 1, 6);
+      if (!(endIdx < otherStartIdx || startIdx > otherEndIdx)) {
+        occupiedLanes.add(taskLanes[otherIdx]);
+      }
+    });
+
+    let lane = 0;
+    while (occupiedLanes.has(lane)) {
+      lane++;
+    }
+    taskLanes.push(lane);
+  });
+
+  const maxLane = taskLanes.length > 0 ? Math.max(...taskLanes.filter((lane) => lane >= 0)) : 0;
+  const containerHeight = 80 + (maxLane + 1) * 48;
+
+  return { lanes: taskLanes, containerHeight };
+}
+
+interface WeekRowProps {
+  weekNum: number;
+  days: number[];
+  dayLabels: string[];
+  monthTasks: ScoredTask[];
+}
+
+/**
+ * Render a single week row in the calendar grid.
+ */
+const WeekRow: React.FC<WeekRowProps> = ({ weekNum, days, dayLabels, monthTasks }) => {
+  const { lanes, containerHeight } = useMemo(() => {
+    return buildTaskLanes(days, monthTasks);
+  }, [days, monthTasks]);
+
+  return (
+    <div
+      key={weekNum}
+      style={{
+        borderRadius: "16px",
+        border: "2px solid #fed7aa",
+        overflow: "hidden",
+        background: "#ffffff",
+        boxShadow: "0 4px 12px rgba(251, 146, 60, 0.1)",
+      }}
+    >
+      {/* Week header - Colorful */}
+      <div
+        style={{
+          background: "linear-gradient(90deg, #fed7aa 0%, #fef3c7 100%)",
+          padding: "12px 16px",
+          borderBottom: "2px solid #fed7aa",
+        }}
+      >
+        <span style={{ fontSize: "14px", fontWeight: "800", color: "#ea580c" }}>
+          {`Week ${weekNum}`}
+        </span>
+      </div>
+
+      {/* Day headers - Vibrant */}
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(7, 1fr)",
+          background: "linear-gradient(to right, #fb923c, #f97316)",
+        }}
+      >
+        {dayLabels.map((day, idx) => (
+          <div
+            key={day}
+            style={{
+              borderRight: idx < 6 ? "1px solid rgba(255,255,255,0.2)" : "none",
+              padding: "10px 8px",
+              textAlign: "center",
+              fontSize: "11px",
+              fontWeight: "800",
+              color: "#ffffff",
+              textTransform: "uppercase",
+              letterSpacing: "0.5px",
+            }}
+          >
+            {day}
+          </div>
+        ))}
+      </div>
+
+      {/* Calendar grid container - wrapper for both grid and absolute tasks */}
+      <div style={{ position: "relative", minHeight: `${containerHeight}px` }}>
+        {/* Day cells grid */}
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(7, 1fr)",
+            minHeight: `${containerHeight}px`,
+          }}
+        >
+          {days.map((absoluteDay, dayIndex) => (
+            <div
+              key={absoluteDay}
+              style={{
+                borderRight: dayIndex < 6 ? "1px solid rgba(254, 215, 170, 0.5)" : "none",
+                borderBottom: "1px solid rgba(254, 215, 170, 0.5)",
+                padding: "8px",
+                background:
+                  "linear-gradient(180deg, rgba(255, 251, 235, 0.6) 0%, rgba(255, 255, 255, 0.4) 100%)",
+                backdropFilter: "blur(5px)",
+                WebkitBackdropFilter: "blur(5px)",
+                position: "relative",
+              }}
+            >
+              {/* Day number with subtle glassmorphism badge */}
+              <div
+                style={{
+                  fontSize: "13px",
+                  fontWeight: "800",
+                  color: "#ea580c",
+                  marginBottom: "4px",
+                  background: "rgba(255, 255, 255, 0.5)",
+                  backdropFilter: "blur(4px)",
+                  WebkitBackdropFilter: "blur(4px)",
+                  padding: "2px 6px",
+                  borderRadius: "6px",
+                  display: "inline-block",
+                  width: "fit-content",
+                  border: "1px solid rgba(234, 88, 12, 0.2)",
+                  boxShadow: "0 2px 4px rgba(234, 88, 12, 0.1)",
+                }}
+              >
+                {absoluteDay + 1}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Tasks rendered separately to span across columns */}
+        {monthTasks.map((task, taskIndex) => {
+          const startDayIndex = days.indexOf(task.startDay);
+          if (startDayIndex === -1) return null;
+
+          const info = getStepInfo(task.step);
+          const spanDays = Math.min(task.duration, 7 - startDayIndex);
+          const lane = lanes[taskIndex];
+          const { accentColor, lightAccent, shadowColor } = getTaskAccentColors(task.step);
+
+          const leftPercent = (startDayIndex / 7) * 100;
+          const widthPercent = (spanDays / 7) * 100;
+          const topPx = 35 + lane * 50;
+
+          return (
+            <div
+              key={task.id}
+              style={{
+                position: "absolute",
+                left: `${leftPercent}%`,
+                width: `calc(${widthPercent}% - 16px)`,
+                top: `${topPx}px`,
+                marginLeft: "8px",
+                marginRight: "8px",
+                zIndex: 10 + lane,
+                background: "linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%)",
+                backdropFilter: "blur(12px)",
+                WebkitBackdropFilter: "blur(12px)",
+                border: "1px solid rgba(255, 255, 255, 0.6)",
+                borderLeft: `3px solid ${accentColor}`,
+                color: "#1f2937",
+                borderRadius: "8px",
+                padding: "8px 10px",
+                fontSize: "10px",
+                fontWeight: "600",
+                boxShadow: `0 4px 12px ${shadowColor}, 0 2px 4px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.8)`,
+                overflow: "hidden",
+                transition: "all 0.3s ease",
+              }}
+              title={task.title}
+            >
+              {/* Glassmorphism shine effect - covers full background */}
+              <div
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  background: `linear-gradient(135deg, ${lightAccent} 0%, rgba(255,255,255,0.05) 50%, rgba(255,255,255,0.1) 100%)`,
+                  borderRadius: "8px",
+                  pointerEvents: "none",
+                  zIndex: 1,
+                }}
+              />
+
+              {/* Top shine */}
+              <div
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  height: "40%",
+                  background: "linear-gradient(180deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 100%)",
+                  borderRadius: "8px 8px 0 0",
+                  pointerEvents: "none",
+                  zIndex: 2,
+                }}
+              />
+
+              {/* Content wrapper with highest z-index */}
+              <div style={{ position: "relative", zIndex: 3 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "4px", marginBottom: "3px" }}>
+                  {/* Icon with colored background */}
+                  <span
+                    style={{
+                      fontSize: "10px",
+                      background: accentColor,
+                      color: "#ffffff",
+                      width: "16px",
+                      height: "16px",
+                      borderRadius: "4px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      boxShadow: `0 2px 4px ${shadowColor}`,
+                    }}
+                  >
+                    {info.icon}
+                  </span>
+                  <span
+                    style={{
+                      fontSize: "8px",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.5px",
+                      fontWeight: "700",
+                      color: accentColor,
+                    }}
+                  >
+                    {info.label}
+                  </span>
+                </div>
+                <div
+                  style={{
+                    fontSize: "10px",
+                    fontWeight: "600",
+                    lineHeight: "1.3",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    display: "-webkit-box",
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: "vertical",
+                    color: "#374151",
+                  }}
+                >
+                  {task.title}
+                </div>
+              </div>
+              <div style={{ fontSize: "8px", opacity: 0.7, marginTop: "2px", color: "#6b7280" }}>
+                {task.duration}d
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
 
 /**
  * Task templates for 90-day roadmap.
@@ -136,33 +443,6 @@ function scoreTask(
   return score;
 }
 
-/**
- * Get season guidance.
- */
-function getSeasonGuidance(season: DayunSeason | null): { title: string; copy: string } {
-  if (season === "spring")
-    return {
-      title: "Spring: Launch & Plant Seeds",
-      copy: "Perfect timing for LAUNCH phase. Execute aggressively on new initiatives.",
-    };
-  if (season === "summer")
-    return {
-      title: "Summer: Scale & Invest",
-      copy: "Ideal for INVEST & HIRE phases. Double down on what's working.",
-    };
-  if (season === "autumn")
-    return {
-      title: "Autumn: Harvest & Refine",
-      copy: "Focus on PIVOT & optimization. Review data and refine your model.",
-    };
-  if (season === "winter")
-    return {
-      title: "Winter: Reset & Recalibrate",
-      copy: "Best time for CHANGE phase. Internal resets and strategic pivots.",
-    };
-  return { title: "Your Timing", copy: "Follow your natural rhythm through all 5 phases." };
-}
-
 export const BusinessCalendar: React.FC<BusinessCalendarProps> = ({ chartData }) => {
   const [selectedMonth, setSelectedMonth] = useState<number>(1); // 1, 2, or 3
 
@@ -173,6 +453,7 @@ export const BusinessCalendar: React.FC<BusinessCalendarProps> = ({ chartData })
     try {
       return analyzeWealthCode(chartData);
     } catch (error) {
+      console.error("BusinessCalendar - Wealth code analysis failed:", error);
       return {
         clientName: "",
         dominantArchetype: "",
@@ -191,12 +472,9 @@ export const BusinessCalendar: React.FC<BusinessCalendarProps> = ({ chartData })
 
   const hasWealthCode = wealthProfile.hasRecognizedStars && wealthProfile.codes.length > 0;
   const dominantCode: WealthCodeKey | null = hasWealthCode ? wealthProfile.codes[0].key : null;
-  const dominantCodeLabel = dominantCode ? WEALTH_CODE_LABELS[dominantCode] : "Unknown";
-
-  const seasonGuidance = useMemo(() => getSeasonGuidance(currentSeason), [currentSeason]);
 
   // Score and sort tasks
-  const sortedTasks = useMemo(() => {
+  const sortedTasks = useMemo<ScoredTask[]>(() => {
     return TASK_TEMPLATES.map((template) => ({
       ...template,
       id: `${template.step}-${template.startDay}`,
@@ -323,282 +601,13 @@ export const BusinessCalendar: React.FC<BusinessCalendarProps> = ({ chartData })
       {/* Calendar Grid - 4 weeks with colorful styling */}
       <div className="space-y-6">
         {weeks.map(({ weekNum, days }) => (
-          <div key={weekNum} style={{
-            borderRadius: "16px",
-            border: "2px solid #fed7aa",
-            overflow: "hidden",
-            background: "#ffffff",
-            boxShadow: "0 4px 12px rgba(251, 146, 60, 0.1)",
-          }}>
-            {/* Week header - Colorful */}
-            <div style={{
-              background: "linear-gradient(90deg, #fed7aa 0%, #fef3c7 100%)",
-              padding: "12px 16px",
-              borderBottom: "2px solid #fed7aa",
-            }}>
-              <span style={{ fontSize: "14px", fontWeight: "800", color: "#ea580c" }}>
-                {`Week ${weekNum}`}
-              </span>
-            </div>
-
-            {/* Day headers - Vibrant */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", background: "linear-gradient(to right, #fb923c, #f97316)" }}>
-              {dayLabels.map((day, idx) => (
-                <div
-                  key={day}
-                  style={{
-                    borderRight: idx < 6 ? "1px solid rgba(255,255,255,0.2)" : "none",
-                    padding: "10px 8px",
-                    textAlign: "center",
-                    fontSize: "11px",
-                    fontWeight: "800",
-                    color: "#ffffff",
-                    textTransform: "uppercase",
-                    letterSpacing: "0.5px",
-                  }}
-                >
-                  {day}
-                </div>
-              ))}
-            </div>
-
-            {(() => {
-              // Pre-calculate task lanes to determine container height
-              const taskLanes: number[] = [];
-              monthTasks.forEach((task) => {
-                const startIdx = days.indexOf(task.startDay);
-                if (startIdx === -1) {
-                  taskLanes.push(-1);
-                  return;
-                }
-                
-                const endIdx = Math.min(startIdx + task.duration - 1, 6);
-                
-                // Find first available lane
-                let lane = 0;
-                const occupiedLanes = new Set<number>();
-                
-                monthTasks.forEach((otherTask, otherIdx) => {
-                  if (otherIdx >= monthTasks.indexOf(task)) return;
-                  const otherStartIdx = days.indexOf(otherTask.startDay);
-                  if (otherStartIdx === -1) return;
-                  const otherEndIdx = Math.min(otherStartIdx + otherTask.duration - 1, 6);
-                  
-                  // Check if tasks overlap
-                  if (!(endIdx < otherStartIdx || startIdx > otherEndIdx)) {
-                    occupiedLanes.add(taskLanes[otherIdx]);
-                  }
-                });
-                
-                while (occupiedLanes.has(lane)) {
-                  lane++;
-                }
-                taskLanes.push(lane);
-              });
-
-              const maxLane = taskLanes.length > 0 ? Math.max(...taskLanes.filter(l => l >= 0)) : 0;
-              const containerHeight = 80 + (maxLane + 1) * 48; // Base height + (lanes * task height)
-              
-              return (
-                <>
-                  {/* Calendar grid container - wrapper for both grid and absolute tasks */}
-                  <div style={{ position: "relative", minHeight: `${containerHeight}px` }}>
-                    {/* Day cells grid */}
-                    <div style={{ 
-                      display: "grid", 
-                      gridTemplateColumns: "repeat(7, 1fr)",
-                      minHeight: `${containerHeight}px`,
-                    }}>
-                      {days.map((absoluteDay, dayIndex) => (
-                        <div
-                          key={absoluteDay}
-                          style={{
-                            borderRight: dayIndex < 6 ? "1px solid rgba(254, 215, 170, 0.5)" : "none",
-                            borderBottom: "1px solid rgba(254, 215, 170, 0.5)",
-                            padding: "8px",
-                            background: "linear-gradient(180deg, rgba(255, 251, 235, 0.6) 0%, rgba(255, 255, 255, 0.4) 100%)",
-                            backdropFilter: "blur(5px)",
-                            WebkitBackdropFilter: "blur(5px)",
-                            position: "relative",
-                          }}
-                        >
-                          {/* Day number with subtle glassmorphism badge */}
-                          <div style={{ 
-                            fontSize: "13px", 
-                            fontWeight: "800", 
-                            color: "#ea580c",
-                            marginBottom: "4px",
-                            background: "rgba(255, 255, 255, 0.5)",
-                            backdropFilter: "blur(4px)",
-                            WebkitBackdropFilter: "blur(4px)",
-                            padding: "2px 6px",
-                            borderRadius: "6px",
-                            display: "inline-block",
-                            width: "fit-content",
-                            border: "1px solid rgba(234, 88, 12, 0.2)",
-                            boxShadow: "0 2px 4px rgba(234, 88, 12, 0.1)",
-                          }}>
-                            {absoluteDay + 1}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                    
-                    {/* Tasks rendered separately to span across columns */}
-                    {monthTasks.map((task, taskIndex) => {
-                  const startDayIndex = days.indexOf(task.startDay);
-                  if (startDayIndex === -1) return null;
-
-                  const info = getStepInfo(task.step);
-                  const spanDays = Math.min(task.duration, 7 - startDayIndex);
-                  const lane = taskLanes[taskIndex];
-                
-                // Get accent colors based on step
-                let accentColor = "#10b981"; // launch - emerald
-                let lightAccent = "rgba(16, 185, 129, 0.1)";
-                let shadowColor = "rgba(16, 185, 129, 0.3)";
-                
-                if (task.step === "invest") {
-                  accentColor = "#f59e0b"; // amber
-                  lightAccent = "rgba(245, 158, 11, 0.1)";
-                  shadowColor = "rgba(245, 158, 11, 0.3)";
-                }
-                if (task.step === "hire") {
-                  accentColor = "#3b82f6"; // blue
-                  lightAccent = "rgba(59, 130, 246, 0.1)";
-                  shadowColor = "rgba(59, 130, 246, 0.3)";
-                }
-                if (task.step === "pivot") {
-                  accentColor = "#a855f7"; // purple
-                  lightAccent = "rgba(168, 85, 247, 0.1)";
-                  shadowColor = "rgba(168, 85, 247, 0.3)";
-                }
-                if (task.step === "change") {
-                  accentColor = "#6b7280"; // gray
-                  lightAccent = "rgba(107, 114, 128, 0.1)";
-                  shadowColor = "rgba(107, 114, 128, 0.3)";
-                }
-
-                  // Calculate position for absolute positioning
-                  const leftPercent = (startDayIndex / 7) * 100;
-                  const widthPercent = (spanDays / 7) * 100;
-                  const topPx = 35 + (lane * 50);
-
-                  return (
-                    <div
-                      key={task.id}
-                      style={{
-                        position: "absolute",
-                        left: `${leftPercent}%`,
-                        width: `calc(${widthPercent}% - 16px)`,
-                        top: `${topPx}px`,
-                        marginLeft: "8px",
-                        marginRight: "8px",
-                        zIndex: 10 + lane,
-                        background: "linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%)",
-                        backdropFilter: "blur(12px)",
-                        WebkitBackdropFilter: "blur(12px)",
-                        border: "1px solid rgba(255, 255, 255, 0.6)",
-                        borderLeft: `3px solid ${accentColor}`,
-                        color: "#1f2937",
-                        borderRadius: "8px",
-                        padding: "8px 10px",
-                        fontSize: "10px",
-                        fontWeight: "600",
-                        cursor: "pointer",
-                        boxShadow: `0 4px 12px ${shadowColor}, 0 2px 4px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.8)`,
-                        overflow: "hidden",
-                        transition: "all 0.3s ease",
-                      }}
-                    title={task.title}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.transform = "translateY(-2px)";
-                      e.currentTarget.style.boxShadow = `0 6px 16px ${shadowColor}, 0 4px 6px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.9)`;
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.transform = "translateY(0)";
-                      e.currentTarget.style.boxShadow = `0 4px 12px ${shadowColor}, 0 2px 4px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.8)`;
-                    }}
-                  >
-                          {/* Glassmorphism shine effect - covers full background */}
-                          <div style={{
-                            position: "absolute",
-                            top: 0,
-                            left: 0,
-                            right: 0,
-                            bottom: 0,
-                            background: `linear-gradient(135deg, ${lightAccent} 0%, rgba(255,255,255,0.05) 50%, rgba(255,255,255,0.1) 100%)`,
-                            borderRadius: "8px",
-                            pointerEvents: "none",
-                            zIndex: 1,
-                          }}></div>
-                          
-                          {/* Top shine */}
-                          <div style={{
-                            position: "absolute",
-                            top: 0,
-                            left: 0,
-                            right: 0,
-                            height: "40%",
-                            background: "linear-gradient(180deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 100%)",
-                            borderRadius: "8px 8px 0 0",
-                            pointerEvents: "none",
-                            zIndex: 2,
-                          }}></div>
-                          
-                          {/* Content wrapper with highest z-index */}
-                          <div style={{ position: "relative", zIndex: 3 }}>
-                            <div style={{ display: "flex", alignItems: "center", gap: "4px", marginBottom: "3px" }}>
-                              {/* Icon with colored background */}
-                              <span style={{ 
-                                fontSize: "10px",
-                                background: accentColor,
-                                color: "#ffffff",
-                                width: "16px",
-                                height: "16px",
-                                borderRadius: "4px",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                boxShadow: `0 2px 4px ${shadowColor}`,
-                              }}>
-                                {info.icon}
-                              </span>
-                              <span style={{ 
-                                fontSize: "8px", 
-                                textTransform: "uppercase", 
-                                letterSpacing: "0.5px",
-                                fontWeight: "700",
-                                color: accentColor,
-                              }}>
-                                {info.label}
-                              </span>
-                            </div>
-                            <div style={{ 
-                              fontSize: "10px", 
-                              fontWeight: "600", 
-                              lineHeight: "1.3",
-                              overflow: "hidden",
-                              textOverflow: "ellipsis",
-                              display: "-webkit-box",
-                              WebkitLineClamp: 2,
-                              WebkitBoxOrient: "vertical",
-                              color: "#374151",
-                            }}>
-                              {task.title}
-                            </div>
-                          </div>
-                          <div style={{ fontSize: "8px", opacity: 0.7, marginTop: "2px", color: "#6b7280" }}>
-                            {task.duration}d
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </>
-              );
-            })()}
-          </div>
+          <WeekRow
+            key={weekNum}
+            weekNum={weekNum}
+            days={days}
+            dayLabels={dayLabels}
+            monthTasks={monthTasks}
+          />
         ))}
       </div>
     </div>

@@ -1,11 +1,9 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { Alert, Card, Checkbox, Label, TextInput } from "flowbite-react";
+import { Card, Checkbox, Label, TextInput } from "flowbite-react";
 import { useAuth } from "../../context/AuthContext";
 import { useLanguage } from "../../context/LanguageContext";
-import LanguageToggle from "../../components/LanguageToggle";
-import PageTransition from "../../components/PageTransition";
 
 /**
  * Sign in page with frosted glass design
@@ -23,7 +21,8 @@ const SignInPage: React.FC = () => {
   const { t } = useLanguage();
   
   // Get the redirect path from location state or default to dashboard
-  const from = (location.state as any)?.from?.pathname || "/dashboard";
+  const locationState = location.state as { from?: { pathname?: string } } | null;
+  const from = locationState?.from?.pathname || "/dashboard";
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   analyzeHealthFromChart,
   HealthAnalysisResult,
@@ -83,8 +83,10 @@ const HumanBodySVG: React.FC<{
   const svgContainerRef = useRef<HTMLDivElement>(null);
   const [svgContent, setSvgContent] = useState<string>("");
 
-  // Convert Chinese body part names to SVG element identifiers
-  const getAffectedSvgParts = (): string[] => {
+  /**
+   * Convert Chinese body part names to SVG element identifiers.
+   */
+  const getAffectedSvgParts = useCallback((): string[] => {
     const svgParts: string[] = [];
 
     affectedParts.forEach((part) => {
@@ -95,7 +97,7 @@ const HumanBodySVG: React.FC<{
     });
 
     return [...new Set(svgParts)]; // Remove duplicates
-  };
+  }, [affectedParts]);
 
   // Load the SVG content directly
   useEffect(() => {

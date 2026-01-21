@@ -8,7 +8,6 @@
 import React from "react";
 import { AreaChart, Area, XAxis, ResponsiveContainer } from "recharts";
 import type { DayunCycleExtended } from "../../types/dayun";
-import { SEASON_COLORS } from "../../utils/dayun/seasonMapper";
 
 interface PhaseIntensityChartProps {
   dayun: DayunCycleExtended;

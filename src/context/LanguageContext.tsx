@@ -47,11 +47,6 @@ interface LanguageProviderProps {
  * Provider component for language context
  */
 export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) => {
-  // Always force English language
-  const getBrowserLanguage = (): Language => {
-    return "en";
-  };
-
   // Force language to always be English, ignore localStorage
   const [language, setLanguage] = useState<Language>("en");
 
@@ -69,7 +64,7 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
    */
   const t = (key: string): string => {
     const keys = key.split(".");
-    let value: any = resources[language];
+    let value: TranslationMap | string = resources[language];
 
     for (const k of keys) {
       if (value && typeof value === "object" && k in value) {

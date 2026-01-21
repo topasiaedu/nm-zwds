@@ -76,9 +76,9 @@ const DayunPeriodSelector: React.FC<DayunPeriodSelectorProps> = ({
   /**
    * Handle back button click
    */
-  const handleBackClick = (): void => {
+  const handleBackClick = React.useCallback((): void => {
     onBack();
-  };
+  }, [onBack]);
 
   /**
    * Handle keyboard navigation
@@ -94,7 +94,7 @@ const DayunPeriodSelector: React.FC<DayunPeriodSelectorProps> = ({
     return (): void => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, []);
+  }, [handleBackClick]);
 
   /**
    * Handle keyboard selection

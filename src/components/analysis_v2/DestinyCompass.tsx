@@ -3,7 +3,6 @@ import { Badge } from "flowbite-react";
 import { ChartData } from "../../utils/zwds/types";
 import { 
   generateDestinyCompassData, 
-  getDestinyCompassDebugInfo, 
   YearDestinyData 
 } from "../../utils/zwds/analysis/destinyCompassAnalysis";
 
@@ -42,12 +41,6 @@ const DestinyCompass: React.FC<DestinyCompassProps> = ({ chartData }) => {
     }
   }, [chartData]);
 
-  // Debug information
-  const debugInfo = useMemo(() => {
-    return getDestinyCompassDebugInfo(chartData);
-  }, [chartData]);
-
-
   // Transform destiny data into year cards
   const yearCards: YearCardData[] = useMemo(() => {
     return destinyData.map((yearData: YearDestinyData) => {
@@ -60,27 +53,6 @@ const DestinyCompass: React.FC<DestinyCompassProps> = ({ chartData }) => {
         yearData.activations[transformationType]
       ] as const);
       
-      // Helper function to translate transformation types to English
-      const getEnglishTransformationType = (transformationType: string): string => {
-        const typeMap: { [key: string]: string } = {
-          // Full transformation names
-          "化科": "Status",
-          "化权": "Power", 
-          "化權" : "Power",
-          "化禄": "Wealth",
-          "化祿": "Wealth",
-          "化忌": "Obstacle",
-          // Short forms
-          "禄": "Wealth",
-          "权": "Authority",
-          "科": "Academic", 
-          "忌": "Obstacle",
-          "化": "",
-          // Add more mappings as needed
-        };
-        return typeMap[transformationType] || transformationType;
-      };
-
       // Helper function to translate palace names to English
       const getEnglishPalaceName = (palaceName: string): string => {
         const palaceMap: { [key: string]: string } = {
@@ -124,8 +96,6 @@ const DestinyCompass: React.FC<DestinyCompassProps> = ({ chartData }) => {
         const colors = ["success", "blue", "warning", "failure"];
         
 
-        
-        const englishType = getEnglishTransformationType(transformationType);
         const englishPalace = getEnglishPalaceName(activation.palaceName);
         
         

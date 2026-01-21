@@ -73,9 +73,9 @@ const TimeframeSelector: React.FC<TimeframeSelectorProps> = ({
   /**
    * Handle back button click
    */
-  const handleBackClick = (): void => {
+  const handleBackClick = React.useCallback((): void => {
     onBack();
-  };
+  }, [onBack]);
 
   /**
    * Handle keyboard navigation
@@ -91,7 +91,7 @@ const TimeframeSelector: React.FC<TimeframeSelectorProps> = ({
     return (): void => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, []);
+  }, [handleBackClick]);
 
   /**
    * Handle keyboard selection

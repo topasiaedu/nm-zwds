@@ -6,24 +6,6 @@ import {
   type PalaceKey,
 } from "./meanings";
 
-/**
- * Normalize transformation strings to ActivationKey (simplified characters)
- * Accepts traditional variants commonly used in chart data.
- */
-const normalizeTransformationToActivationKey = (
-  transformation: string
-): ActivationKey | null => {
-  const map: Record<string, ActivationKey> = {
-    "化祿": "化禄",
-    "化禄": "化禄",
-    "化權": "化权",
-    "化权": "化权",
-    "化科": "化科",
-    "化忌": "化忌",
-  };
-  return map[transformation] ?? null;
-};
-
 export type CycleActivation = {
   activation: ActivationKey;
   palaceKey: PalaceKey;

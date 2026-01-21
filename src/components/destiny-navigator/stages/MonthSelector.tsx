@@ -76,9 +76,9 @@ const MonthSelector: React.FC<MonthSelectorProps> = ({
   /**
    * Handle back button click
    */
-  const handleBackClick = (): void => {
+  const handleBackClick = React.useCallback((): void => {
     onBack();
-  };
+  }, [onBack]);
 
   /**
    * Handle keyboard navigation
@@ -94,7 +94,7 @@ const MonthSelector: React.FC<MonthSelectorProps> = ({
     return (): void => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, []);
+  }, [handleBackClick]);
 
   /**
    * Handle keyboard selection

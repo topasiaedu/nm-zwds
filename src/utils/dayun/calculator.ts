@@ -67,10 +67,6 @@ function findAdjacentCycles(
   previous: { years: string; season: DayunSeason; palace: string } | undefined;
   next: { years: string; season: DayunSeason; palace: string } | undefined;
 } {
-  const currentIndex = chartData.palaces.findIndex(
-    (p) => p.number === currentPalace.number
-  );
-
   // Find all palaces with majorLimit and sort by age
   const allPalaces = chartData.palaces
     .filter(p => p.majorLimit)

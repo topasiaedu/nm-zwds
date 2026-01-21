@@ -17,7 +17,6 @@ interface DayunSeasonHeroProps {
  * DayunSeasonHero component displays the current 10-year season prominently
  */
 export const DayunSeasonHero: React.FC<DayunSeasonHeroProps> = ({ dayun }) => {
-  const seasonColor = SEASON_COLORS[dayun.season];
   const seasonIcon = SEASON_ICONS[dayun.season];
   
   const yearsElapsed = dayun.currentYear - dayun.startYear;

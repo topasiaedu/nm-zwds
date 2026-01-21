@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Card, Button, Label, TextInput } from "flowbite-react";
 import { useAuth } from "../context/AuthContext";
-import { useLanguage } from "../context/LanguageContext";
 import { useAlertContext } from "../context/AlertContext";
 import { useTierContext } from "../context/TierContext";
 import PageTransition from "../components/PageTransition";
@@ -26,7 +25,6 @@ interface PasswordChangeForm {
  */
 const Profile: React.FC = () => {
   const { user } = useAuth();
-  const { t } = useLanguage();
   const { showAlert } = useAlertContext();
   const { userDetails } = useTierContext();
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -48,12 +46,12 @@ const Profile: React.FC = () => {
   /**
    * Load user profile data from Supabase
    */
-  const loadProfile = async (): Promise<void> => {
+  const loadProfile = useCallback(async (): Promise<void> => {
     if (!user) return;
 
     try {
       setIsLoading(true);
-      
+
       // Set basic profile data from auth user
       setProfile({
         id: user.id,
@@ -69,7 +67,7 @@ const Profile: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [showAlert, user, userDetails]);
 
   /**
    * Save profile changes to Supabase Auth
@@ -185,7 +183,7 @@ const Profile: React.FC = () => {
    */
   useEffect(() => {
     loadProfile();
-  }, [user, userDetails]);
+  }, [loadProfile]);
 
   if (!user) {
     return <div>Please sign in to view your profile.</div>;

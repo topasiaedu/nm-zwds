@@ -4,7 +4,6 @@ import { Link } from "react-router-dom";
 import { Alert, Card, Label, TextInput } from "flowbite-react";
 import { useAuth } from "../../context/AuthContext";
 import { useLanguage } from "../../context/LanguageContext";
-import PageTransition from "../../components/PageTransition";
 
 /**
  * ForgotPasswordPage component

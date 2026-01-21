@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Alert, Card, Checkbox, Label, TextInput } from "flowbite-react";
+import { Card, Checkbox, Label, TextInput } from "flowbite-react";
 import { useAuth } from "../../context/AuthContext";
 import { useLanguage } from "../../context/LanguageContext";
 

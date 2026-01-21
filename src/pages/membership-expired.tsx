@@ -1,6 +1,5 @@
 import React from "react";
-import { Card, Button } from "flowbite-react";
-import { useLanguage } from "../context/LanguageContext";
+import { Card } from "flowbite-react";
 import PageTransition from "../components/PageTransition";
 
 /**
@@ -8,8 +7,6 @@ import PageTransition from "../components/PageTransition";
  * Displays when user's membership has expired and needs to contact support
  */
 const MembershipExpired: React.FC = () => {
-  const { t } = useLanguage();
-
   /**
    * Open WhatsApp chat with Jessica
    */

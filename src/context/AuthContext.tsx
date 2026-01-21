@@ -8,7 +8,6 @@ import React, {
 } from "react";
 import { supabase } from "../utils/supabase-client";
 import { Session, User, AuthError } from "@supabase/supabase-js";
-import { useNavigate } from "react-router-dom";
 
 /**
  * AuthResponse type for standardizing auth function responses
@@ -57,20 +56,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const navigate = useNavigate();
   const initializedRef = useRef<boolean>(false);
   const redirectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-  // TEMP CONSOLE LOG OUT USER ID
-  useEffect(() => {
-    const getUserId = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      // console.log("AuthContext - Initial session user ID:", session?.user.id);
-    };
-    getUserId();
-  }, []);
 
   useEffect(() => {
     // Get session from local storage and set states
@@ -123,13 +110,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     );
 
     // Clean up subscription
+    const redirectTimeout = redirectTimeoutRef.current;
     return () => {
       authListener.subscription.unsubscribe();
-      if (redirectTimeoutRef.current) {
-        clearTimeout(redirectTimeoutRef.current);
+      if (redirectTimeout) {
+        clearTimeout(redirectTimeout);
       }
     };
-  }, [navigate]);
+  }, []);
 
   /**
    * Sign in with email and password

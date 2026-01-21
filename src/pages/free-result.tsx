@@ -14,11 +14,8 @@ import { exportChartAsPdf, isPdfExportSupported } from "../utils/pdfExport";
 import PdfExportModal from "../components/PdfExportModal";
 import { PdfChartData } from "../components/PdfDocument";
 import { useAlertContext } from "../context/AlertContext";
-import { ChartSettingsProvider, useChartSettings } from "../context/ChartSettingsContext";
+import { ChartSettingsProvider } from "../context/ChartSettingsContext";
 import ChartSettingsModal from "../components/ChartSettingsModal";
-import { WealthCode } from "../components/analysis_v2";
-import { DayunSection } from "../components/dayun";
-import { NoblemanSection } from "../components/nobleman";
 
 /**
  * Interface for chart data - using PdfChartData for consistency
@@ -35,7 +32,6 @@ const FreeResultContent: React.FC = () => {
   const { profiles, loading: profilesLoading } = useProfileContext();
   const profileLoadAttempts = useRef<number>(0);
   const { showAlert } = useAlertContext();
-  const { toggleModal } = useChartSettings();
 
   // State for chart data
   const [chartData, setChartData] = useState<ChartData | null>(null);
@@ -336,7 +332,7 @@ const FreeResultContent: React.FC = () => {
     return () => {
       isMounted = false;
     };
-  }, [id, profiles, profilesLoading, formatBirthTime]); // Removed profileToShow from dependencies
+  }, [id, profileToShow, profiles, profilesLoading, formatBirthTime]);
 
   /**
    * Memoized chart calculation to prevent unnecessary recalculations

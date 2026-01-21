@@ -4,7 +4,7 @@
  * Optimized for 60fps performance
  */
 
-import React, { useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 
 /**
  * Individual star properties
@@ -45,7 +45,7 @@ const StarfieldBackground: React.FC<StarfieldBackgroundProps> = ({
    * Initialize stars with random positions and properties
    * Creates parallax effect with 3 layers
    */
-  const initStars = (count: number, width: number, height: number): Star[] => {
+  const initStars = useCallback((count: number, width: number, height: number): Star[] => {
     const stars: Star[] = [];
 
     for (let i = 0; i < count; i++) {
@@ -60,12 +60,12 @@ const StarfieldBackground: React.FC<StarfieldBackgroundProps> = ({
       });
     }
     return stars;
-  };
+  }, [speed]);
 
   /**
    * Draw all stars on the canvas
    */
-  const drawStars = (ctx: CanvasRenderingContext2D, width: number, height: number): void => {
+  const drawStars = useCallback((ctx: CanvasRenderingContext2D, width: number, height: number): void => {
     // Clear canvas
     ctx.clearRect(0, 0, width, height);
 
@@ -83,12 +83,12 @@ const StarfieldBackground: React.FC<StarfieldBackgroundProps> = ({
       ctx.fillStyle = gradient;
       ctx.fill();
     });
-  };
+  }, [colors]);
 
   /**
    * Animate stars (move downward with parallax)
    */
-  const animateStars = (currentTime: number): void => {
+  const animateStars = useCallback((currentTime: number): void => {
     const canvas = canvasRef.current;
     const ctx = canvas?.getContext("2d");
     if (!canvas || !ctx) return;
@@ -111,12 +111,12 @@ const StarfieldBackground: React.FC<StarfieldBackgroundProps> = ({
 
     drawStars(ctx, canvas.width, canvas.height);
     animationFrameRef.current = requestAnimationFrame(animateStars);
-  };
+  }, [drawStars]);
 
   /**
    * Handle canvas resize
    */
-  const handleResize = (): void => {
+  const handleResize = useCallback((): void => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -126,7 +126,7 @@ const StarfieldBackground: React.FC<StarfieldBackgroundProps> = ({
 
     // Reinitialize stars with new dimensions
     starsRef.current = initStars(density, canvas.width, canvas.height);
-  };
+  }, [density, initStars]);
 
   /**
    * Setup and cleanup
@@ -159,7 +159,7 @@ const StarfieldBackground: React.FC<StarfieldBackgroundProps> = ({
       }
       window.removeEventListener("resize", handleResize);
     };
-  }, [speed, density, colors]);
+  }, [animateStars, colors, density, handleResize, speed]);
 
   return (
     <canvas

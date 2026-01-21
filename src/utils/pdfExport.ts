@@ -91,7 +91,7 @@ const addText = (doc: jsPDF, text: string, x: number, y: number, options?: any) 
     doc.text(text, x, y, options);
   } catch (error) {
     // Fallback: try to convert problematic characters
-    const fallbackText = text.replace(/[^\x00-\x7F]/g, "?");
+    const fallbackText = text.replace(/[^\u0000-\u007F]/g, "?");
     doc.text(fallbackText, x, y, options);
   }
 };

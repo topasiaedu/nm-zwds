@@ -1,14 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { useLanguage } from "../context/LanguageContext";
 import PageTransition from "../components/PageTransition";
 
 /**
  * 404 Not Found page with frosted glass design
  */
 const NotFoundPage: React.FC = () => {
-  const { t } = useLanguage();
-  
   return (
     <PageTransition>
       <div className="flex flex-col items-center justify-center min-h-screen p-4">

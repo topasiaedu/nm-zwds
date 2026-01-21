@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useLanguage } from "../context/LanguageContext";
 
 /**
@@ -32,18 +32,6 @@ const PdfExportModal: React.FC<PdfExportModalProps> = ({
   chartName,
 }) => {
   const { t } = useLanguage();
-  const [animationStep, setAnimationStep] = useState(0);
-
-  // Animation effect for progress indicator
-  useEffect(() => {
-    if (isOpen && !progress.isComplete) {
-      const interval = setInterval(() => {
-        setAnimationStep((prev) => (prev + 1) % 3);
-      }, 500);
-      return () => clearInterval(interval);
-    }
-  }, [isOpen, progress.isComplete]);
-
   // Handle escape key
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {

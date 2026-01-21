@@ -4,7 +4,6 @@
  */
 
 import React from "react";
-import { motion } from "framer-motion";
 import { LifeAspect, TimeFrame } from "../../../types/destiny-navigator";
 import { getAspectConfig } from "../../../utils/destiny-navigator/aspect-config";
 import { getTimeframeConfig } from "../../../utils/destiny-navigator/timeframe-config";

@@ -1,5 +1,4 @@
 import React, { useMemo } from "react";
-import { Badge } from "flowbite-react";
 import { ChartData } from "../utils/zwds/types";
 import { 
   generateDestinyCompassData, 
@@ -53,27 +52,6 @@ const PdfDestinyCompass: React.FC<PdfDestinyCompassProps> = ({ chartData }) => {
         yearData.activations[transformationType]
       ] as const);
       
-      // Helper function to translate transformation types to English
-      const getEnglishTransformationType = (transformationType: string): string => {
-        const typeMap: { [key: string]: string } = {
-          // Full transformation names
-          "化科": "Status",
-          "化权": "Power", 
-          "化權" : "Power",
-          "化禄": "Wealth",
-          "化祿": "Wealth",
-          "化忌": "Obstacle",
-          // Short forms
-          "禄": "Wealth",
-          "权": "Authority",
-          "科": "Academic", 
-          "忌": "Obstacle",
-          "化": "",
-          // Add more mappings as needed
-        };
-        return typeMap[transformationType] || transformationType;
-      };
-
       // Helper function to translate palace names to English
       const getEnglishPalaceName = (palaceName: string): string => {
         const palaceMap: { [key: string]: string } = {
@@ -116,7 +94,6 @@ const PdfDestinyCompass: React.FC<PdfDestinyCompassProps> = ({ chartData }) => {
       const badges = activations.map(([transformationType, activation], index) => {
         const colors = ["success", "blue", "warning", "failure"];
         
-        const englishType = getEnglishTransformationType(transformationType);
         const englishPalace = getEnglishPalaceName(activation.palaceName);
         
         return {

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { motion } from "framer-motion";
 
 // Breakpoint constants - matching TailwindCSS defaults
@@ -20,76 +20,6 @@ interface TransformationLinesProps {
   windowSize: { width: number; height: number };
   disableAnimations?: boolean; // Optional prop to disable animations for PDF export
 }
-
-/**
- * Calculate the point on the palace border in the direction of the target
- */
-const calculateBorderPoint = (
-  fromRect: DOMRect,
-  fromX: number, 
-  fromY: number, 
-  toX: number, 
-  toY: number
-): { x: number; y: number } => {
-  // Calculate direction vector
-  const dx = toX - fromX;
-  const dy = toY - fromY;
-  
-  // Palace dimensions
-  const width = fromRect.width / 2;
-  const height = fromRect.height / 2;
-  
-  // Calculate the angle of the direction
-  const angle = Math.atan2(dy, dx);
-  
-  // Determine which of the four sides of the palace we're hitting
-  let borderX: number, borderY: number;
-  
-  // Check if the palace is in a corner position by examining its position
-  const isPalaceInCorner = (
-    // Top-left corner
-    (fromRect.left < fromRect.width && fromRect.top < fromRect.height) ||
-    // Top-right corner
-    (fromRect.right > document.body.clientWidth - fromRect.width && fromRect.top < fromRect.height) ||
-    // Bottom-left corner
-    (fromRect.left < fromRect.width && fromRect.bottom > document.body.clientHeight - fromRect.height) ||
-    // Bottom-right corner
-    (fromRect.right > document.body.clientWidth - fromRect.width && fromRect.bottom > document.body.clientHeight - fromRect.height)
-  );
-  
-  // For more precise positioning, identify which side we're hitting
-  if (Math.abs(Math.cos(angle)) > Math.abs(Math.sin(angle))) {
-    // Hitting left or right side
-    borderX = (dx > 0) ? fromX + width : fromX - width;
-    
-    // For corner palaces, ensure we're starting from the middle of the side
-    if (isPalaceInCorner) {
-      // If angle is closer to horizontal than vertical
-      borderY = fromY; // Center of the left/right side
-    } else {
-      borderY = fromY + dy * (borderX - fromX) / dx;
-    }
-  } else {
-    // Hitting top or bottom side
-    borderY = (dy > 0) ? fromY + height : fromY - height;
-    
-    // For corner palaces, ensure we're starting from the middle of the side
-    if (isPalaceInCorner) {
-      // If angle is closer to vertical than horizontal
-      borderX = fromX; // Center of the top/bottom side
-    } else {
-      borderX = fromX + dx * (borderY - fromY) / dy;
-    }
-  }
-  
-  // Apply a small adjustment factor to ensure the point is slightly outside palace
-  // This makes the lines start just a bit outside the palace border for visual clarity
-  const adjustmentFactor = 1.02;
-  const adjustedX = fromX + (borderX - fromX) * adjustmentFactor;
-  const adjustedY = fromY + (borderY - fromY) * adjustmentFactor;
-  
-  return { x: adjustedX, y: adjustedY };
-};
 
 /**
  * Calculate the center point of the border in the direction of the target
@@ -214,9 +144,6 @@ const TransformationLines: React.FC<TransformationLinesProps> = ({
   // Separate transformations into regular and opposite palace influences
   const regularTransformations = transformations.filter(t => !t.isOppositeInfluence);
   const oppositeInfluences = transformations.filter(t => t.isOppositeInfluence);
-  
-  // Create a unique key for the static opposite influence lines
-  const oppositeInfluencesKey = "opposite-influences";
   
   // Group transformations by fromPalace and toPalace to handle spacing
   const groupedRegularTransformations = regularTransformations.reduce((groups, transformation) => {
@@ -459,8 +386,6 @@ const TransformationLines: React.FC<TransformationLinesProps> = ({
       // Calculate direction vector
       const dx = toX - fromX;
       const dy = toY - fromY;
-      const distance = Math.sqrt(dx * dx + dy * dy);
-      
       // Determine line color based on transformation type
       let lineColor;
       let shadowColor;

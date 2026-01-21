@@ -587,15 +587,6 @@ const FounderReportContent: React.FC = () => {
   }, [calcStatus, calculatedChartData, visibleSections]);
 
   /**
-   * Smooth scroll to a report section.
-   */
-  const scrollToSection = useCallback((sectionId: SectionId) => {
-    const el = document.getElementById(sectionId);
-    if (!el) return;
-    el.scrollIntoView({ behavior: "smooth", block: "start" });
-  }, []);
-
-  /**
    * Observe which section is currently in view for the desktop nav and fade-in animations.
    */
   useEffect(() => {

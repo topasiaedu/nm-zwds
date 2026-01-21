@@ -4,7 +4,6 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Alert, Card, Label, TextInput } from "flowbite-react";
 import { useAuth } from "../../context/AuthContext";
 import { useLanguage } from "../../context/LanguageContext";
-import PageTransition from "../../components/PageTransition";
 import { supabase } from "../../utils/supabase-client";
 
 /**
@@ -39,7 +38,7 @@ const ResetPasswordPage: React.FC = () => {
           const refreshToken = hashParams.get("refresh_token");
           
           if (refreshToken) {
-            const { data, error } = await supabase.auth.setSession({
+            const { error } = await supabase.auth.setSession({
               access_token: accessToken,
               refresh_token: refreshToken,
             });

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useLanguage } from "../../context/LanguageContext";
 import { useTierContext, UserDetailsWithEmail, UserTier } from "../../context/TierContext";
 import { Link } from "react-router-dom";
 import PageTransition from "../../components/PageTransition";
@@ -8,7 +7,6 @@ import PageTransition from "../../components/PageTransition";
  * UserManagement component - Admin page for managing user tiers
  */
 const UserManagement: React.FC = () => {
-  const { t } = useLanguage();
   const { getAllUserDetails, updateUserTier, toggleUserPause, isAdmin, loading: tierLoading } = useTierContext();
   
   const [users, setUsers] = useState<UserDetailsWithEmail[]>([]);

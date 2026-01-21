@@ -3,7 +3,7 @@
  * Creates a pulsing orb with particle ring effect
  */
 
-import React, { useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 
 /**
  * Particle properties for the ring effect
@@ -43,7 +43,7 @@ const PulsingOrb: React.FC<PulsingOrbProps> = ({
   /**
    * Initialize particles in a ring formation
    */
-  const initParticles = (): Particle[] => {
+  const initParticles = useCallback((): Particle[] => {
     const particles: Particle[] = [];
     const angleStep = (Math.PI * 2) / particleCount;
 
@@ -57,12 +57,12 @@ const PulsingOrb: React.FC<PulsingOrbProps> = ({
       });
     }
     return particles;
-  };
+  }, [particleCount, size]);
 
   /**
    * Draw the orb and particles
    */
-  const draw = (): void => {
+  const draw = useCallback((): void => {
     const canvas = canvasRef.current;
     const ctx = canvas?.getContext("2d");
     if (!canvas || !ctx) return;
@@ -133,7 +133,7 @@ const PulsingOrb: React.FC<PulsingOrbProps> = ({
     });
 
     animationFrameRef.current = requestAnimationFrame(draw);
-  };
+  }, [color, pulseSpeed, size]);
 
   /**
    * Setup and cleanup
@@ -168,7 +168,7 @@ const PulsingOrb: React.FC<PulsingOrbProps> = ({
         cancelAnimationFrame(animationFrameRef.current);
       }
     };
-  }, [size, color, pulseSpeed, particleCount]);
+  }, [color, draw, initParticles, particleCount, pulseSpeed, size]);
 
   return (
     <canvas
