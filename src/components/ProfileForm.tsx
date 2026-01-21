@@ -4,7 +4,6 @@ import { useProfileContext } from "../context/ProfileContext";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useAlertContext } from "../context/AlertContext";
-import { useTierAccess } from "../context/TierContext";
 import { Database } from "../../database.types";
 
 type ProfileInsert = Database["public"]["Tables"]["profiles"]["Insert"];
@@ -86,7 +85,6 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ isSelfProfile, onSuccess, dis
   const { user } = useAuth();
   const { addProfile } = useProfileContext();
   const { showAlert } = useAlertContext();
-  const { isAdmin } = useTierAccess();
   const navigate = useNavigate();
   
   const [formData, setFormData] = useState({
@@ -348,22 +346,20 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ isSelfProfile, onSuccess, dis
               })}
             </select>
 
-            {/* Don't remember birth time checkbox - Admin only */}
-            {isAdmin && (
-              <div className="mt-3">
-                <label className="flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={dontRememberBirthTime}
-                    onChange={handleDontRememberChange}
-                    className="w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 dark:focus:ring-purple-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                  />
-                  <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">
-                    {t("form.dontRememberBirthTime")}
-                  </span>
-                </label>
-              </div>
-            )}
+            {/* Don't remember birth time checkbox */}
+            <div className="mt-3">
+              <label className="flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={dontRememberBirthTime}
+                  onChange={handleDontRememberChange}
+                  className="w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 dark:focus:ring-purple-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                />
+                <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">
+                  {t("form.dontRememberBirthTime")}
+                </span>
+              </label>
+            </div>
           </div>
           
           <div className="flex gap-4 pt-4">

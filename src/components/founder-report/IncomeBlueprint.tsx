@@ -109,6 +109,7 @@ type ScoredIdea = {
   weightedTotal: number;
   isTopPick: boolean;
   isRunnerUp: boolean;
+  isThirdPick: boolean;
 };
 
 /**
@@ -802,6 +803,7 @@ export const IncomeBlueprint: React.FC<IncomeBlueprintProps> = ({ chartData }) =
         weightedTotal,
         isTopPick: false,
         isRunnerUp: false,
+        isThirdPick: false,
       };
     });
 
@@ -810,6 +812,7 @@ export const IncomeBlueprint: React.FC<IncomeBlueprintProps> = ({ chartData }) =
       ...row,
       isTopPick: idx === 0,
       isRunnerUp: idx === 1,
+      isThirdPick: idx === 2,
     }));
   }, [dominantCode, wealthProfile.profileType, dayunSeason, ibScore]);
 
@@ -904,8 +907,10 @@ export const IncomeBlueprint: React.FC<IncomeBlueprintProps> = ({ chartData }) =
                       let cta: string | null = null;
                       if (row.isTopPick) cta = "START HERE";
                       else if (row.isRunnerUp) cta = "NEXT";
+                      else if (row.isThirdPick) cta = "TOP 3";
 
-                      const isStar = row.isTopPick || row.isRunnerUp;
+                      const isStar = row.isTopPick || row.isRunnerUp || row.isThirdPick;
+                      const starLabel = row.isTopPick ? "★★★" : row.isRunnerUp ? "★★" : row.isThirdPick ? "★" : null;
 
                       let rowClassName = "hover:bg-gray-50 dark:hover:bg-gray-900/10";
                       if (row.isTopPick) {
@@ -923,10 +928,7 @@ export const IncomeBlueprint: React.FC<IncomeBlueprintProps> = ({ chartData }) =
                                   <div className="text-sm font-extrabold text-gray-900 dark:text-white">
                                     {row.idea.title}
                                   </div>
-                                  <span className="inline-flex items-center justify-center rounded-full px-2 py-1 text-[10px] font-bold tracking-wider bg-gray-100 text-gray-700 border border-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700">
-                                    {getTermLabel(row.idea)}
-                                  </span>
-                                  {isStar ? <div className="text-sm font-bold">{"⭐"}</div> : null}
+                                  {isStar ? <div className="text-sm font-bold">{starLabel}</div> : null}
                                   {cta ? (
                                     <span className="ml-1 inline-flex items-center justify-center rounded-full px-2 py-1 text-[10px] font-bold tracking-wider bg-amber-600 text-white">
                                       {cta}
@@ -973,11 +975,13 @@ export const IncomeBlueprint: React.FC<IncomeBlueprintProps> = ({ chartData }) =
             {/* Mobile cards */}
             <div className="lg:hidden space-y-4">
               {scoredIdeas.map((row) => {
-                let cta: string | null = null;
-                if (row.isTopPick) cta = "START HERE";
-                else if (row.isRunnerUp) cta = "NEXT";
+                        let cta: string | null = null;
+                        if (row.isTopPick) cta = "START HERE";
+                        else if (row.isRunnerUp) cta = "NEXT";
+                        else if (row.isThirdPick) cta = "TOP 3";
 
-                const isStar = row.isTopPick || row.isRunnerUp;
+                        const isStar = row.isTopPick || row.isRunnerUp || row.isThirdPick;
+                        const starLabel = row.isTopPick ? "★★★" : row.isRunnerUp ? "★★" : row.isThirdPick ? "★" : null;
 
                 let cardClassName = "border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800";
                 if (row.isTopPick) {
@@ -992,10 +996,7 @@ export const IncomeBlueprint: React.FC<IncomeBlueprintProps> = ({ chartData }) =
                       <div className="flex-1">
                         <div className="flex items-center gap-2 flex-wrap">
                           <div className="text-sm font-extrabold text-gray-900 dark:text-white">{row.idea.title}</div>
-                          <span className="inline-flex items-center justify-center rounded-full px-2 py-1 text-[10px] font-bold tracking-wider bg-gray-100 text-gray-700 border border-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700">
-                            {getTermLabel(row.idea)}
-                          </span>
-                          {isStar ? <span className="text-sm font-bold">{"⭐"}</span> : null}
+                          {isStar ? <span className="text-sm font-bold">{starLabel}</span> : null}
                         </div>
                         <div className="text-xs text-gray-600 dark:text-gray-400 mt-1">{row.idea.oneLine}</div>
                       </div>
