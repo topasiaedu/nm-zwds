@@ -7,7 +7,7 @@
 
 import React from "react";
 import type { DayunCycleExtended } from "../../types/dayun";
-import { SEASON_COLORS, SEASON_ICONS } from "../../utils/dayun/seasonMapper";
+import { SEASON_ICONS } from "../../utils/dayun/seasonMapper";
 
 interface DayunSeasonHeroProps {
   dayun: DayunCycleExtended;

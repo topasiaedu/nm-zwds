@@ -574,21 +574,6 @@ function ideasForCode(code: WealthCodeKey): WealthCodeIdea[] {
 }
 
 /**
- * Label helpers to avoid nested ternaries in UI code.
- */
-function getCapitalLabel(requirement: CapitalRequirement): string {
-  if (requirement === "low") return "Low capital";
-  if (requirement === "medium") return "Medium capital";
-  return "Higher capital";
-}
-
-function getEffortLabel(requirement: EffortRequirement): string {
-  if (requirement === "low") return "Low effort";
-  if (requirement === "medium") return "Medium effort";
-  return "Higher effort";
-}
-
-/**
  * Small UI helper: labeled score meter (0–10) with a horizontal bar.
  */
 const ScoreBar: React.FC<{
