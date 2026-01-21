@@ -1,4 +1,4 @@
-import { ChartData, Star, Palace } from "../types";
+import { ChartData, Palace } from "../types";
 import { OVERVIEW_DESCRIPTION_CONSTANTS } from "../analysis_constants/overview_description";
 import { DATASET_1 } from "../analysis_constants";
 
@@ -122,7 +122,7 @@ const getStrengthsAndWeaknesses = (starNames: string[]): { strengths: string[]; 
       if (starData.命宫.strengths) {
         if (typeof starData.命宫.strengths === "string") {
           // Split by common delimiters like "、" or "," or "/"
-          const strengthList = starData.命宫.strengths.split(/[、，,\/]/).map(s => s.trim()).filter(s => s.length > 0);
+          const strengthList = starData.命宫.strengths.split(/[、，,/]/).map(s => s.trim()).filter(s => s.length > 0);
           strengths.push(...strengthList);
         }
       }
@@ -131,7 +131,7 @@ const getStrengthsAndWeaknesses = (starNames: string[]): { strengths: string[]; 
       if (starData.命宫.cautions) {
         if (typeof starData.命宫.cautions === "string") {
           // Split by common delimiters
-          const cautionList = starData.命宫.cautions.split(/[、，,\/]/).map(s => s.trim()).filter(s => s.length > 0);
+          const cautionList = starData.命宫.cautions.split(/[、，,/]/).map(s => s.trim()).filter(s => s.length > 0);
           weaknesses.push(...cautionList);
         }
       }

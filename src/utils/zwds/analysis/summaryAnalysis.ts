@@ -1,4 +1,5 @@
 import { SUMMARY_ANALYSIS_CONSTANTS } from "../analysis_constants/summary_analysis";
+import type { ChartData, Palace, Star } from "../types";
 
 /**
  * Interface for summary analysis result
@@ -14,7 +15,7 @@ export interface SummaryAnalysisResult {
  * @param chartData - The calculated ZWDS chart data
  * @returns Array of summary analysis results containing star names and descriptions
  */
-export function analyzeSummary(chartData: any): SummaryAnalysisResult[] {
+export function analyzeSummary(chartData: ChartData | null | undefined): SummaryAnalysisResult[] {
   if (!chartData || !chartData.palaces) {
     console.log("Summary analysis: No chart data or palaces found");
     return [];
@@ -36,15 +37,16 @@ export function analyzeSummary(chartData: any): SummaryAnalysisResult[] {
 
   // Find all stars in the Life Palace (both main and minor)
   let stars: Set<string> = new Set();
-  let currentPalace = lifePalace;
-  
-  // Function to collect stars from a palace
-  const collectStarsFromPalace = (palace: any): Set<string> => {
+
+  /**
+   * Collect star names from a palace's star collections.
+   */
+  const collectStarsFromPalace = (palace: Palace): Set<string> => {
     const palaceStars: Set<string> = new Set();
     
     // Add main stars if available
     if (palace.mainStar && Array.isArray(palace.mainStar)) {
-      const mainStarNames = palace.mainStar.map((star: any) => star.name);
+      const mainStarNames = palace.mainStar.map((star: Star) => star.name);
       mainStarNames.forEach((star: string) => {
         // Ensure we only use the main star name (some might have suffixes)
         const mainStarName = star.split("_")[0].trim();
@@ -54,7 +56,7 @@ export function analyzeSummary(chartData: any): SummaryAnalysisResult[] {
     
     // Add minor stars if available
     if (palace.minorStars && Array.isArray(palace.minorStars)) {
-      const minorStarNames = palace.minorStars.map((star: any) => star.name);
+      const minorStarNames = palace.minorStars.map((star: Star) => star.name);
       minorStarNames.forEach((star: string) => {
         // Ensure we only use the star name (some might have suffixes)
         const starName = star.split("_")[0].trim();
@@ -64,7 +66,7 @@ export function analyzeSummary(chartData: any): SummaryAnalysisResult[] {
     
     // Add auxiliary stars if available
     if (palace.auxiliaryStars && Array.isArray(palace.auxiliaryStars)) {
-      const auxStarNames = palace.auxiliaryStars.map((star: any) => star.name);
+      const auxStarNames = palace.auxiliaryStars.map((star: Star) => star.name);
       auxStarNames.forEach((star: string) => {
         const starName = star.split("_")[0].trim();
         palaceStars.add(starName);
@@ -81,7 +83,7 @@ export function analyzeSummary(chartData: any): SummaryAnalysisResult[] {
   if (stars.size === 0) {
     console.log("Summary analysis: No stars found in Life Palace, checking Migration Palace");
     // Find Migration Palace
-    const migrationPalace = chartData.palaces.find((palace: any) => palace.name === "迁移");
+    const migrationPalace = chartData.palaces.find((palace: Palace) => palace.name === "迁移");
     
     if (migrationPalace) {
       stars = collectStarsFromPalace(migrationPalace);

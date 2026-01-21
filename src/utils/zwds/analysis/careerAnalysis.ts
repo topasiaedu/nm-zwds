@@ -183,8 +183,6 @@ export const getCareerArchetypeImage = (archetype: string, gender: "male" | "fem
  */
 export const analyzeCareerLegacy = (chartData: ChartData): string[] => {
   try {
-    const result = analyzeCareer(chartData);
-    
     // Extract career aptitudes from the analysis stars
     const careerPalace = chartData.palaces.find(palace => palace.name === "官禄");
     const spousePalace = chartData.palaces.find(palace => palace.name === "夫妻");

@@ -4,7 +4,6 @@ import { SolarDay } from "tyme4ts";
  * Utility functions for Zi Wei Dou Shu calculations
  */
 
-import { LUNAR_DAY_MAP } from "./constants";
 import { Palace, Star } from "./types";
 
 /**
@@ -107,7 +106,7 @@ export function getHourBranch(hour: number): number {
   // Log the input
   
   // Validate hour is a number
-  if (typeof hour !== 'number' || isNaN(hour)) {
+  if (typeof hour !== "number" || isNaN(hour)) {
     console.error("Invalid hour for getHourBranch:", hour);
     throw new Error(`Invalid hour: ${hour}. Hour must be a number.`);
   }

@@ -1,11 +1,11 @@
 import { WATCHOUT_ANALYSIS_CONSTANTS } from "../analysis_constants/watchout_analysis";
 import { getStarsInPalace } from "./palaceUtils";
+import type { ChartData } from "../types";
 
 /**
  * Types for the watchout analysis constants
  */
 type PalaceName = keyof typeof WATCHOUT_ANALYSIS_CONSTANTS;
-type StarName<P extends PalaceName> = keyof typeof WATCHOUT_ANALYSIS_CONSTANTS[P];
 
 /**
  * Interface for watchout result with star and warning information
@@ -24,7 +24,7 @@ export interface WatchoutResult {
  * @param chartData - The calculated ZWDS chart data
  * @returns Array of watchout results with warnings based on stars and palaces
  */
-export function analyzeWatchouts(chartData: any): WatchoutResult[] {
+export function analyzeWatchouts(chartData: ChartData | null | undefined): WatchoutResult[] {
   if (!chartData || !chartData.palaces) {
     console.log("Watchout analysis: No chart data or palaces found");
     return [];

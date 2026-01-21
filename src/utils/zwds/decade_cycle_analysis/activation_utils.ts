@@ -4,7 +4,6 @@ import {
   ACTIVATION_PALACE_MEANINGS,
   type ActivationKey,
   type PalaceKey,
-  type ActivationEntry,
 } from "./meanings";
 
 /**
@@ -23,26 +22,6 @@ const normalizeTransformationToActivationKey = (
     "化忌": "化忌",
   };
   return map[transformation] ?? null;
-};
-
-/**
- * Safely extract all transformations on a star list.
- */
-const collectTransformations = (stars: ReadonlyArray<Star> | undefined): Set<ActivationKey> => {
-  const result = new Set<ActivationKey>();
-  if (!stars || stars.length === 0) {
-    return result;
-  }
-  for (const s of stars) {
-    const tList = s.transformations ?? [];
-    for (const t of tList) {
-      const key = normalizeTransformationToActivationKey(t);
-      if (key) {
-        result.add(key);
-      }
-    }
-  }
-  return result;
 };
 
 export type CycleActivation = {
