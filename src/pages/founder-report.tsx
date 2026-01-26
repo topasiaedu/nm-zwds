@@ -12,6 +12,7 @@ import ChartSettingsModal from "../components/ChartSettingsModal";
 import { WealthCode } from "../components/analysis_v2";
 
 type SectionChartProps = { chartData: ZWDSChartData };
+type BusinessCalendarSectionProps = { chartData: ZWDSChartData; reportCreatedAt: string };
 
 const WealthTimingCycle = React.lazy(async () => {
   const mod = await import("../components/founder-report/WealthTimingCycle");
@@ -25,7 +26,7 @@ const TalentStrategy = React.lazy(async () => {
 
 const BusinessCalendar = React.lazy(async () => {
   const mod = await import("../components/founder-report/BusinessCalendar");
-  return { default: mod.BusinessCalendar as React.ComponentType<SectionChartProps> };
+  return { default: mod.BusinessCalendar as React.ComponentType<BusinessCalendarSectionProps> };
 });
 
 const IncomeBlueprint = React.lazy(async () => {
@@ -566,7 +567,10 @@ const FounderReportContent: React.FC = () => {
           >
             <SectionErrorBoundary title="Founder Business Calendar">
               <Suspense fallback={<SectionSkeleton title="Founder Business Calendar" />}>
-                <BusinessCalendar chartData={calculatedChartData} />
+                <BusinessCalendar
+                  chartData={calculatedChartData}
+                  reportCreatedAt={chartMeta?.createdAt ?? ""}
+                />
               </Suspense>
             </SectionErrorBoundary>
           </section>
@@ -584,7 +588,7 @@ const FounderReportContent: React.FC = () => {
         </div>
       </div>
     );
-  }, [calcStatus, calculatedChartData, visibleSections]);
+  }, [calcStatus, calculatedChartData, visibleSections, chartMeta]);
 
   /**
    * Observe which section is currently in view for the desktop nav and fade-in animations.
