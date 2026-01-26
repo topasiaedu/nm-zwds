@@ -26,22 +26,92 @@ export interface TaskDetailModalProps {
 }
 
 /**
- * Parse action text into structured parts for better visual hierarchy
+ * Render formatted action text with support for:
+ * - Newlines (\n) 
+ * - Bullet points (•)
+ * - Code/formulas (`backticks`)
+ * - Templates/Scripts (quoted text)
  */
-function parseActionText(text: string): { main: string; context: string; outcome: string } {
-  const parts = text.split("→").map((p) => p.trim());
+function renderFormattedText(text: string): JSX.Element {
+  const lines = text.split("\n").map((line) => line.trim()).filter((line) => line.length > 0);
   
-  if (parts.length === 1) {
-    return { main: parts[0], context: "", outcome: "" };
-  } else if (parts.length === 2) {
-    return { main: parts[0], context: "", outcome: parts[1] };
-  } else {
-    return {
-      main: parts[0],
-      context: parts.slice(1, -1).join(" • "),
-      outcome: parts[parts.length - 1],
-    };
-  }
+  return (
+    <div className="space-y-2">
+      {lines.map((line, lineIdx) => {
+        const isBullet = line.startsWith("•");
+        const isNumbered = /^\d+\)/.test(line);
+        
+        // Remove bullet/number prefix if present
+        const cleanLine = isBullet 
+          ? line.substring(1).trim() 
+          : isNumbered 
+          ? line.replace(/^\d+\)\s*/, "") 
+          : line;
+        
+        // Process inline formatting: backticks for code, quotes for templates
+        const parts: JSX.Element[] = [];
+        let currentText = cleanLine;
+        let key = 0;
+        
+        // Handle backtick code blocks
+        const codeRegex = /`([^`]+)`/g;
+        let lastIndex = 0;
+        let match: RegExpExecArray | null;
+        
+        while ((match = codeRegex.exec(cleanLine)) !== null) {
+          // Add text before code
+          if (match.index > lastIndex) {
+            const beforeText = cleanLine.substring(lastIndex, match.index);
+            if (beforeText) {
+              parts.push(<span key={key++}>{beforeText}</span>);
+            }
+          }
+          
+          // Add code block
+          parts.push(
+            <code 
+              key={key++} 
+              className="px-1.5 py-0.5 bg-gray-100 dark:bg-gray-700 rounded text-xs font-mono text-gray-800 dark:text-gray-200"
+            >
+              {match[1]}
+            </code>
+          );
+          
+          lastIndex = match.index + match[0].length;
+        }
+        
+        // Add remaining text
+        if (lastIndex < cleanLine.length) {
+          parts.push(<span key={key++}>{cleanLine.substring(lastIndex)}</span>);
+        }
+        
+        const content = parts.length > 0 ? <>{parts}</> : cleanLine;
+        
+        // Render based on line type
+        if (isBullet || isNumbered) {
+          return (
+            <div key={lineIdx} className="flex items-start gap-2 pl-2">
+              <span className="text-green-600 dark:text-green-400 font-bold flex-shrink-0 mt-0.5">•</span>
+              <span className="flex-1">{content}</span>
+            </div>
+          );
+        } else if (cleanLine.startsWith('"') && cleanLine.endsWith('"')) {
+          // Template/Script block
+          const quotedText = cleanLine.slice(1, -1);
+          return (
+            <div key={lineIdx} className="pl-3 border-l-2 border-green-300 dark:border-green-600 bg-green-50/50 dark:bg-green-900/10 rounded-r px-3 py-2 text-sm italic text-gray-700 dark:text-gray-300">
+              {quotedText}
+            </div>
+          );
+        } else {
+          // Regular text
+          return (
+            <div key={lineIdx} className="leading-relaxed">{content}</div>
+          );
+        }
+      })}
+    </div>
+  );
 }
 
 /**
@@ -157,37 +227,16 @@ export const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
                 </div>
               </div>
               <ul className="space-y-6">
-                {task.actions.map((action, idx) => {
-                  const parsed = parseActionText(action);
-                  return (
-                    <li key={`${action}-${idx}`} className="flex items-start gap-3">
-                      <span className="mt-0.5 flex-shrink-0 w-6 h-6 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 text-white text-xs font-bold flex items-center justify-center shadow-sm">
-                        {idx + 1}
-                      </span>
-                      <div className="flex-1 space-y-2">
-                        {/* Main Action - Bold and prominent */}
-                        <div className="font-semibold text-gray-900 dark:text-white leading-relaxed text-sm md:text-base">
-                          {parsed.main}
-                        </div>
-                        
-                        {/* Context - Lighter, smaller */}
-                        {parsed.context && (
-                          <div className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed pl-3 border-l-2 border-green-200 dark:border-green-700/40">
-                            {parsed.context}
-                          </div>
-                        )}
-                        
-                        {/* Outcome - Highlighted badge */}
-                        {parsed.outcome && (
-                          <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-green-100/80 dark:bg-green-900/40 rounded-lg text-xs font-medium text-green-800 dark:text-green-200 border border-green-200 dark:border-green-700/40">
-                            <span className="text-base">💡</span>
-                            <span>{parsed.outcome}</span>
-                          </div>
-                        )}
-                      </div>
-                    </li>
-                  );
-                })}
+                {task.actions.map((action, idx) => (
+                  <li key={`${action}-${idx}`} className="flex items-start gap-3">
+                    <span className="mt-0.5 flex-shrink-0 w-6 h-6 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 text-white text-xs font-bold flex items-center justify-center shadow-sm">
+                      {idx + 1}
+                    </span>
+                    <div className="flex-1 text-gray-900 dark:text-white text-sm md:text-base">
+                      {renderFormattedText(action)}
+                    </div>
+                  </li>
+                ))}
               </ul>
             </div>
 
@@ -203,37 +252,16 @@ export const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
                 </div>
               </div>
               <ul className="space-y-6">
-                {task.avoidPoints.map((avoidPoint, idx) => {
-                  const parsed = parseActionText(avoidPoint);
-                  return (
-                    <li key={`${avoidPoint}-${idx}`} className="flex items-start gap-3">
-                      <span className="mt-0.5 flex-shrink-0 w-6 h-6 rounded-full bg-gradient-to-br from-red-500 to-orange-600 text-white text-xs font-bold flex items-center justify-center shadow-sm">
-                        {idx + 1}
-                      </span>
-                      <div className="flex-1 space-y-2">
-                        {/* Main Trap - Bold and prominent */}
-                        <div className="font-semibold text-amber-900 dark:text-amber-200 leading-relaxed text-sm md:text-base">
-                          {parsed.main}
-                        </div>
-                        
-                        {/* Context - Lighter, smaller */}
-                        {parsed.context && (
-                          <div className="text-sm text-amber-700 dark:text-amber-300 leading-relaxed pl-3 border-l-2 border-amber-200 dark:border-amber-700/40">
-                            {parsed.context}
-                          </div>
-                        )}
-                        
-                        {/* Warning - Highlighted badge */}
-                        {parsed.outcome && (
-                          <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-red-100/80 dark:bg-red-900/40 rounded-lg text-xs font-medium text-red-800 dark:text-red-200 border border-red-200 dark:border-red-700/40">
-                            <span className="text-base">⚠️</span>
-                            <span>{parsed.outcome}</span>
-                          </div>
-                        )}
-                      </div>
-                    </li>
-                  );
-                })}
+                {task.avoidPoints.map((avoidPoint, idx) => (
+                  <li key={`${avoidPoint}-${idx}`} className="flex items-start gap-3">
+                    <span className="mt-0.5 flex-shrink-0 w-6 h-6 rounded-full bg-gradient-to-br from-red-500 to-orange-600 text-white text-xs font-bold flex items-center justify-center shadow-sm">
+                      {idx + 1}
+                    </span>
+                    <div className="flex-1 text-amber-900 dark:text-amber-200 text-sm md:text-base">
+                      {renderFormattedText(avoidPoint)}
+                    </div>
+                  </li>
+                ))}
               </ul>
             </div>
           </div>
