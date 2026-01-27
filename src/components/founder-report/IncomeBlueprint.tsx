@@ -574,6 +574,19 @@ function ideasForCode(code: WealthCodeKey): WealthCodeIdea[] {
 }
 
 /**
+ * Get the gradient style for a specific metric.
+ */
+function getMetricGradient(label: string): string {
+  const lowerLabel = label.toLowerCase();
+  if (lowerLabel === "alignment") return "linear-gradient(to right, #a855f7, #9333ea)";
+  if (lowerLabel === "capital") return "linear-gradient(to right, #10b981, #059669)";
+  if (lowerLabel === "effort") return "linear-gradient(to right, #3b82f6, #06b6d4)";
+  if (lowerLabel === "potential") return "linear-gradient(to right, #f59e0b, #eab308)";
+  // Default fallback
+  return "linear-gradient(to right, #f59e0b, #eab308)";
+}
+
+/**
  * Small UI helper: labeled score meter (0–10) with a horizontal bar.
  */
 const ScoreBar: React.FC<{
@@ -586,6 +599,7 @@ const ScoreBar: React.FC<{
 }> = ({ label, value0To10, showLabel }) => {
   const value = clamp0To10(value0To10);
   const pct = (value / 10) * 100;
+  const gradientStyle = getMetricGradient(label);
 
   return (
     <div className="w-full">
@@ -596,10 +610,10 @@ const ScoreBar: React.FC<{
         </div>
       ) : null}
 
-      <div className="h-2.5 w-full rounded-full bg-gray-100 dark:bg-gray-700 overflow-hidden shadow-inner">
+      <div className="h-2.5 w-full rounded-full bg-gray-100 dark:bg-gray-800 overflow-hidden shadow-inner">
         <div
-          className="h-full rounded-full bg-gradient-to-r from-amber-500 to-yellow-500"
-          style={{ width: `${pct}%` }}
+          className="h-full rounded-full"
+          style={{ width: `${pct}%`, backgroundImage: gradientStyle }}
           aria-hidden="true"
         />
       </div>
@@ -627,8 +641,8 @@ const SectionCard: React.FC<{
           }}
         />
         <div className="relative">
-          <h3 className="text-lg font-bold text-gray-900">{title}</h3>
-          {subtitle ? <p className="text-xs text-gray-800 mt-1">{subtitle}</p> : null}
+          <h3 className="text-lg font-bold text-gray-900 dark:text-white">{title}</h3>
+          {subtitle ? <p className="text-xs text-gray-900 dark:text-gray-100 mt-1 font-medium">{subtitle}</p> : null}
         </div>
       </div>
       <div className="p-6">{children}</div>
@@ -699,8 +713,8 @@ export const IncomeBlueprint: React.FC<IncomeBlueprintProps> = ({ chartData }) =
       {/* Section Header */}
       <div className="text-center mb-8">
         <h2 className="text-4xl dark:text-white font-bold mb-2">{"SCALABLE INCOME BLUEPRINT"}</h2>
-        <p className="text-gray-600 dark:text-gray-400 text-sm">
-          {"Side income isn’t luck. It’s alignment — built on your natural path and your timing."}
+        <p className="text-gray-700 dark:text-gray-300 text-sm">
+          {"Side income isn't luck. It's alignment — built on your natural path and your timing."}
         </p>
 
         <div className="mt-4 flex flex-wrap items-center justify-center gap-2 text-xs">
@@ -722,13 +736,8 @@ export const IncomeBlueprint: React.FC<IncomeBlueprintProps> = ({ chartData }) =
           {/* CHART 1 (Hero): Side Income Priority Matrix */}
           <SectionCard
             title="START HERE: Side Income Priority Matrix"
-            subtitle={`Top 5 aligned ideas for your ${dominantCodeLabel} path · Timing: ${seasonCue.title} (${seasonCue.action}) · Capital capacity (IB): ${formatScore(ibScore)}/10`}
+            subtitle={`Top 5 aligned ideas for your ${dominantCodeLabel} path • Timing: ${seasonCue.title} (${seasonCue.action}) • Capital capacity (IB): ${formatScore(ibScore)}/10`}
           >
-            <div className="text-sm text-gray-700 dark:text-gray-200 leading-relaxed mb-5">
-              {
-                "You don’t need more options — you need the right path. These five are ranked by alignment + timing first, then capital, effort, and potential."
-              }
-            </div>
 
             {/* Desktop table */}
             <div className="hidden lg:block">
@@ -761,7 +770,7 @@ export const IncomeBlueprint: React.FC<IncomeBlueprintProps> = ({ chartData }) =
                       else if (row.isThirdPick) cta = "TOP 3";
 
                       const isStar = row.isTopPick || row.isRunnerUp || row.isThirdPick;
-                      const starLabel = row.isTopPick ? "★★★" : row.isRunnerUp ? "★★" : row.isThirdPick ? "★" : null;
+                      const starLabel = row.isTopPick ? "🌟🌟🌟" : row.isRunnerUp ? "⭐⭐" : row.isThirdPick ? "⭐" : null;
 
                       let rowClassName = "hover:bg-gray-50 dark:hover:bg-gray-900/10";
                       if (row.isTopPick) {
@@ -779,15 +788,15 @@ export const IncomeBlueprint: React.FC<IncomeBlueprintProps> = ({ chartData }) =
                                   <div className="text-sm font-extrabold text-gray-900 dark:text-white">
                                     {row.idea.title}
                                   </div>
-                                  {isStar ? <div className="text-sm font-bold">{starLabel}</div> : null}
+                                  {isStar ? <div className="text-base">{starLabel}</div> : null}
                                   {cta ? (
-                                    <span className="ml-1 inline-flex items-center justify-center rounded-full px-2 py-1 text-[10px] font-bold tracking-wider bg-amber-600 text-white">
+                                    <span className="ml-1 inline-flex items-center justify-center rounded-full px-2 py-1 text-[10px] font-bold tracking-wider bg-amber-600 dark:bg-amber-500 text-white hover:scale-105 transition-transform dark:shadow-amber-500/50 dark:shadow-lg">
                                       {cta}
                                     </span>
                                   ) : null}
                                 </div>
                                 <div className="text-xs text-gray-600 dark:text-gray-400 mt-1">{row.idea.oneLine}</div>
-                                <div className="text-xs text-gray-700 dark:text-gray-300 mt-2 leading-relaxed">
+                                <div className="text-xs text-gray-800 dark:text-gray-200 mt-2 leading-relaxed">
                                   {row.idea.details}
                                 </div>
                               </div>
@@ -832,7 +841,7 @@ export const IncomeBlueprint: React.FC<IncomeBlueprintProps> = ({ chartData }) =
                         else if (row.isThirdPick) cta = "TOP 3";
 
                         const isStar = row.isTopPick || row.isRunnerUp || row.isThirdPick;
-                        const starLabel = row.isTopPick ? "★★★" : row.isRunnerUp ? "★★" : row.isThirdPick ? "★" : null;
+                        const starLabel = row.isTopPick ? "🌟🌟🌟" : row.isRunnerUp ? "⭐⭐" : row.isThirdPick ? "⭐" : null;
 
                 let cardClassName = "border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800";
                 if (row.isTopPick) {
@@ -847,19 +856,19 @@ export const IncomeBlueprint: React.FC<IncomeBlueprintProps> = ({ chartData }) =
                       <div className="flex-1">
                         <div className="flex items-center gap-2 flex-wrap">
                           <div className="text-sm font-extrabold text-gray-900 dark:text-white">{row.idea.title}</div>
-                          {isStar ? <span className="text-sm font-bold">{starLabel}</span> : null}
+                          {isStar ? <span className="text-base">{starLabel}</span> : null}
                         </div>
                         <div className="text-xs text-gray-600 dark:text-gray-400 mt-1">{row.idea.oneLine}</div>
                       </div>
 
                       {cta ? (
-                        <span className="inline-flex items-center justify-center rounded-full px-2 py-1 text-[10px] font-bold tracking-wider bg-amber-600 text-white shrink-0">
+                        <span className="inline-flex items-center justify-center rounded-full px-2 py-1 text-[10px] font-bold tracking-wider bg-amber-600 dark:bg-amber-500 text-white shrink-0 hover:scale-105 transition-transform dark:shadow-amber-500/50 dark:shadow-lg">
                           {cta}
                         </span>
                       ) : null}
                     </div>
 
-                    <div className="mt-3 text-sm text-gray-800 dark:text-gray-200 leading-relaxed">{row.idea.details}</div>
+                    <div className="mt-3 text-sm text-gray-800 dark:text-gray-100 leading-relaxed">{row.idea.details}</div>
 
                     <div className="mt-4 space-y-3">
                       <div>

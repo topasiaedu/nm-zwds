@@ -97,59 +97,85 @@ const LeadershipQuadrant: React.FC<LeadershipQuadrantProps> = ({ quadrantData, h
 
   return (
     <SectionCard title="Leadership Quadrant" subtitle="Career Palace leadership positioning">
-      <div className="relative w-full h-[420px]">
-        <ResponsiveContainer width="100%" height="100%">
-          <ScatterChart margin={{ top: 10, right: 10, bottom: 30, left: 10 }}>
-            <ReferenceArea x1={-10} x2={0} y1={0} y2={10} fill="rgba(79, 70, 229, 0.10)" />
-            <ReferenceArea x1={0} x2={10} y1={0} y2={10} fill="rgba(124, 58, 237, 0.10)" />
-            <ReferenceArea x1={-10} x2={0} y1={-10} y2={0} fill="rgba(30, 64, 175, 0.08)" />
-            <ReferenceArea x1={0} x2={10} y1={-10} y2={0} fill="rgba(147, 51, 234, 0.08)" />
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+        {/* Left: Quadrant Chart */}
+        <div className="lg:col-span-3">
+          <div className="relative w-full h-[420px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <ScatterChart margin={{ top: 10, right: 10, bottom: 30, left: 10 }}>
+                <ReferenceArea x1={-10} x2={0} y1={0} y2={10} fill="rgba(79, 70, 229, 0.10)" />
+                <ReferenceArea x1={0} x2={10} y1={0} y2={10} fill="rgba(124, 58, 237, 0.10)" />
+                <ReferenceArea x1={-10} x2={0} y1={-10} y2={0} fill="rgba(30, 64, 175, 0.08)" />
+                <ReferenceArea x1={0} x2={10} y1={-10} y2={0} fill="rgba(147, 51, 234, 0.08)" />
 
-            <CartesianGrid strokeDasharray="3 3" opacity={0.25} />
-            <XAxis type="number" dataKey="x" domain={[-10, 10]} tick={{ fill: "#94a3b8", fontSize: 11 }} />
-            <YAxis type="number" dataKey="y" domain={[-10, 10]} tick={{ fill: "#94a3b8", fontSize: 11 }} />
-            <ZAxis type="number" dataKey="z" range={[80, 240]} />
-            <ReferenceLine x={0} stroke="#94a3b8" opacity={0.6} />
-            <ReferenceLine y={0} stroke="#94a3b8" opacity={0.6} />
-            <RechartsTooltip content={<QuadrantTooltip />} />
-            <Legend />
+                <CartesianGrid strokeDasharray="3 3" opacity={0.25} />
+                <XAxis type="number" dataKey="x" domain={[-10, 10]} tick={{ fill: "#94a3b8", fontSize: 11 }} />
+                <YAxis type="number" dataKey="y" domain={[-10, 10]} tick={{ fill: "#94a3b8", fontSize: 11 }} />
+                <ZAxis type="number" dataKey="z" range={[80, 240]} />
+                <ReferenceLine x={0} stroke="#94a3b8" opacity={0.6} />
+                <ReferenceLine y={0} stroke="#94a3b8" opacity={0.6} />
+                <RechartsTooltip content={<QuadrantTooltip />} />
+                <Legend />
 
-            <Scatter name="Founder" data={[founderPoint]} fill="#7c3aed" stroke="#4f46e5" />
-          </ScatterChart>
-        </ResponsiveContainer>
+                <Scatter name="Founder" data={[founderPoint]} fill="#7c3aed" stroke="#4f46e5" />
+              </ScatterChart>
+            </ResponsiveContainer>
 
-        <div className="pointer-events-none absolute inset-0 px-3 py-3">
-          <div className="absolute left-3 top-3 text-[10px] leading-snug text-gray-600 dark:text-gray-300">
-            <div className="font-bold text-gray-900 dark:text-gray-100">{labels.topLeft.title}</div>
-            <div>{labels.topLeft.subtitle}</div>
-          </div>
-          <div className="absolute right-3 top-3 text-[10px] leading-snug text-right text-gray-600 dark:text-gray-300">
-            <div className="font-bold text-gray-900 dark:text-gray-100">{labels.topRight.title}</div>
-            <div>{labels.topRight.subtitle}</div>
-          </div>
-          <div className="absolute left-3 bottom-10 text-[10px] leading-snug text-gray-600 dark:text-gray-300">
-            <div className="font-bold text-gray-900 dark:text-gray-100">{labels.bottomLeft.title}</div>
-            <div>{labels.bottomLeft.subtitle}</div>
-          </div>
-          <div className="absolute right-3 bottom-10 text-[10px] leading-snug text-right text-gray-600 dark:text-gray-300">
-            <div className="font-bold text-gray-900 dark:text-gray-100">{labels.bottomRight.title}</div>
-            <div>{labels.bottomRight.subtitle}</div>
+            <div className="pointer-events-none absolute inset-0 px-3 py-3">
+              <div className="absolute left-3 top-3 text-xs leading-snug text-gray-600 dark:text-gray-300">
+                <div className="font-semibold text-gray-900 dark:text-gray-100">{labels.topLeft.title}</div>
+                <div className="font-medium">{labels.topLeft.subtitle}</div>
+              </div>
+              <div className="absolute right-3 top-3 text-xs leading-snug text-right text-gray-600 dark:text-gray-300">
+                <div className="font-semibold text-gray-900 dark:text-gray-100">{labels.topRight.title}</div>
+                <div className="font-medium">{labels.topRight.subtitle}</div>
+              </div>
+              <div className="absolute left-3 bottom-10 text-xs leading-snug text-gray-600 dark:text-gray-300">
+                <div className="font-semibold text-gray-900 dark:text-gray-100">{labels.bottomLeft.title}</div>
+                <div className="font-medium">{labels.bottomLeft.subtitle}</div>
+              </div>
+              <div className="absolute right-3 bottom-10 text-xs leading-snug text-right text-gray-600 dark:text-gray-300">
+                <div className="font-semibold text-gray-900 dark:text-gray-100">{labels.bottomRight.title}</div>
+                <div className="font-medium">{labels.bottomRight.subtitle}</div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-      <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-2 text-xs text-gray-600 dark:text-gray-400">
-        <div className="rounded-lg border border-gray-200 dark:border-gray-700 p-3">
-          <div className="font-bold text-gray-900 dark:text-gray-100 mb-1">Your leadership style</div>
-          <div className="leading-relaxed">{guidance.profile}</div>
-          <div className="mt-2 text-[11px] text-gray-500 dark:text-gray-500">
-            {`Axis: ${formatCareerAxis("x", point.x)} · ${formatCareerAxis("y", point.y)}`}
+
+        {/* Right: Guidance Boxes */}
+        <div className="lg:col-span-2 flex flex-col justify-center space-y-4">
+          <div className="rounded-xl bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-950/30 dark:to-purple-950/30 border border-indigo-200 dark:border-indigo-800 p-5">
+            <div className="flex items-center gap-2 mb-3">
+              <span className="text-xl">{"🧭"}</span>
+              <h4 className="font-extrabold text-gray-900 dark:text-gray-100 text-sm">{"Your Leadership Style"}</h4>
+            </div>
+            <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed mb-3">
+              {guidance.profile}
+            </p>
+            <div className="text-xs text-gray-500 dark:text-gray-400 pt-2 border-t border-indigo-200 dark:border-indigo-800">
+              {`Axis: ${formatCareerAxis("x", point.x)} · ${formatCareerAxis("y", point.y)}`}
+            </div>
           </div>
-        </div>
-        <div className="rounded-lg border border-gray-200 dark:border-gray-700 p-3">
-          <div className="font-bold text-gray-900 dark:text-gray-100 mb-1">What to hire for</div>
-          <div className="leading-relaxed">{guidance.lookFor}</div>
-          <div className="mt-3 font-bold text-gray-900 dark:text-gray-100">Look out for</div>
-          <div className="leading-relaxed">{guidance.watchOut}</div>
+
+          <div className="rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-5">
+            <div className="flex items-center gap-2 mb-3">
+              <span className="text-xl">{"✓"}</span>
+              <h4 className="font-extrabold text-gray-900 dark:text-white text-sm">{"What to Hire For"}</h4>
+            </div>
+            <p className="text-sm text-gray-800 dark:text-gray-200 leading-relaxed">
+              {guidance.lookFor}
+            </p>
+          </div>
+
+          <div className="rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-5">
+            <div className="flex items-center gap-2 mb-3">
+              <span className="text-xl">{"⚠"}</span>
+              <h4 className="font-extrabold text-gray-900 dark:text-white text-sm">{"Look Out For"}</h4>
+            </div>
+            <p className="text-sm text-gray-800 dark:text-gray-200 leading-relaxed">
+              {guidance.watchOut}
+            </p>
+          </div>
         </div>
       </div>
     </SectionCard>
