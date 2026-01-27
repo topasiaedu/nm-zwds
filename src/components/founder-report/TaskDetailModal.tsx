@@ -26,13 +26,117 @@ export interface TaskDetailModalProps {
 }
 
 /**
- * Render formatted action text with support for:
- * - Newlines (\n) 
- * - Bullet points (•)
- * - Code/formulas (`backticks`)
- * - Templates/Scripts (quoted text)
+ * Process inline formatting for a single line: backticks for code, bold markers
  */
-function renderFormattedText(text: string): JSX.Element {
+function processInlineFormatting(text: string): JSX.Element {
+  const parts: JSX.Element[] = [];
+  let key = 0;
+  
+  // Handle backtick code blocks
+  const codeRegex = /`([^`]+)`/g;
+  let lastIndex = 0;
+  let match: RegExpExecArray | null;
+  
+  while ((match = codeRegex.exec(text)) !== null) {
+    // Add text before code
+    if (match.index > lastIndex) {
+      const beforeText = text.substring(lastIndex, match.index);
+      if (beforeText) {
+        // Check for **bold** in the before text
+        const boldParts = beforeText.split(/(\*\*[^*]+\*\*)/g);
+        boldParts.forEach((part) => {
+          if (part.startsWith("**") && part.endsWith("**")) {
+            const boldText = part.slice(2, -2);
+            parts.push(<strong key={key++} className="font-bold">{boldText}</strong>);
+          } else if (part) {
+            parts.push(<span key={key++}>{part}</span>);
+          }
+        });
+      }
+    }
+    
+    // Add code block
+    parts.push(
+      <code 
+        key={key++} 
+        className="px-1.5 py-0.5 bg-gray-100 dark:bg-gray-700 rounded text-xs font-mono text-gray-800 dark:text-gray-200"
+      >
+        {match[1]}
+      </code>
+    );
+    
+    lastIndex = match.index + match[0].length;
+  }
+  
+  // Add remaining text
+  if (lastIndex < text.length) {
+    const remainingText = text.substring(lastIndex);
+    // Check for **bold** in remaining text
+    const boldParts = remainingText.split(/(\*\*[^*]+\*\*)/g);
+    boldParts.forEach((part) => {
+      if (part.startsWith("**") && part.endsWith("**")) {
+        const boldText = part.slice(2, -2);
+        parts.push(<strong key={key++} className="font-bold">{boldText}</strong>);
+      } else if (part) {
+        parts.push(<span key={key++}>{part}</span>);
+      }
+    });
+  }
+  
+  return <>{parts.length > 0 ? parts : text}</>;
+}
+
+/**
+ * Render formatted text with support for:
+ * - ARROW FORMAT: "Main → Context → Outcome" (for legacy avoidPoints)
+ * - NEW FORMAT: Newlines, bullets, code, bold, templates (for updated actions)
+ */
+function renderFormattedText(text: string, isAvoidPoint: boolean = false): JSX.Element {
+  // Check if using arrow format (legacy)
+  if (text.includes("→")) {
+    const parts = text.split("→").map((p) => p.trim());
+    
+    if (parts.length === 1) {
+      return <div className="leading-relaxed">{processInlineFormatting(parts[0])}</div>;
+    } else if (parts.length >= 2) {
+      return (
+        <div className="space-y-2">
+          {/* Main point - Bold */}
+          <div className="font-semibold leading-relaxed">
+            {processInlineFormatting(parts[0])}
+          </div>
+          
+          {/* Middle context parts */}
+          {parts.slice(1, -1).map((part, idx) => (
+            <div 
+              key={idx}
+              className={`text-sm leading-relaxed pl-3 border-l-2 ${
+                isAvoidPoint 
+                  ? "border-amber-200 dark:border-amber-700/40 text-amber-700 dark:text-amber-300" 
+                  : "border-green-200 dark:border-green-700/40 text-gray-600 dark:text-gray-400"
+              }`}
+            >
+              {processInlineFormatting(part)}
+            </div>
+          ))}
+          
+          {/* Final outcome - Badge */}
+          {parts.length > 1 && (
+            <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border ${
+              isAvoidPoint
+                ? "bg-red-100/80 dark:bg-red-900/40 text-red-800 dark:text-red-200 border-red-200 dark:border-red-700/40"
+                : "bg-green-100/80 dark:bg-green-900/40 text-green-800 dark:text-green-200 border-green-200 dark:border-green-700/40"
+            }`}>
+              <span className="text-base">{isAvoidPoint ? "⚠️" : "💡"}</span>
+              <span>{processInlineFormatting(parts[parts.length - 1])}</span>
+            </div>
+          )}
+        </div>
+      );
+    }
+  }
+  
+  // NEW FORMAT: Handle newlines and bullets
   const lines = text.split("\n").map((line) => line.trim()).filter((line) => line.length > 0);
   
   return (
@@ -48,49 +152,15 @@ function renderFormattedText(text: string): JSX.Element {
           ? line.replace(/^\d+\)\s*/, "") 
           : line;
         
-        // Process inline formatting: backticks for code, quotes for templates
-        const parts: JSX.Element[] = [];
-        let key = 0;
-        
-        // Handle backtick code blocks
-        const codeRegex = /`([^`]+)`/g;
-        let lastIndex = 0;
-        let match: RegExpExecArray | null;
-        
-        while ((match = codeRegex.exec(cleanLine)) !== null) {
-          // Add text before code
-          if (match.index > lastIndex) {
-            const beforeText = cleanLine.substring(lastIndex, match.index);
-            if (beforeText) {
-              parts.push(<span key={key++}>{beforeText}</span>);
-            }
-          }
-          
-          // Add code block
-          parts.push(
-            <code 
-              key={key++} 
-              className="px-1.5 py-0.5 bg-gray-100 dark:bg-gray-700 rounded text-xs font-mono text-gray-800 dark:text-gray-200"
-            >
-              {match[1]}
-            </code>
-          );
-          
-          lastIndex = match.index + match[0].length;
-        }
-        
-        // Add remaining text
-        if (lastIndex < cleanLine.length) {
-          parts.push(<span key={key++}>{cleanLine.substring(lastIndex)}</span>);
-        }
-        
-        const content = parts.length > 0 ? <>{parts}</> : cleanLine;
+        const content = processInlineFormatting(cleanLine);
         
         // Render based on line type
         if (isBullet || isNumbered) {
           return (
             <div key={lineIdx} className="flex items-start gap-2 pl-2">
-              <span className="text-green-600 dark:text-green-400 font-bold flex-shrink-0 mt-0.5">•</span>
+              <span className={`font-bold flex-shrink-0 mt-0.5 ${
+                isAvoidPoint ? "text-red-600 dark:text-red-400" : "text-green-600 dark:text-green-400"
+              }`}>•</span>
               <span className="flex-1">{content}</span>
             </div>
           );
@@ -98,7 +168,11 @@ function renderFormattedText(text: string): JSX.Element {
           // Template/Script block
           const quotedText = cleanLine.slice(1, -1);
           return (
-            <div key={lineIdx} className="pl-3 border-l-2 border-green-300 dark:border-green-600 bg-green-50/50 dark:bg-green-900/10 rounded-r px-3 py-2 text-sm italic text-gray-700 dark:text-gray-300">
+            <div key={lineIdx} className={`pl-3 border-l-2 rounded-r px-3 py-2 text-sm italic ${
+              isAvoidPoint
+                ? "border-amber-300 dark:border-amber-600 bg-amber-50/50 dark:bg-amber-900/10 text-amber-700 dark:text-amber-300"
+                : "border-green-300 dark:border-green-600 bg-green-50/50 dark:bg-green-900/10 text-gray-700 dark:text-gray-300"
+            }`}>
               {quotedText}
             </div>
           );
@@ -257,7 +331,7 @@ export const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
                       {idx + 1}
                     </span>
                     <div className="flex-1 text-amber-900 dark:text-amber-200 text-sm md:text-base">
-                      {renderFormattedText(avoidPoint)}
+                      {renderFormattedText(avoidPoint, true)}
                     </div>
                   </li>
                 ))}
