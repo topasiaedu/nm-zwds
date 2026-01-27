@@ -44,14 +44,14 @@ function processInlineFormatting(text: string): JSX.Element {
       if (beforeText) {
         // Check for **bold** in the before text
         const boldParts = beforeText.split(/(\*\*[^*]+\*\*)/g);
-        boldParts.forEach((part) => {
+        for (const part of boldParts) {
           if (part.startsWith("**") && part.endsWith("**")) {
             const boldText = part.slice(2, -2);
             parts.push(<strong key={key++} className="font-bold">{boldText}</strong>);
           } else if (part) {
             parts.push(<span key={key++}>{part}</span>);
           }
-        });
+        }
       }
     }
     
@@ -73,14 +73,14 @@ function processInlineFormatting(text: string): JSX.Element {
     const remainingText = text.substring(lastIndex);
     // Check for **bold** in remaining text
     const boldParts = remainingText.split(/(\*\*[^*]+\*\*)/g);
-    boldParts.forEach((part) => {
+    for (const part of boldParts) {
       if (part.startsWith("**") && part.endsWith("**")) {
         const boldText = part.slice(2, -2);
         parts.push(<strong key={key++} className="font-bold">{boldText}</strong>);
       } else if (part) {
         parts.push(<span key={key++}>{part}</span>);
       }
-    });
+    }
   }
   
   return <>{parts.length > 0 ? parts : text}</>;
