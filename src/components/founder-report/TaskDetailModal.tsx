@@ -50,7 +50,6 @@ function renderFormattedText(text: string): JSX.Element {
         
         // Process inline formatting: backticks for code, quotes for templates
         const parts: JSX.Element[] = [];
-        let currentText = cleanLine;
         let key = 0;
         
         // Handle backtick code blocks

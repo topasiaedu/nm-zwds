@@ -4,7 +4,7 @@ import {
   analyzeFourKeyPalaces,
   getConstantTransformationInfo,
   getPalaceMeaningFromConstants,
-  getPalaceKeywordFromConstants, transformationTypes,
+  transformationTypes,
   type TransformationType
 } from "../../utils/zwds/analysis";
 import AnimatedWrapper from "./AnimatedWrapper";
@@ -22,7 +22,7 @@ interface FourKeyPalaceAnalysisProps {
  * (禄、权、科、忌) and where they landed in the chart
  */
 const FourKeyPalaceAnalysis: React.FC<FourKeyPalaceAnalysisProps> = ({ chartData }) => {
-  const { t, language } = useLanguage();
+  const { t } = useLanguage();
   const [openCardStates, setOpenCardStates] = useState<Record<TransformationType, boolean>>({
     "化禄": true,
     "化权": true,

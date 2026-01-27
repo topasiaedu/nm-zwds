@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { Star, Line, Constellation } from "../types/star";
+import { Star, Line } from "../types/star";
 import { constellationData } from "../utils/constellationData";
 
 interface UseStarAnimationProps {

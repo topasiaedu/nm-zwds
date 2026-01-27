@@ -1,15 +1,12 @@
 import React from "react";
 import { Button } from "flowbite-react";
 import { Link } from "react-router-dom";
-import { useLanguage } from "../context/LanguageContext";
 
 /**
  * NotFoundPage component
  * Displays a 404 error page with a link to return home
  */
 const NotFoundPage: React.FC = () => {
-  const { t } = useLanguage();
-  
   return (
     <div className="flex flex-col items-center justify-center min-h-[70vh] text-center px-4">
       <div className="max-w-md backdrop-filter backdrop-blur-lg bg-white/20 dark:bg-black/20 p-8 rounded-2xl shadow-2xl border border-white/10">

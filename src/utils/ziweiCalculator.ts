@@ -1,12 +1,10 @@
-import { lunar } from './lunar'; // We'll need to convert the lunar.js to TypeScript
+import { lunar } from "./lunar"; // We'll need to convert the lunar.js to TypeScript
 import {
   EarthlyBranches,
   FiveElements,
   FiveEleArr,
   FiveEleTable,
-  GanGB,
   HeavenlyStems,
-  ZhiGB,
   ShengXiaoGB,
   StarM_S04,
   PalaceNames,
@@ -14,7 +12,6 @@ import {
   StarM_A07,
   StarM_B06,
   StarO_S05,
-  Star_A14,
   Star_Z06,
   Star_T08,
   Star_G07,
@@ -22,14 +19,14 @@ import {
   Star_B06,
   Star_OS5,
   YinYang
-} from './ziweiTypes';
+} from "./ziweiTypes";
 import type {
   ZiweiData,
   ZiweiState,
   StarPositions,
   Gender,
   Palace
-} from './ziweiTypes';
+} from "./ziweiTypes";
 
 class ZiweiCalculator {
   private state: ZiweiState;
@@ -231,8 +228,6 @@ class ZiweiCalculator {
   private stepSetStar(y: string, m: number, d: number, h: string): void {
     // Prepare stars
     // 0:紫微,1:天機,2:太陽,3:武曲,4:天同,5:廉貞,6:天府,7:太陰,8:貪狼,9:巨門,10:天相,11:天梁,12:七殺,13:破軍
-    const s14 = Star_A14[this.state.zPos] || [];
-
     // Get stars from Star_Z06 array
     const sZ06 = Star_Z06.map(row => row[this.state.zPos]);
 

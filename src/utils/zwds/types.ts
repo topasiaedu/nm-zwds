@@ -1,4 +1,4 @@
-import { HEAVENLY_STEMS, EARTHLY_BRANCHES, LUNAR_DAY_MAP, FIVE_ELEMENTS_TABLE, ZIWEI_POSITIONS } from './constants';
+import { HEAVENLY_STEMS, EARTHLY_BRANCHES, LUNAR_DAY_MAP } from "./constants";
 /**
  * Types for Zi Wei Dou Shu calculations
  */

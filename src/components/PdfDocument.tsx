@@ -31,7 +31,7 @@ interface PdfDocumentProps {
  */
 const PdfDocument = forwardRef<HTMLDivElement, PdfDocumentProps>(
   ({ chartData, calculatedChartData, formatDate, includeAnalysis = true, pageBreaks = true }, ref) => {
-    const { t, language } = useLanguage();
+    const { t } = useLanguage();
 
     // Professional PDF styles
     const pdfStyles = {

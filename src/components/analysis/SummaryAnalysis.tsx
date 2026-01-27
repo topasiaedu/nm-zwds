@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { analyzeSummary, SummaryAnalysisResult } from "../../utils/zwds/analysis";
 import { useLanguage } from "../../context/LanguageContext";
 import { SUMMARY_ANALYSIS_CONSTANTS } from "../../utils/zwds/analysis_constants/summary_analysis";
@@ -17,17 +17,16 @@ interface SummaryAnalysisProps {
  * based on stars in the Life Palace (命宫)
  */
 const SummaryAnalysis: React.FC<SummaryAnalysisProps> = ({ chartData }) => {
-  const { t, language } = useLanguage();
+  const { t } = useLanguage();
   const [summaries, setSummaries] = useState<SummaryAnalysisResult[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<boolean>(false);
 
   // Helper function to translate or provide default text
-  const getText = (key: string, defaultText: string): string => {
+  const getText = useCallback((key: string, defaultText: string): string => {
     const translated = t(key);
     // If translation returns the key itself or is empty, use default text
     return (!translated || translated === key) ? defaultText : translated;
-  };
+  }, [t]);
 
   useEffect(() => {
     if (chartData) {
@@ -44,7 +43,6 @@ const SummaryAnalysis: React.FC<SummaryAnalysisProps> = ({ chartData }) => {
             { starName: "天同", description: getText(`analysis.summary.stars.天同`, SUMMARY_ANALYSIS_CONSTANTS.天同) }
           ];
           setSummaries(demoData);
-          setError(true);
           console.log("Using demo data for Summary Analysis as no stars were found in Life Palace");
         } else {
           // Transform summaryResults to use translations
@@ -53,7 +51,6 @@ const SummaryAnalysis: React.FC<SummaryAnalysisProps> = ({ chartData }) => {
             description: getText(`analysis.summary.stars.${summary.starName}`, summary.description)
           }));
           setSummaries(translatedResults);
-          setError(false);
         }
 
         setLoading(false);
@@ -67,11 +64,10 @@ const SummaryAnalysis: React.FC<SummaryAnalysisProps> = ({ chartData }) => {
           { starName: "文曲", description: getText(`analysis.summary.stars.文曲`, SUMMARY_ANALYSIS_CONSTANTS.文曲) }
         ];
         setSummaries(demoData);
-        setError(true);
         setLoading(false);
       }
     }
-  }, [chartData, language, t]);
+  }, [chartData, getText]);
 
   if (loading) {
     return (

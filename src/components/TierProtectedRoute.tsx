@@ -25,7 +25,6 @@ const TierProtectedRoute: React.FC<TierProtectedRouteProps> = ({
   const { user } = useAuth();
   const location = useLocation();
   const { 
-    tier, 
     isAdmin, 
     isTier2OrHigher, 
     hasDestinyNavigatorAccess, 

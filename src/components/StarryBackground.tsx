@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 
 /**
  * Properties for individual stars in the starry background
@@ -37,7 +37,7 @@ const StarryBackground: React.FC = () => {
   /**
    * Initialize stars with random positions, sizes, directions and speeds
    */
-  const initStars = (count: number): Star[] => {
+  const initStars = useCallback((count: number): Star[] => {
     const newStars: Star[] = [];
     // Create a canvas area larger than viewport to accommodate parallax scrolling
     const areaWidth = window.innerWidth;
@@ -64,12 +64,12 @@ const StarryBackground: React.FC = () => {
       });
     }
     return newStars;
-  };
+  }, [isDarkMode]);
   
   /**
    * Draw a star on the canvas
    */
-  const drawStar = (
+  const drawStar = useCallback((
     ctx: CanvasRenderingContext2D,
     x: number,
     y: number,
@@ -95,19 +95,19 @@ const StarryBackground: React.FC = () => {
     ctx.beginPath();
     ctx.arc(x, y, radius, 0, Math.PI * 2);
     ctx.fill();
-  };
+  }, [isDarkMode]);
   
   /**
    * Calculate distance between two points
    */
-  const calculateDistance = (x1: number, y1: number, x2: number, y2: number): number => {
+  const calculateDistance = useCallback((x1: number, y1: number, x2: number, y2: number): number => {
     return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
-  };
+  }, []);
   
   /**
    * Draw connections between nearby stars to form constellations
    */
-  const drawConstellations = (ctx: CanvasRenderingContext2D, stars: Star[], parallaxOffset: number): void => {
+  const drawConstellations = useCallback((ctx: CanvasRenderingContext2D, stars: Star[], parallaxOffset: number): void => {
     const threshold = 120; // Maximum distance to connect stars (reduced for subtlety)
     const maxConnections = 2; // Maximum connections per star (reduced for fewer lines)
     
@@ -159,54 +159,12 @@ const StarryBackground: React.FC = () => {
         }
       }
     }
-  };
-  
-  /**
-   * Start the animation loop
-   */
-  const startAnimation = (): void => {
-    if (animationPaused.current) {
-      return;
-    }
-    
-    if (animationRef.current) {
-      return;
-    }
-    
-    isRunning.current = false; // Reset this to ensure animate() will run
-    animationRef.current = requestAnimationFrame(animate);
-  };
-  
-  /**
-   * Stop the animation loop
-   */
-  const stopAnimation = (): void => {
-    if (animationRef.current) {
-      cancelAnimationFrame(animationRef.current);
-      animationRef.current = 0;
-    }
-  };
-  
-  /**
-   * Pause the animation (when page is not visible)
-   */
-  const pauseAnimation = (): void => {
-    animationPaused.current = true;
-    stopAnimation();
-  };
-  
-  /**
-   * Resume the animation (when page becomes visible again)
-   */
-  const resumeAnimation = (): void => {
-    animationPaused.current = false;
-    startAnimation();
-  };
+  }, [calculateDistance, isDarkMode]);
   
   /**
    * Animate the stars with random movement, very slow flickering, and parallax scrolling
    */
-  const animate = (timestamp: number): void => {
+  const animate = useCallback((timestamp: number): void => {
     // Skip if paused or already running
     if (animationPaused.current) {
       return;
@@ -310,7 +268,61 @@ const StarryBackground: React.FC = () => {
     } else {
       animationRef.current = 0;
     }
-  };
+  }, [
+    animationPaused,
+    animationRef,
+    canvasRef,
+    drawConstellations,
+    drawStar,
+    initStars,
+    isDarkMode,
+    isRunning,
+    lastFrameTime,
+    scrollY,
+    stars
+  ]);
+  
+  /**
+   * Start the animation loop
+   */
+  const startAnimation = useCallback((): void => {
+    if (animationPaused.current) {
+      return;
+    }
+    
+    if (animationRef.current) {
+      return;
+    }
+    
+    isRunning.current = false; // Reset this to ensure animate() will run
+    animationRef.current = requestAnimationFrame(animate);
+  }, [animate, animationPaused, animationRef, isRunning]);
+  
+  /**
+   * Stop the animation loop
+   */
+  const stopAnimation = useCallback((): void => {
+    if (animationRef.current) {
+      cancelAnimationFrame(animationRef.current);
+      animationRef.current = 0;
+    }
+  }, [animationRef]);
+  
+  /**
+   * Pause the animation (when page is not visible)
+   */
+  const pauseAnimation = useCallback((): void => {
+    animationPaused.current = true;
+    stopAnimation();
+  }, [animationPaused, stopAnimation]);
+  
+  /**
+   * Resume the animation (when page becomes visible again)
+   */
+  const resumeAnimation = useCallback((): void => {
+    animationPaused.current = false;
+    startAnimation();
+  }, [animationPaused, startAnimation]);
   
   /**
    * Set up canvas and stars, start animation
@@ -469,7 +481,7 @@ const StarryBackground: React.FC = () => {
       intersectionObserver.disconnect();
       window.removeEventListener("resize", debouncedResize);
     };
-  }, []);
+  }, [initStars, pauseAnimation, resumeAnimation, startAnimation, stopAnimation]);
   
   return (
     <canvas

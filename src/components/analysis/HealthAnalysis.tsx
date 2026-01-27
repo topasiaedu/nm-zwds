@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { analyzeHealth, getStarsInPalace } from "../../utils/zwds/analysis";
 import { useLanguage } from "../../context/LanguageContext";
 import AnimatedWrapper from "./AnimatedWrapper";
@@ -52,7 +52,7 @@ const HumanBodySVG: React.FC<{
   const [svgContent, setSvgContent] = useState<string>("");
   
   // Convert Chinese body part names to SVG element identifiers
-  const getAffectedSvgParts = (): string[] => {
+  const getAffectedSvgParts = useCallback((): string[] => {
     const svgParts: string[] = [];
     
     affectedParts.forEach(part => {
@@ -63,7 +63,7 @@ const HumanBodySVG: React.FC<{
     });
     
     return [...new Set(svgParts)]; // Remove duplicates
-  };
+  }, [affectedParts]);
 
   // Load the SVG content directly
   useEffect(() => {
@@ -266,7 +266,7 @@ const HumanBodySVG: React.FC<{
         cancelAnimationFrame(animationFrame);
       };
     }
-  }, [svgContent, affectedParts]);
+  }, [svgContent, getAffectedSvgParts]);
 
   return (
     <div 
@@ -281,7 +281,7 @@ const HumanBodySVG: React.FC<{
  * based on stars in the chart's health palace (疾厄宫) with a human body visualization
  */
 const HealthAnalysis: React.FC<HealthAnalysisProps> = ({ chartData }) => {
-  const { t, language } = useLanguage();
+  const { t } = useLanguage();
   const [affectedBodyParts, setAffectedBodyParts] = useState<string[]>([]);
   const [starsInHealthPalace, setStarsInHealthPalace] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(true);

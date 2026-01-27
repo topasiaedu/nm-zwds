@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { analyzeWatchouts } from "../../utils/zwds/analysis";
 import { useLanguage } from "../../context/LanguageContext";
 import { WatchoutResult } from "../../utils/zwds/analysis/watchoutAnalysis";
@@ -17,17 +17,16 @@ interface WatchoutAnalysisProps {
  * Draws data from WATCHOUT_ANALYSIS_CONSTANTS through the analyzeWatchouts function
  */
 const WatchoutAnalysis: React.FC<WatchoutAnalysisProps> = ({ chartData }) => {
-  const { t, language } = useLanguage();
+  const { t } = useLanguage();
   const [watchoutData, setWatchoutData] = useState<WatchoutResult[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<boolean>(false);
 
   // Helper function to translate or provide default text
-  const getText = (key: string, defaultText: string): string => {
+  const getText = useCallback((key: string, defaultText: string): string => {
     const translated = t(key);
     // If translation returns the key itself or is empty, use default text
     return (!translated || translated === key) ? defaultText : translated;
-  };
+  }, [t]);
 
   useEffect(() => {
     if (chartData) {
@@ -55,7 +54,6 @@ const WatchoutAnalysis: React.FC<WatchoutAnalysisProps> = ({ chartData }) => {
               warning: getText(`analysis.watchout.官禄.武曲`, "压过主管、推不开团队、太用力失去弹性")
             }
           ]);
-          setError(true);
         } else {
           // Transform results to use translations
           const translatedResults = watchouts.map(item => ({
@@ -64,7 +62,6 @@ const WatchoutAnalysis: React.FC<WatchoutAnalysisProps> = ({ chartData }) => {
             warning: getText(`analysis.watchout.${item.palace}.${item.star}`, item.warning)
           }));
           setWatchoutData(translatedResults);
-          setError(false);
         }
 
         setLoading(false);
@@ -84,11 +81,10 @@ const WatchoutAnalysis: React.FC<WatchoutAnalysisProps> = ({ chartData }) => {
             warning: getText(`analysis.watchout.财帛.天府`, "过于保守，错失机会")
           }
         ]);
-        setError(true);
         setLoading(false);
       }
     }
-  }, [chartData, language, t]);
+  }, [chartData, getText]);
 
   if (loading) {
     return (

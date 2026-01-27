@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { analyzeCareerLegacy as analyzeCareer, getStarsInPalace } from "../../utils/zwds/analysis";
 import { useLanguage } from "../../context/LanguageContext";
@@ -184,19 +185,6 @@ const CareerAnalysis: React.FC<CareerAnalysisProps> = ({ chartData }) => {
       "Advisors 筹策者": "#1976D2"       // Blue
     };
 
-    // Simplified category translations - just names, no descriptions
-    const categoryTranslations = {
-      "Visionaries 灵感者": t("analysis.career.visionaries"),
-      "Lifekeepers 生命守护者": t("analysis.career.lifekeepers"),
-      "Educators 教育者": t("analysis.career.educators"),
-      "Strategists 策略者": t("analysis.career.strategists"),
-      "Architects 架构者": t("analysis.career.architects"),
-      "Stewards 执行者": t("analysis.career.stewards"),
-      "Guardians 守护者": t("analysis.career.guardians"),
-      "Vanguards 先锋者": t("analysis.career.vanguards"),
-      "Advisors 筹策者": t("analysis.career.advisors")
-    };
-
     // Create direct display values for categories
     const displayCategories: Record<string, string> = {
       "Visionaries 灵感者": language === "en" ? "Visionaries" : "灵感者",
@@ -225,7 +213,7 @@ const CareerAnalysis: React.FC<CareerAnalysisProps> = ({ chartData }) => {
       careersInCategories: categorizedCareers,
       categories
     };
-  }, [careerAptitudes, t, language]);
+  }, [careerAptitudes, language]);
 
   // Translate career name
   const translateCareer = (careerName: string): string => {
@@ -248,14 +236,6 @@ const CareerAnalysis: React.FC<CareerAnalysisProps> = ({ chartData }) => {
       </div>
     );
   }
-
-  console.log("careerAptitudes for those in vanguards", careerAptitudes.filter(career => {
-    if (categories["Vanguards 先锋者"].includes(career)) {
-      return career;
-    }}
-
-  ))
-
 
   return (
     <AnimatedWrapper threshold={0.1}>
@@ -313,6 +293,7 @@ const CareerAnalysis: React.FC<CareerAnalysisProps> = ({ chartData }) => {
                       tick={{fill: "#718096"}}
                     />
                     <Tooltip
+                      // eslint-disable-next-line react/prop-types
                       content={(props) => {
                         if (!props.active || !props.payload || !props.payload[0]) {
                           return null;
@@ -325,7 +306,7 @@ const CareerAnalysis: React.FC<CareerAnalysisProps> = ({ chartData }) => {
                         
                         const careersInThisCategory = englishCategory === "其他" 
                           ? careerAptitudes.filter(career => {
-                              for (const [cat, careerList] of Object.entries(categories)) {
+                            for (const [, careerList] of Object.entries(categories)) {
                                 if (careerList.includes(career)) {
                                   return false;
                                 }

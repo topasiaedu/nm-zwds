@@ -181,8 +181,6 @@ const ActivationAnalysis: React.FC<ActivationAnalysisProps> = ({ chartData }) =>
    */
   const activations = useMemo(() => {
     // Mock: Assume we're analyzing "Travel" palace, all 4 transformations fly FROM there
-    const aspectPalace = "Travel";
-    
     return [
       {
         type: "禄",
@@ -215,8 +213,6 @@ const ActivationAnalysis: React.FC<ActivationAnalysisProps> = ({ chartData }) =>
     return null;
   }
 
-  const aspectPalace = "Travel"; // Mock - should come from props
-
   return (
     <section className="mb-8 bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 p-8">
       {/* Header */}
@@ -227,7 +223,7 @@ const ActivationAnalysis: React.FC<ActivationAnalysisProps> = ({ chartData }) =>
           </div>
           <div className="flex-1">
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
-              Energy Transformations from {aspectPalace}
+              Energy Transformations from Travel
             </h2>
             <p className="text-sm text-gray-600 dark:text-gray-400">
               Four key energies emanating from this palace and where they land
@@ -238,13 +234,15 @@ const ActivationAnalysis: React.FC<ActivationAnalysisProps> = ({ chartData }) =>
 
       {/* Transformation Insights Grid */}
       <div className="space-y-4">
-        {activations.map((activation, index) => {
+        {activations.map((activation) => {
           const config = ACTIVATION_CONFIGS[activation.type];
-          const insight = generateActivationInsight(activation.type, activation.toPalace, aspectPalace);
+          const insight = generateActivationInsight(activation.type, activation.toPalace, "Travel");
+          // Stable key derived from activation data to avoid index keys.
+          const activationKey = `${activation.type}-${activation.starName}-${activation.palaceNumber}`;
 
           return (
             <div
-              key={index}
+              key={activationKey}
               className={`rounded-xl border p-5 transition-all duration-200 hover:shadow-md ${config.bgLight} ${config.bgDark} ${config.borderLight} ${config.borderDark}`}
             >
               {/* Header Row */}

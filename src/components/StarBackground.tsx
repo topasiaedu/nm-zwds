@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 
 /**
  * Animation properties for the star background
@@ -24,7 +24,7 @@ const StarBackground: React.FC = () => {
   const isInitialized = useRef<boolean>(false);
 
   // Initialize stars
-  const initStars = (count: number): Star[] => {
+  const initStars = useCallback((count: number): Star[] => {
     const stars: Star[] = [];
     const canvas = canvasRef.current;
     if (!canvas) return stars;
@@ -39,10 +39,10 @@ const StarBackground: React.FC = () => {
       });
     }
     return stars;
-  };
+  }, [canvasRef]);
 
   // Draw stars
-  const drawStars = () => {
+  const drawStars = useCallback(() => {
     const canvas = canvasRef.current;
     const ctx = canvas?.getContext("2d");
     if (!canvas || !ctx) return;
@@ -67,10 +67,10 @@ const StarBackground: React.FC = () => {
       ctx.fillStyle = `rgba(${starColor}, ${star.opacity})`;
       ctx.fill();
     });
-  };
+  }, [canvasRef, initStars, isDarkMode, isInitialized]);
 
   // Animate stars
-  const animateStars = () => {
+  const animateStars = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -87,10 +87,10 @@ const StarBackground: React.FC = () => {
 
     drawStars();
     animationFrameRef.current = requestAnimationFrame(animateStars);
-  };
+  }, [canvasRef, drawStars]);
 
   // Resize canvas to match window size
-  const handleResize = () => {
+  const handleResize = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -104,10 +104,10 @@ const StarBackground: React.FC = () => {
     drawStars();
     
     isInitialized.current = true;
-  };
+  }, [canvasRef, drawStars, initStars, isDarkMode]);
 
   // Monitor theme changes
-  const setupThemeObserver = () => {
+  const setupThemeObserver = useCallback(() => {
     const callback = (mutationsList: MutationRecord[]) => {
       for (const mutation of mutationsList) {
         if (
@@ -125,7 +125,7 @@ const StarBackground: React.FC = () => {
       attributes: true,
       attributeFilter: ["class"],
     });
-  };
+  }, [drawStars]);
 
   useEffect(() => {
     
@@ -151,7 +151,7 @@ const StarBackground: React.FC = () => {
       }
       window.removeEventListener("resize", handleResize);
     };
-  }, []);
+  }, [animateStars, handleResize, setupThemeObserver]);
 
   return (
     <canvas
