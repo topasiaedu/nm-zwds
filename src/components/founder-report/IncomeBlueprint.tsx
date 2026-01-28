@@ -711,34 +711,93 @@ export const IncomeBlueprint: React.FC<IncomeBlueprintProps> = ({ chartData }) =
       <div className="w-full border-t border-gray-400 dark:border-gray-600 mb-6" />
 
       {/* Section Header */}
-      <div className="text-center mb-8">
-        <h2 className="text-4xl dark:text-white font-bold mb-2">{"SCALABLE INCOME BLUEPRINT"}</h2>
-        <p className="text-gray-700 dark:text-gray-300 text-sm">
-          {"Side income isn't luck. It's alignment — built on your natural path and your timing."}
-        </p>
+      <div
+        className="relative rounded-3xl overflow-hidden mb-8"
+        style={{
+          background: "linear-gradient(135deg, #d97706 0%, #f59e0b 50%, #eab308 100%)",
+          padding: "32px 40px",
+          boxShadow: "0 10px 40px rgba(245, 158, 11, 0.3)",
+        }}
+      >
+        <div
+          style={{
+            position: "absolute",
+            top: "20px",
+            right: "40px",
+            fontSize: "48px",
+            opacity: 0.2,
+          }}
+        >
+          💰
+        </div>
+        <div
+          style={{
+            position: "absolute",
+            bottom: "30px",
+            left: "60px",
+            fontSize: "24px",
+            opacity: 0.15,
+          }}
+        >
+          📈
+        </div>
 
-        <div className="mt-4 flex flex-wrap items-center justify-center gap-2 text-xs">
-          <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800">
-            <span className="font-bold text-amber-900 dark:text-amber-200">{"Timing"}</span>
-            <span className="text-gray-700 dark:text-gray-300">{`${seasonCue.title} · ${seasonCue.action} season`}</span>
-          </span>
-          {hasWealthCode ? (
-            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
-              <span className="font-bold text-gray-900 dark:text-white">{"Dominant code"}</span>
-              <span className="text-gray-700 dark:text-gray-300">{dominantCodeLabel}</span>
+        <div className="relative z-10">
+          <div className="flex items-center gap-3 mb-3">
+            <span
+              style={{
+                background: "rgba(255, 255, 255, 0.9)",
+                color: "#d97706",
+                padding: "4px 12px",
+                borderRadius: "8px",
+                fontSize: "18px",
+                fontWeight: "800",
+              }}
+            >
+              04
             </span>
-          ) : null}
+            <h2
+              style={{
+                fontSize: "32px",
+                fontWeight: "800",
+                color: "#ffffff",
+                textShadow: "0 2px 10px rgba(0,0,0,0.1)",
+              }}
+            >
+              Scalable Income Blueprint
+            </h2>
+          </div>
+          <p
+            style={{
+              color: "#fff",
+              fontSize: "15px",
+              fontWeight: "500",
+              marginTop: "8px",
+              opacity: 0.95,
+            }}
+          >
+            Explore proven side-income paths aligned to your Wealth Code and current timing
+          </p>
+
+          <div className="mt-4 flex flex-wrap items-center gap-2 text-xs">
+            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/20 backdrop-blur-sm border border-white/30">
+              <span className="font-bold text-white">{"Timing"}</span>
+              <span className="text-white/90">{`${seasonCue.title} · ${seasonCue.action} season`}</span>
+            </span>
+            {hasWealthCode ? (
+              <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/20 backdrop-blur-sm border border-white/30">
+                <span className="font-bold text-white">{"Dominant code"}</span>
+                <span className="text-white/90">{dominantCodeLabel}</span>
+              </span>
+            ) : null}
+          </div>
         </div>
       </div>
 
       {hasWealthCode ? (
         <>
           {/* CHART 1 (Hero): Side Income Priority Matrix */}
-          <SectionCard
-            title="START HERE: Side Income Priority Matrix"
-            subtitle={`Top 5 aligned ideas for your ${dominantCodeLabel} path • Timing: ${seasonCue.title} (${seasonCue.action}) • Capital capacity (IB): ${formatScore(ibScore)}/10`}
-          >
-
+          <div className="rounded-2xl shadow-lg overflow-hidden border bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700">
             {/* Desktop table */}
             <div className="hidden lg:block">
               <div className="overflow-hidden rounded-2xl border border-gray-200 dark:border-gray-700">
@@ -910,7 +969,7 @@ export const IncomeBlueprint: React.FC<IncomeBlueprintProps> = ({ chartData }) =
               })}
             </div>
 
-          </SectionCard>
+          </div>
         </>
       ) : (
         <div className="rounded-2xl shadow-lg border bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700 p-8 text-center">

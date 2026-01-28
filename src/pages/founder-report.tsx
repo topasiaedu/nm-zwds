@@ -497,8 +497,9 @@ const FounderReportContent: React.FC = () => {
                 chartData={calculatedChartData}
                 showTopDivider={false}
                 header={{
-                  title: "WEALTH CODE DNA",
-                  subtitle: "Your Natural Business Model & Income Strategy",
+                  badgeText: "01",
+                  title: "Wealth Code DNA",
+                  subtitle: "Decode your natural earning style and ideal business model aligned to your energy.",
                 }}
               />
             </SectionErrorBoundary>
@@ -898,10 +899,10 @@ const FounderReportContent: React.FC = () => {
               <div className="mt-8">
                 <div className="flex flex-col justify-center items-center">
                   <h2 className="text-2xl sm:text-4xl mb-2 font-bold dark:text-white flex items-center text-center pt-4">
-                    {"Analysis"}
+                    {"FOUNDER REPORT ANALYSIS"}
                   </h2>
                   <p className="text-sm sm:text-lg mb-6 dark:text-white text-center italic">
-                    {"Founder-focused strategic insights will appear here."}
+                    {"A personalized breakdown of your business DNA, timing cycles, and strategic action plans."}
                   </p>
                 </div>
 

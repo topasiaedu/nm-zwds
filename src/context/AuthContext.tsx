@@ -158,7 +158,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   ): Promise<AuthResponse> => {
     try {
       // Check referral code
-      if (referralCode !== "DYD2025") {
+      if (referralCode !== "DYD2025" ) {
         return {
           data: { user: null, session: null },
           error: { message: "Invalid referral code", status: 400 } as AuthError,

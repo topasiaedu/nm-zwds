@@ -64,7 +64,16 @@ const IdealTeamRadar: React.FC<IdealTeamRadarProps> = ({
                       return match ? `${match.icon} ${value}` : value;
                     }}
                   />
-                  <PolarRadiusAxis angle={90} domain={[0, 10]} tick={{ fill: "#94a3b8", fontSize: 10 }} />
+                  <PolarRadiusAxis 
+                    angle={90} 
+                    domain={[0, 10]} 
+                    tick={{ fill: "#94a3b8", fontSize: 10 }}
+                    tickCount={6}
+                    tickFormatter={(value: number) => {
+                      // Convert 0-10 scale to 0-100 for display
+                      return `${Math.round(value * 10)}`;
+                    }}
+                  />
                   <RechartsTooltip content={<TalentRadarTooltip />} />
                   <Radar
                     name="Ideal"

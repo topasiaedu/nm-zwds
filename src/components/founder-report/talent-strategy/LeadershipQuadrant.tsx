@@ -92,8 +92,23 @@ const LeadershipQuadrant: React.FC<LeadershipQuadrantProps> = ({ quadrantData, h
   }
 
   const { point, labels } = quadrantData;
-  const founderPoint: CareerQuadrantPoint & { z: number } = { ...point, z: 120 };
+  // Increase z-value to make the point much larger and more visible
+  const founderPoint: CareerQuadrantPoint & { z: number } = { ...point, z: 300 };
   const guidance = buildLaymanGuidance(point);
+  
+  /**
+   * Generate natural language axis descriptions
+   */
+  const getAxisExplanation = (): string => {
+    const xDirection = point.x >= 0 
+      ? "you lean toward creating momentum, external growth, and fast action"
+      : "you lean toward internal support, steady processes, and structured control";
+    const yDirection = point.y >= 0
+      ? "you lead with initiative and decisive forward push"
+      : "you lead with stability, people focus, and team cohesion";
+    
+    return `Your chart shows ${xDirection}, and ${yDirection}.`;
+  };
 
   return (
     <SectionCard title="Leadership Quadrant" subtitle="Career Palace leadership positioning">
@@ -111,13 +126,19 @@ const LeadershipQuadrant: React.FC<LeadershipQuadrantProps> = ({ quadrantData, h
                 <CartesianGrid strokeDasharray="3 3" opacity={0.25} />
                 <XAxis type="number" dataKey="x" domain={[-10, 10]} tick={{ fill: "#94a3b8", fontSize: 11 }} />
                 <YAxis type="number" dataKey="y" domain={[-10, 10]} tick={{ fill: "#94a3b8", fontSize: 11 }} />
-                <ZAxis type="number" dataKey="z" range={[80, 240]} />
+                <ZAxis type="number" dataKey="z" range={[200, 400]} />
                 <ReferenceLine x={0} stroke="#94a3b8" opacity={0.6} />
                 <ReferenceLine y={0} stroke="#94a3b8" opacity={0.6} />
                 <RechartsTooltip content={<QuadrantTooltip />} />
                 <Legend />
 
-                <Scatter name="Founder" data={[founderPoint]} fill="#7c3aed" stroke="#4f46e5" />
+                <Scatter 
+                  name="Founder" 
+                  data={[founderPoint]} 
+                  fill="#7c3aed" 
+                  stroke="#4f46e5" 
+                  strokeWidth={3}
+                />
               </ScatterChart>
             </ResponsiveContainer>
 
@@ -152,8 +173,9 @@ const LeadershipQuadrant: React.FC<LeadershipQuadrantProps> = ({ quadrantData, h
             <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed mb-3">
               {guidance.profile}
             </p>
-            <div className="text-xs text-gray-500 dark:text-gray-400 pt-2 border-t border-indigo-200 dark:border-indigo-800">
-              {`Axis: ${formatCareerAxis("x", point.x)} · ${formatCareerAxis("y", point.y)}`}
+            <div className="text-xs text-gray-600 dark:text-gray-400 pt-3 border-t border-indigo-200 dark:border-indigo-800 leading-relaxed">
+              <div className="font-semibold text-gray-800 dark:text-gray-200 mb-1">{"Chart Position Explained:"}</div>
+              {getAxisExplanation()}
             </div>
           </div>
 

@@ -52,15 +52,90 @@ export const TalentStrategy: React.FC<TalentStrategyProps> = ({ chartData }) => 
     anchor: "Team Stability"
   };
 
+  /**
+   * Detailed explanations for each leadership archetype.
+   * Helps users understand what their archetype means in practice.
+   */
+  const archetypeExplanations: Record<string, string> = {
+    architect: "You're a builder of systems and frameworks. You naturally see the big picture and break down complex problems into structured solutions. As a founder, you excel at creating processes, building roadmaps, and designing scalable operations. Your strength is turning chaos into order.",
+    guardian: "You're wired for financial discipline and risk management. You naturally focus on profitability, cost control, and sustainable growth. As a founder, you excel at protecting resources, optimizing margins, and making data-driven decisions. Your strength is keeping the business financially healthy and stable.",
+    catalyst: "You're a natural growth driver and momentum creator. You thrive on expansion, sales, and bringing energy to the team. As a founder, you excel at launching initiatives, closing deals, and pushing boundaries. Your strength is accelerating growth and creating movement when others get stuck.",
+    anchor: "You're a stabilizing force who values people and culture. You naturally build trust, resolve conflicts, and create cohesive teams. As a founder, you excel at employee retention, building loyalty, and maintaining morale during turbulent times. Your strength is holding the team together and preventing attrition."
+  };
+
   return (
     <div className="p-6 dark:bg-gray-900">
       <div className="w-full border-t border-gray-400 dark:border-gray-600 mb-6"></div>
 
-      <div className="text-center mb-10">
-        <h2 className="text-4xl dark:text-white font-bold mb-2">{"A+ TALENT STRATEGY"}</h2>
-        <p className="text-gray-700 dark:text-gray-300 text-sm max-w-3xl mx-auto leading-relaxed">
-          {"Your Career Palace reveals your natural leadership style and ideal team composition. Founders often hire people like themselves, creating blind spots. This analysis shows exactly which personality types and skill sets you need to balance your natural tendencies and scale sustainably."}
-        </p>
+      {/* Section Header */}
+      <div
+        className="relative rounded-3xl overflow-hidden mb-10"
+        style={{
+          background: "linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%)",
+          padding: "32px 40px",
+          boxShadow: "0 10px 40px rgba(139, 92, 246, 0.3)",
+        }}
+      >
+        <div
+          style={{
+            position: "absolute",
+            top: "20px",
+            right: "40px",
+            fontSize: "48px",
+            opacity: 0.2,
+          }}
+        >
+          👥
+        </div>
+        <div
+          style={{
+            position: "absolute",
+            bottom: "30px",
+            left: "60px",
+            fontSize: "24px",
+            opacity: 0.15,
+          }}
+        >
+          ⭐
+        </div>
+
+        <div className="relative z-10">
+          <div className="flex items-center gap-3 mb-3">
+            <span
+              style={{
+                background: "rgba(255, 255, 255, 0.9)",
+                color: "#8b5cf6",
+                padding: "4px 12px",
+                borderRadius: "8px",
+                fontSize: "18px",
+                fontWeight: "800",
+              }}
+            >
+              03
+            </span>
+            <h2
+              style={{
+                fontSize: "32px",
+                fontWeight: "800",
+                color: "#ffffff",
+                textShadow: "0 2px 10px rgba(0,0,0,0.1)",
+              }}
+            >
+              A+ Talent Strategy
+            </h2>
+          </div>
+          <p
+            style={{
+              color: "#fff",
+              fontSize: "15px",
+              fontWeight: "500",
+              marginTop: "8px",
+              opacity: 0.95,
+            }}
+          >
+            Uncover your leadership DNA and who to hire to fill your blind spots
+          </p>
+        </div>
       </div>
 
       {/* Leadership DNA */}
@@ -85,49 +160,60 @@ export const TalentStrategy: React.FC<TalentStrategyProps> = ({ chartData }) => 
                   </div>
                 </div>
               ) : null}
-              <div className="space-y-4">
+              <div className="space-y-6">
                 {sortedGroups.map((group, idx) => {
                 const groupDetail = careerProfile.presentGroups.find((g) => g.key === group.key);
                 const label = groupDetail?.label ?? group.key;
                 const icon = archetypeIcons[group.key] ?? "📊";
                 const descriptor = archetypeDescriptors[group.key] ?? "";
+                const explanation = archetypeExplanations[group.key] ?? "";
                 const scorePercentage = Math.min(100, (group.score / 10) * 100);
                 
                 return (
-                  <div key={group.key} className="flex items-center gap-3">
-                    <span className="text-2xl flex-shrink-0">{icon}</span>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1.5">
-                        <span className="font-bold text-gray-900 dark:text-white text-sm uppercase tracking-wide">
-                          {label}
-                        </span>
-                        {!allScoresEqual ? (
-                          <span className={[
-                            "text-xs font-semibold px-2 py-0.5 rounded-full",
-                            idx === 0 
-                              ? "bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300"
-                              : "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300"
-                          ].join(" ")}>
-                            {idx === 0 ? "Primary" : "Supporting"}
+                  <div key={group.key} className="rounded-xl border border-gray-200 dark:border-gray-700 bg-gradient-to-br from-indigo-50/50 to-purple-50/50 dark:from-indigo-900/10 dark:to-purple-900/10 p-4">
+                    <div className="flex items-start gap-3">
+                      <span className="text-3xl flex-shrink-0 mt-1">{icon}</span>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="font-bold text-gray-900 dark:text-white text-base uppercase tracking-wide">
+                            {label}
                           </span>
-                        ) : null}
-                        <span className="text-xs text-gray-500 dark:text-gray-400">
-                          {"• " + descriptor}
-                        </span>
-                      </div>
-                      <div className="h-2.5 w-full rounded-full bg-gray-100 dark:bg-gray-700 overflow-hidden">
-                        <div 
-                          className="h-full rounded-full transition-all duration-500"
-                          style={{ 
-                            width: `${scorePercentage}%`,
-                            backgroundImage: "linear-gradient(to right, #6366f1, #8b5cf6)"
-                          }}
-                        />
+                          {!allScoresEqual ? (
+                            <span className={[
+                              "text-xs font-semibold px-2 py-0.5 rounded-full",
+                              idx === 0 
+                                ? "bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300"
+                                : "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300"
+                            ].join(" ")}>
+                              {idx === 0 ? "Primary" : "Supporting"}
+                            </span>
+                          ) : null}
+                          <span className="text-xs font-semibold text-gray-500 dark:text-gray-400">
+                            {"• " + descriptor}
+                          </span>
+                        </div>
+                        
+                        {/* Explanation text */}
+                        <p className="text-sm text-gray-700 dark:text-gray-300 mb-3 leading-relaxed">
+                          {explanation}
+                        </p>
+                        
+                        <div className="flex items-center gap-3">
+                          <div className="h-2.5 flex-1 rounded-full bg-gray-100 dark:bg-gray-700 overflow-hidden">
+                            <div 
+                              className="h-full rounded-full transition-all duration-500"
+                              style={{ 
+                                width: `${scorePercentage}%`,
+                                backgroundImage: "linear-gradient(to right, #6366f1, #8b5cf6)"
+                              }}
+                            />
+                          </div>
+                          <span className="text-sm font-bold text-gray-700 dark:text-gray-300 flex-shrink-0 w-8 text-right">
+                            {group.score.toFixed(1)}
+                          </span>
+                        </div>
                       </div>
                     </div>
-                    <span className="text-sm font-bold text-gray-700 dark:text-gray-300 flex-shrink-0 w-8 text-right">
-                      {group.score.toFixed(1)}
-                    </span>
                   </div>
                 );
               })}
