@@ -157,8 +157,15 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     referralCode: string
   ): Promise<AuthResponse> => {
     try {
-      // Check referral code
-      if (referralCode !== "DYD2025" ) {
+      /**
+       * Normalize and validate the referral code.
+       */
+      const normalizedReferralCode = referralCode.trim();
+      const validReferralCodes: ReadonlyArray<string> = ["DYD2025", "DYD206"];
+      const isReferralCodeValid = validReferralCodes.includes(normalizedReferralCode);
+
+      // Reject invalid referral codes early.
+      if (!isReferralCodeValid) {
         return {
           data: { user: null, session: null },
           error: { message: "Invalid referral code", status: 400 } as AuthError,
