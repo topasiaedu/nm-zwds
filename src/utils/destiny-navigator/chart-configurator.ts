@@ -12,7 +12,10 @@ import {
   getPalaceForAspectLiuNian,
   getPalaceForAspectLiuMonth,
   getCurrentDayunPalace,
-  getCurrentLiuNianPalace
+  getNextDayunPalace,
+  getCurrentLiuNianPalace,
+  getMonthPalaceForLiuMonth,
+  getYearPalaceForLiuMonth
 } from "./palace-resolver";
 
 /**
@@ -28,6 +31,8 @@ export interface ChartConfig {
   selectedPalaceNameControlled: number | null;
   /** The palace to trigger month display (1-12) - for Liu Month mode */
   showMonthsForPalace: number | null;
+  /** Simulated age for Dayun highlight (makes chart think user is this age) */
+  simulatedAge?: number;
   /** Chart settings to apply */
   settings: Partial<ChartSettings>;
 }
@@ -39,22 +44,28 @@ export interface ChartConfig {
  * @param aspect - The life aspect selected by user
  * @param timeframe - The timeframe selected by user
  * @param chartData - Complete chart data for the profile
+ * @param dayunPeriod - Which Dayun period to analyze (only used when timeframe is "dayun")
+ * @param selectedMonth - Selected month (only used when timeframe is "liumonth")
+ * @param selectedYear - Selected year (only used when timeframe is "liumonth")
  * @returns Chart configuration object with all necessary props
  */
 export function getChartConfigForSelection(
   aspect: LifeAspect,
   timeframe: TimeFrame,
-  chartData: ChartData
+  chartData: ChartData,
+  dayunPeriod?: "current" | "next",
+  selectedMonth?: number,
+  selectedYear?: number
 ): ChartConfig {
   switch (timeframe) {
     case "natal":
       return getNatalConfig(aspect, chartData);
     case "dayun":
-      return getDayunConfig(aspect, chartData);
+      return getDayunConfig(aspect, chartData, dayunPeriod ?? "current");
     case "liunian":
       return getLiuNianConfig(aspect, chartData);
     case "liumonth":
-      return getLiuMonthConfig(aspect, chartData);
+      return getLiuMonthConfig(aspect, chartData, selectedMonth, selectedYear);
     default:
       return getDefaultConfig();
   }
@@ -73,6 +84,8 @@ function getNatalConfig(aspect: LifeAspect, chartData: ChartData): ChartConfig {
     selectedDaXianControlled: null,
     selectedPalaceNameControlled: null,
     showMonthsForPalace: null,
+    // No simulated age for natal view.
+    simulatedAge: undefined,
     settings: {
       transformationLines: true,
       palaceClickInteraction: false,  // Locked - user can't change selection
@@ -92,19 +105,75 @@ function getNatalConfig(aspect: LifeAspect, chartData: ChartData): ChartConfig {
 }
 
 /**
- * Dayun (Decade Cycle) configuration
- * Shows Da Ming tags based on current 10-year cycle
- * Highlights the aspect palace in the Dayun context
+ * Resolve a simulated age for Dayun highlighting.
+ *
+ * Steps:
+ * 1) Validate the palace index is a valid number within range.
+ * 2) Resolve the palace data safely from chartData.
+ * 3) Validate the majorLimit startAge and ensure it is finite.
+ * 4) Return the validated startAge to shift the highlight.
  */
-function getDayunConfig(aspect: LifeAspect, chartData: ChartData): ChartConfig {
-  const dayunPalace = getCurrentDayunPalace(chartData);
-  const palaceNumber = getPalaceForAspectDayun(aspect, chartData);
+function getDayunSimulatedAge(
+  chartData: ChartData,
+  dayunPalace: number | null
+): number | undefined {
+  // Step 1: Validate palace index.
+  if (
+    typeof dayunPalace !== "number"
+    || !Number.isInteger(dayunPalace)
+    || dayunPalace < 1
+    || dayunPalace > 12
+  ) {
+    return undefined;
+  }
+
+  // Step 2: Resolve palace data using the validated index.
+  const palace = chartData.palaces[dayunPalace - 1];
+
+  // Step 3: Validate startAge from majorLimit.
+  const startAge = palace?.majorLimit?.startAge;
+  if (typeof startAge !== "number" || !Number.isFinite(startAge)) {
+    return undefined;
+  }
+
+  // Step 4: Return the validated age for highlight simulation.
+  return startAge;
+}
+
+/**
+ * Dayun (Decade Cycle) configuration
+ * Shows Da Ming tags based on selected 10-year cycle (current or next)
+ * Highlights the aspect palace in the Dayun context
+ *
+ * @param aspect - The life aspect selected by user
+ * @param chartData - Complete chart data
+ * @param dayunPeriod - Which Dayun period to analyze ("current" or "next")
+ */
+function getDayunConfig(
+  aspect: LifeAspect,
+  chartData: ChartData,
+  dayunPeriod: "current" | "next"
+): ChartConfig {
+  // Resolve the correct Dayun palace based on the selected period.
+  const dayunPalace = dayunPeriod === "next"
+    ? getNextDayunPalace(chartData)
+    : getCurrentDayunPalace(chartData);
+
+  // Resolve the aspect palace using the selected Dayun period.
+  const palaceNumber = getPalaceForAspectDayun(aspect, chartData, dayunPeriod);
+
+  // Simulate the next Dayun age to shift the highlight when needed.
+  const simulatedAge = dayunPeriod === "next"
+    ? getDayunSimulatedAge(chartData, dayunPalace)
+    : undefined;
 
   return {
     selectedPalaceControlled: palaceNumber,
     selectedDaXianControlled: dayunPalace,  // This triggers Da Ming tags
     selectedPalaceNameControlled: null,
     showMonthsForPalace: null,
+    // Use simulated age only for next Dayun highlighting.
+    simulatedAge,
     settings: {
       transformationLines: true,
       palaceClickInteraction: false,  // Locked
@@ -137,6 +206,8 @@ function getLiuNianConfig(aspect: LifeAspect, chartData: ChartData): ChartConfig
     selectedDaXianControlled: null,
     selectedPalaceNameControlled: liuNianPalace,  // This triggers secondary names
     showMonthsForPalace: null,
+    // No simulated age for annual view.
+    simulatedAge: undefined,
     settings: {
       transformationLines: true,
       palaceClickInteraction: false,  // Locked
@@ -159,17 +230,33 @@ function getLiuNianConfig(aspect: LifeAspect, chartData: ChartData): ChartConfig
  * Liu Month (Monthly Rhythm) configuration
  * Same as Liu Nian but also shows months
  * Highlights aspect palace in the current year/month context
+ *
+ * @param aspect - The life aspect selected by user
+ * @param chartData - Complete chart data
+ * @param selectedMonth - Selected month (1-12), defaults to current month
+ * @param selectedYear - Selected year, defaults to current year
  */
-function getLiuMonthConfig(aspect: LifeAspect, chartData: ChartData): ChartConfig {
-  const liuNianPalace = getCurrentLiuNianPalace(chartData);
-  const currentMonth = new Date().getMonth() + 1;
-  const palaceNumber = getPalaceForAspectLiuMonth(aspect, chartData, currentMonth);
+function getLiuMonthConfig(
+  aspect: LifeAspect,
+  chartData: ChartData,
+  selectedMonth?: number,
+  selectedYear?: number
+): ChartConfig {
+  const month = selectedMonth ?? (new Date().getMonth() + 1);
+  const year = selectedYear ?? new Date().getFullYear();
+  const palaceNumber = getPalaceForAspectLiuMonth(aspect, chartData, month, year);
+
+  // Resolve year palace (month display) and month palace (secondary name anchor).
+  const yearPalace = getYearPalaceForLiuMonth(chartData, year);
+  const monthPalace = getMonthPalaceForLiuMonth(chartData, month, year);
 
   return {
     selectedPalaceControlled: palaceNumber,
     selectedDaXianControlled: null,
-    selectedPalaceNameControlled: liuNianPalace,
-    showMonthsForPalace: liuNianPalace,  // This triggers month display
+    selectedPalaceNameControlled: monthPalace,
+    showMonthsForPalace: yearPalace,  // This triggers month display
+    // No simulated age for monthly view.
+    simulatedAge: undefined,
     settings: {
       transformationLines: true,
       palaceClickInteraction: false,  // Locked
@@ -183,7 +270,7 @@ function getLiuMonthConfig(aspect: LifeAspect, chartData: ChartData): ChartConfi
       showDaMingCornerTag: false,
       showDaMingBottomLabel: false,
       showSecondaryBottomLabel: true,
-      showSecondaryOverlayName: true
+      showSecondaryOverlayName: false
     }
   };
 }
@@ -198,6 +285,8 @@ function getDefaultConfig(): ChartConfig {
     selectedDaXianControlled: null,
     selectedPalaceNameControlled: null,
     showMonthsForPalace: null,
+    // No simulated age for default config.
+    simulatedAge: undefined,
     settings: {
       transformationLines: false,
       palaceClickInteraction: false,

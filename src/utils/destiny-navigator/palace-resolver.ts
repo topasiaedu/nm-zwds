@@ -93,6 +93,43 @@ function findCurrentDayunPalace(chartData: ChartData, currentAge: number): numbe
 }
 
 /**
+ * Find the palace that represents the next Dayun (10-year cycle)
+ * based on the person's current age.
+ *
+ * The next Dayun palace is determined by finding the palace whose
+ * majorLimit.startAge is the smallest value greater than currentAge.
+ *
+ * @param chartData - Complete chart data
+ * @param currentAge - Person's current age
+ * @returns Palace number (1-12) of next Dayun, or null if not found
+ */
+function findNextDayunPalace(chartData: ChartData, currentAge: number): number | null {
+  // Validate age input to avoid invalid comparisons.
+  if (!Number.isFinite(currentAge) || currentAge < 0) {
+    return null;
+  }
+
+  // Track the nearest future palace by smallest startAge.
+  let nextDayunPalace: ChartData["palaces"][number] | null = null;
+  let nearestStartAge = Number.POSITIVE_INFINITY;
+
+  // Walk all palaces and find the nearest future startAge.
+  for (const palace of chartData.palaces) {
+    const startAgeValue = palace.majorLimit?.startAge;
+    if (typeof startAgeValue !== "number" || !Number.isFinite(startAgeValue) || startAgeValue <= currentAge) {
+      continue;
+    }
+
+    if (startAgeValue < nearestStartAge) {
+      nearestStartAge = startAgeValue;
+      nextDayunPalace = palace;
+    }
+  }
+
+  return nextDayunPalace?.number ?? null;
+}
+
+/**
  * Calculate current age from birth year.
  *
  * @param birthYear - Year of birth from chartData.input.year
@@ -249,6 +286,41 @@ export function getCurrentDayunPalace(chartData: ChartData): number | null {
 }
 
 /**
+ * Get next Dayun (major limit) palace based on age
+ * @param chartData - Complete chart data
+ * @returns Palace number of next dayun cycle, or null if not found
+ */
+export function getNextDayunPalace(chartData: ChartData): number | null {
+  const birthYear = chartData.lunarDate.year;
+  if (!Number.isFinite(birthYear)) {
+    console.warn("Invalid lunar birth year for next Dayun:", birthYear);
+    return null;
+  }
+
+  const currentYear = new Date().getFullYear();
+  const currentAge = currentYear - birthYear + 1;
+
+  // Track the nearest future palace by smallest startAge.
+  let nextPalace: ChartData["palaces"][number] | null = null;
+  let nearestStartAge = Number.POSITIVE_INFINITY;
+
+  // Walk all palaces and find the nearest future startAge.
+  for (const palace of chartData.palaces) {
+    const startAgeValue = palace.majorLimit?.startAge;
+    if (typeof startAgeValue !== "number" || !Number.isFinite(startAgeValue) || startAgeValue <= currentAge) {
+      continue;
+    }
+
+    if (startAgeValue < nearestStartAge) {
+      nearestStartAge = startAgeValue;
+      nextPalace = palace;
+    }
+  }
+
+  return nextPalace?.number ?? null;
+}
+
+/**
  * Get palace with current year's Liu Nian (annual flow) tag
  * @param chartData - Complete chart data
  * @returns Palace number with current year's annual flow, or null if not found
@@ -260,6 +332,80 @@ export function getCurrentLiuNianPalace(chartData: ChartData): number | null {
   );
 
   return palace?.number ?? null;
+}
+
+/**
+ * Get the palace that represents a specific month in Liu Month mode.
+ *
+ * This is the palace that should be used as the anchor for secondary palace names
+ * when analyzing Liu Month (the palace the user would click on to see its secondary name).
+ *
+ * @param chartData - Complete chart data
+ * @param selectedMonth - Selected month (1-12)
+ * @param selectedYear - Selected year (defaults to current year)
+ * @returns Palace number representing that month, or null if not found
+ */
+export function getMonthPalaceForLiuMonth(
+  chartData: ChartData,
+  selectedMonth: number,
+  selectedYear?: number
+): number | null {
+  // Validate selected month to prevent invalid indexing.
+  if (!Number.isFinite(selectedMonth) || selectedMonth < 1 || selectedMonth > 12) {
+    console.warn("Invalid selected month:", selectedMonth);
+    return null;
+  }
+
+  // Resolve the target year, defaulting to the current year.
+  const targetYear = selectedYear ?? new Date().getFullYear();
+
+  // Find the palace that contains the target year.
+  const yearPalaceNumber = findPalaceWithYear(chartData, targetYear);
+  if (!yearPalaceNumber) {
+    console.warn("Could not find palace for year:", targetYear);
+    return null;
+  }
+
+  // Convert selected month (1-12) to index (0-11).
+  const targetMonthIndex = selectedMonth - 1;
+
+  // Find the palace that corresponds to the target month index.
+  const monthPalaceNumber = findPalaceWithMonthIndex(
+    chartData,
+    yearPalaceNumber,
+    targetMonthIndex
+  );
+
+  if (!monthPalaceNumber) {
+    console.warn("Could not find palace for month:", selectedMonth);
+    return null;
+  }
+
+  return monthPalaceNumber;
+}
+
+/**
+ * Get the palace that contains a specific year's annual flow.
+ *
+ * This is the palace where months will be displayed (the year palace).
+ *
+ * @param chartData - Complete chart data
+ * @param selectedYear - Selected year (defaults to current year)
+ * @returns Palace number with that year's annual flow, or null if not found
+ */
+export function getYearPalaceForLiuMonth(
+  chartData: ChartData,
+  selectedYear?: number
+): number | null {
+  const targetYear = selectedYear ?? new Date().getFullYear();
+  const yearPalaceNumber = findPalaceWithYear(chartData, targetYear);
+
+  if (!yearPalaceNumber) {
+    console.warn("Could not find palace for year:", targetYear);
+    return null;
+  }
+
+  return yearPalaceNumber;
 }
 
 /**
@@ -353,17 +499,24 @@ export function getPalaceForAspectNatal(aspect: LifeAspect, chartData: ChartData
  * Get palace number for a given aspect in Dayun mode
  * @param aspect - The life aspect
  * @param chartData - Complete chart data
+ * @param dayunPeriod - Which Dayun period to analyze ("current" or "next")
  * @returns Palace number or null if not found
  */
-export function getPalaceForAspectDayun(aspect: LifeAspect, chartData: ChartData): number | null {
+export function getPalaceForAspectDayun(
+  aspect: LifeAspect,
+  chartData: ChartData,
+  dayunPeriod: "current" | "next" = "current"
+): number | null {
   // Calculate current age based on chart input birth year.
   const birthYear = chartData.input.year;
   const currentAge = calculateCurrentAge(birthYear);
 
-  // Find current Dayun palace based on age and majorLimit ranges.
-  const dayunPalaceNumber = findCurrentDayunPalace(chartData, currentAge);
+  // Find Dayun palace based on the selected period.
+  const dayunPalaceNumber = dayunPeriod === "next"
+    ? findNextDayunPalace(chartData, currentAge)
+    : findCurrentDayunPalace(chartData, currentAge);
   if (!dayunPalaceNumber) {
-    console.warn("Could not find current Dayun palace for age:", currentAge);
+    console.warn(`Could not find ${dayunPeriod} Dayun palace for age:`, currentAge);
     return null;
   }
 

@@ -149,6 +149,9 @@ const AnalysisView: React.FC<AnalysisViewProps> = ({
               profile={profile}
               aspect={selectedAspect}
               timeframe={selectedTimeframe}
+              dayunPeriod={navigatorState.selectedDayunPeriod}
+              selectedMonth={navigatorState.selectedMonth}
+              selectedYear={undefined}
             />
           </div>
 
@@ -163,6 +166,9 @@ const AnalysisView: React.FC<AnalysisViewProps> = ({
                 profile={profile}
                 aspect={selectedAspect}
                 timeframe={selectedTimeframe}
+                dayunPeriod={navigatorState.selectedDayunPeriod}
+                selectedMonth={navigatorState.selectedMonth}
+                selectedYear={undefined}
               />
             )}
           </div>

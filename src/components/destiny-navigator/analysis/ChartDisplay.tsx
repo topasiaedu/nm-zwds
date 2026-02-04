@@ -19,12 +19,22 @@ interface ChartDisplayProps {
   profile: Profile;
   aspect: LifeAspect;
   timeframe: TimeFrame;
+  dayunPeriod?: "current" | "next";
+  selectedMonth?: number;
+  selectedYear?: number;
 }
 
 /**
  * Inner component that applies settings
  */
-const ChartDisplayInner: React.FC<ChartDisplayProps> = ({ profile, aspect, timeframe }) => {
+const ChartDisplayInner: React.FC<ChartDisplayProps> = ({
+  profile,
+  aspect,
+  timeframe,
+  dayunPeriod,
+  selectedMonth,
+  selectedYear
+}) => {
   const { updateSetting } = useChartSettings();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -93,12 +103,19 @@ const ChartDisplayInner: React.FC<ChartDisplayProps> = ({ profile, aspect, timef
     if (!calculatedChartData) return null;
 
     try {
-      return getChartConfigForSelection(aspect, timeframe, calculatedChartData);
+      return getChartConfigForSelection(
+        aspect,
+        timeframe,
+        calculatedChartData,
+        dayunPeriod,
+        selectedMonth,
+        selectedYear
+      );
     } catch (err) {
       console.error("Error generating chart config:", err);
       return null;
     }
-  }, [aspect, timeframe, calculatedChartData]);
+  }, [aspect, timeframe, calculatedChartData, dayunPeriod, selectedMonth, selectedYear]);
 
   /**
    * Apply chart settings when config changes
@@ -182,6 +199,8 @@ const ChartDisplayInner: React.FC<ChartDisplayProps> = ({ profile, aspect, timef
           selectedDaXianControlled={chartConfig.selectedDaXianControlled ?? undefined}
           selectedPalaceNameControlled={chartConfig.selectedPalaceNameControlled ?? undefined}
           showMonthsControlled={chartConfig.showMonthsForPalace ?? undefined}
+          // Use simulated age to shift Dayun highlighting when configured.
+          simulatedAge={chartConfig.simulatedAge}
         />
       </div>
     </div>

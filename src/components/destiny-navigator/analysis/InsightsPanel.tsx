@@ -39,6 +39,9 @@ interface InsightsPanelProps {
   profile: Profile;
   aspect: LifeAspect;
   timeframe: TimeFrame;
+  dayunPeriod?: "current" | "next";
+  selectedMonth?: number;
+  selectedYear?: number;
 }
 
 /**
@@ -48,7 +51,10 @@ interface InsightsPanelProps {
 export const InsightsPanel: React.FC<InsightsPanelProps> = ({
   profile,
   aspect,
-  timeframe
+  timeframe,
+  dayunPeriod,
+  selectedMonth,
+  selectedYear
 }) => {
   const insights = useMemo(() => {
     try {
@@ -88,22 +94,27 @@ export const InsightsPanel: React.FC<InsightsPanelProps> = ({
       const calculator = new ZWDSCalculator(chartInput);
       const chartData = calculator.calculate();
 
-      // Get palace number based on timeframe
+      // Get palace number based on timeframe and selection context.
       let palaceNumber: number | null = null;
       switch (timeframe) {
         case "natal":
           palaceNumber = getPalaceForAspectNatal(aspect, chartData);
           break;
         case "dayun":
-          palaceNumber = getPalaceForAspectDayun(aspect, chartData);
+          palaceNumber = getPalaceForAspectDayun(aspect, chartData, dayunPeriod ?? "current");
           break;
         case "liunian":
           palaceNumber = getPalaceForAspectLiuNian(aspect, chartData);
           break;
         case "liumonth": {
-          // TODO: Need selectedMonth from NavigatorState
           const currentMonth = new Date().getMonth() + 1;
-          palaceNumber = getPalaceForAspectLiuMonth(aspect, chartData, currentMonth);
+          const resolvedMonth = selectedMonth ?? currentMonth;
+          palaceNumber = getPalaceForAspectLiuMonth(
+            aspect,
+            chartData,
+            resolvedMonth,
+            selectedYear
+          );
           break;
         }
       }
@@ -130,15 +141,11 @@ export const InsightsPanel: React.FC<InsightsPanelProps> = ({
       // Calculate meaningful star activity
       const starActivity = calculateStarActivity(palace);
 
-      // Determine star count based on timeframe
-      const starCount = {
-        natal: 999, // Show all
-        dayun: 3,
-        liunian: 2,
-        liumonth: 1
-      }[timeframe];
+      // Show all stars regardless of timeframe
+      // Stars are still ranked by relevance, but none are filtered out
+      const starCount = 999;
 
-      // Filter and rank stars
+      // Filter and rank stars (will show all, ranked by relevance)
       const rankedStars = filterStarsByRelevance(allStars, aspect, starCount);
 
       // Generate focus priorities and filter to aspect-relevant ones
@@ -156,7 +163,7 @@ export const InsightsPanel: React.FC<InsightsPanelProps> = ({
       console.error("Error generating insights:", err);
       return null;
     }
-  }, [profile, aspect, timeframe]);
+  }, [profile, aspect, timeframe, dayunPeriod, selectedMonth, selectedYear]);
 
   // Error state
   if (!insights) {
