@@ -28,6 +28,7 @@
     "libopus.js": "^0.0.1",
     "lodash.debounce": "^4.0.8",
     "lodash.isequal": "^4.5.0",
+    "lucide-react": "^0.563.0",
     "my-app": "file:",
     "papaparse": "^5.4.1",
     "postcss": "^8.4.12",

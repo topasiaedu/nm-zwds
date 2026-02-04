@@ -162,7 +162,8 @@ function getLiuNianConfig(aspect: LifeAspect, chartData: ChartData): ChartConfig
  */
 function getLiuMonthConfig(aspect: LifeAspect, chartData: ChartData): ChartConfig {
   const liuNianPalace = getCurrentLiuNianPalace(chartData);
-  const palaceNumber = getPalaceForAspectLiuMonth(aspect, chartData);
+  const currentMonth = new Date().getMonth() + 1;
+  const palaceNumber = getPalaceForAspectLiuMonth(aspect, chartData, currentMonth);
 
   return {
     selectedPalaceControlled: palaceNumber,
