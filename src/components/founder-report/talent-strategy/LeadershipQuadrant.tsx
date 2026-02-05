@@ -1,7 +1,6 @@
 import React from "react";
 import {
   CartesianGrid,
-  Legend,
   ReferenceArea,
   ReferenceLine,
   ResponsiveContainer,
@@ -15,6 +14,58 @@ import {
 import type { CareerQuadrantData, CareerQuadrantPoint } from "../../../utils/zwds/analysis/talentStrategyData";
 import { formatCareerAxis } from "../../../utils/zwds/analysis/talentStrategyData";
 import SectionCard from "./SectionCard";
+
+/**
+ * Custom dot shape for the scatter point with glowing ring effect.
+ * Makes the founder point highly visible without animation conflicts.
+ */
+const GlowDot: React.FC<{
+  cx?: number;
+  cy?: number;
+  fill?: string;
+  stroke?: string;
+  strokeWidth?: number;
+}> = ({ cx, cy, fill, stroke, strokeWidth }) => {
+  if (cx === undefined || cy === undefined) return null;
+
+  return (
+    <g>
+      {/* Outer glow ring */}
+      <circle
+        cx={cx}
+        cy={cy}
+        r={20}
+        fill={fill}
+        opacity={0.15}
+      />
+      {/* Middle glow ring */}
+      <circle
+        cx={cx}
+        cy={cy}
+        r={14}
+        fill={fill}
+        opacity={0.3}
+      />
+      {/* Inner bright ring */}
+      <circle
+        cx={cx}
+        cy={cy}
+        r={11}
+        fill={fill}
+        opacity={0.5}
+      />
+      {/* Core dot */}
+      <circle
+        cx={cx}
+        cy={cy}
+        r={9}
+        fill={fill}
+        stroke={stroke}
+        strokeWidth={strokeWidth || 3}
+      />
+    </g>
+  );
+};
 
 type RechartsPayload<T> = { payload: T };
 
@@ -130,17 +181,28 @@ const LeadershipQuadrant: React.FC<LeadershipQuadrantProps> = ({ quadrantData, h
                 <ReferenceLine x={0} stroke="#94a3b8" opacity={0.6} />
                 <ReferenceLine y={0} stroke="#94a3b8" opacity={0.6} />
                 <RechartsTooltip content={<QuadrantTooltip />} />
-                <Legend />
 
                 <Scatter 
-                  name="Founder" 
+                  name="Your Position" 
                   data={[founderPoint]} 
                   fill="#7c3aed" 
                   stroke="#4f46e5" 
                   strokeWidth={3}
+                  shape={<GlowDot />}
                 />
               </ScatterChart>
             </ResponsiveContainer>
+
+            {/* Integrated Legend Badge */}
+            <div className="absolute top-3 right-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 shadow-sm">
+              <div className="flex items-center gap-2">
+                <div 
+                  className="w-3 h-3 rounded-full bg-purple-600" 
+                  style={{ boxShadow: "0 0 8px rgba(124, 58, 237, 0.5)" }}
+                />
+                <span className="text-xs font-semibold text-gray-700 dark:text-gray-300">Your Position</span>
+              </div>
+            </div>
 
             <div className="pointer-events-none absolute inset-0 px-3 py-3">
               <div className="absolute left-3 top-3 text-xs leading-snug text-gray-600 dark:text-gray-300">

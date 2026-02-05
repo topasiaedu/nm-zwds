@@ -28,9 +28,9 @@ const WealthTimingHeader: React.FC = () => {
     <div
       className="relative rounded-3xl overflow-hidden mb-8"
       style={{
-        background: "linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%)",
+        background: "linear-gradient(135deg, #fb923c 0%, #f97316 50%, #ea580c 100%)",
         padding: "32px 40px",
-        boxShadow: "0 10px 40px rgba(139, 92, 246, 0.3)",
+        boxShadow: "0 10px 40px rgba(251, 146, 60, 0.3)",
       }}
     >
       <div
@@ -61,7 +61,7 @@ const WealthTimingHeader: React.FC = () => {
           <span
             style={{
               background: "rgba(255, 255, 255, 0.9)",
-              color: "#8b5cf6",
+              color: "#ea580c",
               padding: "4px 12px",
               borderRadius: "8px",
               fontSize: "18px",

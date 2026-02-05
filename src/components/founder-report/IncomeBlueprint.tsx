@@ -684,9 +684,9 @@ export const IncomeBlueprint: React.FC<IncomeBlueprintProps> = ({ chartData }) =
       <div
         className="relative rounded-3xl overflow-hidden mb-8"
         style={{
-          background: "linear-gradient(135deg, #d97706 0%, #f59e0b 50%, #eab308 100%)",
+          background: "linear-gradient(135deg, #fb923c 0%, #f97316 50%, #ea580c 100%)",
           padding: "32px 40px",
-          boxShadow: "0 10px 40px rgba(245, 158, 11, 0.3)",
+          boxShadow: "0 10px 40px rgba(251, 146, 60, 0.3)",
         }}
       >
         <div
@@ -717,7 +717,7 @@ export const IncomeBlueprint: React.FC<IncomeBlueprintProps> = ({ chartData }) =
             <span
               style={{
                 background: "rgba(255, 255, 255, 0.9)",
-                color: "#d97706",
+                color: "#ea580c",
                 padding: "4px 12px",
                 borderRadius: "8px",
                 fontSize: "18px",

@@ -59,7 +59,8 @@ function clamp0To10(value: number): number {
 
 function clampMinus10To10(value: number): number {
   if (!Number.isFinite(value)) return 0;
-  return Math.max(-10, Math.min(10, value));
+  // Clamp to -9 to 9 to prevent points from reaching the very edge of the chart
+  return Math.max(-9, Math.min(9, value));
 }
 
 function getGroupScore(profile: CareerPalaceProfile, key: CareerGroupKey): number {

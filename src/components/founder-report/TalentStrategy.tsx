@@ -71,9 +71,9 @@ export const TalentStrategy: React.FC<TalentStrategyProps> = ({ chartData }) => 
       <div
         className="relative rounded-3xl overflow-hidden mb-10"
         style={{
-          background: "linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%)",
+          background: "linear-gradient(135deg, #fb923c 0%, #f97316 50%, #ea580c 100%)",
           padding: "32px 40px",
-          boxShadow: "0 10px 40px rgba(139, 92, 246, 0.3)",
+          boxShadow: "0 10px 40px rgba(251, 146, 60, 0.3)",
         }}
       >
         <div
@@ -104,7 +104,7 @@ export const TalentStrategy: React.FC<TalentStrategyProps> = ({ chartData }) => 
             <span
               style={{
                 background: "rgba(255, 255, 255, 0.9)",
-                color: "#8b5cf6",
+                color: "#ea580c",
                 padding: "4px 12px",
                 borderRadius: "8px",
                 fontSize: "18px",
@@ -139,15 +139,11 @@ export const TalentStrategy: React.FC<TalentStrategyProps> = ({ chartData }) => 
       </div>
 
       {/* Leadership DNA */}
-      <div className="mb-12 rounded-2xl shadow-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 overflow-hidden">
-        <div className="bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-4">
-          <div className="flex items-center gap-2">
-            <span className="text-2xl">{"🧬"}</span>
-            <h3 className="text-lg font-bold text-white">{"YOUR LEADERSHIP DNA"}</h3>
-          </div>
-        </div>
-        <div className="p-6">
-          {sortedGroups.length > 0 ? (
+      <div className="mb-12 rounded-2xl shadow-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-8">
+        <h3 className="text-lg font-bold mb-6 text-gray-900 dark:text-white">
+          {"Your Leadership DNA"}
+        </h3>
+        {sortedGroups.length > 0 ? (
             <>
               {allScoresEqual && sortedGroups.length > 1 ? (
                 <div className="mb-4 p-4 rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800">
@@ -219,12 +215,11 @@ export const TalentStrategy: React.FC<TalentStrategyProps> = ({ chartData }) => 
               })}
               </div>
             </>
-          ) : (
-            <div className="text-center py-4 text-sm text-gray-600 dark:text-gray-400">
-              {"No leadership groups detected in Career Palace"}
-            </div>
-          )}
-        </div>
+        ) : (
+          <div className="text-center py-4 text-sm text-gray-600 dark:text-gray-400">
+            {"No leadership groups detected in Career Palace"}
+          </div>
+        )}
       </div>
 
       <IdealTeamRadar

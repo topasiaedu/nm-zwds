@@ -503,9 +503,9 @@ const WealthCode: React.FC<WealthCodeProps> = ({
         <div
           className="relative rounded-3xl overflow-hidden mb-8"
           style={{
-            background: "linear-gradient(135deg, #dc2626 0%, #f97316 50%, #d97706 100%)",
+            background: "linear-gradient(135deg, #fb923c 0%, #f97316 50%, #ea580c 100%)",
             padding: "32px 40px",
-            boxShadow: "0 10px 40px rgba(249, 115, 22, 0.3)",
+            boxShadow: "0 10px 40px rgba(251, 146, 60, 0.3)",
           }}
         >
           <div
@@ -536,7 +536,7 @@ const WealthCode: React.FC<WealthCodeProps> = ({
               <span
                 style={{
                   background: "rgba(255, 255, 255, 0.9)",
-                  color: "#dc2626",
+                  color: "#ea580c",
                   padding: "4px 12px",
                   borderRadius: "8px",
                   fontSize: "18px",
