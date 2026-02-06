@@ -38,6 +38,11 @@ Complete index of all NM-ZWDS documentation.
 - [UI Optimization](./performance/UI_OPTIMIZATION.md) - Component rendering improvements
 - [Testing Strategy](./performance/TESTING_STRATEGY.md) - Comprehensive testing approach
 
+### ✨ Features & Access Control **NEW!**
+- [Feature Flags System](./features/FEATURE_FLAGS.md) - **NEW!** Flexible feature access control
+- [Access Control](./features/ACCESS_CONTROL.md) - **NEW!** Authentication & authorization architecture
+- [Birth Time Option Feature](./features/BIRTH_TIME_OPTION.md) - Birth time input option
+
 ### 🔌 API Documentation
 - [Chart-Only Endpoint](./api/CHART_ONLY.md) - Backend integration for screenshots
 
@@ -136,6 +141,11 @@ docs/
 ├── api/                        # API documentation
 │   └── CHART_ONLY.md
 │
+├── features/                   # NEW! Feature documentation
+│   ├── FEATURE_FLAGS.md        # Feature flags system
+│   ├── ACCESS_CONTROL.md       # Access control architecture
+│   └── BIRTH_TIME_OPTION.md    # Birth time feature
+│
 ├── guides/                     # How-to guides
 │   ├── QUICK_START.md
 │   └── ENVIRONMENT.md
@@ -178,6 +188,16 @@ docs/
 - ✅ **Automated Testing Guide** (NEW!)
 - ✅ **Deployment Workflow** (NEW!)
 - ✅ **Implementation Roadmap** (NEW!)
+- ✅ **Feature Flags System** (NEW! Feb 2026)
+- ✅ **Access Control Architecture** (NEW! Feb 2026)
+
+### February 2026 Update
+**Added feature flags & access control:**
+- ✨ Feature flags system documentation
+- 🔐 Access control architecture
+- 🎯 Program definitions (DYD, Founder, Beta)
+- 🛠️ Implementation prompts for AI agents
+- 📋 Complete migration guide
 
 ### January 2025 Update
 **Added production-ready documentation:**
@@ -230,11 +250,11 @@ docs/
 
 ## 📊 Documentation Stats
 
-- **Total Files**: 25 (+6 new!)
-- **Total Words**: ~60,000+
-- **Total Lines**: ~6,000+
+- **Total Files**: 27 (+2 new!)
+- **Total Words**: ~70,000+
+- **Total Lines**: ~7,500+
 - **Status**: Production-ready documentation complete
-- **Last Major Update**: January 5, 2025
+- **Last Major Update**: February 6, 2026
 
 
 ## 📝 Documentation Standards
@@ -280,17 +300,19 @@ docs/
 
 ---
 
-**Last Updated**: January 5, 2026
+**Last Updated**: February 6, 2026
 
-**Documentation Version**: 2.0.0 (Production-Ready)
+**Documentation Version**: 2.1.0 (Feature Flags Update)
 
 **Maintained By**: Development Team
 
 **Recent Updates**:
-- ✨ Added Security Audit 2025
-- ✨ Added Production Testing Strategy
-- ✨ Added Automated Testing Guide
-- ✨ Added Deployment Guide
-- ✨ Added Implementation Roadmap
-- ✨ Updated Known Issues
+- ✨ Added Feature Flags System (Feb 2026)
+- ✨ Added Access Control Architecture (Feb 2026)
+- ✨ Added Implementation Prompts for AI agents (Feb 2026)
+- ✨ Added Security Audit 2025 (Jan 2026)
+- ✨ Added Production Testing Strategy (Jan 2026)
+- ✨ Added Automated Testing Guide (Jan 2026)
+- ✨ Added Deployment Guide (Jan 2026)
+- ✨ Added Implementation Roadmap (Jan 2026)
 

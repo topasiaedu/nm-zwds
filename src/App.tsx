@@ -37,6 +37,7 @@ import FounderReport from "./pages/founder-report";
 import Profile from "./pages/profile";
 import MembershipExpired from "./pages/membership-expired";
 import MembershipPaused from "./pages/membership-paused";
+import AdminDashboard from "./pages/admin/dashboard";
 // Import new free test pages
 import FreeTest from "./pages/free-test";
 import FreeResult from "./pages/free-result";
@@ -282,7 +283,7 @@ const App: React.FC = () => {
                       }
                     />
                     <Route
-                      path="/founder-report/:id"
+                      path="/founder-report/:id?"
                       element={
                         <ProtectedRoute>
                           <FounderReport />
@@ -305,6 +306,14 @@ const App: React.FC = () => {
 
 
                     {/* Admin Routes */}
+                    <Route
+                      path="/admin"
+                      element={
+                        <ProtectedRoute>
+                            <AdminDashboard />
+                        </ProtectedRoute>
+                      }
+                    />
                     <Route
                       path="/admin/users"
                       element={

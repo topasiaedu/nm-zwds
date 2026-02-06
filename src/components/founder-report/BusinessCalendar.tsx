@@ -65,43 +65,32 @@ export const BusinessCalendar: React.FC<BusinessCalendarProps> = ({ chartData, r
           background: "linear-gradient(135deg, #fb923c 0%, #f97316 50%, #ea580c 100%)",
           padding: "32px 40px",
           boxShadow: "0 10px 40px rgba(251, 146, 60, 0.3)",
+          border: "3px solid rgba(251, 146, 60, 0.8)",
+          animation: "pulse-border 1.5s ease-in-out infinite",
         }}
       >
-        <div
-          style={{
-            position: "absolute",
-            top: "20px",
-            right: "40px",
-            fontSize: "48px",
-            opacity: 0.2,
-          }}
-        >
-          ✨
-        </div>
-        <div
-          style={{
-            position: "absolute",
-            bottom: "30px",
-            left: "60px",
-            fontSize: "24px",
-            opacity: 0.15,
-          }}
-        >
-          ⭐
-        </div>
-
+        <style>{`
+          @keyframes pulse-border {
+            0%, 100% {
+              box-shadow: 0 10px 40px rgba(251, 146, 60, 0.4), 0 0 0 0 rgba(251, 146, 60, 1), 0 0 20px rgba(251, 146, 60, 0.6);
+            }
+            50% {
+              box-shadow: 0 10px 60px rgba(251, 146, 60, 0.8), 0 0 0 15px rgba(251, 146, 60, 0), 0 0 40px rgba(251, 146, 60, 0.3);
+            }
+          }
+        `}</style>
         <div className="relative z-10">
           <div className="flex items-center gap-3 mb-3">
-            <span
-              style={{
-                background: "rgba(255, 255, 255, 0.9)",
-                color: "#ea580c",
-                padding: "4px 12px",
-                borderRadius: "8px",
-                fontSize: "18px",
-                fontWeight: "800",
-              }}
-            >
+              <span
+                style={{
+                  background: "rgba(255, 255, 255, 0.9)",
+                  color: "#ea580c",
+                  padding: "4px 12px",
+                  borderRadius: "8px",
+                  fontSize: "18px",
+                  fontWeight: "800",
+                }}
+              >
               05
             </span>
             <h2

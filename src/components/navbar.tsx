@@ -2,6 +2,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useTierAccess } from "../context/TierContext";
 import { useLanguage } from "../context/LanguageContext";
 // import LanguageToggle from "./LanguageToggle";
 import ThemeToggle from "./ThemeToggle";
@@ -12,6 +13,7 @@ import ThemeToggle from "./ThemeToggle";
 const Navbar: React.FC = () => {
   const { user, signOut } = useAuth();
   const { t } = useLanguage();
+  const { isAdmin } = useTierAccess();
   const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
   const navigate = useNavigate();
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -116,6 +118,30 @@ const Navbar: React.FC = () => {
                       </Link>
                     </li>
                   </ul>
+                  {isAdmin && (
+                    <div className="py-2 border-t border-gray-200 dark:border-gray-600">
+                      <Link
+                        to="/admin"
+                        className="flex items-center px-4 py-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all duration-200"
+                        onClick={() => setDropdownOpen(false)}
+                      >
+                        <svg
+                          className="w-4 h-4 mr-2"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M12 3l7 4v5c0 5-3.5 9-7 10-3.5-1-7-5-7-10V7l7-4z"
+                          />
+                        </svg>
+                        Admin Dashboard
+                      </Link>
+                    </div>
+                  )}
                   <div className="py-2 border-t border-gray-200 dark:border-gray-600">
                     <button
                       onClick={handleSignOut}

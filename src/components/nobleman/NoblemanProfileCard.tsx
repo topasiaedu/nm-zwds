@@ -106,9 +106,6 @@ const NoblemanProfileCard: React.FC<NoblemanProfileCardProps> = ({
               Your Nobleman Profile
             </h3>
           </div>
-          <p className="text-base text-gray-600 dark:text-gray-400 ml-6">
-            Based on <span className="font-semibold text-purple-600 dark:text-purple-400">{palaceName}</span> analysis
-          </p>
         </div>
       </div>
       

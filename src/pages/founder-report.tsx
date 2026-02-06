@@ -1,5 +1,5 @@
 import React, { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Link, Navigate, useParams } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import PageTransition from "../components/PageTransition";
 import ZWDSChart from "../components/ZWDSChart";
 import { ZWDSCalculator } from "../utils/zwds/calculator";
@@ -215,9 +215,8 @@ const formatHourAsTime = (hour: number): string => {
  */
 const FounderReportContent: React.FC = () => {
   const { t } = useLanguage();
-  const { id } = useParams<{ id: string }>();
   const { profiles, loading: profilesLoading } = useProfileContext();
-  const { isAdmin } = useTierAccess();
+  const { hasFounderReport } = useTierAccess();
 
   // Data state
   const [chartMeta, setChartMeta] = useState<FounderReportChartMeta | null>(
@@ -272,20 +271,21 @@ const FounderReportContent: React.FC = () => {
   }, []);
 
   /**
-   * Find the profile for the given route ID.
+   * Find the account owner's own profile (is_self).
+   * The founder report should always use the account owner's profile,
+   * matching the behavior of the /chart endpoint.
    */
   const profileToShow = useMemo(() => {
-    if (!id) return null;
-    return profiles.find((profile) => String(profile.id) === String(id)) ?? null;
-  }, [profiles, id]);
+    return profiles.find((profile) => profile.is_self) ?? null;
+  }, [profiles]);
 
   /**
    * Load profile into page-local meta format.
    * We intentionally keep the data pipeline aligned with `result.tsx`.
    */
   useEffect(() => {
-    // Admin-only page: do not load any data for non-admin users.
-    if (!isAdmin) {
+    // Founder Report access required: do not load any data for non-authorized users.
+    if (!hasFounderReport) {
       return;
     }
 
@@ -294,15 +294,8 @@ const FounderReportContent: React.FC = () => {
       return;
     }
 
-    if (!id) {
-      setError("Missing profile ID");
-      setChartMeta(null);
-      setLoading(false);
-      return;
-    }
-
     if (!profileToShow) {
-      setError(`Profile with ID ${id} not found`);
+      setError("Account owner profile not found. Please ensure you have a profile marked as 'self' in your account.");
       setChartMeta(null);
       setLoading(false);
       return;
@@ -364,7 +357,7 @@ const FounderReportContent: React.FC = () => {
     setError(null);
     setChartMeta(meta);
     setLoading(false);
-  }, [isAdmin, profilesLoading, id, profileToShow]);
+  }, [hasFounderReport, profilesLoading, profileToShow]);
 
   /**
    * Memoize the ZWDS chart input. Calculation runs in an effect to allow skeletons to render.
@@ -444,14 +437,6 @@ const FounderReportContent: React.FC = () => {
       globalThis.clearTimeout(timer);
     };
   }, [chartInput, chartMeta]);
-
-  /**
-   * Print/export the full report using browser print.
-   */
-  const handlePrintExport = useCallback(() => {
-    if (!isAdmin) return;
-    globalThis.print();
-  }, [isAdmin]);
 
   /**
    * Precompute responsive flags for render-time layout tweaks.
@@ -654,10 +639,10 @@ const FounderReportContent: React.FC = () => {
   }
 
   /**
-   * Admin-only access control (checked AFTER loading completes).
-   * Non-admins are silently redirected to dashboard (per requirements).
+   * Founder Report access required (checked AFTER loading completes).
+   * Non-authorized users are silently redirected to dashboard (per requirements).
    */
-  if (!isAdmin) {
+  if (!hasFounderReport) {
     return <Navigate to="/dashboard" replace />;
   }
 
@@ -835,61 +820,6 @@ const FounderReportContent: React.FC = () => {
                           )}
                         </div>
                       </div>
-                    </div>
-
-                    {/* PDF Export Button */}
-                    <div className="mt-6 print:hidden">
-                      <button
-                        type="button"
-                        onClick={handlePrintExport}
-                        className="w-full px-4 py-2 text-white font-medium rounded-lg transition-all
-                          bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700
-                          focus:ring-4 focus:ring-indigo-300 focus:outline-none
-                          flex items-center justify-center"
-                      >
-                        <svg
-                          className="w-5 h-5 mr-2"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2M6 14h12v8H6v-8z"
-                          />
-                        </svg>
-                        {"Print / Export"}
-                      </button>
-                    </div>
-
-                    {/* Back to dashboard link (explicitly required in sidebar) */}
-                    <div className="mt-3">
-                      <Link
-                        to="/dashboard"
-                        className="w-full px-4 py-2 text-white font-medium rounded-lg transition-all 
-                              bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700
-                              focus:ring-4 focus:ring-blue-300 focus:outline-none block text-center
-                              flex items-center justify-center"
-                      >
-                        <svg
-                          className="w-5 h-5 mr-2"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M10 19l-7-7m0 0l7-7m-7 7h18"
-                          />
-                        </svg>
-                        {t("dashboard.title") || "Back to Dashboard"}
-                      </Link>
                     </div>
                   </div>
                 </div>

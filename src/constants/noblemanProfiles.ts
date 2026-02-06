@@ -192,33 +192,27 @@ export const PALACE_OBJECTIVES: Record<string, string> = {
 };
 
 /**
- * 4 key life areas for "Other Life Areas" section
- * These are the most commonly sought objectives
+ * 3 key life areas for "Other Life Areas" section
+ * Focus on: Life, Career, and Friends
  */
 export const KEY_LIFE_AREAS = [
   {
+    palaceName: "命宫",
+    palaceNameTraditional: "命宮",
+    objective: "Life & Personal Growth",
+    gradient: "from-purple-500 to-pink-500",
+  },
+  {
     palaceName: "官禄",
     palaceNameTraditional: "官祿",
-    objective: "Career Growth",
+    objective: "Career & Achievement",
     gradient: "from-blue-500 to-cyan-500",
   },
   {
-    palaceName: "财帛",
-    palaceNameTraditional: "財帛",
-    objective: "Wealth Building",
-    gradient: "from-amber-800 to-orange-800",
-  },
-  {
-    palaceName: "疾厄",
-    palaceNameTraditional: "疾厄",
-    objective: "Health & Wellness",
+    palaceName: "交友",
+    palaceNameTraditional: "交友",
+    objective: "Friends & Collaboration",
     gradient: "from-green-500 to-emerald-500",
-  },
-  {
-    palaceName: "命宫",
-    palaceNameTraditional: "命宮",
-    objective: "Personal Growth",
-    gradient: "from-purple-500 to-pink-500",
   },
 ] as const;
 

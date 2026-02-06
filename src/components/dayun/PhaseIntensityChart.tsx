@@ -32,11 +32,11 @@ export const PhaseIntensityChart: React.FC<PhaseIntensityChartProps> = ({ dayun 
   const getGradientColors = (season: string): string => {
     switch (season) {
       case "spring":
-        return "#10b981"; // emerald-500
+        return "#f97316"; // orange-500
       case "summer":
         return "#f59e0b"; // amber-500
       case "autumn":
-        return "#f97316"; // orange-500
+        return "#10b981"; // emerald-500
       case "winter":
         return "#3b82f6"; // blue-500
       default:

@@ -14,6 +14,7 @@ import {
   getScoreBadgeClasses,
   type ChartDataType,
 } from "../../utils/zwds/analysis";
+import GradientSectionHeader from "./shared/GradientSectionHeader";
 
 /**
  * Helper function to normalize star names for translation lookup
@@ -105,48 +106,50 @@ const AreasOfLife: React.FC<{ chartData: ChartDataType }> = ({ chartData }) => {
 
   return (
     <div className="p-6 dark:bg-gray-900">
-      {/* Divider */}
-      <div className="w-full border-t border-gray-400 dark:border-gray-600 mb-6"></div>
+      {/* Section Header */}
+      <GradientSectionHeader
+        badgeText="05"
+        title="DESTINY SCOREBOARD"
+        subtitle="Your personal scorecard across the 5 destiny pillars."
+        showDivider={true}
+      />
 
-      {/* Title */}
-      <h2 className="text-4xl mb-2 dark:text-white text-center font-bold">
-      DESTINY SCOREBOARD
-      </h2>
-
-      {/* Subtitle */}
-      <p className="text-lg mb-6 dark:text-white text-center italic">
-        Your personal scorecard across the 5 destiny pillars.
-      </p>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Left Column - Radar Chart */}
-        <div className="w-full flex justify-center items-center">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {/* Left Column - Radar Chart in Premium Card */}
+        <div className="rounded-2xl shadow-lg border bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 border-gray-200 dark:border-gray-700 p-8">
+          <div className="flex items-center gap-3 mb-6">
+            <span className="text-3xl">📊</span>
+            <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+              Life Areas Overview
+            </h3>
+          </div>
           <div className="w-full h-80 md:h-96">
             {lifeAreaScores.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
                 <RadarChart data={lifeAreaScores}>
-                  <PolarGrid stroke="#475569" />
+                  <PolarGrid stroke="#94a3b8" strokeDasharray="3 3" />
                   <PolarAngleAxis 
                     dataKey="area" 
-                    tick={{ fill: "#475569", fontSize: 12 }}
+                    tick={{ fill: "#64748b", fontSize: 12, fontWeight: 600 }}
                   />
                   <PolarRadiusAxis 
                     angle={90} 
                     domain={[0, 100]}
-                    tick={{ fill: "#475569", fontSize: 10 }}
+                    tick={{ fill: "#94a3b8", fontSize: 10 }}
                   />
                   <Radar
                     name="Score"
                     dataKey="score"
-                    stroke="#2563eb"
-                    fill="#2563eb"
-                    fillOpacity={0.6}
-                    strokeWidth={2}
+                    stroke="#6366f1"
+                    fill="#8b5cf6"
+                    fillOpacity={0.5}
+                    strokeWidth={3}
                   />
                 </RadarChart>
               </ResponsiveContainer>
             ) : (
               <div className="flex items-center justify-center h-full">
-                <p className="text-gray-500 dark:text-gray-400">
+                <p className="text-sm text-gray-600 dark:text-gray-400">
                   {t("analysis.noDataAvailable") || "No data available"}
                 </p>
               </div>
@@ -155,17 +158,17 @@ const AreasOfLife: React.FC<{ chartData: ChartDataType }> = ({ chartData }) => {
         </div>
 
         {/* Right Column - Area Explanations */}
-        <div className="space-y-4 max-h-[600px] overflow-y-auto pr-2">
+        <div className="space-y-4 max-h-[700px] overflow-y-auto pr-2">
           {lifeAreaAnalysis.length > 0 ? (
             <>
               {lifeAreaAnalysis.map((area) => (
                 <div
                   key={area.area}
-                  className="relative border border-gray-200 dark:border-gray-700 rounded-lg p-4 transition-shadow duration-300 hover:shadow-md overflow-hidden">
-                  {/* Background Score Display */}
+                  className="relative rounded-xl border border-gray-200 dark:border-gray-700 bg-gradient-to-br from-indigo-50/30 to-purple-50/30 dark:from-indigo-900/10 dark:to-purple-900/10 p-5 hover:shadow-lg transition-all duration-300 overflow-hidden">
+                  {/* Background Score Display with better opacity */}
                   <div className="absolute inset-0 pointer-events-none z-0">
                     <div className="flex items-end justify-end h-full">
-                      <div className="opacity-[0.16] dark:opacity-[0.10] transform scale-[1] mr-2 mb-0">
+                      <div className="opacity-[0.08] dark:opacity-[0.06] transform mr-2 mb-0">
                         <span
                           className={`text-9xl font-bold ${getScoreBadgeClasses(
                             area.score
@@ -179,38 +182,44 @@ const AreasOfLife: React.FC<{ chartData: ChartDataType }> = ({ chartData }) => {
                   {/* Content */}
                   <div className="relative z-10">
                     <div className="flex flex-col gap-3">
-                      <div className="flex items-center gap-3">
-                        <span
-                          className="text-2xl"
-                          role="img"
-                          aria-label={area.displayName}>
-                          {area.icon}
-                        </span>
-                        <h4 className="font-semibold text-lg text-gray-800 dark:text-white">
-                          {area.displayName}
-                        </h4>
+                      <div className="flex items-center justify-between flex-wrap gap-3">
+                        <div className="flex items-center gap-3">
+                          <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-md">
+                            <span
+                              className="text-xl"
+                              role="img"
+                              aria-label={area.displayName}>
+                              {area.icon}
+                            </span>
+                          </div>
+                          <h4 className="font-bold text-base text-gray-900 dark:text-white uppercase tracking-wide">
+                            {area.displayName}
+                          </h4>
+                        </div>
 
-                        {/* Score Badge */}
-                        <span
-                          className={`text-lg font-bold ${getScoreBadgeClasses(
-                            area.score
-                          )}`}>
-                          {area.score}%
-                        </span>
+                        {/* Score Badge with gradient background */}
+                        <div className="flex items-center gap-2">
+                          <div className="px-3 py-1 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 shadow-md">
+                            <span className="text-sm font-bold text-white">
+                              {area.score}%
+                            </span>
+                          </div>
+                        </div>
                       </div>
-                      <div className="space-y-2">
+                      
+                      <div className="space-y-2 mt-1">
                         <div
                           className={`${
-                            !expandedAreas[area.area] ? "line-clamp-4" : ""
+                            !expandedAreas[area.area] ? "line-clamp-3" : ""
                           }`}>
-                          <p className="text-gray-600 dark:text-gray-400">
+                          <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
                             {getCombinedDescription(area)}
                           </p>
                         </div>
                         <button
                           onClick={() => toggleArea(area.area)}
-                          className="text-sm font-medium text-purple-600 hover:text-purple-700 dark:text-purple-400 dark:hover:text-purple-300 transition-colors duration-200">
-                          {expandedAreas[area.area] ? "Show Less" : "See More"}
+                          className="text-xs font-bold text-purple-600 hover:text-purple-700 dark:text-purple-400 dark:hover:text-purple-300 transition-colors duration-200 uppercase tracking-wider">
+                          {expandedAreas[area.area] ? "Show Less ↑" : "See More ↓"}
                         </button>
                       </div>
                     </div>
@@ -219,8 +228,9 @@ const AreasOfLife: React.FC<{ chartData: ChartDataType }> = ({ chartData }) => {
               ))}
             </>
           ) : (
-            <div className="text-center p-6">
-              <p className="text-gray-500 dark:text-gray-400">
+            <div className="rounded-2xl shadow-lg border bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700 p-8 text-center">
+              <span className="text-6xl mb-4 block">📭</span>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
                 {t("analysis.noAnalysisAvailable") || "No analysis available"}
               </p>
             </div>

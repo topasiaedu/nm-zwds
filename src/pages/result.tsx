@@ -92,7 +92,7 @@ const ResultContent: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { profiles, loading: profilesLoading } = useProfileContext();
-  const { hasAnalyticsAccess, isAdmin } = useTierAccess();
+  const { hasFullAnalysis, isAdmin } = useTierAccess();
   const { showAlert } = useAlertContext();
 
   // State for chart data
@@ -495,7 +495,7 @@ const ResultContent: React.FC = () => {
           }));
         },
         {
-          includeAnalysis: hasAnalyticsAccess,
+          includeAnalysis: hasFullAnalysis,
           pageBreaks: true,
           quality: 0.95,
           scale: 1.5,
@@ -515,7 +515,7 @@ const ResultContent: React.FC = () => {
         },
       }));
     }
-  }, [chartData, calculatedChartData, hasAnalyticsAccess, formatDate, language, showAlert, t]);
+  }, [chartData, calculatedChartData, formatDate, hasFullAnalysis, language, showAlert, t]);
 
   // If loading profiles from context
   if (profilesLoading) {
@@ -1069,7 +1069,7 @@ const ResultContent: React.FC = () => {
 
 
         {/* Analysis Section - Always show Overview, but other components require Tier 2+ */}
-        {calculatedChartData && !loading && !error && hasAnalyticsAccess && (
+        {calculatedChartData && !loading && !error && hasFullAnalysis && (
           <div className="mt-8">
             <div className="flex flex-col justify-center items-center">
               <h2 className="text-4xl mb-2 font-bold dark:text-white flex items-center text-center pt-4">
@@ -1088,25 +1088,36 @@ const ResultContent: React.FC = () => {
               <Overview chartData={calculatedChartData} />
 
               {/* Premium Analytics - Tier 2+ only */}
-              {hasAnalyticsAccess && (
+              {hasFullAnalysis && (
                 <>
-                  <Career chartData={calculatedChartData} />
+                  {/* <Career chartData={calculatedChartData} /> */}
+                  <WealthCode 
+                    chartData={calculatedChartData}
+                    showTopDivider={true}
+                    header={{
+                      badgeText: "02",
+                      title: "WEALTH CODE ANALYSIS",
+                      subtitle: "Decode your natural earning style and ideal business model aligned to your energy."
+                    }}
+                  />
+                  <NoblemanSection chartData={calculatedChartData} />
+
                   <Health chartData={calculatedChartData} />
-                  <AreasOfLife chartData={calculatedChartData} />
-                  <FourKeyPalace chartData={calculatedChartData} />
-                  <DestinyCompass chartData={calculatedChartData} />
+                  {/* <FourKeyPalace chartData={calculatedChartData} /> */}
                 </>
               )}
 
               {/* Wealth Code Analysis - Admin only (testing phase) - Placed at bottom */}
-              <WealthCode chartData={calculatedChartData} />
 
-              {/* Dayun Season Analysis - 10-Year Life Cycle */}
-              <DayunSection chartData={calculatedChartData} />
+
 
               {/* Nobleman Analysis - Key Supportive People */}
-              <NoblemanSection chartData={calculatedChartData} />
 
+
+              {/* <DestinyCompass chartData={calculatedChartData} /> */}
+              <AreasOfLife chartData={calculatedChartData} />
+              {/* Dayun Season Analysis - 10-Year Life Cycle */}
+              <DayunSection chartData={calculatedChartData} />
               {/* Summary Analysis */}
               {/* <SummaryAnalysis chartData={calculatedChartData} /> */}
 

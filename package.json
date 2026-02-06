@@ -68,7 +68,9 @@
     "dev": "nodemon --exec 'react-scripts start'",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "format": "prettier --write .",
-    "supabase-sync": "npx supabase gen types typescript --project-id fwbyxczxtepkvklkhnjv > database.types.ts"
+    "supabase-sync": "npx supabase gen types typescript --project-id fwbyxczxtepkvklkhnjv > database.types.ts",
+    "migrate:feature-flags": "tsx scripts/migrate-user-feature-flags.ts",
+    "migrate:feature-flags:dry": "tsx scripts/migrate-user-feature-flags.ts --dry-run"
   },
   "eslintConfig": {
     "extends": [

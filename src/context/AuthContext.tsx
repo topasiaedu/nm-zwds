@@ -161,7 +161,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
        * Normalize and validate the referral code.
        */
       const normalizedReferralCode = referralCode.trim();
-      const validReferralCodes: ReadonlyArray<string> = ["DYD2025", "DYD206"];
+      const validReferralCodes: ReadonlyArray<string> = ["DYD2025", "DYD2026"];
       const isReferralCodeValid = validReferralCodes.includes(normalizedReferralCode);
 
       // Reject invalid referral codes early.

@@ -27,11 +27,11 @@ export const DayunSeasonHero: React.FC<DayunSeasonHeroProps> = ({ dayun }) => {
   const getGradientColors = (season: string) => {
     switch (season) {
       case 'spring':
-        return 'linear-gradient(to bottom right, #10b981, #059669)'; // emerald-500 to emerald-600
+        return 'linear-gradient(to bottom right, #f97316, #ef4444)'; // orange-500 to red-500
       case 'summer':
         return 'linear-gradient(to bottom right, #f59e0b, #eab308)'; // amber-500 to yellow-500
       case 'autumn':
-        return 'linear-gradient(to bottom right, #f97316, #ef4444)'; // orange-500 to red-500
+        return 'linear-gradient(to bottom right, #10b981, #059669)'; // emerald-500 to emerald-600
       case 'winter':
         return 'linear-gradient(to bottom right, #3b82f6, #06b6d4)'; // blue-500 to cyan-500
       default:

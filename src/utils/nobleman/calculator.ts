@@ -62,44 +62,43 @@ function getStarsForMatching(chartData: ChartData, palace: Palace): Palace {
 }
 
 /**
- * Calculate nobleman data for the current Dayun palace
+ * Calculate nobleman data for the Wealth Palace (fixed)
  * 
- * This is the main function that implements the complete 3-step nobleman
- * identification methodology. If the Dayun palace has no stars, it checks
- * the opposite palace.
+ * This function always uses the Wealth Palace (财帛) to determine the
+ * main nobleman profile, regardless of the current Dayun cycle.
  * 
  * @param chartData - Complete ZWDS chart data
- * @param currentAge - User's current age
- * @returns NoblemanData for the current Dayun palace, or null if not available
+ * @returns NoblemanData for the Wealth Palace, or null if not available
  */
 export function calculateNoblemanData(
-  chartData: ChartData,
-  currentAge: number
+  chartData: ChartData
 ): NoblemanData | null {
-  // Step 1: Get current Dayun palace
-  const dayunPalace = findCurrentDayunPalace(chartData, currentAge);
+  // Find the Wealth Palace (check both simplified and traditional names)
+  const wealthPalace = chartData.palaces.find(
+    (p) => p.name === "财帛" || p.name === "財帛"
+  );
   
-  if (!dayunPalace) {
-    // No Dayun palace found for current age
+  if (!wealthPalace) {
+    console.error("Wealth Palace not found in chart data");
     return null;
   }
   
-  // Step 2: Extract earthly branch and map to zodiac (always use original Dayun palace)
-  const zodiacData = mapEarthlyBranchToZodiac(dayunPalace.earthlyBranch);
-  const yearExamples = generateRecentYears(dayunPalace.earthlyBranch);
+  // Step 1: Extract earthly branch and map to zodiac
+  const zodiacData = mapEarthlyBranchToZodiac(wealthPalace.earthlyBranch);
+  const yearExamples = generateRecentYears(wealthPalace.earthlyBranch);
   
-  // Step 3: Get stars for matching (may use opposite palace stars as fallback)
-  const starsSource = getStarsForMatching(chartData, dayunPalace);
+  // Step 2: Get stars for matching (may use opposite palace stars as fallback)
+  const starsSource = getStarsForMatching(chartData, wealthPalace);
   const matchedProfiles = matchStarsToProfiles(starsSource);
   
   // Debug: Log if no profiles matched but palace has stars
   if (matchedProfiles.length === 0) {
     console.log("Nobleman Debug - No profiles matched:", {
-      palaceName: dayunPalace.name,
-      mainStars: dayunPalace.mainStar?.map(s => s.name),
-      auxiliaryStars: dayunPalace.auxiliaryStars?.map(s => s.name),
-      minorStars: dayunPalace.minorStars?.map(s => s.name),
-      yearStars: dayunPalace.yearStars?.map(s => s.name),
+      palaceName: wealthPalace.name,
+      mainStars: wealthPalace.mainStar?.map(s => s.name),
+      auxiliaryStars: wealthPalace.auxiliaryStars?.map(s => s.name),
+      minorStars: wealthPalace.minorStars?.map(s => s.name),
+      yearStars: wealthPalace.yearStars?.map(s => s.name),
       starsSourcePalace: starsSource.name,
       starsSourceMainStars: starsSource.mainStar?.map(s => s.name),
       starsSourceAuxiliaryStars: starsSource.auxiliaryStars?.map(s => s.name),
@@ -108,17 +107,17 @@ export function calculateNoblemanData(
     });
   }
   
-  // Get palace name in English (always use original Dayun palace name)
-  const palaceName = PALACE_NAME_TRANSLATIONS[dayunPalace.name] || dayunPalace.name;
+  // Get palace name in English
+  const palaceName = PALACE_NAME_TRANSLATIONS[wealthPalace.name] || wealthPalace.name;
   
   return {
     palaceName,
-    palaceChinese: dayunPalace.name,
+    palaceChinese: wealthPalace.name,
     zodiac: zodiacData.english,
     zodiacChinese: zodiacData.chinese,
     yearExamples,
     matchedProfiles,
-    earthlyBranch: dayunPalace.earthlyBranch,
+    earthlyBranch: wealthPalace.earthlyBranch,
   };
 }
 

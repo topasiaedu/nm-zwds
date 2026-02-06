@@ -9,6 +9,7 @@ import React from "react";
 import type { ChartData } from "../../utils/zwds/types";
 import { calculateCurrentDayunCycle } from "../../utils/dayun/calculator";
 import { generateDayunGuidance } from "../../utils/dayun/guidanceGenerator";
+import GradientSectionHeader from "../analysis_v2/shared/GradientSectionHeader";
 import {
   DayunSeasonHero,
   CycleTimeline,
@@ -66,17 +67,15 @@ export const DayunSection: React.FC<DayunSectionProps> = ({
   const dayunWithGuidance = generateDayunGuidance(dayunCycle);
 
   return (
-    <section className="mb-8">
-      {/* Section Header - Matching Wealth Code Analysis styling */}
+    <section className="mb-8 p-6 dark:bg-gray-900">
+      {/* Section Header - Premium Gradient Header */}
       {shouldShowHeader ? (
-        <div className="text-center mb-8 pt-8 border-t border-gray-200 dark:border-gray-700">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-2 uppercase tracking-wide">
-            Dayun Season Analysis
-          </h2>
-          <p className="text-base md:text-lg text-gray-600 dark:text-gray-400">
-            Your Current 10-Year Life Cycle Strategy
-          </p>
-        </div>
+        <GradientSectionHeader
+          badgeText="06"
+          title="DAYUN SEASON ANALYSIS"
+          subtitle="Your Current 10-Year Life Cycle Strategy"
+          showDivider={true}
+        />
       ) : null}
 
       {/* Season Hero - Large visual card (FIRST - most prominent) */}

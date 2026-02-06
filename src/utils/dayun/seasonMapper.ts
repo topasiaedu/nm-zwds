@@ -69,9 +69,9 @@ export const PALACE_NAMES: Record<PalaceName, string> = {
  */
 export const SEASON_COLORS: Record<DayunSeason, SeasonColors> = {
   spring: {
-    gradient: "from-green-500 to-emerald-500",
-    primary: "#10b981",
-    bg: "from-green-50 to-emerald-50",
+    gradient: "from-orange-500 to-red-500",
+    primary: "#f97316",
+    bg: "from-orange-50 to-red-50",
   },
   summer: {
     gradient: "from-amber-500 to-yellow-500",
@@ -79,9 +79,9 @@ export const SEASON_COLORS: Record<DayunSeason, SeasonColors> = {
     bg: "from-amber-50 to-yellow-50",
   },
   autumn: {
-    gradient: "from-orange-500 to-red-500",
-    primary: "#f97316",
-    bg: "from-orange-50 to-red-50",
+    gradient: "from-green-500 to-emerald-500",
+    primary: "#10b981",
+    bg: "from-green-50 to-emerald-50",
   },
   winter: {
     gradient: "from-blue-500 to-cyan-500",

@@ -1,3 +1,5 @@
+import type { FeatureFlags } from "./src/types/features"
+
 export type Json =
   | string
   | number
@@ -60,6 +62,7 @@ export type Database = {
           is_paused: boolean
           membership_expiration: string | null
           tier: string
+          feature_flags: FeatureFlags | null // Feature flag overrides for this user.
           updated_at: string
           user_id: string
         }
@@ -69,6 +72,7 @@ export type Database = {
           is_paused?: boolean
           membership_expiration?: string | null
           tier?: string
+          feature_flags?: FeatureFlags | null // Feature flag overrides for this user.
           updated_at?: string
           user_id: string
         }
@@ -78,6 +82,7 @@ export type Database = {
           is_paused?: boolean
           membership_expiration?: string | null
           tier?: string
+          feature_flags?: FeatureFlags | null // Feature flag overrides for this user.
           updated_at?: string
           user_id?: string
         }

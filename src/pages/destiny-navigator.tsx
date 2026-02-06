@@ -14,7 +14,7 @@ import AnalysisView from "../components/destiny-navigator/stages/AnalysisView";
 import type { DayunPeriod } from "../types/destiny-navigator";
 
 /**
- * DestinyNavigator - Admin-only interactive feature for analyzing life aspects
+ * DestinyNavigator - Feature-flag interactive feature for analyzing life aspects
  * across different timeframes using Zi Wei Dou Shu principles.
  * 
  * This page serves as the main entry point and coordinator for the Navigator
@@ -23,7 +23,7 @@ import type { DayunPeriod } from "../types/destiny-navigator";
 const DestinyNavigator: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { profiles, loading: profilesLoading } = useProfileContext();
-  const { isAdmin } = useTierAccess();
+  const { hasDestinyNavigatorTool } = useTierAccess();
 
   /**
    * Navigator state management - tracks progression through stages
@@ -46,10 +46,10 @@ const DestinyNavigator: React.FC = () => {
   }, [profiles, id]);
 
   /**
-   * Admin-only access control
-   * Redirect non-admin users to dashboard with message
+   * Feature-flag access control
+   * Redirect non-authorized users to dashboard with message
    */
-  if (!isAdmin) {
+  if (!hasDestinyNavigatorTool) {
     return (
       <PageTransition>
         <div className="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-900 to-slate-900 flex items-center justify-center p-6">
@@ -70,9 +70,7 @@ const DestinyNavigator: React.FC = () => {
               </svg>
             </div>
             <h1 className="text-2xl font-bold text-white mb-3">Access Restricted</h1>
-            <p className="text-cyan-200 mb-6">
-              The Destiny Navigator is currently available to Admin users only.
-            </p>
+            <p className="text-cyan-200 mb-6">Destiny Navigator access required</p>
             <Link
               to="/dashboard"
               className="inline-block px-6 py-3 rounded-lg bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 text-white font-medium transition-all"

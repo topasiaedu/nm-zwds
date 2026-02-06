@@ -17,7 +17,7 @@ const Dashboard: React.FC = () => {
   const { user } = useAuth();
   const { profiles, loading, deleteProfile } = useProfileContext();
   const { showAlert } = useAlertContext();
-  const { hasDestinyNavigatorAccess, isAdmin, tier } = useTierAccess();
+  const { hasAIAssistant, hasFounderReport, isAdmin, tier } = useTierAccess();
   const [deleteConfirmation, setDeleteConfirmation] = useState<{
     isOpen: boolean;
     profileId: string;
@@ -104,84 +104,6 @@ const Dashboard: React.FC = () => {
                 </h2>
 
                 <div className="space-y-4">
-                  {/* Admin: Experimental Chart */}
-                  {(isAdmin ) && (
-                    <Link
-                      to="/tier3-result"
-                      className="block bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20 rounded-xl p-4 hover:from-purple-100 hover:to-indigo-100 dark:hover:from-purple-900/30 dark:hover:to-indigo-900/30 transition-colors border border-purple-200 dark:border-purple-800">
-                      <div className="flex items-start justify-between">
-                        <div className="flex items-center">
-                          <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-purple-100 dark:bg-purple-900/50 flex items-center justify-center mr-3">
-                            <svg className="w-5 h-5 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                            </svg>
-                          </div>
-                          <div>
-                            <div className="flex items-center">
-                              <h3 className="text-lg font-medium text-gray-900 dark:text-white">Advanced Chart Analysis</h3>
-                            </div>
-                            <p className="text-sm text-gray-600 dark:text-gray-400">Clean natal chart + palace activation preview</p>
-                          </div>
-                        </div>
-                        <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                        </svg>
-                      </div>
-                    </Link>
-                  )}
-                  {/* Admin: Destiny Navigator */}
-                  {(isAdmin && recentProfiles.length > 0) && (
-                    <Link
-                      to={`/destiny-navigator/${recentProfiles[0].id}`}
-                      className="block bg-gradient-to-r from-cyan-50 to-blue-50 dark:from-cyan-900/20 dark:to-blue-900/20 rounded-xl p-4 hover:from-cyan-100 hover:to-blue-100 dark:hover:from-cyan-900/30 dark:hover:to-blue-900/30 transition-colors border border-cyan-200 dark:border-cyan-800">
-                      <div className="flex items-start justify-between">
-                        <div className="flex items-center">
-                          <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-cyan-100 dark:bg-cyan-900/50 flex items-center justify-center mr-3">
-                            <svg className="w-5 h-5 text-cyan-600 dark:text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                            </svg>
-                          </div>
-                          <div>
-                            <div className="flex items-center">
-                              <h3 className="text-lg font-medium text-gray-900 dark:text-white">Destiny Navigator</h3>
-                            </div>
-                            <p className="text-sm text-gray-600 dark:text-gray-400">Interactive timing analysis by life aspect</p>
-                          </div>
-                        </div>
-                        <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                        </svg>
-                      </div>
-                    </Link>
-                  )}
-                  {/* Admin: Founder Timing Decision System Report */}
-                  {(isAdmin && recentProfiles.length > 0) && (
-                    <Link
-                      to={`/founder-report/${recentProfiles[0].id}`}
-                      className="block bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 rounded-xl p-4 hover:from-amber-100 hover:to-orange-100 dark:hover:from-amber-900/30 dark:hover:to-orange-900/30 transition-colors border border-amber-200 dark:border-amber-800">
-                      <div className="flex items-start justify-between">
-                        <div className="flex items-center">
-                          <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-amber-100 dark:bg-amber-900/50 flex items-center justify-center mr-3">
-                            <svg className="w-5 h-5 text-amber-700 dark:text-amber-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                          </div>
-                          <div>
-                            <div className="flex items-center gap-2">
-                              <h3 className="text-lg font-medium text-gray-900 dark:text-white">Founder Report</h3>
-                              <span className="inline-block bg-gradient-to-r from-amber-500 to-orange-600 text-white px-2 py-0.5 rounded-full text-xs font-bold">
-                                Premium
-                              </span>
-                            </div>
-                            <p className="text-sm text-gray-600 dark:text-gray-400">Founder Timing Decision System Report</p>
-                          </div>
-                        </div>
-                        <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                        </svg>
-                      </div>
-                    </Link>
-                  )}
                   {/* My Chart */}
                   <Link
                     to={tier === "tier3" && !isAdmin ? "/tier3-result" : "/chart"}
@@ -287,7 +209,7 @@ const Dashboard: React.FC = () => {
                   </Link>
 
                   {/* Destiny Wealth Navigator AI Assistant - Tier 2+ */}
-                  {hasDestinyNavigatorAccess && (
+                  {hasAIAssistant && (
                     <Link
                       to="/destiny-wealth-navigator"
                       className="block bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
@@ -309,7 +231,7 @@ const Dashboard: React.FC = () => {
                           </div>
                           <div>
                             <h3 className="text-lg font-medium text-gray-900 dark:text-white">
-                              Destiny Wealth Navigator
+                              Destiny Wealth Navigator AI Assistant
                             </h3>
                             <p className="text-sm text-gray-600 dark:text-gray-400">
                               AI-powered astrology insights and guidance
@@ -332,16 +254,16 @@ const Dashboard: React.FC = () => {
                     </Link>
                   )}
 
-                  {/* Admin Management - Admin Only */}
-                  {isAdmin && (
+                  {/* Founder Report - Founders only */}
+                  {hasFounderReport && (
                     <Link
-                      to="/admin/users"
-                      className="block bg-gradient-to-r from-red-50 to-pink-50 dark:from-red-900/20 dark:to-pink-900/20 rounded-xl p-4 hover:from-red-100 hover:to-pink-100 dark:hover:from-red-900/30 dark:hover:to-pink-900/30 transition-all border border-red-200 dark:border-red-800">
+                      to="/founder-report"
+                      className="block bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                       <div className="flex items-start justify-between">
                         <div className="flex items-center">
-                          <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-red-100 dark:bg-red-900/50 flex items-center justify-center mr-3">
+                          <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center mr-3">
                             <svg
-                              className="w-5 h-5 text-red-600 dark:text-red-400"
+                              className="w-5 h-5 text-amber-600 dark:text-amber-400"
                               fill="none"
                               stroke="currentColor"
                               viewBox="0 0 24 24">
@@ -349,26 +271,21 @@ const Dashboard: React.FC = () => {
                                 strokeLinecap="round"
                                 strokeLinejoin="round"
                                 strokeWidth={2}
-                                d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"
+                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
                               />
                             </svg>
                           </div>
                           <div>
-                            <div className="flex items-center mb-1">
-                              <h3 className="text-lg font-medium text-gray-900 dark:text-white">
-                                User Management
-                              </h3>
-                              <span className="ml-2 px-2 py-1 text-xs font-semibold bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300 rounded-full">
-                                ADMIN
-                              </span>
-                            </div>
+                            <h3 className="text-lg font-medium text-gray-900 dark:text-white">
+                              Founder Report
+                            </h3>
                             <p className="text-sm text-gray-600 dark:text-gray-400">
-                              Manage user tiers and permissions
+                              Strategic business and wealth insights
                             </p>
                           </div>
                         </div>
                         <svg
-                          className="w-5 h-5 text-red-400"
+                          className="w-5 h-5 text-gray-400"
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24">
@@ -383,56 +300,6 @@ const Dashboard: React.FC = () => {
                     </Link>
                   )}
 
-                  {/* Numerology Analytics - Admin Only */}
-                  {isAdmin && (
-                    <Link
-                      to="/admin/numerology-analytics"
-                      className="block bg-gradient-to-r from-orange-50 to-yellow-50 dark:from-orange-900/20 dark:to-yellow-900/20 rounded-xl p-4 hover:from-orange-100 hover:to-yellow-100 dark:hover:from-orange-900/30 dark:hover:to-yellow-900/30 transition-all border border-orange-200 dark:border-orange-800">
-                      <div className="flex items-start justify-between">
-                        <div className="flex items-center">
-                          <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-orange-100 dark:bg-orange-900/50 flex items-center justify-center mr-3">
-                            <svg
-                              className="w-5 h-5 text-orange-600 dark:text-orange-400"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24">
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-                              />
-                            </svg>
-                          </div>
-                          <div>
-                            <div className="flex items-center mb-1">
-                              <h3 className="text-lg font-medium text-gray-900 dark:text-white">
-                                Numerology Analytics
-                              </h3>
-                              <span className="ml-2 px-2 py-1 text-xs font-semibold bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300 rounded-full">
-                                ADMIN
-                              </span>
-                            </div>
-                            <p className="text-sm text-gray-600 dark:text-gray-400">
-                              View birth date numerology patterns
-                            </p>
-                          </div>
-                        </div>
-                        <svg
-                          className="w-5 h-5 text-orange-400"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24">
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M9 5l7 7-7 7"
-                          />
-                        </svg>
-                      </div>
-                    </Link>
-                  )}
                 </div>
               </div>
 

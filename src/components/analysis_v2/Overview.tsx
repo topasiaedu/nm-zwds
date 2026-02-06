@@ -2,6 +2,7 @@ import React from "react";
 import { Badge } from "flowbite-react";
 import { ChartData } from "../../utils/zwds/types";
 import { analyzeOverview, OverviewAnalysisResult } from "../../utils/zwds/analysis/overviewAnalysis";
+import GradientSectionHeader from "./shared/GradientSectionHeader";
 
 /**
  * Type definition for a feature item to be displayed as a badge
@@ -68,14 +69,14 @@ const Overview: React.FC<OverviewProps> = ({ chartData }) => {
   };
 
   /**
-   * Renders tip items with increased size and emphasis
+   * Renders tip items with premium card styling
    */
   const renderTipItems = (items: FeatureItem[]): JSX.Element[] => {
     return items.map((item) => (
       <div
         key={item.id}
-        className="p-4 border-l-4 border-blue-500 bg-blue-50 dark:bg-blue-900/20 rounded-r-md shadow-sm hover:shadow transition-shadow dark:shadow-gray-800">
-        <p className="text-base font-medium text-blue-900 dark:text-blue-300">
+        className="rounded-xl border border-blue-200 dark:border-blue-700 bg-gradient-to-br from-blue-50/50 to-indigo-50/50 dark:from-blue-900/10 dark:to-indigo-900/10 p-4 hover:shadow-lg transition-shadow">
+        <p className="text-sm font-medium text-gray-900 dark:text-white leading-relaxed">
           {item.label}
         </p>
       </div>
@@ -95,31 +96,52 @@ const Overview: React.FC<OverviewProps> = ({ chartData }) => {
 
   return (
     <div className="p-6 dark:bg-gray-900">
-      {/* First Row - Full Width Description */}
-      <div className="mb-8">
-        <div className="rounded-lg shadow-sm">
-          {analysisResult.descriptions.length > 0 ? (
-            renderDescriptions()
-          ) : (
-            <p className="mb-4 text-gray-700 dark:text-gray-300">
-              No analysis data available for the stars in your life palace. Please ensure your chart data is properly calculated.
-            </p>
-          )}
+      {/* Section Header */}
+      <GradientSectionHeader
+        badgeText="01"
+        title="PERSONALITY BLUEPRINT"
+        subtitle="Discover your core strengths, challenges, and strategic growth opportunities"
+        showDivider={true}
+      />
+
+      {/* Core Personality Description - Premium Card */}
+      <div className="rounded-2xl shadow-lg border bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700 p-8 mb-12">
+        <div className="flex items-center gap-3 mb-6">
+          <span className="text-3xl">🎭</span>
+          <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+            Your Core Personality
+          </h3>
         </div>
+        {analysisResult.descriptions.length > 0 ? (
+          <div className="space-y-4">
+            {analysisResult.descriptions.map((description, index) => (
+              <p key={`description-${index}`} className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
+                {description}
+              </p>
+            ))}
+          </div>
+        ) : (
+          <p className="text-sm text-gray-600 dark:text-gray-400 text-center py-4">
+            No analysis data available for the stars in your life palace. Please ensure your chart data is properly calculated.
+          </p>
+        )}
       </div>
 
-      {/* Second Row - Strengths and Potential Challenges (2 columns) */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+      {/* Strengths and Challenges - Premium Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
         {/* Strengths Column */}
-        <div className="rounded-lg shadow-sm p-4 ">
-          <h5 className="text-lg font-bold mb-3 dark:text-white">
-            Strengths
-          </h5>
-          <div className="flex flex-wrap">
+        <div className="rounded-2xl shadow-lg border bg-gradient-to-br from-green-50/50 to-emerald-50/50 dark:from-green-900/10 dark:to-emerald-900/10 border-green-200 dark:border-green-700 p-6">
+          <div className="flex items-center gap-3 mb-6">
+            <span className="text-3xl">💪</span>
+            <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+              Strengths
+            </h3>
+          </div>
+          <div className="flex flex-wrap gap-2">
             {featuresData.strengths.length > 0 ? (
               renderFeatureItems(featuresData.strengths, "success")
             ) : (
-              <p className="text-gray-500 dark:text-gray-400 text-sm">
+              <p className="text-sm text-gray-600 dark:text-gray-400">
                 No strength data available
               </p>
             )}
@@ -127,15 +149,18 @@ const Overview: React.FC<OverviewProps> = ({ chartData }) => {
         </div>
 
         {/* Potential Challenges Column */}
-        <div className="rounded-lg shadow-sm p-4 ">
-          <h5 className="text-lg font-bold mb-3 dark:text-white">
-            Potential Challenges
-          </h5>
-          <div className="flex flex-wrap">
+        <div className="rounded-2xl shadow-lg border bg-gradient-to-br from-amber-50/50 to-orange-50/50 dark:from-amber-900/10 dark:to-orange-900/10 border-amber-200 dark:border-amber-700 p-6">
+          <div className="flex items-center gap-3 mb-6">
+            <span className="text-3xl">⚡</span>
+            <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+              Potential Challenges
+            </h3>
+          </div>
+          <div className="flex flex-wrap gap-2">
             {featuresData.weaknesses.length > 0 ? (
               renderFeatureItems(featuresData.weaknesses, "failure")
             ) : (
-              <p className="text-gray-500 dark:text-gray-400 text-sm">
+              <p className="text-sm text-gray-600 dark:text-gray-400">
                 No challenge data available
               </p>
             )}
@@ -143,16 +168,19 @@ const Overview: React.FC<OverviewProps> = ({ chartData }) => {
         </div>
       </div>
 
-      {/* Third Row - Growth Tips with 2-column grid */}
-      <div className="rounded-lg shadow-sm p-4 ">
-        <h5 className="text-lg font-bold mb-4 pb-2 dark:text-white">
-          Growth Tips
-        </h5>
+      {/* Growth Tips - Premium Card */}
+      <div className="rounded-2xl shadow-lg border bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700 p-8">
+        <div className="flex items-center gap-3 mb-6">
+          <span className="text-3xl">🌱</span>
+          <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+            Growth Tips
+          </h3>
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {featuresData.tips.length > 0 ? (
             renderTipItems(featuresData.tips)
           ) : (
-            <p className="text-gray-500 dark:text-gray-400 text-sm col-span-full">
+            <p className="text-sm text-gray-600 dark:text-gray-400 text-center py-4 col-span-full">
               No tip data available
             </p>
           )}

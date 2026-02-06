@@ -8,6 +8,7 @@ import AnimatedWrapper from "../analysis/AnimatedWrapper";
 import { motion } from "framer-motion";
 import maleSvgContent from "../../assets/male-svg";
 import { ChartData } from "../../utils/zwds/types";
+import GradientSectionHeader from "./shared/GradientSectionHeader";
 
 /**
  * Props interface for the HealthAnalysis component
@@ -255,90 +256,76 @@ const Health: React.FC<HealthAnalysisProps> = ({ chartData }) => {
 
   return (
     <AnimatedWrapper delay={0.2} threshold={0.25}>
-      {/* Added divider */}
-      <div className="w-full border-t border-gray-400 dark:border-gray-600 mb-6"></div>
-
-      {/* Title */}
-      <h2 className="text-4xl mb-2 dark:text-white text-center font-bold">
-        HEALTH CODE SCAN
-      </h2>
-
-      {/* Subtitle */}
-      <p className="text-lg mb-6 dark:text-white text-center italic">
-        Decode your body&apos;s energetic blueprint — where vitality flows and
-        where it breaks down.
-      </p>
-
       <div className="p-6 dark:bg-gray-900">
+        {/* Section Header */}
+        <GradientSectionHeader
+          badgeText="04"
+          title="HEALTH CODE SCAN"
+          subtitle="Decode your body's energetic blueprint — where vitality flows and where it breaks down."
+          showDivider={true}
+        />
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left column - Health interpretations */}
           <div className="flex flex-col space-y-6 order-2 lg:order-1 col-span-2">
             {healthAnalysis && healthAnalysis.affectedBodyParts.length > 0 ? (
-              <>
-                {/* Combined Health Tips and Body Parts Section */}
-                <div className="mt-8">
-                  <h3 className="text-xl font-semibold mb-4 text-gray-800 dark:text-white">
+              <div className="rounded-2xl shadow-lg border bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700 p-8">
+                <div className="flex items-center gap-3 mb-6">
+                  <span className="text-3xl">🏥</span>
+                  <h3 className="text-lg font-bold text-gray-900 dark:text-white">
                     Health Analysis & Tips
                   </h3>
-                  <div className="space-y-4">
-                    {healthAnalysis.healthTips.map((tip, index) => (
-                      <div
-                        key={index}
-                        className="p-4 border-l-4 border-red-500 bg-red-50 dark:bg-red-900/10 rounded-r">
-                        {/* Body Part Header */}
-                        <div className="flex items-center mb-3">
-                          <span className="w-3 h-3 rounded-full bg-red-500 mr-3"></span>
-                          <span className="text-lg font-semibold text-gray-800 dark:text-gray-200">
-                            {tip.englishName || tip.bodyPart}
-                          </span>
-                        </div>
-                        
-                        {/* Tip Description */}
-                        <div
-                          className={`${
-                            !expandedTips[index] ? "line-clamp-2" : ""
-                          }`}>
-                          <p className="text-gray-700 dark:text-gray-300">
-                            {tip.description}
-                          </p>
-                        </div>
-
-                        <button
-                          onClick={() => toggleTip(index)}
-                          className="mt-2 text-sm font-medium text-purple-600 hover:text-purple-700 dark:text-purple-400 dark:hover:text-purple-300 transition-colors duration-200">
-                          {expandedTips[index] ? "Show Less" : "See More"}
-                        </button>
-                      </div>
-                    ))}
-                  </div>
                 </div>
-              </>
+                <div className="space-y-6">
+                  {healthAnalysis.healthTips.map((tip, index) => (
+                    <div
+                      key={index}
+                      className="rounded-xl border border-red-200 dark:border-red-700 bg-gradient-to-br from-red-50/50 to-orange-50/50 dark:from-red-900/10 dark:to-orange-900/10 p-5 hover:shadow-lg transition-shadow">
+                      {/* Body Part Header with Icon */}
+                      <div className="flex items-center gap-3 mb-3">
+                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-red-500 to-orange-600 flex items-center justify-center shadow-md">
+                          <span className="w-3 h-3 rounded-full bg-white"></span>
+                        </div>
+                        <span className="text-base font-bold text-gray-900 dark:text-white uppercase tracking-wide">
+                          {tip.englishName || tip.bodyPart}
+                        </span>
+                      </div>
+                      
+                      {/* Tip Description */}
+                      <div
+                        className={`${
+                          !expandedTips[index] ? "line-clamp-3" : ""
+                        }`}>
+                        <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed pl-11">
+                          {tip.description}
+                        </p>
+                      </div>
+
+                      <button
+                        onClick={() => toggleTip(index)}
+                        className="mt-3 ml-11 text-xs font-bold text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 transition-colors duration-200 uppercase tracking-wider">
+                        {expandedTips[index] ? "Show Less ↑" : "See More ↓"}
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
             ) : (
-              <div className="text-center py-8">
-                <svg
-                  className="mx-auto h-12 w-12 text-gray-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-                  />
-                </svg>
-                <p className="mt-2 text-gray-500 dark:text-gray-400">
-                  No health concerns detected in your chart.
-                </p>
-                {healthAnalysis && (
-                  <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">
-                    Stars in palace:{" "}
-                    {healthAnalysis.starsInHealthPalace.length === 0
-                      ? "None"
-                      : healthAnalysis.starsInHealthPalace.join(", ")}
+              <div className="rounded-2xl shadow-lg border bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700 p-8 text-center">
+                <div className="flex flex-col items-center justify-center py-8">
+                  <span className="text-6xl mb-4">✨</span>
+                  <p className="text-lg font-bold text-gray-900 dark:text-white mb-2">
+                    No health concerns detected
                   </p>
-                )}
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Your chart shows no significant health indicators at this time.
+                  </p>
+                  {healthAnalysis && healthAnalysis.starsInHealthPalace.length > 0 && (
+                    <p className="text-xs text-gray-500 dark:text-gray-500 mt-4">
+                      Stars in palace: {healthAnalysis.starsInHealthPalace.join(", ")}
+                    </p>
+                  )}
+                </div>
               </div>
             )}
           </div>
@@ -349,9 +336,14 @@ const Health: React.FC<HealthAnalysisProps> = ({ chartData }) => {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5, delay: 0.7 }}>
-            {/* Container with 1:3 aspect ratio for the new 300x900 viewBox */}
             <div className="w-full max-w-md mx-auto">
-              <div className="w-full bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4">
+              <div className="rounded-2xl shadow-lg border bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 border-gray-200 dark:border-gray-700 p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <span className="text-2xl">🧍</span>
+                  <h4 className="text-base font-bold text-gray-900 dark:text-white">
+                    Body Map
+                  </h4>
+                </div>
                 <HumanBodySVG
                   affectedParts={healthAnalysis?.affectedBodyParts || []}
                   gender={

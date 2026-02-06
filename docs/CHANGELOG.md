@@ -7,12 +7,52 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
+### Added - February 2026
+- **Feature Flags System** - Flexible, non-hierarchical access control
+  - JSONB-based feature flags in database
+  - Support for unlimited feature combinations
+  - Program templates (DYD, Founder, Beta, Admin)
+  - Admin UI for managing feature flags
+- **Separate Admin Dashboard** - Clean separation of admin and user interfaces
+  - New `/admin` route with admin-only features
+  - User management link in navbar
+  - Stats overview and quick actions
+- **Beta/Experimental Tier** - New tier for beta testers
+  - Access to all user features
+  - Access to experimental features
+  - No admin panel access
+- **Founder Program Support** - Official Founder program tier
+  - Includes DYD features + Founder Report + Destiny Navigator
+  - Configurable via feature flags
+- **Documentation**
+  - Feature flags system documentation
+  - Access control architecture documentation
+  - AI agent implementation prompts (9 tasks)
+  - Complete migration guide
+
+### Changed - February 2026
+- **Access Control** - Replaced tier-based hierarchy with feature flags
+  - Old: `hasAnalyticsAccess` → New: `hasFullAnalysis`
+  - Old: `hasDestinyNavigatorAccess` → New: `hasAIAssistant`
+  - Old: `isAdmin` only → New: Specific admin feature flags
+- **Dashboard** - Removed admin clutter from user dashboard
+  - Admin features moved to separate `/admin` dashboard
+  - Cleaner user experience
+- **Founder Report** - Now accessible via feature flag instead of admin-only
+- **Destiny Navigator** - Now accessible via feature flag instead of admin-only
+- **Tier3** - Repurposed as "Beta" tier for experimental features
+
+### Added - January 2026
 - Comprehensive documentation in `/docs` folder
 - Refactoring plans and architecture documentation
 - Quick start guide for new developers
+- Security audit documentation
+- Production testing strategy
+- Automated testing guide
+- Deployment guide
+- Implementation roadmap
 
-### Changed
+### Changed - January 2026
 - Reorganized project documentation
 - Updated README with better structure
 

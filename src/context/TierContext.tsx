@@ -4,12 +4,18 @@ import React, {
   useState,
   useEffect,
   useCallback,
+  useMemo,
   ReactNode,
   useRef,
 } from "react";
 import { supabase } from "../utils/supabase-client";
 import { Database } from "../../database.types";
 import { useAuthContext } from "./AuthContext";
+import {
+  FeatureFlags,
+  FeatureKey,
+  PROGRAM_TEMPLATES,
+} from "../types/features";
 
 export type UserDetails = Database["public"]["Tables"]["user_details"]["Row"];
 export type UserDetailsInsert = Database["public"]["Tables"]["user_details"]["Insert"];
@@ -20,7 +26,11 @@ export type UserDetailsWithEmail = UserDetails & {
   email?: string;
 };
 
-export type UserTier = string;
+/**
+ * User tier identifiers used throughout the app.
+ * Includes "tier3" temporarily to keep legacy checks compiling.
+ */
+export type UserTier = "tier1" | "tier2" | "tier3" | "founder" | "beta" | "admin";
 
 interface TierContextProps {
   loading: boolean;
@@ -29,8 +39,14 @@ interface TierContextProps {
   isAdmin: boolean;
   isTier2OrHigher: boolean;
   isPaused: boolean;
+  featureFlags: FeatureFlags;
+  hasFeature: (feature: FeatureKey) => boolean;
   updateUserTier: (userId: string, newTier: UserTier) => Promise<boolean>;
   toggleUserPause: (userId: string, isPaused: boolean) => Promise<boolean>;
+  updateFeatureFlags: (userId: string, flags: FeatureFlags) => Promise<boolean>;
+  applyProgramTemplate: (userId: string, programKey: string) => Promise<boolean>;
+  updateMembershipExpiration: (userId: string, expiration: string | null) => Promise<boolean>;
+  quickSetProgram: (userId: string, programKey: string) => Promise<boolean>;
   getAllUserDetails: () => Promise<UserDetailsWithEmail[]>;
 }
 
@@ -39,7 +55,7 @@ const TierContext = createContext<TierContextProps | undefined>(undefined);
 /**
  * TierProvider component that manages user tier state and provides tier-related functions
  */
-export function TierProvider({ children }: { children: ReactNode }) {
+export function TierProvider({ children }: { readonly children: ReactNode }) {
   const [loading, setLoading] = useState<boolean>(true);
   const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
   const { user } = useAuthContext();
@@ -112,9 +128,7 @@ export function TierProvider({ children }: { children: ReactNode }) {
       // Use a handler that doesn't capture user in closure
       const handleRealtimeChange = (payload: any) => {
         
-        if (payload.eventType === "UPDATE" && payload.new) {
-          setUserDetails(payload.new as UserDetails);
-        } else if (payload.eventType === "INSERT" && payload.new) {
+        if ((payload.eventType === "UPDATE" || payload.eventType === "INSERT") && payload.new) {
           setUserDetails(payload.new as UserDetails);
         }
       };
@@ -148,7 +162,7 @@ export function TierProvider({ children }: { children: ReactNode }) {
    * Update a user's tier - Admin only function
    */
   const updateUserTier = useCallback(async (userId: string, newTier: UserTier): Promise<boolean> => {
-    if (!userDetails || userDetails.tier !== "admin") {
+    if (userDetails?.tier !== "admin") {
       console.error("TierContext - Unauthorized tier update attempt");
       return false;
     }
@@ -176,7 +190,7 @@ export function TierProvider({ children }: { children: ReactNode }) {
    * Toggle user pause status - Admin only function
    */
   const toggleUserPause = useCallback(async (userId: string, isPaused: boolean): Promise<boolean> => {
-    if (!userDetails || userDetails.tier !== "admin") {
+    if (userDetails?.tier !== "admin") {
       console.error("TierContext - Unauthorized pause toggle attempt");
       return false;
     }
@@ -204,7 +218,7 @@ export function TierProvider({ children }: { children: ReactNode }) {
    * Get all user details with emails - Admin only function
    */
   const getAllUserDetails = useCallback(async (): Promise<UserDetailsWithEmail[]> => {
-    if (!userDetails || userDetails.tier !== "admin") {
+    if (userDetails?.tier !== "admin") {
       console.error("TierContext - Unauthorized getAllUserDetails attempt");
       return [];
     }
@@ -251,22 +265,210 @@ export function TierProvider({ children }: { children: ReactNode }) {
   }, [userDetails]);
 
   // Computed values for easy access
-  const tier: UserTier = userDetails?.tier || "tier1";
+  const tier: UserTier = (userDetails?.tier as UserTier) || "tier1";
   const isAdmin: boolean = tier === "admin";
   const isTier2OrHigher: boolean = tier === "tier2" || tier === "admin";
   const isPaused: boolean = userDetails?.is_paused === true;
 
-  const value: TierContextProps = {
-    loading,
-    userDetails,
-    tier,
-    isAdmin,
-    isTier2OrHigher,
-    isPaused,
-    updateUserTier,
-    toggleUserPause,
-    getAllUserDetails,
-  };
+  /**
+   * Merge tier program template with user-specific feature flag overrides.
+   * Base features come from PROGRAM_TEMPLATES[tier], then user overrides are applied.
+   * The database feature_flags column is for exceptions/overrides only - most users have NULL/empty.
+   */
+  const featureFlags: FeatureFlags = React.useMemo(() => {
+    // Validate that the tier exists in PROGRAM_TEMPLATES
+    const isProgramKey = (key: string): key is keyof typeof PROGRAM_TEMPLATES =>
+      Object.hasOwn(PROGRAM_TEMPLATES, key);
+    
+    const baseFlags = isProgramKey(tier) ? PROGRAM_TEMPLATES[tier] : PROGRAM_TEMPLATES.tier1;
+    const userOverrides = userDetails?.feature_flags || {};
+    
+    return { ...baseFlags, ...userOverrides };
+  }, [tier, userDetails?.feature_flags]);
+
+  /**
+   * Check whether a feature is enabled for the current user.
+   */
+  const hasFeature = useCallback(
+    (feature: FeatureKey): boolean => {
+      // Step: Admin has unrestricted access across all features.
+      if (isAdmin) {
+        return true;
+      }
+
+      // Step: Non-admin users rely on explicit feature flag enablement.
+      return featureFlags[feature] === true;
+    },
+    [featureFlags, isAdmin]
+  );
+
+  /**
+   * Update a user's feature flags - Admin only function.
+   */
+  const updateFeatureFlags = useCallback(
+    async (userId: string, flags: FeatureFlags): Promise<boolean> => {
+      // Step: Guard against non-admin updates.
+      if (userDetails?.tier !== "admin") {
+        console.error("TierContext - Unauthorized feature flag update attempt");
+        return false;
+      }
+
+      // Step: Persist feature flag updates in the database.
+      try {
+        const { error } = await supabase
+          .from("user_details")
+          .update({ feature_flags: flags })
+          .eq("user_id", userId);
+
+        if (error) {
+          console.error("TierContext - Error updating feature flags:", error);
+          return false;
+        }
+
+        console.log("TierContext - Successfully updated feature flags:", userId);
+        return true;
+      } catch (error) {
+        console.error("TierContext - Exception updating feature flags:", error);
+        return false;
+      }
+    },
+    [userDetails]
+  );
+
+  /**
+   * Apply a program template to a user - Admin only helper.
+   */
+  const applyProgramTemplate = useCallback(
+    async (userId: string, programKey: string): Promise<boolean> => {
+      // Step: Validate the provided program key.
+      const isProgramKey = (key: string): key is keyof typeof PROGRAM_TEMPLATES =>
+        Object.hasOwn(PROGRAM_TEMPLATES, key);
+
+      if (!isProgramKey(programKey)) {
+        console.error("TierContext - Unknown program template:", programKey);
+        return false;
+      }
+
+      // Step: Apply the program template via feature flag update.
+      return updateFeatureFlags(userId, PROGRAM_TEMPLATES[programKey]);
+    },
+    [updateFeatureFlags]
+  );
+
+  /**
+   * Update membership expiration for a user - Admin only helper.
+   */
+  const updateMembershipExpiration = useCallback(
+    async (userId: string, expiration: string | null): Promise<boolean> => {
+      // Step: Guard against non-admin updates.
+      if (userDetails?.tier !== "admin") {
+        console.error("TierContext - Unauthorized membership expiration update attempt");
+        return false;
+      }
+
+      // Step: Persist the membership expiration in the database.
+      try {
+        const { error } = await supabase
+          .from("user_details")
+          .update({ membership_expiration: expiration })
+          .eq("user_id", userId);
+
+        if (error) {
+          console.error("TierContext - Error updating membership expiration:", error);
+          return false;
+        }
+
+        console.log("TierContext - Successfully updated membership expiration:", userId);
+        return true;
+      } catch (error) {
+        console.error("TierContext - Exception updating membership expiration:", error);
+        return false;
+      }
+    },
+    [userDetails]
+  );
+
+  /**
+   * Update tier and feature flags in one operation - Admin only helper.
+   */
+  const quickSetProgram = useCallback(
+    async (userId: string, programKey: string): Promise<boolean> => {
+      // Step: Guard against non-admin updates.
+      if (userDetails?.tier !== "admin") {
+        console.error("TierContext - Unauthorized program quick set attempt");
+        return false;
+      }
+
+      // Step: Validate program key before applying.
+      const isProgramKey = (key: string): key is keyof typeof PROGRAM_TEMPLATES =>
+        Object.hasOwn(PROGRAM_TEMPLATES, key);
+
+      if (!isProgramKey(programKey)) {
+        console.error("TierContext - Unknown program template:", programKey);
+        return false;
+      }
+
+      // Step: Persist tier and feature flags together.
+      try {
+        const { error } = await supabase
+          .from("user_details")
+          .update({
+            tier: programKey,
+            feature_flags: PROGRAM_TEMPLATES[programKey],
+          })
+          .eq("user_id", userId);
+
+        if (error) {
+          console.error("TierContext - Error quick setting program:", error);
+          return false;
+        }
+
+        console.log("TierContext - Successfully quick set program:", userId, programKey);
+        return true;
+      } catch (error) {
+        console.error("TierContext - Exception quick setting program:", error);
+        return false;
+      }
+    },
+    [userDetails]
+  );
+
+  const value: TierContextProps = useMemo(
+    () => ({
+      loading,
+      userDetails,
+      tier,
+      isAdmin,
+      isTier2OrHigher,
+      isPaused,
+      featureFlags,
+      hasFeature,
+      updateUserTier,
+      toggleUserPause,
+      updateFeatureFlags,
+      applyProgramTemplate,
+      updateMembershipExpiration,
+      quickSetProgram,
+      getAllUserDetails,
+    }),
+    [
+      loading,
+      userDetails,
+      tier,
+      isAdmin,
+      isTier2OrHigher,
+      isPaused,
+      featureFlags,
+      hasFeature,
+      updateUserTier,
+      toggleUserPause,
+      updateFeatureFlags,
+      applyProgramTemplate,
+      updateMembershipExpiration,
+      quickSetProgram,
+      getAllUserDetails,
+    ]
+  );
 
   return (
     <TierContext.Provider value={value}>
@@ -290,14 +492,34 @@ export function useTierContext(): TierContextProps {
  * Convenience hook for checking tier access
  */
 export function useTierAccess() {
-  const { tier, isAdmin, isTier2OrHigher } = useTierContext();
+  const {
+    tier,
+    isAdmin,
+    isTier2OrHigher,
+    featureFlags,
+    hasFeature,
+  } = useTierContext();
   
   return {
     tier,
     isAdmin,
     isTier2OrHigher,
-    hasDestinyNavigatorAccess: isTier2OrHigher,
-    hasAnalyticsAccess: isTier2OrHigher,
+    featureFlags,
+    hasFeature,
+    hasFullAnalysis: hasFeature("hasFullAnalysis"),
+    hasAIAssistant: hasFeature("hasAIAssistant"),
+    hasDestinyNavigatorTool: hasFeature("hasDestinyNavigatorTool"),
+    hasFounderReport: hasFeature("hasFounderReport"),
+    hasExperimentalCharts: hasFeature("hasExperimentalCharts"),
+    hasHourAdjustment: hasFeature("hasHourAdjustment"),
+    hasUserManagement: hasFeature("hasUserManagement"),
+    hasNumerologyAnalytics: hasFeature("hasNumerologyAnalytics"),
+    canManageUserTiers: hasFeature("canManageUserTiers"),
+    canManageFeatureFlags: hasFeature("canManageFeatureFlags"),
+    // Deprecated: use hasFullAnalysis instead.
+    hasAnalyticsAccess: hasFeature("hasFullAnalysis"),
+    // Deprecated: use hasAIAssistant instead.
+    hasDestinyNavigatorAccess: hasFeature("hasAIAssistant"),
     canManageUsers: isAdmin,
   };
 } 
