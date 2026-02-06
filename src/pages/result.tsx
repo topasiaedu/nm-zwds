@@ -16,10 +16,7 @@ import { PdfChartData } from "../components/PdfDocument";
 import { useAlertContext } from "../context/AlertContext";
 import {
   Overview,
-  Career,
-  FourKeyPalace,
   Health,
-  DestinyCompass,
   AreasOfLife,
   WealthCode,
 } from "../components/analysis_v2";
