@@ -83,16 +83,6 @@ const Overview: React.FC<OverviewProps> = ({ chartData }) => {
     ));
   };
 
-  /**
-   * Renders description paragraphs from analysis
-   */
-  const renderDescriptions = (): JSX.Element[] => {
-    return analysisResult.descriptions.map((description, index) => (
-      <p key={`description-${index}`} className="mb-4 text-gray-700 dark:text-gray-300">
-        {description}
-      </p>
-    ));
-  };
 
   return (
     <div className="p-6 dark:bg-gray-900">

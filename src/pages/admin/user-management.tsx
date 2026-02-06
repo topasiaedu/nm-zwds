@@ -67,33 +67,6 @@ const UserManagement: React.FC = () => {
     fetchUsers();
   }, [getAllUserDetails, tierLoading, isAdmin]);
 
-  /**
-   * Handle single tier update
-   */
-  const handleTierUpdate = async (userId: string, newTier: UserTier) => {
-    setUpdating(userId);
-    try {
-      const success = await updateUserTier(userId, newTier);
-      if (success) {
-        // Update local state
-        setUsers(prev => 
-          prev.map(user => 
-            user.user_id === userId 
-              ? { ...user, tier: newTier }
-              : user
-          )
-        );
-        alert("User tier updated successfully!");
-      } else {
-        alert("Failed to update user tier. Please try again.");
-      }
-    } catch (error) {
-      console.error("Error updating tier:", error);
-      alert("An error occurred while updating the tier.");
-    } finally {
-      setUpdating(null);
-    }
-  };
 
   /**
    * Handle pause toggle for a single user

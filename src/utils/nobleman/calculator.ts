@@ -9,7 +9,6 @@
 
 import type { ChartData, Palace } from "../zwds/types";
 import type { NoblemanData, OtherAreaData } from "../../types/nobleman";
-import { findCurrentDayunPalace } from "../dayun/calculator";
 import { mapEarthlyBranchToZodiac, generateRecentYears, formatYearExamples } from "./zodiacMapper";
 import { matchStarsToProfiles } from "./profileMatcher";
 import { KEY_LIFE_AREAS, PALACE_NAME_TRANSLATIONS } from "../../constants/noblemanProfiles";

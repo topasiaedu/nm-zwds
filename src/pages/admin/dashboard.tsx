@@ -59,17 +59,17 @@ const AdminDashboard: React.FC = () => {
   }, [getAllUserDetails, isAdmin, tierLoading]);
 
   /**
-   * Count users by a list of tier identifiers.
-   * @param tiers - The tier values to include.
-   */
-  const getTierCount = (tiers: UserTier[]): number => {
-    return users.filter((user) => tiers.includes(user.tier as UserTier)).length;
-  };
-
-  /**
    * Compute the admin stats summary from fetched user data.
    */
   const stats = useMemo<AdminStats>(() => {
+    /**
+     * Count users by a list of tier identifiers.
+     * @param tiers - The tier values to include.
+     */
+    const getTierCount = (tiers: UserTier[]): number => {
+      return users.filter((user) => tiers.includes(user.tier as UserTier)).length;
+    };
+
     return {
       totalUsers: users.length,
       tier1Users: getTierCount(["tier1"]),
