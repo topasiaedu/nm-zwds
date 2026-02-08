@@ -20,10 +20,11 @@ import {
   AreasOfLife,
   WealthCode,
 } from "../components/analysis_v2";
-import { ChartSettingsProvider } from "../context/ChartSettingsContext";
+import { ChartSettingsProvider, useChartSettings } from "../context/ChartSettingsContext";
 import ChartSettingsModal from "../components/ChartSettingsModal";
 import { DayunSection } from "../components/dayun";
 import { NoblemanSection } from "../components/nobleman";
+import { getCurrentLiuNianPalace, getCurrentDayunPalace } from "../utils/destiny-navigator/palace-resolver";
 
 /**
  * Chinese Earthly Branches for time periods (地支)
@@ -91,6 +92,7 @@ const ResultContent: React.FC = () => {
   const { profiles, loading: profilesLoading } = useProfileContext();
   const { hasFullAnalysis, isAdmin } = useTierAccess();
   const { showAlert } = useAlertContext();
+  const { updateSetting } = useChartSettings();
 
   // State for chart data
   const [chartData, setChartData] = useState<ChartData | null>(null);
@@ -100,6 +102,9 @@ const ResultContent: React.FC = () => {
   
   // State for branch adjustment (allows users to cycle through the 12 time branches)
   const [branchOffset, setBranchOffset] = useState<number>(0);
+
+  // State for blueprint mode switching (controls chart overlay presets)
+  const [blueprintMode, setBlueprintMode] = useState<"dna" | "dayun" | "liunian">("dna");
 
   // Removed Tier3/Admin control pills from this page and moved to tier3-result
 
@@ -118,6 +123,49 @@ const ResultContent: React.FC = () => {
   const loadedChartDataRef = useRef<{ id: string; data: ChartData } | null>(
     null
   );
+
+  /**
+   * Handle blueprint mode changes and sync chart overlay settings.
+   * @param mode - Selected blueprint mode.
+   */
+  const handleBlueprintChange = useCallback((mode: "dna" | "dayun" | "liunian"): void => {
+    setBlueprintMode(mode);
+
+    if (mode === "dna") {
+      // Reset all chart settings to default (clean natal chart)
+      updateSetting("liuNianTag", true);
+      updateSetting("showDaYunHighlight", true);
+      updateSetting("showDaMingCornerTag", true);
+      updateSetting("showDaMingBottomLabel", true);
+      updateSetting("showSecondaryBottomLabel", true);
+      updateSetting("showSecondaryOverlayName", true);
+      updateSetting("yearAgeClickInteraction", true);
+      updateSetting("daXianClickInteraction", true);
+      updateSetting("palaceNameClickInteraction", true);
+    } else if (mode === "dayun") {
+      // Dayun mode - matches Destiny Navigator getDayunConfig
+      updateSetting("liuNianTag", false);
+      updateSetting("showDaYunHighlight", true);
+      updateSetting("showDaMingCornerTag", false);
+      updateSetting("showDaMingBottomLabel", true);
+      updateSetting("showSecondaryBottomLabel", false);
+      updateSetting("showSecondaryOverlayName", false);
+      updateSetting("yearAgeClickInteraction", false);
+      updateSetting("daXianClickInteraction", true);
+      updateSetting("palaceNameClickInteraction", false);
+    } else if (mode === "liunian") {
+      // LiuNian mode - matches Destiny Navigator getLiuNianConfig
+      updateSetting("liuNianTag", true);
+      updateSetting("showDaYunHighlight", false);
+      updateSetting("showDaMingCornerTag", false);
+      updateSetting("showDaMingBottomLabel", false);
+      updateSetting("showSecondaryBottomLabel", true);
+      updateSetting("showSecondaryOverlayName", false);
+      updateSetting("yearAgeClickInteraction", false);
+      updateSetting("daXianClickInteraction", false);
+      updateSetting("palaceNameClickInteraction", true);
+    }
+  }, [updateSetting]);
 
   /**
    * Memoized formatBirthTime function to prevent unnecessary re-renders
@@ -444,6 +492,22 @@ const ResultContent: React.FC = () => {
   }, [chartData, branchOffset]);
 
   /**
+   * Get current Liu Nian palace for month display and secondary names in LiuNian mode
+   */
+  const currentLiuNianPalace = useMemo(() => {
+    if (!calculatedChartData) return null;
+    return getCurrentLiuNianPalace(calculatedChartData);
+  }, [calculatedChartData]);
+
+  /**
+   * Get current Dayun palace for Da Ming tags in Dayun mode
+   */
+  const currentDayunPalace = useMemo(() => {
+    if (!calculatedChartData) return null;
+    return getCurrentDayunPalace(calculatedChartData);
+  }, [calculatedChartData]);
+
+  /**
    * Handle PDF export with progress modal (currently disabled)
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -512,6 +576,7 @@ const ResultContent: React.FC = () => {
         },
       }));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chartData, calculatedChartData, formatDate, hasFullAnalysis, language, showAlert, t]);
 
   // If loading profiles from context
@@ -711,9 +776,36 @@ const ResultContent: React.FC = () => {
                             bg-white/10 hover:bg-white/15 
                             dark:bg-black/10 dark:hover:bg-black/20 
                             transition-all duration-300 p-1 sm:p-2 md:p-4 lg:p-6">
-                  <h2 className="text-lg sm:text-xl md:text-2xl font-bold mb-2 sm:mb-3 md:mb-6 dark:text-white">
+                  <h2 className="text-lg sm:text-xl md:text-2xl font-bold mb-2 sm:mb-3 md:mb-4 dark:text-white">
                     {t("result.chartVisualization") || "Chart Visualization"}
                   </h2>
+
+                  {/* Blueprint Mode Switcher - Under title */}
+                  <div className="mb-4">
+                    <div className="flex gap-2">
+                      {[
+                        { key: "dna", label: "DNA Chart" },
+                        { key: "liunian", label: "LiuNian Chart" },
+                        { key: "dayun", label: "DaYun Chart" },
+                      ].map((blueprint) => {
+                        const active = blueprintMode === blueprint.key;
+                        return (
+                          <button
+                            key={blueprint.key}
+                            type="button"
+                            onClick={() => handleBlueprintChange(blueprint.key as "dna" | "dayun" | "liunian")}
+                            className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                              active
+                                ? "bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-md"
+                                : "bg-white/60 dark:bg-gray-700/60 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-600 hover:border-purple-300 dark:hover:border-purple-500 hover:bg-purple-50 dark:hover:bg-purple-900/20"
+                            }`}
+                          >
+                            {blueprint.label}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
 
                   {calculatedChartData ? (
                     <div
@@ -727,6 +819,12 @@ const ResultContent: React.FC = () => {
                       <ZWDSChart
                         chartData={calculatedChartData}
                         isPdfExport={isCapturingForPdf}
+                        selectedDaXianControlled={
+                          blueprintMode === "dayun" ? currentDayunPalace : undefined
+                        }
+                        selectedPalaceNameControlled={
+                          blueprintMode === "liunian" ? currentLiuNianPalace : undefined
+                        }
                       />
                     </div>
                   ) : (

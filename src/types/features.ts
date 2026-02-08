@@ -71,9 +71,9 @@ export const PROGRAM_TEMPLATES: Record<
     canPauseUsers: false,
   },
   founder: {
-    hasFullAnalysis: false,
-    hasPDFWithAnalysis: false,
-    hasAIAssistant: false,
+    hasFullAnalysis: true,
+    hasPDFWithAnalysis: true,
+    hasAIAssistant: true,
     hasDestinyNavigatorTool: false,
     hasFounderReport: true,
     hasExperimentalCharts: false,
