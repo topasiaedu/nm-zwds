@@ -7,7 +7,7 @@ import { HEAVENLY_STEMS, EARTHLY_BRANCHES, LUNAR_DAY_MAP } from "./constants";
  * Base types for the lookup tables
  */
 export type FiveElementType = "水二局" | "木三局" | "金四局" | "土五局" | "火六局";
-export type EarthlyBranchType =  typeof EARTHLY_BRANCHES[number];
+export type EarthlyBranchType = typeof EARTHLY_BRANCHES[number];
 export type HeavenlyStemType = typeof HEAVENLY_STEMS[number];
 export type LunarDayString = keyof typeof LUNAR_DAY_MAP;
 
@@ -82,12 +82,13 @@ export interface Palace {
  * Input data for chart calculation
  */
 export interface ChartInput {
+  name: string;
+  email?: string;
+  gender: "male" | "female";
   year: number;
   month: number;
   day: number;
   hour: number;
-  gender: "male" | "female";
-  name: string;
 }
 
 /**

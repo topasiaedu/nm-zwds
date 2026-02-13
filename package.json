@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@nivo/radar": "^0.89.1",
+    "@pdf-lib/fontkit": "^1.1.1",
     "@react-spring/web": "^10.0.3",
     "@supabase/supabase-js": "^2.40.0",
     "@testing-library/jest-dom": "^5.17.0",
@@ -31,6 +32,7 @@
     "lucide-react": "^0.563.0",
     "my-app": "file:",
     "papaparse": "^5.4.1",
+    "pdf-lib": "^1.17.1",
     "postcss": "^8.4.12",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -58,6 +60,7 @@
     "eslint-plugin-react": "^7.28.0",
     "nodemon": "^2.0.15",
     "prettier": "^2.5.1",
+    "puppeteer": "^24.37.2",
     "supabase": "^1.150.0"
   },
   "scripts": {

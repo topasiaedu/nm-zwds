@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #FEFBF4;
+      padding: 0;
+      margin: 0;
+    }
+
+    .table-container {
+      width: 350px;
+      background: #FEFBF4;
+      padding: 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #FEFBF4;
+      font-size: 7px;
+    }
+
+    thead {
+      background: #b4583c;
+      color: white;
+    }
+
+    thead th {
+      padding: 4px 4px;
+      text-align: left;
+      font-weight: 400;
+      border: 1px solid #a04530;
+      font-size: 7px;
+      text-transform: uppercase;
+    }
+
+    tbody td {
+      padding: 4px 4px;
+      border: 1px solid #e0e0e0;
+      color: #000;
+      vertical-align: middle;
+      font-size: 7px;
+    }
+
+    tbody tr {
+      height: 26px;
+    }
+
+    .season-cell, .energy-cell {
+      text-align: left;
+      padding-left: 4px;
+    }
+
+    .season-cell img, .energy-cell img {
+      height: 16px;
+      vertical-align: middle;
+      display: inline-block;
+    }
+
+    /* Column widths - reduced to fit all columns */
+    .col-month { width: 35px; }
+    .col-palace { width: 52px; }
+    .col-area { width: 52px; }
+    .col-season { width: 58px; }
+    .col-energy { width: 58px; }
+    .col-priority { width: 95px; }
+  </style>
+</head>
+<body>
+  <div class="table-container">
+    <table id="yearly-table">
+      <thead>
+        <tr>
+          <th class="col-month">MONTH</th>
+          <th class="col-palace">PALACE</th>
+          <th class="col-area">AREA</th>
+          <th class="col-season">SEASON</th>
+          <th class="col-energy">ENERGY</th>
+          <th class="col-priority">PRIORITY THEME</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{ROWS}}
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>

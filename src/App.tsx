@@ -44,6 +44,8 @@ import FreeResult from "./pages/free-result";
 import FreeTestEnded from "./pages/free-test-ended";
 // Import dev pages
 import WealthCodePreviewPage from "./pages/dev/wealth-code-preview";
+// Import 12-month forecast
+import TwelveMonthForecast from "./pages/12month-forecast";
 // Import centralized config
 import FREE_TEST_CONFIG from "./config/freeTestConfig";
 import { Analytics } from "@vercel/analytics/react"
@@ -59,8 +61,8 @@ const AuthRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
   // If user is authenticated and trying to access auth pages, redirect to dashboard
   // EXCEPT for password reset page (allow users to complete password reset flow)
-  if (user && location.pathname.includes("/authentication") && 
-      !location.pathname.includes("/reset-password")) {
+  if (user && location.pathname.includes("/authentication") &&
+    !location.pathname.includes("/reset-password")) {
     return <Navigate to="/dashboard" replace />;
   }
 
@@ -127,212 +129,213 @@ const App: React.FC = () => {
                 <SidebarProvider>
                   {/* Single router switch. Some routes bypass MainLayout. */}
                   <Routes>
-                  {/* Routes WITHOUT MainLayout (no navbar) */}
-                  <Route path="/chart-only" element={<ChartOnly />} />
-                  <Route path="/chart-test" element={<ChartTest />} />
-                  <Route path="/membership-expired" element={<MembershipExpired />} />
-                  <Route path="/membership-paused" element={<MembershipPaused />} />
-                  {/* Dev-only routes */}
+                    {/* Routes WITHOUT MainLayout (no navbar) */}
+                    <Route path="/chart-only" element={<ChartOnly />} />
+                    <Route path="/chart-test" element={<ChartTest />} />
+                    <Route path="/membership-expired" element={<MembershipExpired />} />
+                    <Route path="/membership-paused" element={<MembershipPaused />} />
+                    <Route path="/12month-forecast" element={<TwelveMonthForecast />} />
+                    {/* Dev-only routes */}
                     <Route path="/dev/wealth-code-preview" element={<WealthCodePreviewPage />} />
 
                     {/* Routes WITH MainLayout */}
                     <Route element={<MainLayoutWrapper />}>
-                    {/* Authentication routes */}
-                    <Route
-                      path="/authentication/sign-in"
-                      element={
-                        <AuthRoute>
-                          <SignInPage />
-                        </AuthRoute>
-                      }
-                    />
-                    <Route
-                      path="/authentication/sign-up"
-                      element={
-                        <AuthRoute>
-                          <SignUpPage />
-                        </AuthRoute>
-                      }
-                    />
-                    <Route
-                      path="/authentication/forgot-password"
-                      element={
-                        <AuthRoute>
-                          <ForgotPasswordPage />
-                        </AuthRoute>
-                      }
-                    />
-                    <Route
-                      path="/authentication/reset-password"
-                      element={
-                        <AuthRoute>
-                          <ResetPasswordPage />
-                        </AuthRoute>
-                      }
-                    />
+                      {/* Authentication routes */}
+                      <Route
+                        path="/authentication/sign-in"
+                        element={
+                          <AuthRoute>
+                            <SignInPage />
+                          </AuthRoute>
+                        }
+                      />
+                      <Route
+                        path="/authentication/sign-up"
+                        element={
+                          <AuthRoute>
+                            <SignUpPage />
+                          </AuthRoute>
+                        }
+                      />
+                      <Route
+                        path="/authentication/forgot-password"
+                        element={
+                          <AuthRoute>
+                            <ForgotPasswordPage />
+                          </AuthRoute>
+                        }
+                      />
+                      <Route
+                        path="/authentication/reset-password"
+                        element={
+                          <AuthRoute>
+                            <ResetPasswordPage />
+                          </AuthRoute>
+                        }
+                      />
 
-                    {/* Public Free Test Routes */}
-                    <Route
-                      path="/free-test"
-                      element={
-                        isFreeTestActive() ? <FreeTest /> : <FreeTestEnded />
-                      }
-                    />
-                    <Route
-                      path="/free-result/:id"
-                      element={
-                        isFreeTestActive() ? <FreeResult /> : <FreeTestEnded />
-                      }
-                    />
-                    <Route
-                      path="/free-test-ended"
-                      element={<FreeTestEnded />}
-                    />
+                      {/* Public Free Test Routes */}
+                      <Route
+                        path="/free-test"
+                        element={
+                          isFreeTestActive() ? <FreeTest /> : <FreeTestEnded />
+                        }
+                      />
+                      <Route
+                        path="/free-result/:id"
+                        element={
+                          isFreeTestActive() ? <FreeResult /> : <FreeTestEnded />
+                        }
+                      />
+                      <Route
+                        path="/free-test-ended"
+                        element={<FreeTestEnded />}
+                      />
 
-                    {/* Protected routes */}
-                    <Route
-                      path="/"
-                      element={
-                        <ProtectedRoute>
-                          <Navigate to="/dashboard" replace />
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="/dashboard"
-                      element={
-                        <ProtectedRoute>
-                          <Dashboard />
-                        </ProtectedRoute>
-                      }
-                    />
+                      {/* Protected routes */}
+                      <Route
+                        path="/"
+                        element={
+                          <ProtectedRoute>
+                            <Navigate to="/dashboard" replace />
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="/dashboard"
+                        element={
+                          <ProtectedRoute>
+                            <Dashboard />
+                          </ProtectedRoute>
+                        }
+                      />
 
-                    {/* Profile Route */}
-                    <Route
-                      path="/profile"
-                      element={
-                        <ProtectedRoute>
-                          <Profile />
-                        </ProtectedRoute>
-                      }
-                    />
+                      {/* Profile Route */}
+                      <Route
+                        path="/profile"
+                        element={
+                          <ProtectedRoute>
+                            <Profile />
+                          </ProtectedRoute>
+                        }
+                      />
 
-                    {/* 紫微斗数 (Zi Wei Dou Shu) Routes */}
-                    <Route
-                      path="/tier3-result"
-                      element={
-                        <ProtectedRoute>
-                          <Tier3Result />
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="/tier3-result/:id"
-                      element={
-                        <ProtectedRoute>
-                          <Tier3Result />
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="/my-chart"
-                      element={
-                        <ProtectedRoute>
-                          <Navigate to="/chart" replace />
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="/chart"
-                      element={
-                        <ProtectedRoute>
-                          <TierAwareChartRoute />
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="/calculate"
-                      element={
-                        <ProtectedRoute>
-                          <Calculate />
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="/result/:id"
-                      element={
-                        <ProtectedRoute>
-                          <TierAwareResultByIdRoute />
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="/timing-chart/:id"
-                      element={
-                        <ProtectedRoute>
-                          <TimingChart />
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="/destiny-navigator/:id"
-                      element={
-                        <ProtectedRoute>
-                          <DestinyNavigator />
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="/founder-report/:id?"
-                      element={
-                        <ProtectedRoute>
-                          <FounderReport />
-                        </ProtectedRoute>
-                      }
-                    />
+                      {/* 紫微斗数 (Zi Wei Dou Shu) Routes */}
+                      <Route
+                        path="/tier3-result"
+                        element={
+                          <ProtectedRoute>
+                            <Tier3Result />
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="/tier3-result/:id"
+                        element={
+                          <ProtectedRoute>
+                            <Tier3Result />
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="/my-chart"
+                        element={
+                          <ProtectedRoute>
+                            <Navigate to="/chart" replace />
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="/chart"
+                        element={
+                          <ProtectedRoute>
+                            <TierAwareChartRoute />
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="/calculate"
+                        element={
+                          <ProtectedRoute>
+                            <Calculate />
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="/result/:id"
+                        element={
+                          <ProtectedRoute>
+                            <TierAwareResultByIdRoute />
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="/timing-chart/:id"
+                        element={
+                          <ProtectedRoute>
+                            <TimingChart />
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="/destiny-navigator/:id"
+                        element={
+                          <ProtectedRoute>
+                            <DestinyNavigator />
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="/founder-report/:id?"
+                        element={
+                          <ProtectedRoute>
+                            <FounderReport />
+                          </ProtectedRoute>
+                        }
+                      />
 
-                    
 
-                    {/* Destiny Wealth Navigator AI Assistant - Tier 2+ Only */}
-                    <Route
-                      path="/destiny-wealth-navigator"
-                      element={
-                        <ProtectedRoute>
+
+                      {/* Destiny Wealth Navigator AI Assistant - Tier 2+ Only */}
+                      <Route
+                        path="/destiny-wealth-navigator"
+                        element={
+                          <ProtectedRoute>
                             <CAEGPT />
-                        </ProtectedRoute>
-                      }
-                    />
+                          </ProtectedRoute>
+                        }
+                      />
 
 
 
-                    {/* Admin Routes */}
-                    <Route
-                      path="/admin"
-                      element={
-                        <ProtectedRoute>
+                      {/* Admin Routes */}
+                      <Route
+                        path="/admin"
+                        element={
+                          <ProtectedRoute>
                             <AdminDashboard />
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="/admin/users"
-                      element={
-                        <ProtectedRoute>
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="/admin/users"
+                        element={
+                          <ProtectedRoute>
                             <UserManagement />
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="/admin/numerology-analytics"
-                      element={
-                        <ProtectedRoute>
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="/admin/numerology-analytics"
+                        element={
+                          <ProtectedRoute>
                             <NumerologyAnalytics />
-                        </ProtectedRoute>
-                      }
-                    />
+                          </ProtectedRoute>
+                        }
+                      />
 
-                    {/* 404 page */}
-                    <Route path="*" element={<NotFoundPage />} />
+                      {/* 404 page */}
+                      <Route path="*" element={<NotFoundPage />} />
                     </Route>
                   </Routes>
                 </SidebarProvider>
