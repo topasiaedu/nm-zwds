@@ -7,13 +7,13 @@
  */
 
 import React, { useEffect, useState } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { PDFDocument, rgb, PDFFont } from "pdf-lib";
 import fontkit from "@pdf-lib/fontkit";
 import { ZWDSCalculator } from "../utils/zwds/calculator";
 import { ChartInput } from "../utils/zwds/types";
 import { getPalaceForAspectLiuMonth } from "../utils/destiny-navigator/palace-resolver";
-import { calculatePalaceQuality } from "../utils/destiny-navigator/metrics-calculator";
+
 import ForecastForm from "../components/ForecastForm";
 
 interface GenerationProgress {
@@ -25,7 +25,7 @@ interface GenerationProgress {
 
 const TwelveMonthForecast: React.FC = () => {
   const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
+
 
   const [view, setView] = useState<'form' | 'generating' | 'success' | 'error'>('form');
   const [progress, setProgress] = useState<GenerationProgress>({
@@ -77,7 +77,7 @@ const TwelveMonthForecast: React.FC = () => {
       // 3. Show Form
       setView('form');
     }
-  }, []);
+  }, [searchParams]);
 
   const handleFormSubmit = (data: ChartInput) => {
     localStorage.setItem("zwds_forecast_user", JSON.stringify(data));
@@ -493,24 +493,7 @@ async function embedYearlyTable(pdfDoc: PDFDocument, monthToPalaceMap: any[], ye
     "疾厄": { season: "Winter", stars: 3, area: "Body", priority: "Restore Strength" },                 // Health
   };
 
-  // Helper for Priority Theme mapping
-  const getPriorityTheme = (palaceName: string): string => {
-    const themeMap: Record<string, string> = {
-      "官禄": "Launch Initiatives",       // Career
-      "迁移": "Step Beyond Comfort Zone", // Travel
-      "交友": "Launch Initiatives",       // Friends (Matches 'Launch Initiatives' in reference)
-      "财帛": "Monetize Resources",       // Wealth
-      "田宅": "Optimize Foundations",     // Property
-      "福德": "Align Inner State",        // Fortune/Wellbeing
-      "夫妻": "Clear Emotional Clutter",  // Spouse
-      "兄弟": "Purge Connections",        // Siblings
-      "子女": "Structure Your Plans",     // Children
-      "父母": "Break Old Loops",          // Parents
-      "命宫": "Invest in Yourself",       // Life
-      "疾厄": "Restore Strength"          // Health
-    };
-    return themeMap[palaceName] || "Focus on Growth";
-  };
+
 
   // Table configuration
   // User requested y: 150 (was 130)
@@ -592,51 +575,14 @@ async function embedYearlyTable(pdfDoc: PDFDocument, monthToPalaceMap: any[], ye
     return translations[palaceName] || palaceName;
   };
 
-  //Helper for area mapping
-  const getArea = (palaceName: string): string => {
-    const areaMap: Record<string, string> = {
-      "命宫": "Core Self",
-      "兄弟": "Social",
-      "夫妻": "Love",
-      "子女": "Legacy",
-      "财帛": "Financial",
-      "疾厄": "Health",
-      "迁移": "Expansion",
-      "交友": "Network",
-      "官禄": "Professional",
-      "田宅": "Property",
-      "福德": "Spiritual",
-      "父母": "Family"
-    };
-    return areaMap[palaceName] || "General";
-  };
+
 
   // Helper for season
   // Month 1-3 (Index 0-2): Spring
   // Month 4-6 (Index 3-5): Summer
   // Month 7-9 (Index 6-8): Autumn
   // Month 10-12 (Index 9-11): Winter
-  const getSeason = (monthIndex: number): string => {
-    if (monthIndex >= 0 && monthIndex <= 2) return "Spring";
-    if (monthIndex >= 3 && monthIndex <= 5) return "Summer";
-    if (monthIndex >= 6 && monthIndex <= 8) return "Autumn";
-    return "Winter";
-  };
 
-  // Helper for star rating (1-5) using palace quality score
-  const getStarRating = (palace: any): number => {
-    try {
-      const score = calculatePalaceQuality(palace);
-      if (score >= 80) return 5;
-      if (score >= 60) return 4;
-      if (score >= 40) return 3;
-      if (score >= 20) return 2;
-      return 1;
-    } catch (e) {
-      console.warn("Error calculating quality:", e);
-      return 3;
-    }
-  };
 
   // Cover background for entire table area
   page43.drawRectangle({

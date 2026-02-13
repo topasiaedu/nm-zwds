@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useLanguage } from "../context/LanguageContext";
+
 import { ChartInput } from "../utils/zwds/types";
 
 // Note: EarthlyBranches logic duplicated from ProfileForm to avoid prop drilling complexity
@@ -14,7 +14,7 @@ interface ForecastFormProps {
 }
 
 const ForecastForm: React.FC<ForecastFormProps> = ({ onSubmit, isGenerating }) => {
-  const { t } = useLanguage();
+
 
   const [formData, setFormData] = useState({
     name: "",
