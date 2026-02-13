@@ -93,21 +93,22 @@ const TwelveMonthForecast: React.FC = () => {
       // Step 2: Calculate chart
       setProgress({ step: "Calculating your ZWDS chart...", percentage: 15, isComplete: false });
 
-      // Simulate small delay for UI smoothness
-      await new Promise(resolve => setTimeout(resolve, 800));
+      // Simulate analysis delay
+      await new Promise(resolve => setTimeout(resolve, 3000));
 
       const calculator = new ZWDSCalculator(chartInput);
       const chartData = calculator.calculate();
 
       // Step 3: Map months to palaces
-      setProgress({ step: "Mapping monthly palaces...", percentage: 25, isComplete: false });
-      await new Promise(resolve => setTimeout(resolve, 500));
+      setProgress({ step: "Mapping your monthly path...", percentage: 25, isComplete: false });
+      await new Promise(resolve => setTimeout(resolve, 3000));
 
       const year = new Date().getFullYear(); // Or current year of forecast? Default to current.
       const monthToPalaceMap = await calculateMonthlyPalaces(chartData, year);
 
-      // Step 4: Load template PDF
-      setProgress({ step: "Loading template...", percentage: 35, isComplete: false });
+      // Step 4: Load personalized guide base
+      setProgress({ step: "Preparing your unique guide...", percentage: 35, isComplete: false });
+      await new Promise(resolve => setTimeout(resolve, 2000));
 
       // URL encode the filename to handle special characters like [CAE]
       const pdfFileName = encodeURIComponent("[CAE] Navigate Your Year Like a Pro.pdf");
@@ -124,7 +125,8 @@ const TwelveMonthForecast: React.FC = () => {
       pdfDoc.registerFontkit(fontkit);
 
       // Step 5: Reorder pages
-      setProgress({ step: "Personalizing pages...", percentage: 45, isComplete: false });
+      setProgress({ step: "Personalizing your pages...", percentage: 45, isComplete: false });
+      await new Promise(resolve => setTimeout(resolve, 3000));
 
       const reorderedPdf = await reorderPdfPages(pdfDoc, monthToPalaceMap);
 
@@ -132,6 +134,7 @@ const TwelveMonthForecast: React.FC = () => {
       setProgress({ step: "Applying customizations...", percentage: 60, isComplete: false });
 
       await updateMonthHeaders(reorderedPdf, year);
+      await new Promise(resolve => setTimeout(resolve, 2500));
 
       // Step 7: Generate yearly table
       setProgress({ step: "Generating visual overview...", percentage: 75, isComplete: false });
@@ -139,8 +142,8 @@ const TwelveMonthForecast: React.FC = () => {
       await embedYearlyTable(reorderedPdf, monthToPalaceMap, year);
 
       // Step 8: Save and download
-      setProgress({ step: "Finalizing document...", percentage: 90, isComplete: false });
-      await new Promise(resolve => setTimeout(resolve, 500));
+      setProgress({ step: "Finalizing your document...", percentage: 90, isComplete: false });
+      await new Promise(resolve => setTimeout(resolve, 2000));
 
       const pdfBytes = await reorderedPdf.save();
 
@@ -167,12 +170,6 @@ const TwelveMonthForecast: React.FC = () => {
       setError(error instanceof Error ? error.message : "Unknown error occurred");
       setView('error');
     }
-  };
-
-  const clearData = () => {
-    localStorage.removeItem("zwds_forecast_user");
-    setView('form');
-    setProgress({ step: "Initializing...", percentage: 0, isComplete: false });
   };
 
   // Joey Yap / PDF Inspired Theme
@@ -206,7 +203,7 @@ const TwelveMonthForecast: React.FC = () => {
             <div className="text-center mb-10">
               {/* No Icon - Clean Professional Look */}
               <h1 className="text-3xl font-bold mb-3 tracking-tight" style={{ color: "#991b1b" }}>
-                2026 Annual Assessment
+                Get Your Personalized Report
               </h1>
               <p className="text-gray-600 text-sm leading-relaxed max-w-xs mx-auto">
                 Secure your personalized 12-month ZWDS strategic guide.
@@ -260,12 +257,9 @@ const TwelveMonthForecast: React.FC = () => {
                 Download Copy
               </button>
 
-              <button
-                onClick={clearData}
-                className="text-gray-400 hover:text-gray-600 text-xs mt-4 transition-colors font-medium"
-              >
-                Not you? Start over
-              </button>
+              <p className="text-gray-400 text-xs mt-4 font-medium">
+                Made a mistake? Contact our support at <a href="mailto:askcae@topasiaedu.com" className="text-red-700 hover:underline">askcae@topasiaedu.com</a>
+              </p>
             </div>
           </div>
         )}

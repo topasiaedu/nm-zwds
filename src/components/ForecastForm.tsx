@@ -32,16 +32,37 @@ const ForecastForm: React.FC<ForecastFormProps> = ({ onSubmit, isGenerating }) =
     if (name === "birthDate") setDateError(null);
   };
 
+  const [dontRememberBirthTime, setDontRememberBirthTime] = useState<boolean>(false);
+
+  const generateRandomBirthTime = (): string => {
+    const randomIndex = Math.floor(Math.random() * EarthlyBranches.length);
+    const startHour = (23 + (randomIndex * 2)) % 24;
+    const formattedStartHour = startHour.toString().padStart(2, "0");
+    return `${formattedStartHour}:00`;
+  };
+
+  const handleDontRememberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const checked = e.target.checked;
+    setDontRememberBirthTime(checked);
+    if (checked) {
+      setFormData(prev => ({ ...prev, birthTime: "" }));
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formData.birthDate || !formData.birthTime) {
+    const birthTime = dontRememberBirthTime || !formData.birthTime
+      ? generateRandomBirthTime()
+      : formData.birthTime;
+
+    if (!formData.birthDate || (!birthTime && !dontRememberBirthTime)) {
       setDateError("Please fill in all fields");
       return;
     }
 
     const [year, month, day] = formData.birthDate.split("-").map(Number);
-    const hour = parseInt(formData.birthTime.split(":")[0]);
+    const hour = parseInt(birthTime.split(":")[0]);
 
     if (isNaN(year) || isNaN(month) || isNaN(day)) {
       setDateError("Invalid Date");
@@ -176,9 +197,11 @@ const ForecastForm: React.FC<ForecastFormProps> = ({ onSubmit, isGenerating }) =
             name="birthTime"
             value={formData.birthTime}
             onChange={handleChange}
-            className="w-full rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-red-500 transition-all shadow-sm"
+            disabled={dontRememberBirthTime}
+            className={`w-full rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-red-500 transition-all shadow-sm ${dontRememberBirthTime ? "opacity-50 cursor-not-allowed bg-gray-100" : ""
+              }`}
             style={inputStyle}
-            required
+            required={!dontRememberBirthTime}
           >
             <option value="" style={{ backgroundColor: "#ffffff", color: "#374151" }}>Select Time</option>
             {EarthlyBranches.map((branch, i) => {
@@ -193,6 +216,20 @@ const ForecastForm: React.FC<ForecastFormProps> = ({ onSubmit, isGenerating }) =
               );
             })}
           </select>
+
+          <div className="mt-3">
+            <label className="flex items-center cursor-pointer">
+              <input
+                type="checkbox"
+                checked={dontRememberBirthTime}
+                onChange={handleDontRememberChange}
+                className="w-4 h-4 text-red-600 border-gray-300 rounded focus:ring-red-500"
+              />
+              <span className="ml-2 text-sm text-gray-600">
+                I don&apos;t know my birth time
+              </span>
+            </label>
+          </div>
         </div>
 
         <button
