@@ -79,7 +79,11 @@ const TwelveMonthForecast: React.FC = () => {
     if (storedData) {
       try {
         const parsed = JSON.parse(storedData);
-        // Auto-generate if data exists
+        // Check blocklist before auto-generating from stored data
+        if (parsed.email && BLOCKED_EMAILS.has(parsed.email.trim().toLowerCase())) {
+          setView('blocked');
+          return;
+        }
         generatePDF(parsed);
       } catch (e) {
         console.error("Failed to parse stored data", e);
