@@ -23,11 +23,17 @@ interface GenerationProgress {
   error?: string;
 }
 
+// Emails that are not entitled to generate a report
+const BLOCKED_EMAILS = new Set([
+  "awesome.possum8888@gmail.com",
+  "notitagain@gmail.com",
+]);
+
 const TwelveMonthForecast: React.FC = () => {
   const [searchParams] = useSearchParams();
 
 
-  const [view, setView] = useState<'form' | 'generating' | 'success' | 'error'>('form');
+  const [view, setView] = useState<'form' | 'generating' | 'success' | 'error' | 'blocked'>('form');
   const [progress, setProgress] = useState<GenerationProgress>({
     step: "Initializing...",
     percentage: 0,
@@ -58,6 +64,12 @@ const TwelveMonthForecast: React.FC = () => {
       // Save valid URL param data to storage too
       localStorage.setItem("zwds_forecast_user", JSON.stringify(input));
 
+      // Check blocklist before generating
+      if (email && BLOCKED_EMAILS.has(email.trim().toLowerCase())) {
+        setView('blocked');
+        return;
+      }
+
       generatePDF(input);
       return;
     }
@@ -81,6 +93,13 @@ const TwelveMonthForecast: React.FC = () => {
 
   const handleFormSubmit = (data: ChartInput) => {
     localStorage.setItem("zwds_forecast_user", JSON.stringify(data));
+
+    // Check blocklist before generating
+    if (data.email && BLOCKED_EMAILS.has(data.email.trim().toLowerCase())) {
+      setView('blocked');
+      return;
+    }
+
     generatePDF(data);
   };
 
@@ -261,6 +280,27 @@ const TwelveMonthForecast: React.FC = () => {
                 Made a mistake? Contact our support at <a href="mailto:askcae@topasiaedu.com" className="text-red-700 hover:underline">askcae@topasiaedu.com</a>
               </p>
             </div>
+          </div>
+        )}
+
+        {/* --- BLOCKED VIEW --- */}
+        {view === 'blocked' && (
+          <div className="animate-fade-in text-center py-10 relative z-10">
+            <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-yellow-50 flex items-center justify-center border border-yellow-200">
+              <svg className="w-8 h-8 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+              </svg>
+            </div>
+            <h3 className="text-xl font-bold text-gray-900 mb-3">Not Entitled to This Report</h3>
+            <p className="text-gray-500 mb-6 text-sm px-4 leading-relaxed">
+              It looks like your account is not currently eligible for the 12-Month Forecast Report.
+            </p>
+            <p className="text-gray-400 text-xs font-medium">
+              Questions? Reach us at{" "}
+              <a href="mailto:askcae@topasiaedu.com" className="text-red-700 hover:underline">
+                askcae@topasiaedu.com
+              </a>
+            </p>
           </div>
         )}
 
