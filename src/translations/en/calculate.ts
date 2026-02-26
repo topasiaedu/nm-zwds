@@ -15,7 +15,7 @@ const calculate = {
     requiredInfoDescription: "To create an accurate Purple Star Astrology chart, you'll need the person's exact birth date, time, and location. The more precise this information, the more accurate the chart will be.",
     interpretationDescription: "The chart analysis provides insights into various aspects of life including career, relationships, health, and personal development. The interpretation combines both traditional wisdom and modern psychological understanding."
   },
-  
+
   form: {
     name: "Name",
     relationship: "Relationship",
@@ -40,8 +40,10 @@ const calculate = {
     dateFormatHint: "Enter date in DD/MM/YYYY format (e.g., 31/12/1990)",
     invalidDateFormat: "Invalid date format. Please use DD/MM/YYYY",
     dontRememberBirthTime: "I don't remember my birth time",
-    submitting: "Creating..."
+    submitting: "Creating...",
+    email: "Email Address",
+    emailPlaceholder: "your@email.com",
   },
 };
 
-export default calculate; 
+export default calculate;

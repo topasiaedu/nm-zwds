@@ -30,15 +30,15 @@ const FreeTest: React.FC = () => {
    */
   const handleProfileSuccess = (profileId?: string) => {
     console.log("Free test profile created:", profileId);
-    
+
     // Prevent multiple submissions
     if (isSubmitting) {
       console.log("Submission already in progress, ignoring duplicate");
       return;
     }
-    
+
     setIsSubmitting(true);
-    
+
     if (profileId) {
       // Navigate immediately to prevent auth state race conditions
       console.log("Navigating to free result:", `/free-result/${profileId}`);
@@ -56,7 +56,7 @@ const FreeTest: React.FC = () => {
     return null;
   }
 
-  return (  
+  return (
     <PageTransition>
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
@@ -82,6 +82,7 @@ const FreeTest: React.FC = () => {
               isSelfProfile={false}
               onSuccess={handleProfileSuccess}
               disabled={isSubmitting}
+              showEmailField={true}
             />
           </div>
 

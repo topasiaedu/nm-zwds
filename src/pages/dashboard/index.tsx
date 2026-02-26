@@ -17,7 +17,7 @@ const Dashboard: React.FC = () => {
   const { user } = useAuth();
   const { profiles, loading, deleteProfile } = useProfileContext();
   const { showAlert } = useAlertContext();
-  const { hasAIAssistant, hasFounderReport, isAdmin, tier } = useTierAccess();
+  const { hasAIAssistant, hasFounderReport, hasDestinyNavigatorTool, isAdmin, tier } = useTierAccess();
   const [deleteConfirmation, setDeleteConfirmation] = useState<{
     isOpen: boolean;
     profileId: string;
@@ -27,6 +27,15 @@ const Dashboard: React.FC = () => {
     profileId: "",
     profileName: "",
   });
+
+  // Self-profile (is_self === true) — same profile /chart uses
+  const selfProfile = React.useMemo(
+    () => profiles.find((p) => p.is_self),
+    [profiles]
+  );
+  const destinyNavigatorUrl = selfProfile
+    ? `/destiny-navigator/${selfProfile.id}`
+    : "/calculate";
 
   /**
    * Get recent profiles sorted by last_viewed
@@ -207,6 +216,52 @@ const Dashboard: React.FC = () => {
                       </span>
                     </div>
                   </Link>
+
+                  {/* Destiny Navigator Tool - Beta/Admin */}
+                  {hasDestinyNavigatorTool && (
+                    <Link
+                      to={destinyNavigatorUrl}
+                      className="block bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-center">
+                          <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-cyan-100 dark:bg-cyan-900/30 flex items-center justify-center mr-3">
+                            <svg
+                              className="w-5 h-5 text-cyan-600 dark:text-cyan-400"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24">
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M13 10V3L4 14h7v7l9-11h-7z"
+                              />
+                            </svg>
+                          </div>
+                          <div>
+                            <h3 className="text-lg font-medium text-gray-900 dark:text-white">
+                              Destiny Navigator
+                            </h3>
+                            <p className="text-sm text-gray-600 dark:text-gray-400">
+                              Analyse life aspects across timeframes
+                            </p>
+                          </div>
+                        </div>
+                        <svg
+                          className="w-5 h-5 text-gray-400"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24">
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M9 5l7 7-7 7"
+                          />
+                        </svg>
+                      </div>
+                    </Link>
+                  )}
 
                   {/* Destiny Wealth Navigator AI Assistant - Tier 2+ */}
                   {hasAIAssistant && (

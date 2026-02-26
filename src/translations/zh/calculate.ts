@@ -15,7 +15,7 @@ const calculate = {
     requiredInfoDescription: "要创建准确的紫微斗数星图，您需要准确的出生日期、时间和地点。信息越精确，星图就越准确。",
     interpretationDescription: "星图分析提供关于生活各个方面的见解，包括事业、人际关系、健康和个人发展。解读结合了传统智慧和现代心理学理解。"
   },
-  
+
   form: {
     name: "姓名",
     relationship: "关系",
@@ -40,8 +40,10 @@ const calculate = {
     dateFormatHint: "请按照日/月/年格式输入日期（例如：31/12/1990）",
     invalidDateFormat: "日期格式无效。请使用日/月/年格式",
     dontRememberBirthTime: "我不记得出生时间",
-    submitting: "创建中..."
+    submitting: "创建中...",
+    email: "电子邮件",
+    emailPlaceholder: "your@email.com",
   },
 };
 
-export default calculate; 
+export default calculate;
