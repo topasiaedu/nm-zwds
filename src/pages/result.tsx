@@ -19,12 +19,15 @@ import {
   Health,
   AreasOfLife,
   WealthCode,
+  FourKeyPalace,
 } from "../components/analysis_v2";
 import { ChartSettingsProvider, useChartSettings } from "../context/ChartSettingsContext";
 import ChartSettingsModal from "../components/ChartSettingsModal";
 import { DayunSection } from "../components/dayun";
 import { NoblemanSection } from "../components/nobleman";
 import { getCurrentLiuNianPalace, getCurrentDayunPalace } from "../utils/destiny-navigator/palace-resolver";
+// FourKeyPalaceAnalysis and LifeAreasExplanation are kept commented out for potential future use
+// import { FourKeyPalaceAnalysis, LifeAreasExplanation } from "../components/analysis";
 
 /**
  * Chinese Earthly Branches for time periods (地支)
@@ -106,6 +109,20 @@ const ResultContent: React.FC = () => {
   // State for blueprint mode switching (controls chart overlay presets)
   const [blueprintMode, setBlueprintMode] = useState<"dna" | "dayun" | "liunian">("dna");
 
+  /**
+   * Persisted palace name selection for DNA (natal) mode.
+   * Saved when the user clicks a palace name in DNA mode and restored when
+   * the user switches back to DNA mode from another blueprint.
+   */
+  const [dnaPalaceNameSelection, setDnaPalaceNameSelection] = useState<number | null>(null);
+
+  /**
+   * Persisted Da Xian selection for DNA (natal) mode.
+   * Saved when the user clicks a Da Xian palace in DNA mode and restored when
+   * the user switches back to DNA mode from another blueprint.
+   */
+  const [dnaDaXianSelection, setDnaDaXianSelection] = useState<number | null>(null);
+
   // Removed Tier3/Admin control pills from this page and moved to tier3-result
 
   // PDF export state
@@ -132,12 +149,16 @@ const ResultContent: React.FC = () => {
     setBlueprintMode(mode);
 
     if (mode === "dna") {
-      // Reset all chart settings to default (clean natal chart)
+      // Reset all chart settings to match DEFAULT_SETTINGS["result"] (clean natal chart).
+      // showDaMingBottomLabel and showSecondaryBottomLabel are intentionally false so the
+      // bottom label always shows the palace's own name — not a Da Ming or secondary overlay
+      // name. Showing both secondary overlay AND secondary bottom label causes a "Life Life"
+      // duplicate when a palace name is clicked with no Da Xian selected.
       updateSetting("liuNianTag", true);
       updateSetting("showDaYunHighlight", true);
       updateSetting("showDaMingCornerTag", true);
-      updateSetting("showDaMingBottomLabel", true);
-      updateSetting("showSecondaryBottomLabel", true);
+      updateSetting("showDaMingBottomLabel", false);
+      updateSetting("showSecondaryBottomLabel", false);
       updateSetting("showSecondaryOverlayName", true);
       updateSetting("yearAgeClickInteraction", true);
       updateSetting("daXianClickInteraction", true);
@@ -819,12 +840,38 @@ const ResultContent: React.FC = () => {
                       <ZWDSChart
                         chartData={calculatedChartData}
                         isPdfExport={isCapturingForPdf}
+                        // DaYun: drive with current dayun palace
+                        // DNA: restore saved DNA selection (null clears on first render)
+                        // LiuNian: pass null to clear any stale Da Xian value
                         selectedDaXianControlled={
-                          blueprintMode === "dayun" ? currentDayunPalace : undefined
+                          blueprintMode === "dayun"
+                            ? currentDayunPalace
+                            : blueprintMode === "dna"
+                              ? dnaDaXianSelection
+                              : null
                         }
+                        // LiuNian: drive with current liunian palace
+                        // DNA: restore saved DNA selection (null clears on first render)
+                        // DaYun: pass null to clear any stale palace name value
                         selectedPalaceNameControlled={
-                          blueprintMode === "liunian" ? currentLiuNianPalace : undefined
+                          blueprintMode === "liunian"
+                            ? currentLiuNianPalace
+                            : blueprintMode === "dna"
+                              ? dnaPalaceNameSelection
+                              : null
                         }
+                        // Persist palace name clicks only while in DNA mode
+                        onPalaceNameChange={(palace) => {
+                          if (blueprintMode === "dna") {
+                            setDnaPalaceNameSelection(palace);
+                          }
+                        }}
+                        // Persist Da Xian clicks only while in DNA mode
+                        onDaXianChange={(palace) => {
+                          if (blueprintMode === "dna") {
+                            setDnaDaXianSelection(palace);
+                          }
+                        }}
                       />
                     </div>
                   ) : (
@@ -1198,7 +1245,7 @@ const ResultContent: React.FC = () => {
                   <NoblemanSection chartData={calculatedChartData} />
 
                   <Health chartData={calculatedChartData} />
-                  {/* <FourKeyPalace chartData={calculatedChartData} /> */}
+                   <FourKeyPalace chartData={calculatedChartData} /> 
                 </>
               )}
 

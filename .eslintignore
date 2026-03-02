@@ -1,0 +1,11 @@
+# Third-party / legacy vendor JS files in the public directory
+public/
+
+# Build output
+build/
+
+# Helper / migration scripts (not part of the app bundle)
+scripts/
+
+# Node modules (ESLint ignores these by default, but listed for clarity)
+node_modules/

@@ -56,17 +56,6 @@ const ATTRIBUTES: readonly AttributeConfig[] = [
 ] as const;
 
 /**
- * Color class mappings for text colors
- * Uses complete class names to ensure Tailwind purging works correctly
- */
-const TEXT_COLOR_CLASSES: Record<ColorTheme, string> = {
-  emerald: "text-emerald-600 dark:text-emerald-400",
-  blue: "text-blue-600 dark:text-blue-400",
-  amber: "text-amber-600 dark:text-amber-400",
-  gray: "text-gray-600 dark:text-gray-400"
-};
-
-/**
  * Gradient styles for progress bars (using inline styles to avoid Tailwind purging)
  */
 const GRADIENT_STYLES: Record<ColorTheme, string> = {
@@ -117,7 +106,6 @@ export const AttributeBars: React.FC<AttributeBarsProps> = ({ attributes }) => {
         {ATTRIBUTES.map(({ key, label, icon: Icon }) => {
           const value = attributes[key];
           const colorTheme = getColorTheme(value);
-          const textColorClass = TEXT_COLOR_CLASSES[colorTheme];
           const gradientStyle = GRADIENT_STYLES[colorTheme];
           
           // Get descriptor

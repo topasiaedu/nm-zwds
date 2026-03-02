@@ -121,6 +121,16 @@ interface ZWDSChartProps {
   selectedPalaceNameControlled?: number | null;
   /** Optional controlled showMonths state (1-12). When set, automatically shows months for that palace. */
   showMonthsControlled?: number | null;
+  /**
+   * Callback fired when the user changes the palace name selection via click.
+   * Only called for user-driven interactions, not controlled prop syncs.
+   */
+  onPalaceNameChange?: (palace: number | null) => void;
+  /**
+   * Callback fired when the user changes the Da Xian selection via click.
+   * Only called for user-driven interactions, not controlled prop syncs.
+   */
+  onDaXianChange?: (palace: number | null) => void;
 }
 
 /**
@@ -136,6 +146,8 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
   selectedPalaceControlled = null,
   selectedDaXianControlled = null,
   selectedPalaceNameControlled = null,
+  onPalaceNameChange,
+  onDaXianChange,
   showMonthsControlled = null,
 }) => {
   // State to track the selected palace for transformations
@@ -334,13 +346,18 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
 
   /**
    * Handle Da Xian click
-   * Memoized to prevent unnecessary re-renders
+   * Memoized to prevent unnecessary re-renders.
+   * Fires the onDaXianChange callback for user-driven interactions so the parent
+   * can persist the selection across blueprint mode switches.
    */
   const handleDaXianClick = useCallback((palaceNumber: number) => {
     if (disableInteraction || !settings.daXianClickInteraction) return;
 
-    setSelectedDaXian(selectedDaXian === palaceNumber ? null : palaceNumber);
-  }, [disableInteraction, settings.daXianClickInteraction, selectedDaXian]);
+    const newValue = selectedDaXian === palaceNumber ? null : palaceNumber;
+    setSelectedDaXian(newValue);
+    // Notify parent of the user-driven change (not triggered by controlled prop syncs)
+    onDaXianChange?.(newValue);
+  }, [disableInteraction, settings.daXianClickInteraction, selectedDaXian, onDaXianChange]);
 
   /**
    * Handle year click to show months
@@ -354,17 +371,20 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
   }, [disableInteraction, settings.yearAgeClickInteraction, showMonths]);
 
   /**
-   * Handle palace name click to show secondary palace name
-   * Memoized to prevent unnecessary re-renders
+   * Handle palace name click to show secondary palace name.
+   * Memoized to prevent unnecessary re-renders.
+   * Fires the onPalaceNameChange callback for user-driven interactions so the parent
+   * can persist the selection across blueprint mode switches.
    */
   const handlePalaceNameClick = useCallback((palaceNumber: number, e: React.MouseEvent) => {
     if (disableInteraction || !settings.palaceNameClickInteraction) return;
 
     e.stopPropagation();
-    setSelectedPalaceName(
-      selectedPalaceName === palaceNumber ? null : palaceNumber
-    );
-  }, [disableInteraction, settings.palaceNameClickInteraction, selectedPalaceName]);
+    const newValue = selectedPalaceName === palaceNumber ? null : palaceNumber;
+    setSelectedPalaceName(newValue);
+    // Notify parent of the user-driven change (not triggered by controlled prop syncs)
+    onPalaceNameChange?.(newValue);
+  }, [disableInteraction, settings.palaceNameClickInteraction, selectedPalaceName, onPalaceNameChange]);
 
   /**
    * Calculate the year for a given palace based on the annual flow position

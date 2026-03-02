@@ -6,7 +6,7 @@
  */
 
 export { ContextHeader } from "./ContextHeader";
-export { AspectMetricsBars } from "./AspectMetricsBars";
+
 export { StarCard } from "./StarCard";
 export { FocusPriorities } from "./FocusPriorities";
 // Note: AttributeBars is deprecated, kept for backwards compatibility if needed elsewhere

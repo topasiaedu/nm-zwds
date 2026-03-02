@@ -10,7 +10,6 @@
 import { PDFDocument, rgb } from "pdf-lib";
 import fontkit from "@pdf-lib/fontkit";
 import * as fs from "fs";
-import * as path from "path";
 
 async function replaceMonthWithImpactFont() {
   try {

@@ -20,15 +20,13 @@ import {
   generateFocusPriorities,
   getAllStarsFromPalace
 } from "../../../utils/destiny-navigator/metrics-calculator";
-import { 
-  calculateAspectMetrics, 
+import {
   getRelevantFocuses,
-  calculateStarActivity 
+  calculateStarActivity
 } from "../../../utils/destiny-navigator/aspect-metrics";
 
 // Import sub-components
 import { ContextHeader } from "../insights/ContextHeader";
-import { AspectMetricsBars } from "../insights/AspectMetricsBars";
 import { StarCard } from "../insights/StarCard";
 import { FocusPriorities } from "../insights/FocusPriorities";
 
@@ -60,7 +58,7 @@ export const InsightsPanel: React.FC<InsightsPanelProps> = ({
     try {
       // Parse birth date
       const birthDate = new Date(profile.birthday);
-      
+
       // Extract hour from birth time
       let hour = 12; // Default to noon
       if (profile.birth_time) {
@@ -70,7 +68,7 @@ export const InsightsPanel: React.FC<InsightsPanelProps> = ({
           hour = Number.parseInt(timeMatch[1], 10);
           const isPM = timeMatch[3]?.toUpperCase() === "PM";
           const isAM = timeMatch[3]?.toUpperCase() === "AM";
-          
+
           if (isPM && hour < 12) {
             hour += 12;
           }
@@ -135,9 +133,6 @@ export const InsightsPanel: React.FC<InsightsPanelProps> = ({
       // Get all stars from palace (combining all star arrays)
       const allStars = getAllStarsFromPalace(palace);
 
-      // Calculate aspect-specific metrics
-      const aspectMetrics = calculateAspectMetrics(palace, aspect);
-
       // Calculate meaningful star activity
       const starActivity = calculateStarActivity(palace);
 
@@ -154,7 +149,6 @@ export const InsightsPanel: React.FC<InsightsPanelProps> = ({
 
       return {
         qualityScore,
-        aspectMetrics,
         stars: rankedStars,
         priorities: relevantPriorities,
         starActivity
@@ -189,12 +183,6 @@ export const InsightsPanel: React.FC<InsightsPanelProps> = ({
         starDensity={insights.starActivity}
       />
 
-      {/* Aspect Metrics - Premium Card */}
-      <AspectMetricsBars 
-        metrics={insights.aspectMetrics} 
-        aspect={aspect}
-      />
-
       {/* Star Grid - Premium Cards */}
       <div className="rounded-2xl shadow-lg border bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700 p-8 mb-6">
         <div className="flex items-center justify-between mb-6">
@@ -205,7 +193,7 @@ export const InsightsPanel: React.FC<InsightsPanelProps> = ({
             {insights.stars.length} {insights.stars.length === 1 ? "Star" : "Stars"}
           </div>
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
           {insights.stars.map(({ star, starData, relevance }) => (
             <StarCard
