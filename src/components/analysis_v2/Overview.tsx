@@ -26,15 +26,17 @@ type FeaturesData = {
  */
 type OverviewProps = {
   chartData: ChartData;
+  /** Optional physical palace number (1–12) for timeframe-based analysis. */
+  palaceOverride?: number;
 };
 
 /**
  * Overview component displaying personality analysis in a two-column layout
  */
-const Overview: React.FC<OverviewProps> = ({ chartData }) => {
+const Overview: React.FC<OverviewProps> = ({ chartData, palaceOverride }) => {
   // Analyze the chart data to get real data
-  const analysisResult: OverviewAnalysisResult = analyzeOverview(chartData);
-  
+  const analysisResult: OverviewAnalysisResult = analyzeOverview(chartData, palaceOverride);
+
 
 
 

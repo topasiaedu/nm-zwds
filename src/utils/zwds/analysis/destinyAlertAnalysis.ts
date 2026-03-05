@@ -10,6 +10,8 @@ export type PalaceAlertData = {
   description: string;
   quote: string;
   palaceNumber: number;
+  /** The name of the star that carries this transformation (e.g. "紫微", "廉贞") */
+  starName: string;
 };
 
 /**
@@ -71,19 +73,19 @@ const PALACE_NAME_TO_ENGLISH: Record<string, string> = {
 const processDescription = (fullDescription: string): { description: string; quote: string } => {
   // Split by full stops and filter out empty sentences
   const sentences = fullDescription.split('.').filter(sentence => sentence.trim() !== "");
-  
+
   if (sentences.length === 0) {
     return { description: "", quote: "" };
   }
-  
+
   if (sentences.length === 1) {
     return { description: "", quote: sentences[0].trim() + "." };
   }
-  
+
   // Last sentence is the quote, everything else is description
   const quote = sentences[sentences.length - 1].trim() + ".";
   const description = sentences.slice(0, -1).join(". ").trim() + ".";
-  
+
   return { description, quote };
 };
 
@@ -91,7 +93,7 @@ const processDescription = (fullDescription: string): { description: string; quo
  * Finds which palace contains a star with the given transformation
  */
 const findPalaceWithTransformation = (
-  palaces: Palace[], 
+  palaces: Palace[],
   transformation: Transformation
 ): { palace: Palace; starName: string } | null => {
   for (const palace of palaces) {
@@ -114,7 +116,7 @@ const findPalaceWithTransformation = (
       }
     }
   }
-  
+
   return null;
 };
 
@@ -130,45 +132,46 @@ export const analyzeDestinyAlert = (chartData: ChartData): DestinyAlertAnalysisR
 
   // Process each transformation type
   const transformations: Transformation[] = ["化祿", "化權", "化科", "化忌"];
-  
+
   for (const transformation of transformations) {
     const result = findPalaceWithTransformation(chartData.palaces, transformation);
-    
+
     if (result) {
       const { palace, starName } = result;
       const palaceNumber = palace.number;
-      
+
       // Store debug info
       debugInfo.transformationsFound[transformation] = {
         star: starName,
         palace: palaceNumber,
       };
-      
+
       // Get the English name for the palace
       const englishName = PALACE_NAME_TO_ENGLISH[palace.name];
       if (!englishName) {
         console.warn(`No English name mapping found for palace: ${palace.name}`);
         continue;
       }
-      
+
       // Find the palace constant by matching the English name
       const palaceConstant = Object.values(DESTINY_ALERT_CONSTANTS).find(
         constant => constant.english_name === englishName
       );
-      
+
       if (palaceConstant) {
         const transformationKey = TRANSFORMATION_KEY_MAP[transformation];
         const alertData = palaceConstant.alerts[transformationKey as keyof typeof palaceConstant.alerts];
-        
+
         if (alertData) {
           const { description, quote } = processDescription(alertData.description);
-          
+
           alerts.push({
             palace: palaceConstant.english_name,
             transformation,
             description,
             quote,
             palaceNumber,
+            starName,   // already in scope from `const { palace, starName } = result;`
           });
         }
       }

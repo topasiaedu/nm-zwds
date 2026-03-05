@@ -27,7 +27,7 @@ type FourKeyPalaceProps = {
 const FourKeyPalace: React.FC<FourKeyPalaceProps> = ({ chartData }) => {
   // Analyze the chart data to get real destiny alert data
   const analysisResult = analyzeDestinyAlert(chartData);
-  
+
 
 
   // Tilt options for the cards
@@ -131,7 +131,7 @@ const FourKeyPalace: React.FC<FourKeyPalaceProps> = ({ chartData }) => {
         Where your life force is thriving — and where it&apos;s sending
         warning signals.
       </p>
-      
+
       {/* Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch">
         {analysisResult.alerts.map((alert, index) => (
@@ -155,8 +155,21 @@ const FourKeyPalace: React.FC<FourKeyPalaceProps> = ({ chartData }) => {
               </div>
 
               <div className="p-5 relative z-10 flex flex-col h-full">
-                {/* Palace name header */}
-                <div className="flex justify-between items-center mb-4 flex-shrink-0">
+                {/* Star + transformation chip row */}
+                <div className="flex items-center gap-2 mb-3 flex-shrink-0 flex-wrap">
+                  <span className="text-xs font-mono bg-black/10 dark:bg-white/10 rounded px-2 py-0.5 text-gray-700 dark:text-gray-200">
+                    ⭐ {alert.starName}
+                  </span>
+                  <span className={`text-xs font-bold ${getTransformationColor(alert.transformation)}`}>
+                    {alert.transformation}
+                  </span>
+                </div>
+
+                {/* Palace activation header */}
+                <div className="mb-3 flex-shrink-0">
+                  <p className="text-xs uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-0.5">
+                    Activates
+                  </p>
                   <h3 className="text-xl font-bold text-gray-800 dark:text-white">
                     {alert.palace}
                   </h3>
@@ -176,7 +189,7 @@ const FourKeyPalace: React.FC<FourKeyPalaceProps> = ({ chartData }) => {
                 )}
 
                 {/* Description with flexible height and hidden scrollbar */}
-                <div 
+                <div
                   className="text-gray-600 dark:text-gray-400 text-sm description-container flex-1 overflow-y-auto">
                   {alert.description ? (
                     // Split description by double line breaks to create paragraphs
@@ -196,7 +209,8 @@ const FourKeyPalace: React.FC<FourKeyPalaceProps> = ({ chartData }) => {
       </div>
 
       {/* Add CSS to hide scrollbars for different browsers */}
-      <style dangerouslySetInnerHTML={{ __html: `
+      <style dangerouslySetInnerHTML={{
+        __html: `
         .description-container::-webkit-scrollbar {
           display: none;
         }

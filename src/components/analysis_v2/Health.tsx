@@ -15,6 +15,8 @@ import GradientSectionHeader from "./shared/GradientSectionHeader";
  */
 interface HealthAnalysisProps {
   chartData: ChartData;
+  /** Optional physical palace number (1–12) for timeframe-based analysis. */
+  palaceOverride?: number;
 }
 
 /**
@@ -178,7 +180,7 @@ const HumanBodySVG: React.FC<{
  * HealthAnalysis component that analyzes and displays health implications
  * based on stars in the chart's health palace (疾厄宫) with a human body visualization
  */
-const Health: React.FC<HealthAnalysisProps> = ({ chartData }) => {
+const Health: React.FC<HealthAnalysisProps> = ({ chartData, palaceOverride }) => {
 
   const [healthAnalysis, setHealthAnalysis] =
     useState<HealthAnalysisResult | null>(null);
@@ -200,10 +202,10 @@ const Health: React.FC<HealthAnalysisProps> = ({ chartData }) => {
         setError("");
 
         // Analyze health using the new utility
-        const analysisResult = analyzeHealthFromChart(chartData);
+        const analysisResult = analyzeHealthFromChart(chartData, palaceOverride);
         setHealthAnalysis(analysisResult);
 
-      
+
       } catch (error) {
         console.error("Error analyzing health data:", error);
         setError(
@@ -221,7 +223,7 @@ const Health: React.FC<HealthAnalysisProps> = ({ chartData }) => {
         setLoading(false);
       }
     }
-  }, [chartData]);
+  }, [chartData, palaceOverride]);
 
   if (loading) {
     return (
@@ -290,12 +292,11 @@ const Health: React.FC<HealthAnalysisProps> = ({ chartData }) => {
                           {tip.englishName || tip.bodyPart}
                         </span>
                       </div>
-                      
+
                       {/* Tip Description */}
                       <div
-                        className={`${
-                          !expandedTips[index] ? "line-clamp-3" : ""
-                        }`}>
+                        className={`${!expandedTips[index] ? "line-clamp-3" : ""
+                          }`}>
                         <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed pl-11">
                           {tip.description}
                         </p>

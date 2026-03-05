@@ -278,8 +278,8 @@ export function getCurrentDayunPalace(chartData: ChartData): number | null {
   const palace = chartData.palaces.find(p => {
     const startAge = p.majorLimit?.startAge;
     const endAge = p.majorLimit?.endAge;
-    return startAge !== undefined && endAge !== undefined && 
-           startAge <= currentAge && endAge >= currentAge;
+    return startAge !== undefined && endAge !== undefined &&
+      startAge <= currentAge && endAge >= currentAge;
   });
 
   return palace?.number ?? null;
@@ -428,14 +428,39 @@ export const DA_MING_TAG_INDICES: Record<LifeAspect, number> = {
 };
 
 /**
- * Calculate target palace from Da Xian using anticlockwise offset
- * Formula: target = (daXianPalace - tagIndex) mod 12
- * @param daXianPalace - The palace number where Da Xian starts (usually current Dayun palace)
- * @param tagIndex - The anticlockwise offset (0 = Da Ming, 1 = Da Xiong, etc.)
- * @returns Target palace number (1-12)
+ * Determine if Da Xian (major limit) progresses clockwise for this chart.
+ * Clockwise: Yang Male or Yin Female.
+ * Counter-clockwise: Yin Male or Yang Female.
+ *
+ * @param chartData - Complete chart data
+ * @returns true if Da Xian moves clockwise (increasing palace numbers)
  */
-export function getPalaceFromDaXian(daXianPalace: number, tagIndex: number): number {
-  let target = daXianPalace - tagIndex;
+export function isDaXianClockwise(chartData: ChartData): boolean {
+  const { gender } = chartData.input;
+  const { yinYang } = chartData;
+  return (
+    (gender === "male" && yinYang === "Yang") ||
+    (gender === "female" && yinYang === "Yin")
+  );
+}
+
+/**
+ * Calculate target palace from Da Xian using directional offset.
+ * For counter-clockwise Da Xian (Yin Male / Yang Female): target = daXianPalace - tagIndex
+ * For clockwise Da Xian (Yang Male / Yin Female):          target = daXianPalace + tagIndex
+ *
+ * @param daXianPalace - Palace number where the current Da Xian starts (1–12)
+ * @param tagIndex - Da Ming offset index (0 = 大命, 1 = 大兄, 4 = 大财, 5 = 大疾, 8 = 大官, …)
+ * @param clockwise - Whether Da Xian progresses clockwise (default: false = anticlockwise)
+ * @returns Target palace number (1–12)
+ */
+export function getPalaceFromDaXian(
+  daXianPalace: number,
+  tagIndex: number,
+  clockwise: boolean = false
+): number {
+  let target = clockwise ? daXianPalace + tagIndex : daXianPalace - tagIndex;
+  // Normalise to 1–12 range
   while (target <= 0) target += 12;
   while (target > 12) target -= 12;
   return target;
@@ -507,49 +532,28 @@ export function getPalaceForAspectDayun(
   chartData: ChartData,
   dayunPeriod: "current" | "next" = "current"
 ): number | null {
-  // Calculate current age based on chart input birth year.
   const birthYear = chartData.input.year;
   const currentAge = calculateCurrentAge(birthYear);
 
-  // Find Dayun palace based on the selected period.
   const dayunPalaceNumber = dayunPeriod === "next"
     ? findNextDayunPalace(chartData, currentAge)
     : findCurrentDayunPalace(chartData, currentAge);
+
   if (!dayunPalaceNumber) {
     console.warn(`Could not find ${dayunPeriod} Dayun palace for age:`, currentAge);
     return null;
   }
 
-  // Build secondary palace names using the Dayun palace as "命宫".
-  const secondaryNames = buildSecondaryPalaceNames(dayunPalaceNumber);
-
-  // Map aspect to its palace name label.
-  const palaceNameMap: Record<LifeAspect, string> = {
-    life: "命宫",
-    siblings: "兄弟",
-    relationships: "夫妻",
-    children: "子女",
-    wealth: "财帛",
-    health: "疾厄",
-    travel: "迁移",
-    social: "交友",
-    career: "官禄",
-    home: "田宅",
-    fortune: "福德",
-    parents: "父母"
-  };
-
-  const aspectPalaceName = palaceNameMap[aspect];
-
-  // Find which palace has the matching secondary name.
-  const targetPalaceIndex = secondaryNames.indexOf(aspectPalaceName);
-  if (targetPalaceIndex === -1) {
-    console.warn("Could not find palace with secondary name:", aspectPalaceName);
+  // Use Da Ming tag indices (same as visual chart display)
+  const tagIndex = DA_MING_TAG_INDICES[aspect];
+  if (tagIndex === undefined) {
+    console.warn("No Da Ming tag index for aspect:", aspect);
     return null;
   }
 
-  // Convert 0-based index to 1-based palace number.
-  return targetPalaceIndex + 1;
+  // Direction must match visual chart — derive from gender and Yin/Yang
+  const clockwise = isDaXianClockwise(chartData);
+  return getPalaceFromDaXian(dayunPalaceNumber, tagIndex, clockwise);
 }
 
 /**
@@ -681,3 +685,5 @@ export function getPalaceForAspectLiuMonth(
   // Convert 0-based index to 1-based palace number.
   return targetPalaceIndex + 1;
 }
+
+

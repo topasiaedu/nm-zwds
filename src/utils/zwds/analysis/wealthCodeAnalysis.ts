@@ -248,12 +248,17 @@ function aggregateCareers(
 
 /**
  * Main analysis function: Analyze Wealth Code from chart data
+ * @param chartData - Calculated ZWDS chart data
+ * @param palaceNumberOverride - Optional physical palace number (1–12) to analyse
+ *   instead of the natal Wealth Palace (财帛). Used for timeframe-based analysis.
  */
-export function analyzeWealthCode(chartData: ChartData): WealthProfile {
+export function analyzeWealthCode(chartData: ChartData, palaceNumberOverride?: number): WealthProfile {
   const clientName = chartData.input.name || "Client";
 
-  // Extract Wealth Palace by name (财帛)
-  const wealthPalace = findPalaceByName(chartData, "财帛");
+  // Resolve palace: use override if provided, otherwise find by natal name "财帛"
+  const wealthPalace = palaceNumberOverride !== undefined
+    ? (chartData.palaces.find(p => p.number === palaceNumberOverride) ?? null)
+    : findPalaceByName(chartData, "财帛");
 
   // Handle case: Wealth Palace not found
   if (!wealthPalace) {
@@ -307,7 +312,7 @@ export function analyzeWealthCode(chartData: ChartData): WealthProfile {
   // Edge case: If Wealth Palace is empty, borrow from Well-being Palace (福德)
   if (allStars.length === 0) {
     const wellBeingPalace = findPalaceByName(chartData, "福德");
-    
+
     if (wellBeingPalace) {
       allStars = collectStarsFromPalace(wellBeingPalace);
     }

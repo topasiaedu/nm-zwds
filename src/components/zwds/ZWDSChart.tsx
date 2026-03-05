@@ -15,7 +15,7 @@ import { PALACE_NAMES } from "../../utils/zwds/constants";
 // Breakpoint constants - matching TailwindCSS defaults
 const SCREEN_SM = 640;
 
-// Palace tags in clockwise order starting from the selected palace
+// Da Ming tag labels. Spread direction (clockwise vs anticlockwise) depends on gender + Yin/Yang.
 const PALACE_TAGS = [
   "大命",
   "大兄",
@@ -163,9 +163,11 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
     null
   );
 
-  // Sync showMonths with controlled prop
+  // Sync showMonths with controlled prop.
+  // When showMonthsControlled is null, also clear the internal state so months
+  // are not left visible after switching away from Liu Month mode.
   React.useEffect(() => {
-    if (showMonthsControlled !== undefined && showMonthsControlled !== null) {
+    if (showMonthsControlled !== undefined) {
       setShowMonths(showMonthsControlled);
     }
   }, [showMonthsControlled]);
@@ -255,9 +257,10 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
   }, [selectedPalace, settings.palaceClickInteraction, settings.transformationLines, calculateTransformations, calculateOppositePalaceInfluences]);
 
   /**
-   * Calculate palace tag for a given palace based on the selected Da Xian
-   * Tags are assigned anticlockwise starting from the selected palace
-   * Da Ming (大命) should be at the selected palace, then Da Xiong (大兄) anticlockwise, etc.
+   * Calculate palace tag for a given palace based on the selected Da Xian.
+   * Tags spread in the Da Xian progression direction from the selected palace.
+   * Clockwise Da Xian (Yang Male / Yin Female): tags increase with palace number.
+   * Counter-clockwise Da Xian (Yin Male / Yang Female): tags decrease.
    */
   const getPalaceTag = (
     palaceNumber: number
@@ -265,14 +268,24 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
     if (!selectedDaXian || !settings.daXianClickInteraction)
       return { tag: null, delay: 0 };
 
-    // Calculate the anticlockwise distance from the selected palace
-    // Palace numbers go 1-12, but we need 0-11 for array indexing
-    let tagIndex = (selectedDaXian - palaceNumber) % 12;
-    if (tagIndex < 0) tagIndex += 12;
+    // Determine direction from chart data
+    const gender = chartData.input.gender;
+    const yinYang = chartData.yinYang;
+    const isClockwise =
+      (gender === "male" && yinYang === "Yang") ||
+      (gender === "female" && yinYang === "Yin");
+
+    // Calculate directional distance from selected Da Xian palace
+    let tagIndex: number;
+    if (isClockwise) {
+      tagIndex = (palaceNumber - selectedDaXian + 12) % 12;
+    } else {
+      tagIndex = (selectedDaXian - palaceNumber + 12) % 12;
+    }
 
     return {
       tag: language === "en" ? PALACE_TAGS_EN[tagIndex] : PALACE_TAGS[tagIndex],
-      delay: tagIndex * 0.05, // delay still based on distance
+      delay: tagIndex * 0.05,
     };
   };
 
@@ -282,15 +295,15 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
   const containerVariants = isPdfExport
     ? undefined
     : {
-        hidden: { opacity: 0 },
-        visible: {
-          opacity: 1,
-          transition: {
-            staggerChildren: 0.1,
-            delayChildren: 0.3,
-          },
+      hidden: { opacity: 0 },
+      visible: {
+        opacity: 1,
+        transition: {
+          staggerChildren: 0.1,
+          delayChildren: 0.3,
         },
-      };
+      },
+    };
 
   /**
    * Handle palace click
@@ -395,7 +408,7 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
     const annualFlowPalace = chartData.palaces.find(
       (p) => p.annualFlow && p.annualFlow.year === targetYear
     );
-    
+
     if (!annualFlowPalace) {
       // Fallback: calculate from palace 1
       let distance = palaceNum - 1;
@@ -404,13 +417,13 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
       }
       return targetYear + distance;
     }
-    
+
     // Calculate how many positions away from the annual flow palace
     let distance = palaceNum - annualFlowPalace.number;
     if (distance < 0) {
       distance += 12;
     }
-    
+
     return targetYear + distance;
   }, [chartData.palaces, targetYear]);
 
@@ -563,9 +576,8 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
         maxHeight: "900px", // Increased from 800px to give more room
       }}>
       <motion.div
-        className={`grid grid-cols-4 grid-rows-4 gap-1.5 xs:gap-2 sm:gap-1.5 md:gap-1 p-1 xs:p-1.5 sm:p-1 md:p-1 h-full rounded-xl ${
-          isPdfExport ? "bg-white" : ""
-        }`}
+        className={`grid grid-cols-4 grid-rows-4 gap-1.5 xs:gap-2 sm:gap-1.5 md:gap-1 p-1 xs:p-1.5 sm:p-1 md:p-1 h-full rounded-xl ${isPdfExport ? "bg-white" : ""
+          }`}
         initial={isPdfExport ? false : { opacity: 0 }}
         animate={isPdfExport ? false : { opacity: 1 }}
         transition={isPdfExport ? { duration: 0 } : { duration: 0.5 }}>
