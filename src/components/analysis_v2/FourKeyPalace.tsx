@@ -168,6 +168,13 @@ const getStarPinyin = (chineseName: string): string =>
  */
 type FourKeyPalaceProps = {
   chartData: ChartData;
+  /**
+   * Optional function that maps a physical palace number (1–12) to an
+   * English palace name for the active timeframe.
+   * When provided, this overrides the natal palace name from the analysis result.
+   * When not provided (or returns an empty string), the natal name is used.
+   */
+  resolvePalaceName?: (palaceNumber: number) => string;
 };
 
 /**
@@ -179,7 +186,7 @@ type FourKeyPalaceProps = {
  *   Zone 3: Energy profile bars (static per transformation type)
  *   Zone 4: 3-line insight (theme, reality, directive)
  */
-const FourKeyPalace: React.FC<FourKeyPalaceProps> = ({ chartData }) => {
+const FourKeyPalace: React.FC<FourKeyPalaceProps> = ({ chartData, resolvePalaceName }) => {
   const analysisResult = analyzeDestinyAlert(chartData);
 
   if (analysisResult.alerts.length === 0) {
@@ -211,6 +218,11 @@ const FourKeyPalace: React.FC<FourKeyPalaceProps> = ({ chartData }) => {
         {analysisResult.alerts.map((alert) => {
           const key = normaliseTransformation(alert.transformation);
           const config = TRANSFORMATION_CONFIG[key] ?? TRANSFORMATION_CONFIG["化忌"];
+
+          // Resolve palace name: use timeframe override when available, else natal name.
+          const displayPalace =
+            (resolvePalaceName ? resolvePalaceName(alert.palaceNumber) : "") ||
+            alert.palace;
 
           return (
             <div
@@ -261,7 +273,7 @@ const FourKeyPalace: React.FC<FourKeyPalaceProps> = ({ chartData }) => {
                       className="text-2xl font-black leading-tight"
                       style={{ color: config.palaceColor }}
                     >
-                      {alert.palace}
+                      {displayPalace}
                     </h3>
                     {/* Star pill — right-aligned, same visual weight as palace */}
                     <span

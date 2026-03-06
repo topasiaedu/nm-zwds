@@ -27,6 +27,37 @@ const PALACE_TO_MONTH_INDEX: Record<string, number> = {
 };
 
 /**
+ * English name parallel to PALACE_NAMES (index 0 = 命宫 → "Life Palace").
+ * Used to convert Chinese secondary/Da Ming palace names to English for display.
+ */
+const PALACE_NAMES_ENGLISH = [
+  "Life Palace",
+  "Siblings Palace",
+  "Spouse Palace",
+  "Children Palace",
+  "Wealth Palace",
+  "Health Palace",
+  "Travel Palace",
+  "Friends Palace",
+  "Career Palace",
+  "Property Palace",
+  "Wellbeing Palace",
+  "Parents Palace",
+] as const;
+
+/**
+ * Convert a Chinese palace name to its English equivalent.
+ * Returns null if the name is not found in the standard PALACE_NAMES list.
+ *
+ * @param chineseName - Chinese palace name (e.g., "财帛")
+ * @returns English palace name (e.g., "Wealth Palace") or null
+ */
+function chineseToEnglish(chineseName: string): string | null {
+  const idx = PALACE_NAMES.indexOf(chineseName as typeof PALACE_NAMES[number]);
+  return idx !== -1 ? PALACE_NAMES_ENGLISH[idx] : null;
+}
+
+/**
  * Build secondary palace names based on a selected palace.
  * When a palace is selected (e.g., Dayun palace), all 12 palaces get
  * secondary names based on their distance from the selected palace.
@@ -41,7 +72,7 @@ const PALACE_TO_MONTH_INDEX: Record<string, number> = {
  * - Palace 3 gets "夫妻" (distance 2)
  * etc., wrapping around the 12-palace cycle
  */
-function buildSecondaryPalaceNames(selectedPalaceNumber: number): string[] {
+export function buildSecondaryPalaceNames(selectedPalaceNumber: number): string[] {
   // Validate palace number input to prevent invalid indexing.
   if (!Number.isFinite(selectedPalaceNumber) || selectedPalaceNumber < 1 || selectedPalaceNumber > 12) {
     throw new TypeError(`Invalid palace number: ${selectedPalaceNumber}. Must be between 1 and 12.`);
@@ -686,4 +717,84 @@ export function getPalaceForAspectLiuMonth(
   return targetPalaceIndex + 1;
 }
 
+/**
+ * Given a physical palace number (1–12), resolve its English palace name
+ * for the currently active timeframe mode.
+ *
+ * - DNA: returns null → the caller should fall back to the natal name already present
+ *   in the alert data.
+ * - Liu Nian: builds secondary palace names anchored on the Liu Nian palace and
+ *   returns the English name at the physical palace's secondary position.
+ * - Da Yun: computes the Da Ming offset from the Da Xian palace (respecting
+ *   clockwise/anticlockwise direction) and maps that to an English palace name.
+ * - Liu Month: builds secondary palace names anchored on the Liu Month palace and
+ *   returns the English name at the physical palace's secondary position.
+ *
+ * @param physicalPalaceNumber - The physical palace number (1–12) from natal chart
+ * @param chartData - Complete chart data
+ * @param mode - Active blueprint/timeframe mode
+ * @param selectedMonth - Required for "liumonth" mode (1–12); defaults to current month
+ * @returns English palace name (e.g. "Wealth Palace") or null if not resolvable
+ */
+export function getPalaceEnglishNameForTimeframe(
+  physicalPalaceNumber: number,
+  chartData: ChartData,
+  mode: "dna" | "liunian" | "dayun" | "liumonth",
+  selectedMonth?: number
+): string | null {
+  // Validate the palace number input.
+  if (
+    !Number.isFinite(physicalPalaceNumber) ||
+    physicalPalaceNumber < 1 ||
+    physicalPalaceNumber > 12
+  ) {
+    console.warn("getPalaceEnglishNameForTimeframe: invalid palace number:", physicalPalaceNumber);
+    return null;
+  }
 
+  // DNA mode — no override; caller falls back to natal name from alert data.
+  if (mode === "dna") return null;
+
+  if (mode === "liunian") {
+    // Find current Liu Nian palace and build secondary names.
+    const anchor = getCurrentLiuNianPalace(chartData);
+    if (!anchor) {
+      console.warn("getPalaceEnglishNameForTimeframe: could not resolve Liu Nian palace.");
+      return null;
+    }
+    const secondary = buildSecondaryPalaceNames(anchor);
+    return chineseToEnglish(secondary[physicalPalaceNumber - 1]) ?? null;
+  }
+
+  if (mode === "liumonth") {
+    // Resolve month palace and build secondary names.
+    const month = selectedMonth ?? new Date().getMonth() + 1;
+    const monthPalace = getMonthPalaceForLiuMonth(chartData, month);
+    if (!monthPalace) {
+      console.warn("getPalaceEnglishNameForTimeframe: could not resolve Liu Month palace.");
+      return null;
+    }
+    const secondary = buildSecondaryPalaceNames(monthPalace);
+    return chineseToEnglish(secondary[physicalPalaceNumber - 1]) ?? null;
+  }
+
+  if (mode === "dayun") {
+    // Find the Da Xian palace and compute the Da Ming offset to this physical palace.
+    const daXian = getCurrentDayunPalace(chartData);
+    if (!daXian) {
+      console.warn("getPalaceEnglishNameForTimeframe: could not resolve Da Xian palace.");
+      return null;
+    }
+
+    // Direction matches the visual Da Ming tag spread on the chart.
+    const clockwise = isDaXianClockwise(chartData);
+    const offset = clockwise
+      ? (physicalPalaceNumber - daXian + 12) % 12
+      : (daXian - physicalPalaceNumber + 12) % 12;
+
+    // PALACE_NAMES[offset] gives the Chinese name for this Da Ming position.
+    return chineseToEnglish(PALACE_NAMES[offset]) ?? null;
+  }
+
+  return null;
+}

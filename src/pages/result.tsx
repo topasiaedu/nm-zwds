@@ -25,7 +25,7 @@ import { ChartSettingsProvider, useChartSettings } from "../context/ChartSetting
 import ChartSettingsModal from "../components/ChartSettingsModal";
 import { DayunSection } from "../components/dayun";
 import { NoblemanSection } from "../components/nobleman";
-import { getCurrentLiuNianPalace, getCurrentDayunPalace, getMonthPalaceForLiuMonth, getYearPalaceForLiuMonth, getPalaceForAspectLiuNian, getPalaceForAspectLiuMonth, getPalaceForAspectDayun } from "../utils/destiny-navigator/palace-resolver";
+import { getCurrentLiuNianPalace, getCurrentDayunPalace, getMonthPalaceForLiuMonth, getYearPalaceForLiuMonth, getPalaceForAspectLiuNian, getPalaceForAspectLiuMonth, getPalaceForAspectDayun, getPalaceEnglishNameForTimeframe } from "../utils/destiny-navigator/palace-resolver";
 import type { LifeAspect } from "../types/destiny-navigator";
 // FourKeyPalaceAnalysis and LifeAreasExplanation are kept commented out for potential future use
 // import { FourKeyPalaceAnalysis, LifeAreasExplanation } from "../components/analysis";
@@ -601,6 +601,32 @@ const ResultContent: React.FC = () => {
         default:
           return null;
       }
+    },
+    [calculatedChartData, blueprintMode, selectedLiuMonth]
+  );
+
+  /**
+   * Resolve the English palace name for a given physical palace number
+   * based on the active timeframe mode. Used by the Destiny Alert Map
+   * (FourKeyPalace) so its palace labels update in sync with all other sections.
+   *
+   * Returns an empty string for DNA mode so the component falls back to the
+   * natal name already stored in the alert data.
+   *
+   * @param palaceNumber - Physical palace number (1–12)
+   * @returns Timeframe-aware English palace name, or empty string for DNA/fallback
+   */
+  const resolvePalaceName = useCallback(
+    (palaceNumber: number): string => {
+      if (!calculatedChartData) return "";
+      return (
+        getPalaceEnglishNameForTimeframe(
+          palaceNumber,
+          calculatedChartData,
+          blueprintMode,
+          blueprintMode === "liumonth" ? selectedLiuMonth : undefined
+        ) ?? ""
+      );
     },
     [calculatedChartData, blueprintMode, selectedLiuMonth]
   );
@@ -1352,8 +1378,11 @@ const ResultContent: React.FC = () => {
                         palaceOverride={getPalaceOverride("health") ?? undefined}
                       />
 
-                      {/* Destiny Alert Map — always shows natal transformations */}
-                      <FourKeyPalace chartData={calculatedChartData} />
+                      {/* Destiny Alert Map — palace names update with active timeframe */}
+                      <FourKeyPalace
+                        chartData={calculatedChartData}
+                        resolvePalaceName={resolvePalaceName}
+                      />
                     </>
                   )}
 
