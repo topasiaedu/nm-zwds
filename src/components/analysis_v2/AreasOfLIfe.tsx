@@ -108,7 +108,7 @@ const AreasOfLife: React.FC<{ chartData: ChartDataType; /** Optional physical pa
     <div className="p-6 dark:bg-gray-900">
       {/* Section Header */}
       <GradientSectionHeader
-        badgeText="05"
+        badgeText="06"
         title="DESTINY SCOREBOARD"
         subtitle="Your personal scorecard across the 5 destiny pillars."
         showDivider={true}

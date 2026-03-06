@@ -98,7 +98,7 @@ const PdfFourKeyPalace: React.FC<PdfFourKeyPalaceProps> = ({ chartData }) => {
   };
 
   return (
-    <div style={{ 
+    <div style={{
       padding: "24px",
       fontFamily: "Arial, sans-serif",
       backgroundColor: "white",
@@ -125,16 +125,16 @@ const PdfFourKeyPalace: React.FC<PdfFourKeyPalaceProps> = ({ chartData }) => {
         </p>
       </div>
 
-             {/* Cards in Column Layout - Show first 2 only */}
-       <div>
-         {alerts.length > 0 ? (
-           <div style={{
-             display: "flex",
-             flexDirection: "column",
-             gap: "20px",
-           }}>
-             {alerts.slice(0, 2).map((alert, index) => (
-              <div 
+      {/* Cards in Column Layout - Show first 2 only */}
+      <div>
+        {alerts.length > 0 ? (
+          <div style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "20px",
+          }}>
+            {alerts.slice(0, 2).map((alert) => (
+              <div
                 key={`${alert.palaceNumber}-${alert.transformation}`}
                 style={{
                   position: "relative",
@@ -189,71 +189,18 @@ const PdfFourKeyPalace: React.FC<PdfFourKeyPalaceProps> = ({ chartData }) => {
                     </h3>
                   </div>
 
-                  {/* Quote with emphasis */}
-                  {alert.quote && (
-                    <blockquote style={{
-                      fontSize: "18px",
-                      fontStyle: "italic",
-                      fontWeight: "600",
-                      color: "#374151", // gray-700
-                      paddingLeft: "16px",
-                      paddingTop: "8px",
-                      paddingBottom: "8px",
-                      marginBottom: "16px",
-                      textAlign: "center",
-                      position: "relative",
-                      margin: "0 0 16px 0",
-                    }}>
-                      <span style={{
-                        position: "absolute",
-                        top: "0",
-                        left: "0",
-                        fontSize: "40px",
-                        color: "#a855f7", // purple-500 with opacity
-                        opacity: 0.3,
-                        lineHeight: "1",
-                        fontFamily: "serif",
-                      }}>
-                        &quot;
-                      </span>
-                      <span style={{ position: "relative", zIndex: 1 }}>
-                        {alert.quote}
-                      </span>
-                      <span style={{
-                        position: "absolute",
-                        bottom: "0",
-                        right: "16px",
-                        fontSize: "40px",
-                        color: "#a855f7", // purple-500 with opacity
-                        opacity: 0.3,
-                        lineHeight: "1",
-                        fontFamily: "serif",
-                      }}>
-                        &quot;
-                      </span>
-                    </blockquote>
-                  )}
-
-                  {/* Description */}
+                  {/* 3-line insight */}
                   <div style={{
-                    color: "#4b5563", // gray-600
+                    color: "#4b5563",
                     fontSize: "14px",
                     lineHeight: "1.6",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "6px",
                   }}>
-                    {alert.description ? (
-                      // Split description by double line breaks to create paragraphs
-                      alert.description.split('\n\n').map((paragraph, pIndex) => (
-                        <p key={pIndex} style={{
-                          margin: pIndex > 0 ? "12px 0 0 0" : "0",
-                        }}>
-                          {paragraph.trim()}
-                        </p>
-                      ))
-                    ) : (
-                      <p style={{ margin: "0" }}>
-                        No description available for this transformation.
-                      </p>
-                    )}
+                    <p style={{ margin: "0" }}>{alert.line1}</p>
+                    <p style={{ margin: "0" }}>{alert.line2}</p>
+                    <p style={{ margin: "0", fontWeight: "600", fontStyle: "italic" }}>{alert.line3}</p>
                   </div>
                 </div>
               </div>

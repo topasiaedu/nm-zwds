@@ -1323,45 +1323,45 @@ const ResultContent: React.FC = () => {
 
               {/* ── Full analysis suite — shown for ALL modes ───────────────── */}
 
-              {/* Overview — uses Life Palace (命宫) */}
-              <Overview
-                chartData={calculatedChartData}
-                palaceOverride={getPalaceOverride("life") ?? undefined}
-              />
-
-              {hasFullAnalysis && (
-                <>
-                  {/* Wealth Code — uses Wealth Palace (财帛) */}
-                  <WealthCode
+                  {/* Overview — uses Life Palace (命宫) */}
+                  <Overview
                     chartData={calculatedChartData}
-                    showTopDivider={true}
-                    header={{
-                      badgeText: "02",
-                      title: "WEALTH CODE ANALYSIS",
-                      subtitle:
-                        "Decode your natural earning style and ideal business model aligned to your energy.",
-                    }}
-                    palaceOverride={getPalaceOverride("wealth") ?? undefined}
+                    palaceOverride={getPalaceOverride("life") ?? undefined}
                   />
 
-                  <NoblemanSection chartData={calculatedChartData} />
+                  {hasFullAnalysis && (
+                    <>
+                      {/* Wealth Code — uses Wealth Palace (财帛) */}
+                      <WealthCode
+                        chartData={calculatedChartData}
+                        showTopDivider={true}
+                        header={{
+                          badgeText: "02",
+                          title: "WEALTH CODE ANALYSIS",
+                          subtitle:
+                            "Decode your natural earning style and ideal business model aligned to your energy.",
+                        }}
+                        palaceOverride={getPalaceOverride("wealth") ?? undefined}
+                      />
 
-                  {/* Health — uses Health Palace (疾厄) */}
-                  <Health
+                      <NoblemanSection chartData={calculatedChartData} />
+
+                      {/* Health — uses Health Palace (疾厄) */}
+                      <Health
+                        chartData={calculatedChartData}
+                        palaceOverride={getPalaceOverride("health") ?? undefined}
+                      />
+
+                      {/* Destiny Alert Map — always shows natal transformations */}
+                      <FourKeyPalace chartData={calculatedChartData} />
+                    </>
+                  )}
+
+                  {/* Areas of Life — uses all palace areas */}
+                  <AreasOfLife
                     chartData={calculatedChartData}
-                    palaceOverride={getPalaceOverride("health") ?? undefined}
+                    palaceOverride={getPalaceOverride("life") ?? undefined}
                   />
-
-                  {/* Destiny Alert Map — always shows natal transformations */}
-                  <FourKeyPalace chartData={calculatedChartData} />
-                </>
-              )}
-
-              {/* Areas of Life — uses all palace areas */}
-              <AreasOfLife
-                chartData={calculatedChartData}
-                palaceOverride={getPalaceOverride("life") ?? undefined}
-              />
 
             </div>
           </div>

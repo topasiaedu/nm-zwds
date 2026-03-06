@@ -1,16 +1,23 @@
 import { ChartData, Palace, Transformation } from "../types";
-import { DESTINY_ALERT_CONSTANTS } from "../analysis_constants/destiny_alert";
+import { DESTINY_ALERT_STAR_CONSTANTS } from "../analysis_constants/destiny_alert_star";
 
 /**
  * Type definition for processed palace alert data
  */
 export type PalaceAlertData = {
+  /** English name of the palace where the transformation activates (e.g. "Life Palace") */
   palace: string;
+  /** The transformation type in traditional Chinese (e.g. "化祿") */
   transformation: string;
-  description: string;
-  quote: string;
+  /** Line 1 — Theme of the activation */
+  line1: string;
+  /** Line 2 — How it manifests practically */
+  line2: string;
+  /** Line 3 — The directive (rendered bold in UI) */
+  line3: string;
+  /** Physical palace number (1–12) */
   palaceNumber: number;
-  /** The name of the star that carries this transformation (e.g. "紫微", "廉贞") */
+  /** The star carrying this transformation (Chinese name) */
   starName: string;
 };
 
@@ -26,17 +33,47 @@ export type DestinyAlertAnalysisResult = {
 };
 
 /**
- * Maps transformation Chinese characters to the keys used in DESTINY_ALERT_CONSTANTS
+ * Normalises traditional/simplified transformation variants to a canonical traditional key
  */
 const TRANSFORMATION_KEY_MAP: Record<string, string> = {
-  "化祿": "化禄", // Traditional to simplified mapping
-  "化權": "化权", // Traditional to simplified mapping
+  "化祿": "化祿",
+  "化禄": "化祿", // simplified → traditional
+  "化權": "化權",
+  "化权": "化權", // simplified → traditional
   "化科": "化科",
   "化忌": "化忌",
 };
 
 /**
- * Maps palace names to their English names in DESTINY_ALERT_CONSTANTS
+ * Normalises simplified Chinese star names to traditional Chinese so they match
+ * the keys in DESTINY_ALERT_STAR_CONSTANTS.
+ *
+ * The ZWDS calculator stores star names in simplified Chinese (e.g. 太阳, 廉贞),
+ * while the constants file uses traditional Chinese (太陽, 廉貞). Stars that are
+ * identical in both scripts (武曲, 天同, 天梁, 紫微, 天府, 文昌, 文曲, 右弼…) pass
+ * through unchanged.
+ */
+const STAR_NAME_SIMPLIFIED_TO_TRADITIONAL: Record<string, string> = {
+  "廉贞": "廉貞",
+  "天机": "天機",
+  "太阴": "太陰",
+  "贪狼": "貪狼",
+  "巨门": "巨門",
+  "破军": "破軍",
+  "太阳": "太陽",
+  "左辅": "左輔",
+  "七杀": "七殺",
+};
+
+/**
+ * Returns the traditional-character version of a star name.
+ * If the name is already traditional (or identical in both scripts) it is returned as-is.
+ */
+const normaliseStarName = (name: string): string =>
+  STAR_NAME_SIMPLIFIED_TO_TRADITIONAL[name] ?? name;
+
+/**
+ * Maps palace names to their English display names
  */
 const PALACE_NAME_TO_ENGLISH: Record<string, string> = {
   "命宫": "Life Palace",
@@ -51,7 +88,7 @@ const PALACE_NAME_TO_ENGLISH: Record<string, string> = {
   "田宅": "Property Palace",
   "福德": "Wellbeing Palace",
   "父母": "Parents Palace",
-  // Add variations without 宫
+  // Variations without 宫
   "命": "Life Palace",
   "兄弟宫": "Siblings Palace",
   "夫妻宫": "Spouse Palace",
@@ -64,29 +101,6 @@ const PALACE_NAME_TO_ENGLISH: Record<string, string> = {
   "田宅宫": "Property Palace",
   "福德宫": "Wellbeing Palace",
   "父母宫": "Parents Palace",
-};
-
-/**
- * Extracts quote and description from the full description text
- * Quote is the last sentence (after the last full stop), description is everything else
- */
-const processDescription = (fullDescription: string): { description: string; quote: string } => {
-  // Split by full stops and filter out empty sentences
-  const sentences = fullDescription.split('.').filter(sentence => sentence.trim() !== "");
-
-  if (sentences.length === 0) {
-    return { description: "", quote: "" };
-  }
-
-  if (sentences.length === 1) {
-    return { description: "", quote: sentences[0].trim() + "." };
-  }
-
-  // Last sentence is the quote, everything else is description
-  const quote = sentences[sentences.length - 1].trim() + ".";
-  const description = sentences.slice(0, -1).join(". ").trim() + ".";
-
-  return { description, quote };
 };
 
 /**
@@ -130,7 +144,7 @@ export const analyzeDestinyAlert = (chartData: ChartData): DestinyAlertAnalysisR
     palacesChecked: chartData.palaces.length,
   };
 
-  // Process each transformation type
+  // Process each transformation type in order: 化祿, 化權, 化科, 化忌
   const transformations: Transformation[] = ["化祿", "化權", "化科", "化忌"];
 
   for (const transformation of transformations) {
@@ -153,27 +167,29 @@ export const analyzeDestinyAlert = (chartData: ChartData): DestinyAlertAnalysisR
         continue;
       }
 
-      // Find the palace constant by matching the English name
-      const palaceConstant = Object.values(DESTINY_ALERT_CONSTANTS).find(
-        constant => constant.english_name === englishName
-      );
+      // Normalise transformation to traditional key for lookup
+      const normalisedTransformation = TRANSFORMATION_KEY_MAP[transformation] ?? transformation;
 
-      if (palaceConstant) {
-        const transformationKey = TRANSFORMATION_KEY_MAP[transformation];
-        const alertData = palaceConstant.alerts[transformationKey as keyof typeof palaceConstant.alerts];
+      // Normalise star name (simplified → traditional) so it matches the constants keys
+      const normalisedStarName = normaliseStarName(starName);
 
-        if (alertData) {
-          const { description, quote } = processDescription(alertData.description);
+      // Look up by star × transformation key
+      const lookupKey = `${normalisedStarName}_${normalisedTransformation}`;
+      const starEntry = DESTINY_ALERT_STAR_CONSTANTS[lookupKey];
 
-          alerts.push({
-            palace: palaceConstant.english_name,
-            transformation,
-            description,
-            quote,
-            palaceNumber,
-            starName,   // already in scope from `const { palace, starName } = result;`
-          });
-        }
+      if (starEntry) {
+        alerts.push({
+          palace: englishName,
+          transformation,
+          line1: starEntry.line1,
+          line2: starEntry.line2,
+          line3: starEntry.line3,
+          palaceNumber,
+          // Keep the original starName from chart data for display; UI will convert to pinyin
+          starName,
+        });
+      } else {
+        console.warn(`No destiny alert entry found for key: ${lookupKey}`);
       }
     }
   }
@@ -187,7 +203,7 @@ export const analyzeDestinyAlert = (chartData: ChartData): DestinyAlertAnalysisR
 /**
  * Gets debug information for troubleshooting
  */
-export const getDestinyAlertDebugInfo = (chartData: ChartData): Record<string, any> => {
+export const getDestinyAlertDebugInfo = (chartData: ChartData): Record<string, unknown> => {
   return {
     totalPalaces: chartData.palaces.length,
     lifePalace: chartData.lifePalace,
@@ -199,4 +215,4 @@ export const getDestinyAlertDebugInfo = (chartData: ChartData): Record<string, a
       transformedStars: chartData.palaces[index].mainStar?.filter(s => s.transformations && s.transformations.length > 0) || [],
     })),
   };
-}; 
+};
