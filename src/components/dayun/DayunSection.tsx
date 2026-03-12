@@ -21,7 +21,7 @@ import {
 interface DayunSectionProps {
   /** Complete ZWDS chart data */
   chartData: ChartData;
-  
+
   /** Optional current year override (defaults to current year) */
   currentYear?: number;
 
@@ -48,8 +48,8 @@ interface DayunSectionProps {
  * <DayunSection chartData={chartData} />
  * ```
  */
-export const DayunSection: React.FC<DayunSectionProps> = ({ 
-  chartData, 
+export const DayunSection: React.FC<DayunSectionProps> = ({
+  chartData,
   currentYear,
   showHeader
 }) => {
@@ -78,23 +78,8 @@ export const DayunSection: React.FC<DayunSectionProps> = ({
         />
       ) : null}
 
-      {/* Season Hero - Large visual card (FIRST - most prominent) */}
+      {/* Season Hero — current 10-year cycle at a glance */}
       <DayunSeasonHero dayun={dayunWithGuidance} />
-
-      {/* Cycle Timeline - Past, current, future */}
-      <CycleTimeline dayun={dayunWithGuidance} />
-
-      {/* Phase Intensity Chart - Energy curve visualization */}
-      <PhaseIntensityChart dayun={dayunWithGuidance} />
-
-      {/* Decision Point Hero - Critical "NOW" moment with two paths (AFTER energy graph) */}
-      {/* <DecisionPointHero dayun={dayunWithGuidance} /> */}
-
-      {/* Guidance Cards - Key actions and warnings */}
-      <DayunGuidanceCards dayun={dayunWithGuidance} />
-
-      {/* Reflection Questions - Collapsible section */}
-      <ReflectionQuestions questions={dayunWithGuidance.reflectionQuestions} />
     </section>
   );
 };

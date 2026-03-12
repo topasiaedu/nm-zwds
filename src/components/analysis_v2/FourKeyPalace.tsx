@@ -45,72 +45,72 @@ const TRANSFORMATION_CONFIG: Record<string, TransformationConfig> = {
     icon: "💰",
     bars: [
       { label: "Abundance", pct: 85 },
-      { label: "Flow",      pct: 70 },
-      { label: "Ease",      pct: 60 },
+      { label: "Flow", pct: 70 },
+      { label: "Ease", pct: 60 },
     ],
-    headerGradient:  "linear-gradient(135deg, #047857 0%, #059669 50%, #10b981 100%)",
-    bodyGradient:    "linear-gradient(145deg, #f0fdf4 0%, #dcfce7 100%)",
-    borderColor:     "#86efac",
-    barFill:         "#059669",
-    barGradient:     "linear-gradient(90deg, #047857, #10b981)",
-    palaceColor:     "#065f46",
-    watermarkColor:  "#059669",
-    watermarkChar:   "祿",
-    cardShadow:      "0 4px 24px rgba(5,150,105,0.12)",
+    headerGradient: "linear-gradient(135deg, #047857 0%, #059669 50%, #10b981 100%)",
+    bodyGradient: "linear-gradient(145deg, #f0fdf4 0%, #dcfce7 100%)",
+    borderColor: "#86efac",
+    barFill: "#059669",
+    barGradient: "linear-gradient(90deg, #047857, #10b981)",
+    palaceColor: "#065f46",
+    watermarkColor: "#059669",
+    watermarkChar: "祿",
+    cardShadow: "0 4px 24px rgba(5,150,105,0.12)",
   },
   "化權": {
     heroQuestion: "WHERE DOES POWER RISE?",
     icon: "👑",
     bars: [
       { label: "Authority", pct: 90 },
-      { label: "Drive",     pct: 75 },
-      { label: "Control",   pct: 65 },
+      { label: "Drive", pct: 75 },
+      { label: "Control", pct: 65 },
     ],
-    headerGradient:  "linear-gradient(135deg, #1e40af 0%, #2563eb 50%, #3b82f6 100%)",
-    bodyGradient:    "linear-gradient(145deg, #eff6ff 0%, #dbeafe 100%)",
-    borderColor:     "#93c5fd",
-    barFill:         "#2563eb",
-    barGradient:     "linear-gradient(90deg, #1e40af, #3b82f6)",
-    palaceColor:     "#1e3a8a",
-    watermarkColor:  "#2563eb",
-    watermarkChar:   "權",
-    cardShadow:      "0 4px 24px rgba(37,99,235,0.12)",
+    headerGradient: "linear-gradient(135deg, #1e40af 0%, #2563eb 50%, #3b82f6 100%)",
+    bodyGradient: "linear-gradient(145deg, #eff6ff 0%, #dbeafe 100%)",
+    borderColor: "#93c5fd",
+    barFill: "#2563eb",
+    barGradient: "linear-gradient(90deg, #1e40af, #3b82f6)",
+    palaceColor: "#1e3a8a",
+    watermarkColor: "#2563eb",
+    watermarkChar: "權",
+    cardShadow: "0 4px 24px rgba(37,99,235,0.12)",
   },
   "化科": {
-    heroQuestion: "WHERE DOES TALENT SHINE?",
-    icon: "✨",
+    heroQuestion: "WHERE DOES YOUR FAME RISE?",
+    icon: "🌟",
     bars: [
-      { label: "Talent",      pct: 85 },
-      { label: "Recognition", pct: 70 },
-      { label: "Refinement",  pct: 60 },
+      { label: "Reputation", pct: 85 },
+      { label: "Visibility", pct: 70 },
+      { label: "Recognition", pct: 60 },
     ],
-    headerGradient:  "linear-gradient(135deg, #b45309 0%, #d97706 50%, #f59e0b 100%)",
-    bodyGradient:    "linear-gradient(145deg, #fffbeb 0%, #fef3c7 100%)",
-    borderColor:     "#fcd34d",
-    barFill:         "#d97706",
-    barGradient:     "linear-gradient(90deg, #b45309, #f59e0b)",
-    palaceColor:     "#92400e",
-    watermarkColor:  "#d97706",
-    watermarkChar:   "科",
-    cardShadow:      "0 4px 24px rgba(217,119,6,0.12)",
+    headerGradient: "linear-gradient(135deg, #b45309 0%, #d97706 50%, #f59e0b 100%)",
+    bodyGradient: "linear-gradient(145deg, #fffbeb 0%, #fef3c7 100%)",
+    borderColor: "#fcd34d",
+    barFill: "#d97706",
+    barGradient: "linear-gradient(90deg, #b45309, #f59e0b)",
+    palaceColor: "#92400e",
+    watermarkColor: "#d97706",
+    watermarkChar: "科",
+    cardShadow: "0 4px 24px rgba(217,119,6,0.12)",
   },
   "化忌": {
-    heroQuestion: "WHERE SHOULD I TREAD CAREFULLY?",
-    icon: "🧭",
+    heroQuestion: "WHERE IS ENERGY BLOCKED?",
+    icon: "⚠️",
     bars: [
-      { label: "Friction",   pct: 80 },
-      { label: "Tension",    pct: 65 },
-      { label: "Complexity", pct: 55 },
+      { label: "Blockage", pct: 80 },
+      { label: "Resistance", pct: 65 },
+      { label: "Challenge", pct: 55 },
     ],
-    headerGradient:  "linear-gradient(135deg, #9f1239 0%, #dc2626 50%, #ef4444 100%)",
-    bodyGradient:    "linear-gradient(145deg, #fff1f2 0%, #ffe4e6 100%)",
-    borderColor:     "#fda4af",
-    barFill:         "#dc2626",
-    barGradient:     "linear-gradient(90deg, #9f1239, #ef4444)",
-    palaceColor:     "#9f1239",
-    watermarkColor:  "#dc2626",
-    watermarkChar:   "忌",
-    cardShadow:      "0 4px 24px rgba(220,38,38,0.12)",
+    headerGradient: "linear-gradient(135deg, #9f1239 0%, #dc2626 50%, #ef4444 100%)",
+    bodyGradient: "linear-gradient(145deg, #fff1f2 0%, #ffe4e6 100%)",
+    borderColor: "#fda4af",
+    barFill: "#dc2626",
+    barGradient: "linear-gradient(90deg, #9f1239, #ef4444)",
+    palaceColor: "#9f1239",
+    watermarkColor: "#dc2626",
+    watermarkChar: "忌",
+    cardShadow: "0 4px 24px rgba(220,38,38,0.12)",
   },
 };
 
@@ -243,7 +243,7 @@ const FourKeyPalace: React.FC<FourKeyPalaceProps> = ({ chartData, resolvePalaceN
                 }}
               >
                 <p className="text-white font-black text-lg tracking-wide leading-tight"
-                   style={{ textShadow: "0 1px 4px rgba(0,0,0,0.2)" }}>
+                  style={{ textShadow: "0 1px 4px rgba(0,0,0,0.2)" }}>
                   {config.icon} {config.heroQuestion}
                 </p>
               </div>
@@ -265,7 +265,7 @@ const FourKeyPalace: React.FC<FourKeyPalaceProps> = ({ chartData, resolvePalaceN
                 {/* Zone 2 — Palace name (left) and star pill (right), space-between */}
                 <div>
                   <p className="text-xs uppercase tracking-widest mb-1"
-                     style={{ color: "rgba(107,114,128,0.8)" }}>
+                    style={{ color: "rgba(107,114,128,0.8)" }}>
                     Activates
                   </p>
                   <div className="flex items-center justify-between gap-3">
@@ -328,7 +328,7 @@ const FourKeyPalace: React.FC<FourKeyPalaceProps> = ({ chartData, resolvePalaceN
 
                 {/* Zone 4 — 3-line insight */}
                 <div className="flex flex-col gap-1 text-sm leading-relaxed"
-                     style={{ color: "rgba(55,65,81,0.95)" }}>
+                  style={{ color: "rgba(55,65,81,0.95)" }}>
                   <p>{alert.line1}</p>
                   <p>{alert.line2}</p>
                   <p

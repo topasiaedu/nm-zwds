@@ -25,6 +25,7 @@ import { ChartSettingsProvider, useChartSettings } from "../context/ChartSetting
 import ChartSettingsModal from "../components/ChartSettingsModal";
 import { DayunSection } from "../components/dayun";
 import { NoblemanSection } from "../components/nobleman";
+import { LiuMonthCard } from "../components/liumonth";
 import { getCurrentLiuNianPalace, getCurrentDayunPalace, getMonthPalaceForLiuMonth, getYearPalaceForLiuMonth, getPalaceForAspectLiuNian, getPalaceForAspectLiuMonth, getPalaceForAspectDayun, getPalaceEnglishNameForTimeframe } from "../utils/destiny-navigator/palace-resolver";
 import type { LifeAspect } from "../types/destiny-navigator";
 // FourKeyPalaceAnalysis and LifeAreasExplanation are kept commented out for potential future use
@@ -908,9 +909,9 @@ const ResultContent: React.FC = () => {
                   <div className="mb-4">
                     <div className="flex gap-2 flex-wrap">
                       {[
-                        { key: "dna",      label: "DNA Chart"           },
-                        { key: "liunian",  label: "Liu Nian (Yearly)"   },
-                        { key: "dayun",    label: "Da Yun (10 Year)"    },
+                        { key: "dna", label: "DNA Chart" },
+                        { key: "dayun", label: "Da Yun (10 Year)" },
+                        { key: "liunian", label: "Liu Nian (Yearly)" },
                         { key: "liumonth", label: "Liu Month (Monthly)" },
                       ].map((blueprint) => {
                         const active = blueprintMode === blueprint.key;
@@ -1347,7 +1348,16 @@ const ResultContent: React.FC = () => {
                 <DayunSection chartData={calculatedChartData} />
               )}
 
-              {/* ── Full analysis suite — shown for ALL modes ───────────────── */}
+              {/* ── Liu Month Mode: show monthly briefing card instead of full analysis ── */}
+              {blueprintMode === "liumonth" && currentLiuMonthPalace !== null ? (
+                <LiuMonthCard
+                  selectedMonth={selectedLiuMonth}
+                  palaceNumber={currentLiuMonthPalace}
+                  palaceName={calculatedChartData.palaces[currentLiuMonthPalace - 1]?.name ?? ""}
+                />
+              ) : blueprintMode !== "liumonth" ? (
+                <>
+                  {/* ── Full analysis suite — shown for DNA / Da Yun / Liu Nian modes ── */}
 
                   {/* Overview — uses Life Palace (命宫) */}
                   <Overview
@@ -1391,6 +1401,8 @@ const ResultContent: React.FC = () => {
                     chartData={calculatedChartData}
                     palaceOverride={getPalaceOverride("life") ?? undefined}
                   />
+                </>
+              ) : null}
 
             </div>
           </div>
