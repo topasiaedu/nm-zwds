@@ -10,7 +10,13 @@ import type { ChartData } from "../../utils/zwds/types";
 import { calculateCurrentDayunCycle } from "../../utils/dayun/calculator";
 import { generateDayunGuidance } from "../../utils/dayun/guidanceGenerator";
 import GradientSectionHeader from "../analysis_v2/shared/GradientSectionHeader";
-import { DayunSeasonHero } from "./index";
+import {
+  DayunSeasonHero,
+  CycleTimeline,
+  PhaseIntensityChart,
+  DayunGuidanceCards,
+  ReflectionQuestions,
+} from "./index";
 
 interface DayunSectionProps {
   /** Complete ZWDS chart data */
@@ -72,8 +78,20 @@ export const DayunSection: React.FC<DayunSectionProps> = ({
         />
       ) : null}
 
-      {/* Season Hero — current 10-year cycle at a glance */}
+      {/* 1. Season Hero — current 10-year cycle at a glance */}
       <DayunSeasonHero dayun={dayunWithGuidance} />
+
+      {/* 2. Cycle Timeline — past, current and future Da Yun cycles */}
+      <CycleTimeline dayun={dayunWithGuidance} />
+
+      {/* 3. Phase Intensity Chart — 10-year energy curve */}
+      <PhaseIntensityChart dayun={dayunWithGuidance} />
+
+      {/* 4. Guidance Cards — key actions and watch outs for this cycle */}
+      <DayunGuidanceCards dayun={dayunWithGuidance} />
+
+      {/* 5. Reflection Questions — thought-provoking prompts for the season */}
+      <ReflectionQuestions questions={dayunWithGuidance.reflectionQuestions} />
     </section>
   );
 };
