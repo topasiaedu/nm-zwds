@@ -17,7 +17,6 @@ import {
   type DimensionBar,
   type SeasonStyle,
 } from "../../utils/forecast/liuMonthData";
-import GradientSectionHeader from "../analysis_v2/shared/GradientSectionHeader";
 
 /** English display names for each palace */
 const PALACE_ENGLISH: Record<string, string> = {
@@ -433,14 +432,6 @@ export const LiuMonthCard: React.FC<LiuMonthCardProps> = ({
 
   return (
     <div className="p-6 dark:bg-gray-900">
-      {/* ── Section Header — badge is always "01" since this is the sole section in Liu Month mode ── */}
-      <GradientSectionHeader
-        badgeText="01"
-        title="MONTHLY BRIEFING"
-        subtitle={`Your energetic focus and strategy for ${monthName} ${currentYear}`}
-        showDivider={false}
-      />
-
       {/* ── 1. Hero Card ── */}
       <HeroCard
         seasonStyle={seasonStyle}

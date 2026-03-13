@@ -1329,35 +1329,37 @@ const ResultContent: React.FC = () => {
         {/* Analysis Section - Always show Overview, but other components require Tier 2+ */}
         {calculatedChartData && !loading && !error && hasFullAnalysis && (
           <div className="mt-8">
-            <div className="flex flex-col justify-center items-center">
-              <h2 className="text-4xl mb-2 font-bold dark:text-white flex items-center text-center pt-4">
-                {t("analysis.title") || "Chart Analysis"}
-              </h2>
 
-              {/* Subtitle */}
-              <p className="text-lg mb-6 dark:text-white text-center italic">
-                {t("analysis.subtitle") ||
-                  "A custom breakdown of your chart's strengths, patterns, and strategic focus areas."}
-              </p>
-            </div>
+            {/* ── Title block — only for DNA and Liu Nian modes ── */}
+            {(blueprintMode === "dna" || blueprintMode === "liunian") && (
+              <div className="flex flex-col justify-center items-center">
+                <h2 className="text-4xl mb-2 font-bold dark:text-white flex items-center text-center pt-4">
+                  {t("analysis.title") || "PERSONALIZED LIFE REPORT"}
+                </h2>
+                <p className="text-lg mb-6 dark:text-white text-center italic">
+                  {t("analysis.subtitle") ||
+                    "A custom breakdown of your chart's strengths, patterns, and strategic focus areas."}
+                </p>
+              </div>
+            )}
 
             <div className="space-y-8">
 
-              {/* ── Da Yun Mode: DayunSection shown first as an extra section ── */}
+              {/* ── Da Yun Mode: only DayunSection, no numbered header ── */}
               {blueprintMode === "dayun" && (
-                <DayunSection chartData={calculatedChartData} />
+                <DayunSection chartData={calculatedChartData} showHeader={false} />
               )}
 
-              {/* ── Liu Month Mode: show monthly briefing card instead of full analysis ── */}
+              {/* ── Liu Month Mode: monthly briefing card only ── */}
               {blueprintMode === "liumonth" && currentLiuMonthPalace !== null ? (
                 <LiuMonthCard
                   selectedMonth={selectedLiuMonth}
                   palaceNumber={currentLiuMonthPalace}
                   palaceName={calculatedChartData.palaces[currentLiuMonthPalace - 1]?.name ?? ""}
                 />
-              ) : blueprintMode !== "liumonth" ? (
+              ) : (blueprintMode === "dna" || blueprintMode === "liunian") ? (
                 <>
-                  {/* ── Full analysis suite — shown for DNA / Da Yun / Liu Nian modes ── */}
+                  {/* ── Full analysis suite — DNA and Liu Nian modes only ── */}
 
                   {/* Overview — uses Life Palace (命宫) */}
                   <Overview
