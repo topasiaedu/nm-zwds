@@ -10,13 +10,7 @@ import type { ChartData } from "../../utils/zwds/types";
 import { calculateCurrentDayunCycle } from "../../utils/dayun/calculator";
 import { generateDayunGuidance } from "../../utils/dayun/guidanceGenerator";
 import GradientSectionHeader from "../analysis_v2/shared/GradientSectionHeader";
-import {
-  DayunSeasonHero,
-  CycleTimeline,
-  PhaseIntensityChart,
-  DayunGuidanceCards,
-  ReflectionQuestions,
-} from "./index";
+import { DayunSeasonHero } from "./index";
 
 interface DayunSectionProps {
   /** Complete ZWDS chart data */
