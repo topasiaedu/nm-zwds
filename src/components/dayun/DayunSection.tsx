@@ -21,7 +21,7 @@ import {
 interface DayunSectionProps {
   /** Complete ZWDS chart data */
   chartData: ChartData;
-  
+
   /** Optional current year override (defaults to current year) */
   currentYear?: number;
 
@@ -48,8 +48,8 @@ interface DayunSectionProps {
  * <DayunSection chartData={chartData} />
  * ```
  */
-export const DayunSection: React.FC<DayunSectionProps> = ({ 
-  chartData, 
+export const DayunSection: React.FC<DayunSectionProps> = ({
+  chartData,
   currentYear,
   showHeader
 }) => {
@@ -78,22 +78,19 @@ export const DayunSection: React.FC<DayunSectionProps> = ({
         />
       ) : null}
 
-      {/* Season Hero - Large visual card (FIRST - most prominent) */}
+      {/* 1. Season Hero — current 10-year cycle at a glance */}
       <DayunSeasonHero dayun={dayunWithGuidance} />
 
-      {/* Cycle Timeline - Past, current, future */}
+      {/* 2. Cycle Timeline — past, current and future Da Yun cycles */}
       <CycleTimeline dayun={dayunWithGuidance} />
 
-      {/* Phase Intensity Chart - Energy curve visualization */}
+      {/* 3. Phase Intensity Chart — 10-year energy curve */}
       <PhaseIntensityChart dayun={dayunWithGuidance} />
 
-      {/* Decision Point Hero - Critical "NOW" moment with two paths (AFTER energy graph) */}
-      {/* <DecisionPointHero dayun={dayunWithGuidance} /> */}
-
-      {/* Guidance Cards - Key actions and warnings */}
+      {/* 4. Guidance Cards — key actions and watch outs for this cycle */}
       <DayunGuidanceCards dayun={dayunWithGuidance} />
 
-      {/* Reflection Questions - Collapsible section */}
+      {/* 5. Reflection Questions — thought-provoking prompts for the season */}
       <ReflectionQuestions questions={dayunWithGuidance.reflectionQuestions} />
     </section>
   );

@@ -32,6 +32,12 @@ interface WealthCodeProps {
    * Defaults to `true` to preserve legacy appearance (e.g. on `result.tsx`).
    */
   showTopDivider?: boolean;
+  /**
+   * Optional physical palace number override (1–12).
+   * When provided, analyses this palace instead of the natal Wealth Palace (财帛).
+   * Used for timeframe-based analysis (Liu Nian, Liu Month, Da Yun).
+   */
+  palaceOverride?: number;
 }
 
 /**
@@ -285,9 +291,9 @@ const ModernInsights: React.FC<{
           <div className="absolute top-0 right-0 w-32 h-32 rounded-full blur-3xl bg-gradient-to-br from-green-400/10 to-emerald-400/10 dark:from-green-400/5 dark:to-emerald-400/5" />
           <div className="relative">
             <div className="flex items-center gap-2 mb-4">
-              <div 
+              <div
                 className="rounded-lg flex items-center justify-center shadow-lg"
-                style={{ 
+                style={{
                   width: "36px",
                   height: "36px",
                   background: "linear-gradient(135deg, #059669 0%, #10b981 100%)",
@@ -306,9 +312,9 @@ const ModernInsights: React.FC<{
                   key={`${strength}-${idx}`}
                   className="flex items-start gap-2.5"
                 >
-                  <div 
+                  <div
                     className="rounded-full flex items-center justify-center flex-shrink-0 shadow-md"
-                    style={{ 
+                    style={{
                       width: "24px",
                       height: "24px",
                       marginTop: "2px",
@@ -334,9 +340,9 @@ const ModernInsights: React.FC<{
           <div className="absolute top-0 right-0 w-32 h-32 rounded-full blur-3xl bg-gradient-to-br from-amber-400/10 to-orange-400/10 dark:from-amber-400/5 dark:to-orange-400/5" />
           <div className="relative">
             <div className="flex items-center gap-2 mb-4">
-              <div 
+              <div
                 className="rounded-lg flex items-center justify-center shadow-lg"
-                style={{ 
+                style={{
                   width: "36px",
                   height: "36px",
                   background: "linear-gradient(135deg, #D97706 0%, #F59E0B 100%)",
@@ -355,9 +361,9 @@ const ModernInsights: React.FC<{
                   key={`${blindSpot}-${idx}`}
                   className="flex items-start gap-2.5"
                 >
-                  <div 
+                  <div
                     className="rounded-full flex items-center justify-center flex-shrink-0 shadow-md"
-                    style={{ 
+                    style={{
                       width: "24px",
                       height: "24px",
                       marginTop: "2px",
@@ -485,9 +491,10 @@ const WealthCode: React.FC<WealthCodeProps> = ({
   chartData,
   header,
   showTopDivider,
+  palaceOverride,
 }) => {
   // Analyze wealth code
-  const wealthProfile = analyzeWealthCode(chartData);
+  const wealthProfile = analyzeWealthCode(chartData, palaceOverride);
   const resolvedHeader: WealthCodeHeaderConfig = header ?? DEFAULT_HEADER;
   const shouldShowTopDivider = showTopDivider ?? true;
 

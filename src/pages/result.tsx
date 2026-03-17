@@ -25,7 +25,9 @@ import { ChartSettingsProvider, useChartSettings } from "../context/ChartSetting
 import ChartSettingsModal from "../components/ChartSettingsModal";
 import { DayunSection } from "../components/dayun";
 import { NoblemanSection } from "../components/nobleman";
-import { getCurrentLiuNianPalace, getCurrentDayunPalace } from "../utils/destiny-navigator/palace-resolver";
+import { LiuMonthCard } from "../components/liumonth";
+import { getCurrentLiuNianPalace, getCurrentDayunPalace, getMonthPalaceForLiuMonth, getYearPalaceForLiuMonth, getPalaceForAspectLiuNian, getPalaceForAspectLiuMonth, getPalaceForAspectDayun, getPalaceEnglishNameForTimeframe } from "../utils/destiny-navigator/palace-resolver";
+import type { LifeAspect } from "../types/destiny-navigator";
 // FourKeyPalaceAnalysis and LifeAreasExplanation are kept commented out for potential future use
 // import { FourKeyPalaceAnalysis, LifeAreasExplanation } from "../components/analysis";
 
@@ -102,12 +104,15 @@ const ResultContent: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [isCapturingForPdf] = useState<boolean>(false);
-  
+
   // State for branch adjustment (allows users to cycle through the 12 time branches)
   const [branchOffset, setBranchOffset] = useState<number>(0);
 
   // State for blueprint mode switching (controls chart overlay presets)
-  const [blueprintMode, setBlueprintMode] = useState<"dna" | "dayun" | "liunian">("dna");
+  const [blueprintMode, setBlueprintMode] = useState<"dna" | "dayun" | "liunian" | "liumonth">("dna");
+
+  /** Current month (1–12) for Liu Month mode. Fixed at the current calendar month. */
+  const selectedLiuMonth = new Date().getMonth() + 1;
 
   /**
    * Persisted palace name selection for DNA (natal) mode.
@@ -145,7 +150,7 @@ const ResultContent: React.FC = () => {
    * Handle blueprint mode changes and sync chart overlay settings.
    * @param mode - Selected blueprint mode.
    */
-  const handleBlueprintChange = useCallback((mode: "dna" | "dayun" | "liunian"): void => {
+  const handleBlueprintChange = useCallback((mode: "dna" | "dayun" | "liunian" | "liumonth"): void => {
     setBlueprintMode(mode);
 
     if (mode === "dna") {
@@ -154,6 +159,7 @@ const ResultContent: React.FC = () => {
       // bottom label always shows the palace's own name — not a Da Ming or secondary overlay
       // name. Showing both secondary overlay AND secondary bottom label causes a "Life Life"
       // duplicate when a palace name is clicked with no Da Xian selected.
+      updateSetting("palaceClickInteraction", true);
       updateSetting("liuNianTag", true);
       updateSetting("showDaYunHighlight", true);
       updateSetting("showDaMingCornerTag", true);
@@ -165,6 +171,7 @@ const ResultContent: React.FC = () => {
       updateSetting("palaceNameClickInteraction", true);
     } else if (mode === "dayun") {
       // Dayun mode - matches Destiny Navigator getDayunConfig
+      updateSetting("palaceClickInteraction", true);
       updateSetting("liuNianTag", false);
       updateSetting("showDaYunHighlight", true);
       updateSetting("showDaMingCornerTag", false);
@@ -176,6 +183,7 @@ const ResultContent: React.FC = () => {
       updateSetting("palaceNameClickInteraction", false);
     } else if (mode === "liunian") {
       // LiuNian mode - matches Destiny Navigator getLiuNianConfig
+      updateSetting("palaceClickInteraction", true);
       updateSetting("liuNianTag", true);
       updateSetting("showDaYunHighlight", false);
       updateSetting("showDaMingCornerTag", false);
@@ -185,6 +193,23 @@ const ResultContent: React.FC = () => {
       updateSetting("yearAgeClickInteraction", false);
       updateSetting("daXianClickInteraction", false);
       updateSetting("palaceNameClickInteraction", true);
+    } else if (mode === "liumonth") {
+      // Liu Month mode — shows monthly view by auto-triggering the year-click
+      // interaction on the current year palace via showMonthsControlled.
+      // yearAgeClickInteraction must be TRUE so getMonthForPalace() renders
+      // the month labels (it gates on this setting internally).
+      // palaceClickInteraction is FALSE to prevent transformation lines from
+      // appearing when the user clicks a palace in this mode.
+      updateSetting("liuNianTag", true);
+      updateSetting("showDaYunHighlight", false);
+      updateSetting("showDaMingCornerTag", false);
+      updateSetting("showDaMingBottomLabel", false);
+      updateSetting("showSecondaryBottomLabel", true);
+      updateSetting("showSecondaryOverlayName", false);
+      updateSetting("yearAgeClickInteraction", true);
+      updateSetting("daXianClickInteraction", false);
+      updateSetting("palaceNameClickInteraction", true);
+      updateSetting("palaceClickInteraction", false);
     }
   }, [updateSetting]);
 
@@ -289,7 +314,7 @@ const ResultContent: React.FC = () => {
       // Calculate current branch with offset (ensure positive result with double modulo)
       const originalBranchIndex = getBranchIndexFromHour(hour);
       const currentBranchIndex = ((originalBranchIndex + branchOffset) % 12 + 12) % 12;
-      
+
       return {
         branch: EarthlyBranches[currentBranchIndex],
         timeRange: getTimeRangeForBranch(currentBranchIndex),
@@ -529,6 +554,85 @@ const ResultContent: React.FC = () => {
   }, [calculatedChartData]);
 
   /**
+   * The year palace for Liu Month mode.
+   * Identifies which physical palace contains the selected year's annual flow.
+   */
+  const currentLiuMonthYearPalace = useMemo<number | null>(() => {
+    if (!calculatedChartData) return null;
+    return getYearPalaceForLiuMonth(calculatedChartData);
+  }, [calculatedChartData]);
+
+  /**
+   * The month palace anchor for Liu Month mode.
+   * Identifies which physical palace represents the selected month.
+   */
+  const currentLiuMonthPalace = useMemo<number | null>(() => {
+    if (!calculatedChartData) return null;
+    return getMonthPalaceForLiuMonth(calculatedChartData, selectedLiuMonth);
+  }, [calculatedChartData, selectedLiuMonth]);
+
+  /**
+   * Resolve the physical palace number override for a given life aspect
+   * based on the currently active blueprint mode.
+   *
+   * Returns null when no override is needed (natal mode uses palace names directly).
+   *
+   * @param aspect - The life aspect to resolve (e.g. "wealth", "health", "life")
+   * @returns Palace number (1–12) or null
+   */
+  const getPalaceOverride = useCallback(
+    (aspect: LifeAspect): number | null => {
+      if (!calculatedChartData) return null;
+
+      switch (blueprintMode) {
+        case "dna":
+          // Natal — no override; components use their own name-based palace lookup
+          // (including any internal fallback logic, e.g. wealth → 福德 fallback)
+          return null;
+
+        case "liunian":
+          return getPalaceForAspectLiuNian(aspect, calculatedChartData);
+
+        case "liumonth":
+          return getPalaceForAspectLiuMonth(aspect, calculatedChartData, selectedLiuMonth);
+
+        case "dayun":
+          return getPalaceForAspectDayun(aspect, calculatedChartData, "current");
+
+        default:
+          return null;
+      }
+    },
+    [calculatedChartData, blueprintMode, selectedLiuMonth]
+  );
+
+  /**
+   * Resolve the English palace name for a given physical palace number
+   * based on the active timeframe mode. Used by the Destiny Alert Map
+   * (FourKeyPalace) so its palace labels update in sync with all other sections.
+   *
+   * Returns an empty string for DNA mode so the component falls back to the
+   * natal name already stored in the alert data.
+   *
+   * @param palaceNumber - Physical palace number (1–12)
+   * @returns Timeframe-aware English palace name, or empty string for DNA/fallback
+   */
+  const resolvePalaceName = useCallback(
+    (palaceNumber: number): string => {
+      if (!calculatedChartData) return "";
+      return (
+        getPalaceEnglishNameForTimeframe(
+          palaceNumber,
+          calculatedChartData,
+          blueprintMode,
+          blueprintMode === "liumonth" ? selectedLiuMonth : undefined
+        ) ?? ""
+      );
+    },
+    [calculatedChartData, blueprintMode, selectedLiuMonth]
+  );
+
+  /**
    * Handle PDF export with progress modal (currently disabled)
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -742,9 +846,9 @@ const ResultContent: React.FC = () => {
             <p className="text-gray-600 dark:text-gray-400">
               {isSelfProfile
                 ? t("myChart.subtitle") ||
-                  "View your personal Zi Wei Dou Shu chart and analysis"
+                "View your personal Zi Wei Dou Shu chart and analysis"
                 : t("result.subtitle") ||
-                  `紫微斗数 (Zi Wei Dou Shu) chart analysis for ${chartData.name}`}
+                `紫微斗数 (Zi Wei Dou Shu) chart analysis for ${chartData.name}`}
             </p>
           )}
         </div>
@@ -803,23 +907,27 @@ const ResultContent: React.FC = () => {
 
                   {/* Blueprint Mode Switcher - Under title */}
                   <div className="mb-4">
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 flex-wrap">
                       {[
                         { key: "dna", label: "DNA Chart" },
-                        { key: "liunian", label: "LiuNian Chart" },
-                        { key: "dayun", label: "DaYun Chart" },
+                        { key: "dayun", label: "Da Yun (10 Year)" },
+                        { key: "liunian", label: "Liu Nian (Yearly)" },
+                        { key: "liumonth", label: "Liu Month (Monthly)" },
                       ].map((blueprint) => {
                         const active = blueprintMode === blueprint.key;
                         return (
                           <button
                             key={blueprint.key}
                             type="button"
-                            onClick={() => handleBlueprintChange(blueprint.key as "dna" | "dayun" | "liunian")}
-                            className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                              active
-                                ? "bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-md"
-                                : "bg-white/60 dark:bg-gray-700/60 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-600 hover:border-purple-300 dark:hover:border-purple-500 hover:bg-purple-50 dark:hover:bg-purple-900/20"
-                            }`}
+                            onClick={() =>
+                              handleBlueprintChange(
+                                blueprint.key as "dna" | "dayun" | "liunian" | "liumonth"
+                              )
+                            }
+                            className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${active
+                              ? "bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-md"
+                              : "bg-white/60 dark:bg-gray-700/60 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-600 hover:border-purple-300 dark:hover:border-purple-500 hover:bg-purple-50 dark:hover:bg-purple-900/20"
+                              }`}
                           >
                             {blueprint.label}
                           </button>
@@ -850,15 +958,24 @@ const ResultContent: React.FC = () => {
                               ? dnaDaXianSelection
                               : null
                         }
-                        // LiuNian: drive with current liunian palace
+                        // LiuNian: drive with current liunian palace for secondary names
+                        // LiuMonth: drive with the current month palace for secondary names
                         // DNA: restore saved DNA selection (null clears on first render)
                         // DaYun: pass null to clear any stale palace name value
                         selectedPalaceNameControlled={
                           blueprintMode === "liunian"
                             ? currentLiuNianPalace
-                            : blueprintMode === "dna"
-                              ? dnaPalaceNameSelection
-                              : null
+                            : blueprintMode === "liumonth"
+                              ? currentLiuMonthPalace
+                              : blueprintMode === "dna"
+                                ? dnaPalaceNameSelection
+                                : null
+                        }
+                        // LiuMonth: auto-show months for the current year's annual flow palace,
+                        // mimicking the user clicking on that palace's year/age label.
+                        // Other modes: clear any stale months display.
+                        showMonthsControlled={
+                          blueprintMode === "liumonth" ? currentLiuMonthYearPalace : null
                         }
                         // Persist palace name clicks only while in DNA mode
                         onPalaceNameChange={(palace) => {
@@ -994,7 +1111,7 @@ const ResultContent: React.FC = () => {
                         <p className="text-xs text-gray-600 dark:text-gray-300 mb-3">
                           {t("result.hourAdjustment.description") || "Cycle through the 12 time branches (地支) to explore chart variations"}
                         </p>
-                      
+
                         <div className="flex items-center justify-between gap-3">
                           {/* Previous Branch Button */}
                           <button
@@ -1021,11 +1138,10 @@ const ResultContent: React.FC = () => {
 
                           {/* Current Branch Display */}
                           <div className="flex-[2] text-center">
-                            <div className={`px-3 py-2 rounded-lg font-bold text-sm ${
-                              branchOffset === 0 
-                                ? "bg-green-100 dark:bg-green-500/20 text-green-800 dark:text-green-300 border border-green-200 dark:border-green-500/30" 
-                                : "bg-amber-100 dark:bg-blue-500/20 text-amber-800 dark:text-blue-300 border border-amber-200 dark:border-blue-500/30"
-                            }`}>
+                            <div className={`px-3 py-2 rounded-lg font-bold text-sm ${branchOffset === 0
+                              ? "bg-green-100 dark:bg-green-500/20 text-green-800 dark:text-green-300 border border-green-200 dark:border-green-500/30"
+                              : "bg-amber-100 dark:bg-blue-500/20 text-amber-800 dark:text-blue-300 border border-amber-200 dark:border-blue-500/30"
+                              }`}>
                               {currentBranchInfo ? (
                                 <div className="flex flex-col">
                                   <span className="text-lg">{currentBranchInfo.branch}</span>
@@ -1158,7 +1274,7 @@ const ResultContent: React.FC = () => {
                             bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700
                             focus:ring-4 focus:ring-purple-300 focus:outline-none block text-center
                             flex items-center justify-center">
-                     
+
                       {"View Timing Analysis"}
                     </Link>
                   </div>
@@ -1213,73 +1329,83 @@ const ResultContent: React.FC = () => {
         {/* Analysis Section - Always show Overview, but other components require Tier 2+ */}
         {calculatedChartData && !loading && !error && hasFullAnalysis && (
           <div className="mt-8">
-            <div className="flex flex-col justify-center items-center">
-              <h2 className="text-4xl mb-2 font-bold dark:text-white flex items-center text-center pt-4">
-                {t("analysis.title") || "Chart Analysis"}
-              </h2>
 
-              {/* Subtitle */}
-              <p className="text-lg mb-6 dark:text-white text-center italic">
-                {t("analysis.subtitle") ||
-                  "A custom breakdown of your chart's strengths, patterns, and strategic focus areas."}
-              </p>
-            </div>
+            {/* ── Title block — only for DNA and Liu Nian modes ── */}
+            {(blueprintMode === "dna" || blueprintMode === "liunian") && (
+              <div className="flex flex-col justify-center items-center">
+                <h2 className="text-4xl mb-2 font-bold dark:text-white flex items-center text-center pt-4">
+                  {t("analysis.title") || "PERSONALIZED LIFE REPORT"}
+                </h2>
+                <p className="text-lg mb-6 dark:text-white text-center italic">
+                  {t("analysis.subtitle") ||
+                    "A custom breakdown of your chart's strengths, patterns, and strategic focus areas."}
+                </p>
+              </div>
+            )}
 
             <div className="space-y-8">
-              {/* Overview - Always available */}
-              <Overview chartData={calculatedChartData} />
 
-              {/* Premium Analytics - Tier 2+ only */}
-              {hasFullAnalysis && (
-                <>
-                  {/* <Career chartData={calculatedChartData} /> */}
-                  <WealthCode 
-                    chartData={calculatedChartData}
-                    showTopDivider={true}
-                    header={{
-                      badgeText: "02",
-                      title: "WEALTH CODE ANALYSIS",
-                      subtitle: "Decode your natural earning style and ideal business model aligned to your energy."
-                    }}
-                  />
-                  <NoblemanSection chartData={calculatedChartData} />
-
-                  <Health chartData={calculatedChartData} />
-                   <FourKeyPalace chartData={calculatedChartData} /> 
-                </>
+              {/* ── Da Yun Mode: only DayunSection, no numbered header ── */}
+              {blueprintMode === "dayun" && (
+                <DayunSection chartData={calculatedChartData} showHeader={false} />
               )}
 
-              {/* Wealth Code Analysis - Admin only (testing phase) - Placed at bottom */}
+              {/* ── Liu Month Mode: monthly briefing card only ── */}
+              {blueprintMode === "liumonth" && currentLiuMonthPalace !== null ? (
+                <LiuMonthCard
+                  selectedMonth={selectedLiuMonth}
+                  palaceNumber={currentLiuMonthPalace}
+                  palaceName={calculatedChartData.palaces[currentLiuMonthPalace - 1]?.name ?? ""}
+                />
+              ) : (blueprintMode === "dna" || blueprintMode === "liunian") ? (
+                <>
+                  {/* ── Full analysis suite — DNA and Liu Nian modes only ── */}
 
+                  {/* Overview — uses Life Palace (命宫) */}
+                  <Overview
+                    chartData={calculatedChartData}
+                    palaceOverride={getPalaceOverride("life") ?? undefined}
+                  />
 
+                  {hasFullAnalysis && (
+                    <>
+                      {/* Wealth Code — uses Wealth Palace (财帛) */}
+                      <WealthCode
+                        chartData={calculatedChartData}
+                        showTopDivider={true}
+                        header={{
+                          badgeText: "02",
+                          title: "WEALTH CODE ANALYSIS",
+                          subtitle:
+                            "Decode your natural earning style and ideal business model aligned to your energy.",
+                        }}
+                        palaceOverride={getPalaceOverride("wealth") ?? undefined}
+                      />
 
-              {/* Nobleman Analysis - Key Supportive People */}
+                      <NoblemanSection chartData={calculatedChartData} />
 
+                      {/* Health — uses Health Palace (疾厄) */}
+                      <Health
+                        chartData={calculatedChartData}
+                        palaceOverride={getPalaceOverride("health") ?? undefined}
+                      />
 
-              {/* <DestinyCompass chartData={calculatedChartData} /> */}
-              <AreasOfLife chartData={calculatedChartData} />
-              {/* Dayun Season Analysis - 10-Year Life Cycle */}
-              <DayunSection chartData={calculatedChartData} />
-              {/* Summary Analysis */}
-              {/* <SummaryAnalysis chartData={calculatedChartData} /> */}
+                      {/* Destiny Alert Map — palace names update with active timeframe */}
+                      <FourKeyPalace
+                        chartData={calculatedChartData}
+                        resolvePalaceName={resolvePalaceName}
+                      />
+                    </>
+                  )}
 
-              {/* Life Areas Radar Chart */}
-              {/* <LifeAreasRadarChart chartData={calculatedChartData} /> */}
+                  {/* Areas of Life — uses all palace areas */}
+                  <AreasOfLife
+                    chartData={calculatedChartData}
+                    palaceOverride={getPalaceOverride("life") ?? undefined}
+                  />
+                </>
+              ) : null}
 
-              {/* Life Areas Explanation */}
-              {/* <LifeAreasExplanation chartData={calculatedChartData} /> */}
-
-              {/* Four Key Palace Analysis */}
-              {/* <FourKeyPalaceAnalysis chartData={calculatedChartData} /> */}
-
-              {/* Watchout Analysis */}
-              {/* <WatchoutAnalysis chartData={calculatedChartData} /> */}
-
-              {/* Career Analysis */}
-              {/* <CareerAnalysis chartData={calculatedChartData} /> */}
-
-              {/* Health Analysis */}
-              {/* <HealthAnalysis chartData={calculatedChartData} /> */}
             </div>
           </div>
         )}

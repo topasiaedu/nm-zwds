@@ -132,19 +132,26 @@ export const mainLifeAreas = [
  * Calculate scores for each life area for radar chart
  * @param chartData - The calculated ZWDS chart data
  * @param language - The current language (en or zh)
+ * @param palaceNumberOverride - Optional physical palace number (1–12). When provided,
+ *   the area that maps to the overridden palace is scored from that physical palace's stars
+ *   instead of by natal name lookup.
  * @returns Array of radar chart data points
  */
-export function calculateLifeAreaScores(chartData: ChartDataType | null | undefined, language: string): RadarDataPoint[] {
+export function calculateLifeAreaScores(
+  chartData: ChartDataType | null | undefined,
+  language: string,
+  palaceNumberOverride?: number
+): RadarDataPoint[] {
   if (!chartData || !chartData.palaces) {
     return [];
   }
 
   // Track scores for each life area
   const areaScores: Record<string, { total: number; count: number }> = {};
-  
+
   // Cast constants to proper type
   const areasConstants = AREAS_OF_LIFE_ANALYSIS_CONSTANTS as LifeAreasConstants;
-  
+
   // Initialize area scores only for main life areas
   mainLifeAreas.forEach(area => {
     areaScores[area] = { total: 0, count: 0 };
@@ -157,10 +164,10 @@ export function calculateLifeAreaScores(chartData: ChartDataType | null | undefi
 
     const processStars = (stars: ChartStar[] | undefined, starType: string) => {
       if (!stars || stars.length === 0) return;
-      
+
       stars.forEach((star) => {
         const starName = star.name;
-        
+
         if (areaConstants[starName]) {
           const score = areaConstants[starName].score;
           areaScores[targetAreaName].total += score;
@@ -168,23 +175,28 @@ export function calculateLifeAreaScores(chartData: ChartDataType | null | undefi
         }
       });
     };
-    
+
     // Process main stars
     processStars(palace.mainStar, "main");
-    
+
     // Process minor stars
     processStars(palace.minorStars, "minor");
   };
 
   // Process only the main life areas
   mainLifeAreas.forEach(areaName => {
-    // Find the palace with this name
-    const palace = chartData.palaces.find((p) => p.name === areaName);
-    
+    // Check if this area corresponds to the override palace
+    const overridePalace =
+      palaceNumberOverride !== undefined
+        ? chartData.palaces.find(p => p.number === palaceNumberOverride && p.name === areaName)
+        : null;
+
+    const palace = overridePalace ?? chartData.palaces.find((p) => p.name === areaName);
+
     if (palace) {
       // Process stars for the primary palace
       processStarsForPalace(palace, areaName, areaName);
-      
+
       // If no stars found in primary palace, check opposite palace
       if (areaScores[areaName].count === 0) {
         const oppositePalaceName = oppositePalaceMapping[areaName];
@@ -204,12 +216,12 @@ export function calculateLifeAreaScores(chartData: ChartDataType | null | undefi
   return mainLifeAreas.map(area => {
     const { total, count } = areaScores[area];
     const averageScore = count > 0 ? Math.round(total / count) : 0;
-    
+
     // Get the user-friendly name based on language
-    const displayName = language === "zh" 
-      ? palaceNameMap[area]?.zh || area 
+    const displayName = language === "zh"
+      ? palaceNameMap[area]?.zh || area
       : palaceNameMap[area]?.en || area;
-    
+
     return {
       area: displayName,
       score: averageScore,
@@ -233,9 +245,16 @@ interface StarAnalysisResult {
  * Analyze life areas with detailed star information
  * @param chartData - The calculated ZWDS chart data
  * @param language - The current language (en or zh)
+ * @param palaceNumberOverride - Optional physical palace number (1–12). When provided,
+ *   the area that maps to the overridden palace is scored from that physical palace's stars
+ *   instead of by natal name lookup.
  * @returns Array of life area analysis results
  */
-export function analyzeLifeAreas(chartData: ChartDataType | null | undefined, language: string): LifeAreaResult[] {
+export function analyzeLifeAreas(
+  chartData: ChartDataType | null | undefined,
+  language: string,
+  palaceNumberOverride?: number
+): LifeAreaResult[] {
   if (!chartData || !chartData.palaces) {
     return [];
   }
@@ -257,10 +276,10 @@ export function analyzeLifeAreas(chartData: ChartDataType | null | undefined, la
 
     const processStars = (stars: ChartStar[] | undefined, starType: string) => {
       if (!stars || stars.length === 0) return;
-      
+
       stars.forEach((star) => {
         const starName = star.name;
-        
+
         if (areaConstants[starName]) {
           const { score, description } = areaConstants[starName];
           areaStars.push({
@@ -269,16 +288,16 @@ export function analyzeLifeAreas(chartData: ChartDataType | null | undefined, la
             description,
             starType
           });
-          
+
           totalScore += score;
           starCount++;
         }
       });
     };
-    
+
     // Process main stars
     processStars(palace.mainStar, "main");
-    
+
     // Process minor stars
     processStars(palace.minorStars, "minor");
 
@@ -291,11 +310,11 @@ export function analyzeLifeAreas(chartData: ChartDataType | null | undefined, la
 
     // Find the palace with this name
     const palace = chartData.palaces.find((p) => p.name === areaName);
-    
+
     if (palace) {
       // Process stars for the primary palace
       analysisResult = processStarsForAnalysis(palace, areaName, areaName);
-      
+
       // If no stars found in primary palace, check opposite palace
       if (analysisResult.starCount === 0) {
         const oppositePalaceName = oppositePalaceMapping[areaName];
@@ -313,10 +332,10 @@ export function analyzeLifeAreas(chartData: ChartDataType | null | undefined, la
     // Add areas with at least one star (from primary or opposite palace)
     if (analysisResult.starCount > 0) {
       // Get the user-friendly name based on language
-      const displayName = language === "zh" 
-        ? palaceNameMap[areaName]?.zh || areaName 
+      const displayName = language === "zh"
+        ? palaceNameMap[areaName]?.zh || areaName
         : palaceNameMap[areaName]?.en || areaName;
-        
+
       analysis.push({
         area: areaName,
         displayName,

@@ -775,9 +775,7 @@ const Palace: React.FC<PalaceProps> = ({
                 isSelected ? "text-white dark:text-white" : ""
               } cursor-pointer font-bold hover:opacity-80`}
               onClick={(e) => handlePalaceNameClick(palaceNumber, e)}>
-              {language === "en" && t(`zwds.palaces.${palace.name}`)
-                ? t(`zwds.palaces.${palace.name}`)
-                : palace.name}
+              {bottomLabel}
             </div>
             {/* Mobile view: Heavenly Stem and Earthly Branch on one line */}
             <div className="flex items-center gap-1 sm:hidden">

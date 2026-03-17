@@ -33,7 +33,7 @@ const normalizeStarName = (name: string): string => {
 /**
  * Component that combines radar chart and detailed explanations for life areas
  */
-const AreasOfLife: React.FC<{ chartData: ChartDataType }> = ({ chartData }) => {
+const AreasOfLife: React.FC<{ chartData: ChartDataType; /** Optional physical palace number (1-12) for timeframe-based analysis. */ palaceOverride?: number }> = ({ chartData, palaceOverride }) => {
   const { t, language } = useLanguage();
   const [expandedAreas, setExpandedAreas] = useState<Record<string, boolean>>(
     {}
@@ -48,13 +48,13 @@ const AreasOfLife: React.FC<{ chartData: ChartDataType }> = ({ chartData }) => {
 
   // Calculate scores for radar chart
   const lifeAreaScores = useMemo(() => {
-    return calculateLifeAreaScores(chartData, language);
-  }, [chartData, language]);
+    return calculateLifeAreaScores(chartData, language, palaceOverride);
+  }, [chartData, language, palaceOverride]);
 
   // Get detailed analysis for explanation cards
   const lifeAreaAnalysis = useMemo(() => {
-    return analyzeLifeAreas(chartData, language);
-  }, [chartData, language]);
+    return analyzeLifeAreas(chartData, language, palaceOverride);
+  }, [chartData, language, palaceOverride]);
 
   // Create combined descriptions for each area
   const getCombinedDescription = (area: any): string => {
@@ -108,7 +108,7 @@ const AreasOfLife: React.FC<{ chartData: ChartDataType }> = ({ chartData }) => {
     <div className="p-6 dark:bg-gray-900">
       {/* Section Header */}
       <GradientSectionHeader
-        badgeText="05"
+        badgeText="06"
         title="DESTINY SCOREBOARD"
         subtitle="Your personal scorecard across the 5 destiny pillars."
         showDivider={true}
@@ -128,12 +128,12 @@ const AreasOfLife: React.FC<{ chartData: ChartDataType }> = ({ chartData }) => {
               <ResponsiveContainer width="100%" height="100%">
                 <RadarChart data={lifeAreaScores}>
                   <PolarGrid stroke="#94a3b8" strokeDasharray="3 3" />
-                  <PolarAngleAxis 
-                    dataKey="area" 
+                  <PolarAngleAxis
+                    dataKey="area"
                     tick={{ fill: "#64748b", fontSize: 12, fontWeight: 600 }}
                   />
-                  <PolarRadiusAxis 
-                    angle={90} 
+                  <PolarRadiusAxis
+                    angle={90}
                     domain={[0, 100]}
                     tick={{ fill: "#94a3b8", fontSize: 10 }}
                   />
@@ -206,12 +206,11 @@ const AreasOfLife: React.FC<{ chartData: ChartDataType }> = ({ chartData }) => {
                           </div>
                         </div>
                       </div>
-                      
+
                       <div className="space-y-2 mt-1">
                         <div
-                          className={`${
-                            !expandedAreas[area.area] ? "line-clamp-3" : ""
-                          }`}>
+                          className={`${!expandedAreas[area.area] ? "line-clamp-3" : ""
+                            }`}>
                           <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
                             {getCombinedDescription(area)}
                           </p>
