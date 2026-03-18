@@ -223,11 +223,11 @@ export interface SeasonStyle {
 
 /**
  * Season styles keyed by season name.
- * Colors match the existing DayunSeasonHero component palette.
+ * headerGradient matches DayunSeasonHero exactly for visual consistency.
  */
 export const SEASON_STYLES: Record<LiuMonthSeason, SeasonStyle> = {
   Spring: {
-    headerGradient: "linear-gradient(135deg, #ea580c 0%, #f97316 50%, #fb923c 100%)",
+    headerGradient: "linear-gradient(135deg, #f97316 0%, #ef4444 100%)",
     bodyGradient: "linear-gradient(145deg, #fff7ed 0%, #ffedd5 100%)",
     accentColor: "#9a3412",
     borderColor: "#fed7aa",
@@ -237,7 +237,7 @@ export const SEASON_STYLES: Record<LiuMonthSeason, SeasonStyle> = {
     coreMessage: "This is your green light season. The doors open easier. People say yes faster. Launch, expand, and move forward with confidence.",
   },
   Summer: {
-    headerGradient: "linear-gradient(135deg, #b45309 0%, #d97706 50%, #f59e0b 100%)",
+    headerGradient: "linear-gradient(135deg, #f59e0b 0%, #eab308 100%)",
     bodyGradient: "linear-gradient(145deg, #fffbeb 0%, #fef3c7 100%)",
     accentColor: "#78350f",
     borderColor: "#fde68a",
@@ -247,7 +247,7 @@ export const SEASON_STYLES: Record<LiuMonthSeason, SeasonStyle> = {
     coreMessage: "This is your harvest season. Stop waiting and start activating what you already have. It's time to cash in, monetize, and collect the fruits of your work.",
   },
   Autumn: {
-    headerGradient: "linear-gradient(135deg, #047857 0%, #059669 50%, #10b981 100%)",
+    headerGradient: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
     bodyGradient: "linear-gradient(145deg, #f0fdf4 0%, #dcfce7 100%)",
     accentColor: "#064e3b",
     borderColor: "#86efac",
@@ -257,7 +257,7 @@ export const SEASON_STYLES: Record<LiuMonthSeason, SeasonStyle> = {
     coreMessage: "This is your safety net season. Cut emotional noise, patch up holes, and strengthen your foundation. Protect what you've built and prepare for what's next.",
   },
   Winter: {
-    headerGradient: "linear-gradient(135deg, #1e40af 0%, #2563eb 50%, #3b82f6 100%)",
+    headerGradient: "linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%)",
     bodyGradient: "linear-gradient(145deg, #eff6ff 0%, #dbeafe 100%)",
     accentColor: "#1e3a8a",
     borderColor: "#93c5fd",

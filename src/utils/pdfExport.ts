@@ -1250,7 +1250,7 @@ export const exportChartAsPdf = async (
   try {
     // Step 1: Initialize with minimal memory footprint
     onProgress({
-      step: language === "zh" ? "准备图表数据..." : "Preparing chart data...",
+      step: language === "zh" ? "正在准备您的报告..." : "Preparing your report...",
       percentage: 10,
       isComplete: false,
     });
@@ -1272,7 +1272,7 @@ export const exportChartAsPdf = async (
 
     // Step 2: Create cover page
     onProgress({
-      step: language === "zh" ? "生成封面页..." : "Generating cover page...",
+      step: language === "zh" ? "正在创建封面..." : "Creating cover page...",
       percentage: 25,
       isComplete: false,
     });
@@ -1328,7 +1328,7 @@ export const exportChartAsPdf = async (
 
               // Step 3: Chart Visualization Page
      onProgress({
-       step: language === "zh" ? "准备图表..." : "Preparing chart...",
+       step: language === "zh" ? "正在准备图表..." : "Getting your chart ready...",
        percentage: 40,
        isComplete: false,
      });
@@ -1346,7 +1346,7 @@ export const exportChartAsPdf = async (
 
      // Update progress for chart capture
      onProgress({
-       step: language === "zh" ? "等待动画完成..." : "Waiting for animations to complete...",
+       step: language === "zh" ? "即将完成..." : "Almost there...",
        percentage: 50,
        isComplete: false,
      });
@@ -1356,7 +1356,7 @@ export const exportChartAsPdf = async (
 
      // Update progress after chart capture
      onProgress({
-       step: language === "zh" ? "图表已捕获" : "Chart captured",
+       step: language === "zh" ? "图表已就绪" : "Chart ready",
        percentage: 60,
        isComplete: false,
      });
@@ -1364,7 +1364,7 @@ export const exportChartAsPdf = async (
      // Step 3.5: Add Overview page (only for non-free results)
      if (!finalOptions.isFreeResult && finalOptions.includeAnalysis) {
        onProgress({
-         step: "Adding Personalized Life Report...",
+         step: language === "zh" ? "正在添加人生洞察..." : "Adding life insights...",
          percentage: 65,
          isComplete: false,
        });
@@ -1375,7 +1375,7 @@ export const exportChartAsPdf = async (
        await addOverviewImageToPdf(doc, calculatedChartData);
 
        onProgress({
-         step: "Personalized Life Report added",
+         step: language === "zh" ? "人生洞察已添加" : "Life insights added",
          percentage: 70,
          isComplete: false,
        });
@@ -1384,7 +1384,7 @@ export const exportChartAsPdf = async (
      // Step 3.6: Add Career page (only for non-free results with analytics access)
      if (!finalOptions.isFreeResult && finalOptions.includeAnalysis) {
        onProgress({
-         step: "Adding Wealth Strategy Panel...",
+         step: language === "zh" ? "正在添加财富分析..." : "Adding wealth analysis...",
          percentage: 70,
          isComplete: false,
        });
@@ -1395,7 +1395,7 @@ export const exportChartAsPdf = async (
        await addCareerImageToPdf(doc, calculatedChartData);
 
        onProgress({
-         step: "Wealth Strategy Panel added",
+         step: language === "zh" ? "财富分析已添加" : "Wealth analysis added",
          percentage: 72,
          isComplete: false,
        });
@@ -1404,7 +1404,7 @@ export const exportChartAsPdf = async (
      // Step 3.7: Add Health page (only for non-free results with analytics access)
      if (!finalOptions.isFreeResult && finalOptions.includeAnalysis) {
        onProgress({
-         step: "Adding Health Code Scan...",
+         step: language === "zh" ? "正在添加健康洞察..." : "Adding health insights...",
          percentage: 75,
          isComplete: false,
        });
@@ -1415,7 +1415,7 @@ export const exportChartAsPdf = async (
        await addHealthImageToPdf(doc, calculatedChartData);
 
        onProgress({
-         step: "Health Code Scan added",
+         step: language === "zh" ? "健康洞察已添加" : "Health insights added",
          percentage: 78,
          isComplete: false,
        });
@@ -1424,7 +1424,7 @@ export const exportChartAsPdf = async (
        const needsPagination = await needsHealthPagination(calculatedChartData);
        if (needsPagination) {
          onProgress({
-           step: "Adding additional Health Code Scan...",
+           step: language === "zh" ? "正在添加更多健康洞察..." : "Adding more health insights...",
            percentage: 80,
            isComplete: false,
          });
@@ -1435,7 +1435,7 @@ export const exportChartAsPdf = async (
          await addHealthContinuedImageToPdf(doc, calculatedChartData);
 
          onProgress({
-           step: "Additional Health Code Scan added",
+           step: language === "zh" ? "更多健康洞察已添加" : "More health insights added",
            percentage: 82,
            isComplete: false,
          });
@@ -1445,7 +1445,7 @@ export const exportChartAsPdf = async (
      // Step 3.9: Add Areas of Life page (only for non-free results with analytics access)
      if (!finalOptions.isFreeResult && finalOptions.includeAnalysis) {
        onProgress({
-         step: "Adding Destiny Scoreboard...",
+         step: language === "zh" ? "正在添加人生领域..." : "Adding life areas...",
          percentage: 84,
          isComplete: false,
        });
@@ -1456,7 +1456,7 @@ export const exportChartAsPdf = async (
        await addAreasOfLifeImageToPdf(doc, calculatedChartData);
 
        onProgress({
-         step: "Destiny Scoreboard added",
+         step: language === "zh" ? "人生领域已添加" : "Life areas added",
          percentage: 86,
          isComplete: false,
        });
@@ -1465,7 +1465,7 @@ export const exportChartAsPdf = async (
        const needsAreasPagination = await needsAreasOfLifePagination(calculatedChartData);
        if (needsAreasPagination) {
          onProgress({
-           step: "Adding additional Destiny Scoreboard...",
+           step: language === "zh" ? "正在添加更多人生领域..." : "Adding more life areas...",
            percentage: 88,
            isComplete: false,
          });
@@ -1476,7 +1476,7 @@ export const exportChartAsPdf = async (
          await addAreasOfLifeContinuedImageToPdf(doc, calculatedChartData);
 
          onProgress({
-           step: "Additional Destiny Scoreboard added",
+           step: language === "zh" ? "更多人生领域已添加" : "More life areas added",
            percentage: 90,
            isComplete: false,
          });
@@ -1486,7 +1486,7 @@ export const exportChartAsPdf = async (
      // Step 3.11: Add DESTINY ALERT MAP page (only for non-free results with analytics access)
      if (!finalOptions.isFreeResult && finalOptions.includeAnalysis) {
        onProgress({
-         step: "Adding Destiny Alert Map...",
+         step: language === "zh" ? "正在添加关键洞察..." : "Adding key insights...",
          percentage: 92,
          isComplete: false,
        });
@@ -1497,7 +1497,7 @@ export const exportChartAsPdf = async (
        await addFourKeyPalaceImageToPdf(doc, calculatedChartData);
 
        onProgress({
-         step: "Destiny Alert Map added",
+         step: language === "zh" ? "关键洞察已添加" : "Key insights added",
          percentage: 94,
          isComplete: false,
        });
@@ -1506,7 +1506,7 @@ export const exportChartAsPdf = async (
        const needsPalacePagination = await needsFourKeyPalacePagination(calculatedChartData);
        if (needsPalacePagination) {
          onProgress({
-           step: "Adding additional Destiny Alert Map...",
+           step: language === "zh" ? "正在添加更多关键洞察..." : "Adding more key insights...",
            percentage: 96,
            isComplete: false,
          });
@@ -1517,7 +1517,7 @@ export const exportChartAsPdf = async (
          await addFourKeyPalaceContinuedImageToPdf(doc, calculatedChartData);
 
          onProgress({
-           step: "Additional Destiny Alert Map added",
+           step: language === "zh" ? "更多关键洞察已添加" : "More key insights added",
            percentage: 98,
            isComplete: false,
          });
@@ -1525,7 +1525,7 @@ export const exportChartAsPdf = async (
 
        // Step 3.13: Add Destiny Compass page (final page - only for non-free results with analytics access)
        onProgress({
-         step: "Adding Destiny Compass...",
+         step: language === "zh" ? "正在添加最终洞察..." : "Adding final insights...",
          percentage: 99,
          isComplete: false,
        });
@@ -1536,7 +1536,7 @@ export const exportChartAsPdf = async (
        await addDestinyCompassImageToPdf(doc, calculatedChartData);
 
        onProgress({
-         step: "Destiny Compass added",
+         step: language === "zh" ? "最终洞察已添加" : "Final insights added",
          percentage: 98,
          isComplete: false,
        });
@@ -1545,7 +1545,7 @@ export const exportChartAsPdf = async (
      // Step 4: Add analysis if included (memory-optimized)
      if (shouldIncludeAnalysis) {
        onProgress({
-         step: language === "zh" ? "添加分析内容..." : "Adding analysis content...",
+         step: language === "zh" ? "正在添加分析..." : "Adding analysis...",
          percentage: 85,
          isComplete: false,
        });
@@ -1606,7 +1606,7 @@ export const exportChartAsPdf = async (
 
      // Step 5: Finalize and save (with memory cleanup)
      onProgress({
-       step: language === "zh" ? "最终化PDF..." : "Finalizing PDF...",
+       step: language === "zh" ? "正在完成 PDF..." : "Finalizing your PDF...",
        percentage: 99,
        isComplete: false,
      });
@@ -1635,11 +1635,11 @@ export const exportChartAsPdf = async (
      // Save the PDF
      doc.save(filename);
 
-     onProgress({
-       step: language === "zh" ? "导出完成!" : "Export complete!",
-       percentage: 100,
-       isComplete: true,
-     });
+    onProgress({
+      step: language === "zh" ? "完成！" : "Done!",
+      percentage: 100,
+      isComplete: true,
+    });
 
    } catch (error) {
      console.error("PDF export error:", error);
