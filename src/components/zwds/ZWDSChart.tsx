@@ -269,11 +269,13 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
       return { tag: null, delay: 0 };
 
     // Determine direction from chart data
-    const gender = chartData.input.gender;
-    const yinYang = chartData.yinYang;
-    const isClockwise =
-      (gender === "male" && yinYang === "Yang") ||
-      (gender === "female" && yinYang === "Yin");
+    // const gender = chartData.input.gender;
+    // const yinYang = chartData.yinYang;
+    // const isClockwise =
+    //   (gender === "male" && yinYang === "Yang") ||
+    //   (gender === "female" && yinYang === "Yin");
+
+    const isClockwise = false;
 
     // Calculate directional distance from selected Da Xian palace
     let tagIndex: number;
