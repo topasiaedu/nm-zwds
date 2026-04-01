@@ -17,6 +17,8 @@ import { useAlertContext } from "../context/AlertContext";
 import { ChartSettingsProvider } from "../context/ChartSettingsContext";
 import ChartSettingsModal from "../components/ChartSettingsModal";
 
+const ENABLE_PDF_EXPORT = false;
+
 /**
  * Interface for chart data - using PdfChartData for consistency
  */
@@ -729,32 +731,33 @@ const FreeResultContent: React.FC = () => {
                     </button>
                   </div> */}
 
-                  {/* PDF Export Button */}
-                  <div className="mt-3">
-                    <button
-                      onClick={handlePdfExport}
-                      disabled={!chartData || !calculatedChartData}
-                      className="w-full px-4 py-2 text-white font-medium rounded-lg transition-all 
-                            bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700
-                            focus:ring-4 focus:ring-red-300 focus:outline-none
-                            disabled:opacity-50 disabled:cursor-not-allowed
-                            flex items-center justify-center">
-                      <svg
-                        className="w-5 h-5 mr-2"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                        />
-                      </svg>
-                      {t("result.exportPdf") || "Export PDF"}
-                    </button>
-                  </div>
+                  {ENABLE_PDF_EXPORT ? (
+                    <div className="mt-3">
+                      <button
+                        onClick={handlePdfExport}
+                        disabled={!chartData || !calculatedChartData}
+                        className="w-full px-4 py-2 text-white font-medium rounded-lg transition-all 
+                              bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700
+                              focus:ring-4 focus:ring-red-300 focus:outline-none
+                              disabled:opacity-50 disabled:cursor-not-allowed
+                              flex items-center justify-center">
+                        <svg
+                          className="w-5 h-5 mr-2"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          xmlns="http://www.w3.org/2000/svg">
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                          />
+                        </svg>
+                        {t("result.exportPdf") || "Export PDF"}
+                      </button>
+                    </div>
+                  ) : null}
 
                   {/* Sign up CTA */}
                   {/* <div
@@ -814,12 +817,14 @@ const FreeResultContent: React.FC = () => {
         )}
 
         {/* PDF Export Modal */}
-        <PdfExportModal
-          isOpen={pdfExportModal.isOpen}
-          onClose={closePdfExportModal}
-          progress={pdfExportModal.progress}
-          chartName={chartData?.name || ""}
-        />
+        {ENABLE_PDF_EXPORT ? (
+          <PdfExportModal
+            isOpen={pdfExportModal.isOpen}
+            onClose={closePdfExportModal}
+            progress={pdfExportModal.progress}
+            chartName={chartData?.name || ""}
+          />
+        ) : null}
 
         {/* Chart Settings Modal */}
         <ChartSettingsModal pageType="free-result" />

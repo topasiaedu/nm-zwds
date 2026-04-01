@@ -15,6 +15,8 @@ import { NOBLEMAN_TYPE_TO_IMAGE } from "../../constants/noblemanProfiles";
 interface NoblemanProfileCardProps extends NoblemanData {
   /** Optional: Theme (light/dark) */
   theme?: "light" | "dark";
+  /** Enables PDF-safe stacked layout and disables animations. */
+  forPdfCapture?: boolean;
 }
 
 /**
@@ -83,6 +85,7 @@ const NoblemanProfileCard: React.FC<NoblemanProfileCardProps> = ({
   palaceName,
   matchedProfiles,
   theme = "light",
+  forPdfCapture,
 }) => {
   // State to track currently selected profile (default: first one)
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -109,10 +112,36 @@ const NoblemanProfileCard: React.FC<NoblemanProfileCardProps> = ({
         </div>
       </div>
       
-      {/* Main Content - Two Column Layout (50/50 split, image on RIGHT) */}
-      <div className="flex flex-col md:flex-row min-h-[500px]">
+      {/* Main Content */}
+      <div
+        className={
+          forPdfCapture
+            ? "flex flex-col"
+            : "flex flex-col md:flex-row min-h-[500px]"
+        }
+      >
+        {/* Image block first for PDF layout */}
+        {forPdfCapture ? (
+          <div className="p-8 pt-6">
+            <div className="w-full">
+              <img
+                src={currentImage}
+                alt={`${currentProfile.type} Nobleman`}
+                className="rounded-3xl w-full object-cover"
+                style={{ aspectRatio: "16 / 9", maxHeight: "360px" }}
+              />
+            </div>
+          </div>
+        ) : null}
+
         {/* Left Column - Selector + Content */}
-        <div className="md:w-1/2 p-8 flex flex-col justify-center">
+        <div
+          className={
+            forPdfCapture
+              ? "p-8 pt-2 flex flex-col justify-center"
+              : "md:w-1/2 p-8 flex flex-col justify-center"
+          }
+        >
           {/* Selector Badges - Only show if multiple profiles */}
           {hasMultipleProfiles && (
             <div className="mb-8">
@@ -150,10 +179,10 @@ const NoblemanProfileCard: React.FC<NoblemanProfileCardProps> = ({
           <AnimatePresence mode="wait">
             <motion.div
               key={selectedIndex}
-              initial={{ opacity: 0, x: -30 }}
+              initial={forPdfCapture ? { opacity: 1, x: 0 } : { opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 30 }}
-              transition={{ duration: 0.4, ease: "easeInOut" }}
+              exit={forPdfCapture ? { opacity: 1, x: 0 } : { opacity: 0, x: 30 }}
+              transition={forPdfCapture ? { duration: 0 } : { duration: 0.4, ease: "easeInOut" }}
               className="space-y-6"
             >
               {/* Nobleman Type Title */}
@@ -190,7 +219,8 @@ const NoblemanProfileCard: React.FC<NoblemanProfileCardProps> = ({
         </div>
         
         {/* Right Column - Image with Tilt Effect */}
-        <div className="md:w-1/2 p-8 flex items-center justify-center">
+        {!forPdfCapture ? (
+          <div className="md:w-1/2 p-8 flex items-center justify-center">
           <AnimatePresence mode="wait">
             <motion.div
               key={selectedIndex}
@@ -210,7 +240,8 @@ const NoblemanProfileCard: React.FC<NoblemanProfileCardProps> = ({
               </Tilt>
             </motion.div>
           </AnimatePresence>
-        </div>
+          </div>
+        ) : null}
       </div>
     </div>
   );

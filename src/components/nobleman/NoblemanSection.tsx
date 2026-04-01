@@ -19,6 +19,8 @@ import ZodiacMiniCardsGrid from "./ZodiacMiniCardsGrid";
 interface NoblemanSectionProps {
   /** Complete ZWDS chart data */
   chartData: ChartData;
+  /** When true, disables motion and applies PDF-safe layout for html2canvas. */
+  forPdfCapture?: boolean;
 }
 
 /**
@@ -34,7 +36,10 @@ interface NoblemanSectionProps {
  * <NoblemanSection chartData={chartData} />
  * ```
  */
-export const NoblemanSection: React.FC<NoblemanSectionProps> = ({ chartData }) => {
+export const NoblemanSection: React.FC<NoblemanSectionProps> = ({
+  chartData,
+  forPdfCapture,
+}) => {
   // Calculate nobleman data based on Wealth Palace (fixed)
   const noblemanData = calculateNoblemanData(chartData);
   const otherAreas = calculateOtherLifeAreas(chartData);
@@ -58,13 +63,14 @@ export const NoblemanSection: React.FC<NoblemanSectionProps> = ({ chartData }) =
           title="NOBLEMAN ANALYSIS"
           subtitle="Key People Who Will Support Your Life Journey"
           showDivider={true}
+          forPdfCapture={forPdfCapture}
         />
 
         {/* Hero Card - Purple gradient */}
-        <NoblemanHeroCard />
+        <NoblemanHeroCard forPdfCapture={forPdfCapture} />
         
         {/* Main Profile Card - Detailed nobleman information */}
-        <NoblemanProfileCard {...noblemanData} />
+        <NoblemanProfileCard {...noblemanData} forPdfCapture={forPdfCapture} />
         
         {/* Other Life Areas - 3-card grid */}
         <OtherLifeAreas areas={otherAreas} />

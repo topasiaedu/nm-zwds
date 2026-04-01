@@ -175,6 +175,8 @@ type FourKeyPalaceProps = {
    * When not provided (or returns an empty string), the natal name is used.
    */
   resolvePalaceName?: (palaceNumber: number) => string;
+  /** Static mode for PDF capture. */
+  forPdfCapture?: boolean;
 };
 
 /**
@@ -186,7 +188,7 @@ type FourKeyPalaceProps = {
  *   Zone 3: Energy profile bars (static per transformation type)
  *   Zone 4: 3-line insight (theme, reality, directive)
  */
-const FourKeyPalace: React.FC<FourKeyPalaceProps> = ({ chartData, resolvePalaceName }) => {
+const FourKeyPalace: React.FC<FourKeyPalaceProps> = ({ chartData, resolvePalaceName, forPdfCapture }) => {
   const analysisResult = analyzeDestinyAlert(chartData);
 
   if (analysisResult.alerts.length === 0) {
@@ -196,6 +198,7 @@ const FourKeyPalace: React.FC<FourKeyPalaceProps> = ({ chartData, resolvePalaceN
           badgeText="05"
           title="DESTINY ALERT MAP"
           subtitle="Four signals showing where your life force is most activated."
+          forPdfCapture={forPdfCapture}
         />
         <p className="text-center text-gray-500 dark:text-gray-400 py-8 px-6">
           No transformation data available.
@@ -211,10 +214,11 @@ const FourKeyPalace: React.FC<FourKeyPalaceProps> = ({ chartData, resolvePalaceN
         badgeText="05"
         title="DESTINY ALERT MAP"
         subtitle="Four signals showing where your life force is most activated."
+        forPdfCapture={forPdfCapture}
       />
 
       {/* 2 × 2 card grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 px-6 pb-6">
+      <div data-pdf-break-anchor="four-key-grid" className="grid grid-cols-1 sm:grid-cols-2 gap-5 px-6 pb-6">
         {analysisResult.alerts.map((alert) => {
           const key = normaliseTransformation(alert.transformation);
           const config = TRANSFORMATION_CONFIG[key] ?? TRANSFORMATION_CONFIG["化忌"];
@@ -277,10 +281,16 @@ const FourKeyPalace: React.FC<FourKeyPalaceProps> = ({ chartData, resolvePalaceN
                     </h3>
                     {/* Star pill — right-aligned, same visual weight as palace */}
                     <span
-                      className="font-bold text-sm px-3 py-1 rounded-full flex-shrink-0"
+                      className="font-bold text-sm rounded-full flex-shrink-0"
                       style={{
                         background: "rgba(0,0,0,0.08)",
                         color: config.palaceColor,
+                        height: "28px",
+                        padding: "0 12px",
+                        lineHeight: 1,
+                        display: "inline-flex",
+                        alignItems: "center",
+                        justifyContent: "center",
                       }}
                     >
                       {getStarPinyin(alert.starName)}
@@ -312,7 +322,7 @@ const FourKeyPalace: React.FC<FourKeyPalaceProps> = ({ chartData, resolvePalaceN
                           style={{
                             width: `${bar.pct}%`,
                             background: config.barGradient,
-                            transition: "width 0.7s ease",
+                            transition: forPdfCapture ? "none" : "width 0.7s ease",
                           }}
                         />
                       </div>

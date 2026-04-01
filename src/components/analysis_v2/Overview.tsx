@@ -28,12 +28,14 @@ type OverviewProps = {
   chartData: ChartData;
   /** Optional physical palace number (1–12) for timeframe-based analysis. */
   palaceOverride?: number;
+  /** Static mode for PDF capture. */
+  forPdfCapture?: boolean;
 };
 
 /**
  * Overview component displaying personality analysis in a two-column layout
  */
-const Overview: React.FC<OverviewProps> = ({ chartData, palaceOverride }) => {
+const Overview: React.FC<OverviewProps> = ({ chartData, palaceOverride, forPdfCapture }) => {
   // Analyze the chart data to get real data
   const analysisResult: OverviewAnalysisResult = analyzeOverview(chartData, palaceOverride);
 
@@ -64,7 +66,16 @@ const Overview: React.FC<OverviewProps> = ({ chartData, palaceOverride }) => {
     color: string
   ): JSX.Element[] => {
     return items.map((item) => (
-      <Badge key={item.id} color={color} className="mr-2 mb-2">
+      <Badge
+        key={item.id}
+        color={color}
+        className="mr-2 mb-2 inline-flex items-center"
+        style={{
+          minHeight: "24px",
+          lineHeight: 1,
+          paddingTop: 0,
+          paddingBottom: 0,
+        }}>
         {item.label}
       </Badge>
     ));
@@ -77,7 +88,7 @@ const Overview: React.FC<OverviewProps> = ({ chartData, palaceOverride }) => {
     return items.map((item) => (
       <div
         key={item.id}
-        className="rounded-xl border border-blue-200 dark:border-blue-700 bg-gradient-to-br from-blue-50/50 to-indigo-50/50 dark:from-blue-900/10 dark:to-indigo-900/10 p-4 hover:shadow-lg transition-shadow">
+        className={`rounded-xl border border-blue-200 dark:border-blue-700 bg-gradient-to-br from-blue-50/50 to-indigo-50/50 dark:from-blue-900/10 dark:to-indigo-900/10 p-4 ${forPdfCapture ? "" : "hover:shadow-lg transition-shadow"}`}>
         <p className="text-sm font-medium text-gray-900 dark:text-white leading-relaxed">
           {item.label}
         </p>
@@ -94,10 +105,13 @@ const Overview: React.FC<OverviewProps> = ({ chartData, palaceOverride }) => {
         title="PERSONALITY BLUEPRINT"
         subtitle="Discover your core strengths, challenges, and strategic growth opportunities"
         showDivider={true}
+        forPdfCapture={forPdfCapture}
       />
 
       {/* Core Personality Description - Premium Card */}
-      <div className="rounded-2xl shadow-lg border bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700 p-8 mb-12">
+      <div
+        data-pdf-break-anchor="overview-core-personality"
+        className={`rounded-2xl shadow-lg border bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700 p-8 mb-12 ${forPdfCapture ? "break-inside-avoid-page" : ""}`}>
         <div className="flex items-center gap-3 mb-6">
           <span className="text-3xl">🎭</span>
           <h3 className="text-lg font-bold text-gray-900 dark:text-white">
@@ -120,7 +134,7 @@ const Overview: React.FC<OverviewProps> = ({ chartData, palaceOverride }) => {
       </div>
 
       {/* Strengths and Challenges - Premium Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+      <div data-pdf-break-anchor="overview-strengths-challenges" className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
         {/* Strengths Column */}
         <div className="rounded-2xl shadow-lg border bg-gradient-to-br from-green-50/50 to-emerald-50/50 dark:from-green-900/10 dark:to-emerald-900/10 border-green-200 dark:border-green-700 p-6">
           <div className="flex items-center gap-3 mb-6">
@@ -161,7 +175,7 @@ const Overview: React.FC<OverviewProps> = ({ chartData, palaceOverride }) => {
       </div>
 
       {/* Growth Tips - Premium Card */}
-      <div className="rounded-2xl shadow-lg border bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700 p-8">
+      <div data-pdf-break-anchor="overview-growth-tips" className="rounded-2xl shadow-lg border bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700 p-8">
         <div className="flex items-center gap-3 mb-6">
           <span className="text-3xl">🌱</span>
           <h3 className="text-lg font-bold text-gray-900 dark:text-white">

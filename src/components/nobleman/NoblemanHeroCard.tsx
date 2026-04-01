@@ -13,6 +13,8 @@ interface NoblemanHeroCardProps {
   
   /** Optional: Theme (light/dark) */
   theme?: "light" | "dark";
+  /** Disable animated accents for PDF capture. */
+  forPdfCapture?: boolean;
 }
 
 /**
@@ -24,6 +26,7 @@ interface NoblemanHeroCardProps {
 const NoblemanHeroCard: React.FC<NoblemanHeroCardProps> = ({
   priorityFocus,
   theme = "light",
+  forPdfCapture,
 }) => {
   return (
     <div className="relative overflow-hidden rounded-2xl mb-6 shadow-xl">
@@ -48,7 +51,7 @@ const NoblemanHeroCard: React.FC<NoblemanHeroCardProps> = ({
         <div className="flex-1">
           {/* Badge */}
           <div className="inline-flex items-center gap-2 bg-black/20 backdrop-blur-sm rounded-full px-4 py-1.5 mb-4 border border-white/20">
-            <div className="w-2 h-2 rounded-full bg-white animate-pulse" />
+            <div className={`w-2 h-2 rounded-full bg-white ${forPdfCapture ? "" : "animate-pulse"}`} />
             <span className="text-white text-xs font-bold uppercase tracking-wider drop-shadow-lg">
               Nobleman Analysis
             </span>

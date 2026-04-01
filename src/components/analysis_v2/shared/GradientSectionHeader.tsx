@@ -6,6 +6,7 @@
  */
 
 import React from "react";
+import { pdfCaptureNumericBadgeStyle } from "./pdfCaptureNumericBadgeStyle";
 
 /**
  * Props for the GradientSectionHeader component
@@ -19,6 +20,8 @@ interface GradientSectionHeaderProps {
   subtitle: string;
   /** Whether to show the divider line above the header. Defaults to true. */
   showDivider?: boolean;
+  /** Static mode for PDF capture. */
+  forPdfCapture?: boolean;
 }
 
 /**
@@ -30,6 +33,7 @@ const GradientSectionHeader: React.FC<GradientSectionHeaderProps> = ({
   title,
   subtitle,
   showDivider = true,
+  forPdfCapture,
 }) => {
   return (
     <>
@@ -46,34 +50,48 @@ const GradientSectionHeader: React.FC<GradientSectionHeaderProps> = ({
           padding: "32px 40px",
           boxShadow: "0 10px 40px rgba(251, 146, 60, 0.3)",
           border: "3px solid rgba(251, 146, 60, 0.8)",
-          animation: "pulse-border 1.5s ease-in-out infinite",
+          animation: forPdfCapture ? "none" : "pulse-border 1.5s ease-in-out infinite",
         }}
       >
         {/* Pulsing border animation */}
-        <style>{`
-          @keyframes pulse-border {
-            0%, 100% {
-              box-shadow: 0 10px 40px rgba(251, 146, 60, 0.4), 0 0 0 0 rgba(251, 146, 60, 1), 0 0 20px rgba(251, 146, 60, 0.6);
+        {forPdfCapture ? null : (
+          <style>{`
+            @keyframes pulse-border {
+              0%, 100% {
+                box-shadow: 0 10px 40px rgba(251, 146, 60, 0.4), 0 0 0 0 rgba(251, 146, 60, 1), 0 0 20px rgba(251, 146, 60, 0.6);
+              }
+              50% {
+                box-shadow: 0 10px 60px rgba(251, 146, 60, 0.8), 0 0 0 15px rgba(251, 146, 60, 0), 0 0 40px rgba(251, 146, 60, 0.3);
+              }
             }
-            50% {
-              box-shadow: 0 10px 60px rgba(251, 146, 60, 0.8), 0 0 0 15px rgba(251, 146, 60, 0), 0 0 40px rgba(251, 146, 60, 0.3);
-            }
-          }
-        `}</style>
+          `}</style>
+        )}
 
         {/* Content */}
         <div className="relative z-10">
           <div className="flex items-center gap-3 mb-3">
             {/* Badge */}
             <span
-              style={{
-                background: "rgba(255, 255, 255, 0.9)",
-                color: "#ea580c",
-                padding: "4px 12px",
-                borderRadius: "8px",
-                fontSize: "18px",
-                fontWeight: "800",
-              }}
+              style={
+                forPdfCapture
+                  ? pdfCaptureNumericBadgeStyle("#ea580c")
+                  : {
+                      background: "rgba(255, 255, 255, 0.9)",
+                      color: "#ea580c",
+                      height: "32px",
+                      minWidth: "48px",
+                      padding: "0 12px",
+                      borderRadius: "8px",
+                      fontSize: "18px",
+                      fontWeight: "800",
+                      lineHeight: 1,
+                      display: "inline-flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      fontFamily: "inherit",
+                      verticalAlign: "middle",
+                    }
+              }
             >
               {badgeText}
             </span>

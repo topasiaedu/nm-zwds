@@ -33,7 +33,13 @@ const normalizeStarName = (name: string): string => {
 /**
  * Component that combines radar chart and detailed explanations for life areas
  */
-const AreasOfLife: React.FC<{ chartData: ChartDataType; /** Optional physical palace number (1-12) for timeframe-based analysis. */ palaceOverride?: number }> = ({ chartData, palaceOverride }) => {
+const AreasOfLife: React.FC<{
+  chartData: ChartDataType;
+  /** Optional physical palace number (1-12) for timeframe-based analysis. */
+  palaceOverride?: number;
+  /** Expand all area text and drop scroll clipping for PDF capture. */
+  forPdfCapture?: boolean;
+}> = ({ chartData, palaceOverride, forPdfCapture }) => {
   const { t, language } = useLanguage();
   const [expandedAreas, setExpandedAreas] = useState<Record<string, boolean>>(
     {}
@@ -48,8 +54,22 @@ const AreasOfLife: React.FC<{ chartData: ChartDataType; /** Optional physical pa
 
   // Calculate scores for radar chart
   const lifeAreaScores = useMemo(() => {
-    return calculateLifeAreaScores(chartData, language, palaceOverride);
-  }, [chartData, language, palaceOverride]);
+    const rows = calculateLifeAreaScores(chartData, language, palaceOverride);
+    if (!forPdfCapture || language !== "en") {
+      return rows;
+    }
+    const shortLabels: Record<string, string> = {
+      财帛: "Finance",
+      官禄: "Career",
+      疾厄: "Health",
+      夫妻: "Love",
+      交友: "Social",
+    };
+    return rows.map((row) => ({
+      ...row,
+      area: shortLabels[row.originalName] ?? row.area,
+    }));
+  }, [chartData, language, palaceOverride, forPdfCapture]);
 
   // Get detailed analysis for explanation cards
   const lifeAreaAnalysis = useMemo(() => {
@@ -112,25 +132,37 @@ const AreasOfLife: React.FC<{ chartData: ChartDataType; /** Optional physical pa
         title="DESTINY SCOREBOARD"
         subtitle="Your personal scorecard across the 5 destiny pillars."
         showDivider={true}
+        forPdfCapture={forPdfCapture}
       />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className={forPdfCapture ? "space-y-6" : "grid grid-cols-1 md:grid-cols-2 gap-8"}>
         {/* Left Column - Radar Chart in Premium Card */}
-        <div className="rounded-2xl shadow-lg border bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 border-gray-200 dark:border-gray-700 p-8">
+        <div data-pdf-break-anchor="areas-radar-chart" className="rounded-2xl shadow-lg border bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 border-gray-200 dark:border-gray-700 p-8">
           <div className="flex items-center gap-3 mb-6">
             <span className="text-3xl">📊</span>
             <h3 className="text-lg font-bold text-gray-900 dark:text-white">
               Life Areas Overview
             </h3>
           </div>
-          <div className="w-full h-80 md:h-96">
+          <div className={forPdfCapture ? "w-full h-[250px]" : "w-full h-80 md:h-96"}>
             {lifeAreaScores.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
-                <RadarChart data={lifeAreaScores}>
+                <RadarChart
+                  data={lifeAreaScores}
+                  margin={
+                    forPdfCapture
+                      ? { top: 12, right: 30, bottom: 12, left: 30 }
+                      : { top: 8, right: 8, bottom: 8, left: 8 }
+                  }
+                >
                   <PolarGrid stroke="#94a3b8" strokeDasharray="3 3" />
                   <PolarAngleAxis
                     dataKey="area"
-                    tick={{ fill: "#64748b", fontSize: 12, fontWeight: 600 }}
+                    tick={{
+                      fill: "#64748b",
+                      fontSize: forPdfCapture ? 11 : 12,
+                      fontWeight: 600,
+                    }}
                   />
                   <PolarRadiusAxis
                     angle={90}
@@ -158,13 +190,19 @@ const AreasOfLife: React.FC<{ chartData: ChartDataType; /** Optional physical pa
         </div>
 
         {/* Right Column - Area Explanations */}
-        <div className="space-y-4 max-h-[700px] overflow-y-auto pr-2">
+        <div
+          className={
+            forPdfCapture
+              ? "space-y-4"
+              : "space-y-4 max-h-[700px] overflow-y-auto pr-2"
+          }>
           {lifeAreaAnalysis.length > 0 ? (
             <>
               {lifeAreaAnalysis.map((area) => (
                 <div
+                  data-pdf-break-anchor={`area-card-${area.area}`}
                   key={area.area}
-                  className="relative rounded-xl border border-gray-200 dark:border-gray-700 bg-gradient-to-br from-indigo-50/30 to-purple-50/30 dark:from-indigo-900/10 dark:to-purple-900/10 p-5 hover:shadow-lg transition-all duration-300 overflow-hidden">
+                  className={`relative rounded-xl border border-gray-200 dark:border-gray-700 bg-gradient-to-br from-indigo-50/30 to-purple-50/30 dark:from-indigo-900/10 dark:to-purple-900/10 p-5 overflow-hidden ${forPdfCapture ? "" : "hover:shadow-lg transition-all duration-300"}`}>
                   {/* Background Score Display with better opacity */}
                   <div className="absolute inset-0 pointer-events-none z-0">
                     <div className="flex items-end justify-end h-full">
@@ -199,8 +237,29 @@ const AreasOfLife: React.FC<{ chartData: ChartDataType; /** Optional physical pa
 
                         {/* Score Badge with gradient background */}
                         <div className="flex items-center gap-2">
-                          <div className="px-3 py-1 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 shadow-md">
-                            <span className="text-sm font-bold text-white">
+                          <div
+                            className="rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 shadow-md"
+                            style={
+                              forPdfCapture
+                                ? {
+                                    height: "28px",
+                                    boxSizing: "border-box",
+                                    display: "inline-block",
+                                    lineHeight: "28px",
+                                    paddingLeft: "12px",
+                                    paddingRight: "12px",
+                                  }
+                                : { padding: "4px 12px" }
+                            }
+                          >
+                            <span
+                              className="text-sm font-bold text-white"
+                              style={
+                                forPdfCapture
+                                  ? { lineHeight: "28px", display: "inline-block" }
+                                  : undefined
+                              }
+                            >
                               {area.score}%
                             </span>
                           </div>
@@ -209,17 +268,20 @@ const AreasOfLife: React.FC<{ chartData: ChartDataType; /** Optional physical pa
 
                       <div className="space-y-2 mt-1">
                         <div
-                          className={`${!expandedAreas[area.area] ? "line-clamp-3" : ""
+                          className={`${!forPdfCapture && !expandedAreas[area.area] ? "line-clamp-3" : ""
                             }`}>
                           <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
                             {getCombinedDescription(area)}
                           </p>
                         </div>
-                        <button
-                          onClick={() => toggleArea(area.area)}
-                          className="text-xs font-bold text-purple-600 hover:text-purple-700 dark:text-purple-400 dark:hover:text-purple-300 transition-colors duration-200 uppercase tracking-wider">
-                          {expandedAreas[area.area] ? "Show Less ↑" : "See More ↓"}
-                        </button>
+                        {!forPdfCapture ? (
+                          <button
+                            type="button"
+                            onClick={() => toggleArea(area.area)}
+                            className="text-xs font-bold text-purple-600 hover:text-purple-700 dark:text-purple-400 dark:hover:text-purple-300 transition-colors duration-200 uppercase tracking-wider">
+                            {expandedAreas[area.area] ? "Show Less ↑" : "See More ↓"}
+                          </button>
+                        ) : null}
                       </div>
                     </div>
                   </div>

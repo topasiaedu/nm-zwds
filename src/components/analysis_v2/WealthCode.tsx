@@ -14,6 +14,7 @@ import {
   WealthCodeScore,
   CareerRecommendation,
 } from "../../utils/zwds/analysis_constants/wealth_code_mapping";
+import { pdfCaptureNumericBadgeStyle } from "./shared/pdfCaptureNumericBadgeStyle";
 
 /**
  * Props for the WealthCode component
@@ -38,6 +39,8 @@ interface WealthCodeProps {
    * Used for timeframe-based analysis (Liu Nian, Liu Month, Da Yun).
    */
   palaceOverride?: number;
+  /** Static mode for PDF capture. */
+  forPdfCapture?: boolean;
 }
 
 /**
@@ -110,8 +113,9 @@ const WEALTH_CODE_ICONS: Record<WealthCodeKey, string> = {
 /**
  * Premium hero card with dominant archetype
  */
-const PremiumHeroCard: React.FC<{ profile: WealthCodeAnalysisResult }> = ({
+const PremiumHeroCard: React.FC<{ profile: WealthCodeAnalysisResult; forPdfCapture?: boolean }> = ({
   profile,
+  forPdfCapture,
 }) => {
   if (!profile.hasRecognizedStars) return null;
 
@@ -144,7 +148,7 @@ const PremiumHeroCard: React.FC<{ profile: WealthCodeAnalysisResult }> = ({
         <div className="flex items-start justify-between flex-wrap gap-4">
           <div className="flex-1 min-w-[300px]">
             <div className="inline-flex items-center gap-2 bg-black/20 backdrop-blur-sm rounded-full px-4 py-1.5 mb-4 border border-white/20">
-              <div className="w-2 h-2 rounded-full bg-white animate-pulse" />
+              <div className={`w-2 h-2 rounded-full bg-white ${forPdfCapture ? "" : "animate-pulse"}`} />
               <span className="text-white text-xs font-bold uppercase tracking-wider drop-shadow-lg">
                 Dominant Wealth Code
               </span>
@@ -161,10 +165,35 @@ const PremiumHeroCard: React.FC<{ profile: WealthCodeAnalysisResult }> = ({
           <div className="flex-shrink-0">
             <div className="bg-black/20 backdrop-blur-md rounded-2xl p-6 border border-white/30 shadow-2xl">
               <div className="text-center">
-                <div className="w-20 h-20 mx-auto rounded-xl bg-white shadow-lg flex items-center justify-center mb-3">
+                <div
+                  className={
+                    forPdfCapture
+                      ? "w-20 h-20 mx-auto rounded-xl bg-white shadow-lg mb-3"
+                      : "w-20 h-20 mx-auto rounded-xl bg-white shadow-lg flex items-center justify-center mb-3"
+                  }
+                  style={
+                    forPdfCapture
+                      ? {
+                          display: "block",
+                          textAlign: "center",
+                          lineHeight: "80px",
+                          overflow: "hidden",
+                        }
+                      : undefined
+                  }
+                >
                   <span
                     className="text-3xl font-bold"
-                    style={{ color: colorConfig.primary }}
+                    style={
+                      forPdfCapture
+                        ? {
+                            color: colorConfig.primary,
+                            display: "inline-block",
+                            lineHeight: "80px",
+                            verticalAlign: "middle",
+                          }
+                        : { color: colorConfig.primary }
+                    }
                   >
                     {dominantCode.score.toFixed(1)}
                   </span>
@@ -184,7 +213,7 @@ const PremiumHeroCard: React.FC<{ profile: WealthCodeAnalysisResult }> = ({
 /**
  * Modern horizontal bar chart with premium styling
  */
-const ModernBarChart: React.FC<{ codes: WealthCodeScore[] }> = ({ codes }) => {
+const ModernBarChart: React.FC<{ codes: WealthCodeScore[]; forPdfCapture?: boolean }> = ({ codes, forPdfCapture }) => {
   const maxScore = 10;
 
   /**
@@ -219,7 +248,7 @@ const ModernBarChart: React.FC<{ codes: WealthCodeScore[] }> = ({ codes }) => {
                 <div className="flex items-center gap-3">
                   <div className="relative">
                     <div
-                      className="w-10 h-10 rounded-xl flex items-center justify-center shadow-md group-hover:shadow-lg transition-shadow"
+                      className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-md ${forPdfCapture ? "" : "group-hover:shadow-lg transition-shadow"}`}
                       style={{
                         background: `linear-gradient(135deg, ${colorConfig.primary} 0%, ${colorConfig.secondary} 100%)`,
                       }}
@@ -256,7 +285,7 @@ const ModernBarChart: React.FC<{ codes: WealthCodeScore[] }> = ({ codes }) => {
               <div className="relative">
                 <div className="h-4 rounded-full overflow-hidden shadow-inner bg-gray-100 dark:bg-gray-700">
                   <div
-                    className="h-full rounded-full transition-all duration-700 ease-out relative overflow-hidden"
+                    className={`h-full rounded-full relative overflow-hidden ${forPdfCapture ? "" : "transition-all duration-700 ease-out"}`}
                     style={{
                       width: `${widthPercent}%`,
                       background: `linear-gradient(90deg, ${colorConfig.primary}, ${colorConfig.primary}dd)`,
@@ -280,7 +309,8 @@ const ModernBarChart: React.FC<{ codes: WealthCodeScore[] }> = ({ codes }) => {
 const ModernInsights: React.FC<{
   strengths: string[];
   blindSpots: string[];
-}> = ({ strengths, blindSpots }) => {
+  forPdfCapture?: boolean;
+}> = ({ strengths, blindSpots, forPdfCapture }) => {
   if (strengths.length === 0 && blindSpots.length === 0) return null;
 
   return (
@@ -392,7 +422,8 @@ const ModernInsights: React.FC<{
 const ModernCareerPaths: React.FC<{
   idealRoles: CareerRecommendation[];
   nonIdealRoles: CareerRecommendation[];
-}> = ({ idealRoles, nonIdealRoles }) => {
+  forPdfCapture?: boolean;
+}> = ({ idealRoles, nonIdealRoles, forPdfCapture }) => {
   if (idealRoles.length === 0 && nonIdealRoles.length === 0) return null;
 
   return (
@@ -401,7 +432,13 @@ const ModernCareerPaths: React.FC<{
         Career Alignment
       </h3>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div
+        className={
+          forPdfCapture
+            ? "space-y-6"
+            : "grid grid-cols-1 lg:grid-cols-2 gap-6"
+        }
+      >
         {/* Ideal Roles */}
         {idealRoles.length > 0 && (
           <div>
@@ -417,7 +454,7 @@ const ModernCareerPaths: React.FC<{
               {idealRoles.map((item, idx) => (
                 <div
                   key={`${item.role}-${idx}`}
-                  className="p-3 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 hover:shadow-sm transition-shadow"
+                  className={`p-3 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 ${forPdfCapture ? "" : "hover:shadow-sm transition-shadow"}`}
                 >
                   <div className="font-semibold text-sm text-gray-900 dark:text-white mb-1">
                     {item.role}
@@ -446,7 +483,7 @@ const ModernCareerPaths: React.FC<{
               {nonIdealRoles.map((item, idx) => (
                 <div
                   key={`${item.role}-${idx}`}
-                  className="p-3 rounded-lg bg-gray-50 dark:bg-gray-700/30 border border-gray-200 dark:border-gray-600 opacity-70 hover:opacity-90 transition-opacity"
+                  className={`p-3 rounded-lg bg-gray-50 dark:bg-gray-700/30 border border-gray-200 dark:border-gray-600 opacity-70 ${forPdfCapture ? "" : "hover:opacity-90 transition-opacity"}`}
                 >
                   <div className="font-semibold text-sm text-gray-900 dark:text-white mb-1">
                     {item.role}
@@ -492,6 +529,7 @@ const WealthCode: React.FC<WealthCodeProps> = ({
   header,
   showTopDivider,
   palaceOverride,
+  forPdfCapture,
 }) => {
   // Analyze wealth code
   const wealthProfile = analyzeWealthCode(chartData, palaceOverride);
@@ -508,16 +546,17 @@ const WealthCode: React.FC<WealthCodeProps> = ({
       {/* Section Title */}
       {resolvedHeader.badgeText ? (
         <div
+          data-pdf-break-anchor="wealth-header"
           className="relative rounded-3xl overflow-hidden mb-8"
           style={{
             background: "linear-gradient(135deg, #fb923c 0%, #f97316 50%, #ea580c 100%)",
             padding: "32px 40px",
             boxShadow: "0 10px 40px rgba(251, 146, 60, 0.3)",
             border: "3px solid rgba(251, 146, 60, 0.8)",
-            animation: "pulse-border 1.5s ease-in-out infinite",
+            animation: forPdfCapture ? "none" : "pulse-border 1.5s ease-in-out infinite",
           }}
         >
-          <style>{`
+          {forPdfCapture ? null : <style>{`
             @keyframes pulse-border {
               0%, 100% {
                 box-shadow: 0 10px 40px rgba(251, 146, 60, 0.4), 0 0 0 0 rgba(251, 146, 60, 1), 0 0 20px rgba(251, 146, 60, 0.6);
@@ -526,18 +565,30 @@ const WealthCode: React.FC<WealthCodeProps> = ({
                 box-shadow: 0 10px 60px rgba(251, 146, 60, 0.8), 0 0 0 15px rgba(251, 146, 60, 0), 0 0 40px rgba(251, 146, 60, 0.3);
               }
             }
-          `}</style>
+          `}</style>}
           <div className="relative z-10">
             <div className="flex items-center gap-3 mb-3">
               <span
-                style={{
-                  background: "rgba(255, 255, 255, 0.9)",
-                  color: "#ea580c",
-                  padding: "4px 12px",
-                  borderRadius: "8px",
-                  fontSize: "18px",
-                  fontWeight: "800",
-                }}
+                style={
+                  forPdfCapture
+                    ? pdfCaptureNumericBadgeStyle("#ea580c")
+                    : {
+                        background: "rgba(255, 255, 255, 0.9)",
+                        color: "#ea580c",
+                        height: "32px",
+                        minWidth: "48px",
+                        padding: "0 12px",
+                        borderRadius: "8px",
+                        fontSize: "18px",
+                        fontWeight: "800",
+                        lineHeight: 1,
+                        display: "inline-flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontFamily: "inherit",
+                        verticalAlign: "middle",
+                      }
+                }
               >
                 {resolvedHeader.badgeText}
               </span>
@@ -580,21 +631,27 @@ const WealthCode: React.FC<WealthCodeProps> = ({
       {wealthProfile.hasRecognizedStars ? (
         <>
           {/* 1. Premium Hero - Immediate Wow Factor */}
-          <PremiumHeroCard profile={wealthProfile} />
+          <div data-pdf-break-anchor="wealth-hero">
+            <PremiumHeroCard profile={wealthProfile} forPdfCapture={forPdfCapture} />
+          </div>
 
           {/* 2. Modern Bar Chart - Visual Comparison */}
-          <ModernBarChart codes={wealthProfile.codes} />
+          <div data-pdf-break-anchor="wealth-chart">
+            <ModernBarChart codes={wealthProfile.codes} forPdfCapture={forPdfCapture} />
+          </div>
 
           {/* 3. Modern Insights - Actionable */}
           <ModernInsights
             strengths={wealthProfile.strengths}
             blindSpots={wealthProfile.blindSpots}
+            forPdfCapture={forPdfCapture}
           />
 
           {/* 5. Career Paths - Practical */}
           <ModernCareerPaths
             idealRoles={wealthProfile.idealRoles}
             nonIdealRoles={wealthProfile.nonIdealRoles}
+            forPdfCapture={forPdfCapture}
           />
         </>
       ) : (

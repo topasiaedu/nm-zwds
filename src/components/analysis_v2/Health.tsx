@@ -17,6 +17,8 @@ interface HealthAnalysisProps {
   chartData: ChartData;
   /** Optional physical palace number (1–12) for timeframe-based analysis. */
   palaceOverride?: number;
+  /** When true, skip motion wrappers and expand all tips for PDF/html2canvas capture. */
+  forPdfCapture?: boolean;
 }
 
 /**
@@ -82,7 +84,8 @@ const bodyPartMapping: Record<string, string[]> = {
 const HumanBodySVG: React.FC<{
   affectedParts: string[];
   gender: "male" | "female";
-}> = ({ affectedParts, gender }) => {
+  forPdfCapture?: boolean;
+}> = ({ affectedParts, gender, forPdfCapture }) => {
   const svgContainerRef = useRef<HTMLDivElement>(null);
   const [svgContent, setSvgContent] = useState<string>("");
 
@@ -140,12 +143,18 @@ const HumanBodySVG: React.FC<{
             "style",
             "display: block; fill: #ef4444; fill-opacity: 0.5;"
           );
-          part.classList.add("animate-pulse");
+          if (!forPdfCapture) {
+            part.classList.add("animate-pulse");
+          }
         });
       });
 
       // Update the container with the modified SVG
       svgContainerRef.current.innerHTML = svgElement.outerHTML;
+
+      if (forPdfCapture) {
+        return undefined;
+      }
 
       // Add animation via JavaScript since the SVG is statically inserted
       const animatePulse = () => {
@@ -171,7 +180,7 @@ const HumanBodySVG: React.FC<{
         cancelAnimationFrame(animationFrame);
       };
     }
-  }, [svgContent, affectedParts, getAffectedSvgParts]);
+  }, [svgContent, affectedParts, getAffectedSvgParts, forPdfCapture]);
 
   return <div ref={svgContainerRef} className="w-full h-full" />;
 };
@@ -180,7 +189,11 @@ const HumanBodySVG: React.FC<{
  * HealthAnalysis component that analyzes and displays health implications
  * based on stars in the chart's health palace (疾厄宫) with a human body visualization
  */
-const Health: React.FC<HealthAnalysisProps> = ({ chartData, palaceOverride }) => {
+const Health: React.FC<HealthAnalysisProps> = ({
+  chartData,
+  palaceOverride,
+  forPdfCapture,
+}) => {
 
   const [healthAnalysis, setHealthAnalysis] =
     useState<HealthAnalysisResult | null>(null);
@@ -256,106 +269,125 @@ const Health: React.FC<HealthAnalysisProps> = ({ chartData, palaceOverride }) =>
     );
   }
 
-  return (
-    <AnimatedWrapper delay={0.2} threshold={0.25}>
-      <div className="p-6 dark:bg-gray-900">
-        {/* Section Header */}
-        <GradientSectionHeader
-          badgeText="04"
-          title="HEALTH CODE SCAN"
-          subtitle="Decode your body's energetic blueprint — where vitality flows and where it breaks down."
-          showDivider={true}
+  const tipIsExpanded = (index: number): boolean =>
+    Boolean(forPdfCapture || expandedTips[index]);
+
+  const bodyMapCard = (
+    <div className="w-full max-w-md mx-auto">
+      <div className="rounded-2xl shadow-lg border bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 border-gray-200 dark:border-gray-700 p-6">
+        <div className="flex items-center gap-3 mb-4">
+          <span className="text-2xl">🧍</span>
+          <h4 className="text-base font-bold text-gray-900 dark:text-white">
+            Body Map
+          </h4>
+        </div>
+        <HumanBodySVG
+          affectedParts={healthAnalysis?.affectedBodyParts || []}
+          gender={
+            chartData?.input?.gender === "female" ? "female" : "male"
+          }
+          forPdfCapture={forPdfCapture}
         />
+      </div>
+    </div>
+  );
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Left column - Health interpretations */}
-          <div className="flex flex-col space-y-6 order-2 lg:order-1 col-span-2">
-            {healthAnalysis && healthAnalysis.affectedBodyParts.length > 0 ? (
-              <div className="rounded-2xl shadow-lg border bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700 p-8">
-                <div className="flex items-center gap-3 mb-6">
-                  <span className="text-3xl">🏥</span>
-                  <h3 className="text-lg font-bold text-gray-900 dark:text-white">
-                    Health Analysis & Tips
-                  </h3>
-                </div>
-                <div className="space-y-6">
-                  {healthAnalysis.healthTips.map((tip, index) => (
+  const mainInner = (
+    <div className="p-6 dark:bg-gray-900">
+      <GradientSectionHeader
+        badgeText="04"
+        title="HEALTH CODE SCAN"
+        subtitle="Decode your body's energetic blueprint — where vitality flows and where it breaks down."
+        showDivider={true}
+        forPdfCapture={forPdfCapture}
+      />
+
+      <div className={forPdfCapture ? "space-y-6" : "grid grid-cols-1 lg:grid-cols-3 gap-8"}>
+        {forPdfCapture ? (
+          <div data-pdf-break-anchor="health-body-map">{bodyMapCard}</div>
+        ) : null}
+        <div className={forPdfCapture ? "space-y-6" : "flex flex-col space-y-6 order-2 lg:order-1 col-span-2"}>
+          {healthAnalysis && healthAnalysis.affectedBodyParts.length > 0 ? (
+            <div data-pdf-break-anchor="health-analysis-tips" className="rounded-2xl shadow-lg border bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700 p-8">
+              <div className="flex items-center gap-3 mb-6">
+                <span className="text-3xl">🏥</span>
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+                  Health Analysis & Tips
+                </h3>
+              </div>
+              <div className="space-y-6">
+                {healthAnalysis.healthTips.map((tip, index) => (
+                  <div
+                    key={index}
+                    className={`rounded-xl border border-red-200 dark:border-red-700 bg-gradient-to-br from-red-50/50 to-orange-50/50 dark:from-red-900/10 dark:to-orange-900/10 p-5 ${forPdfCapture ? "" : "hover:shadow-lg transition-shadow"}`}>
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-red-500 to-orange-600 flex items-center justify-center shadow-md">
+                        <span className="w-3 h-3 rounded-full bg-white"></span>
+                      </div>
+                      <span className="text-base font-bold text-gray-900 dark:text-white uppercase tracking-wide">
+                        {tip.englishName || tip.bodyPart}
+                      </span>
+                    </div>
+
                     <div
-                      key={index}
-                      className="rounded-xl border border-red-200 dark:border-red-700 bg-gradient-to-br from-red-50/50 to-orange-50/50 dark:from-red-900/10 dark:to-orange-900/10 p-5 hover:shadow-lg transition-shadow">
-                      {/* Body Part Header with Icon */}
-                      <div className="flex items-center gap-3 mb-3">
-                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-red-500 to-orange-600 flex items-center justify-center shadow-md">
-                          <span className="w-3 h-3 rounded-full bg-white"></span>
-                        </div>
-                        <span className="text-base font-bold text-gray-900 dark:text-white uppercase tracking-wide">
-                          {tip.englishName || tip.bodyPart}
-                        </span>
-                      </div>
+                      className={`${!tipIsExpanded(index) ? "line-clamp-3" : ""}`}>
+                      <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed pl-11">
+                        {tip.description}
+                      </p>
+                    </div>
 
-                      {/* Tip Description */}
-                      <div
-                        className={`${!expandedTips[index] ? "line-clamp-3" : ""
-                          }`}>
-                        <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed pl-11">
-                          {tip.description}
-                        </p>
-                      </div>
-
+                    {!forPdfCapture ? (
                       <button
+                        type="button"
                         onClick={() => toggleTip(index)}
                         className="mt-3 ml-11 text-xs font-bold text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 transition-colors duration-200 uppercase tracking-wider">
                         {expandedTips[index] ? "Show Less ↑" : "See More ↓"}
                       </button>
-                    </div>
-                  ))}
-                </div>
+                    ) : null}
+                  </div>
+                ))}
               </div>
-            ) : (
-              <div className="rounded-2xl shadow-lg border bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700 p-8 text-center">
-                <div className="flex flex-col items-center justify-center py-8">
-                  <span className="text-6xl mb-4">✨</span>
-                  <p className="text-lg font-bold text-gray-900 dark:text-white mb-2">
-                    No health concerns detected
+            </div>
+          ) : (
+            <div className="rounded-2xl shadow-lg border bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700 p-8 text-center">
+              <div className="flex flex-col items-center justify-center py-8">
+                <span className="text-6xl mb-4">✨</span>
+                <p className="text-lg font-bold text-gray-900 dark:text-white mb-2">
+                  No health concerns detected
+                </p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Your chart shows no significant health indicators at this time.
+                </p>
+                {healthAnalysis && healthAnalysis.starsInHealthPalace.length > 0 && (
+                  <p className="text-xs text-gray-500 dark:text-gray-500 mt-4">
+                    Stars in palace: {healthAnalysis.starsInHealthPalace.join(", ")}
                   </p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Your chart shows no significant health indicators at this time.
-                  </p>
-                  {healthAnalysis && healthAnalysis.starsInHealthPalace.length > 0 && (
-                    <p className="text-xs text-gray-500 dark:text-gray-500 mt-4">
-                      Stars in palace: {healthAnalysis.starsInHealthPalace.join(", ")}
-                    </p>
-                  )}
-                </div>
+                )}
               </div>
-            )}
-          </div>
+            </div>
+          )}
+        </div>
 
-          {/* Right column - Interactive human body */}
+        {forPdfCapture ? null : (
           <motion.div
             className="relative order-1 lg:order-2"
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5, delay: 0.7 }}>
-            <div className="w-full max-w-md mx-auto">
-              <div className="rounded-2xl shadow-lg border bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 border-gray-200 dark:border-gray-700 p-6">
-                <div className="flex items-center gap-3 mb-4">
-                  <span className="text-2xl">🧍</span>
-                  <h4 className="text-base font-bold text-gray-900 dark:text-white">
-                    Body Map
-                  </h4>
-                </div>
-                <HumanBodySVG
-                  affectedParts={healthAnalysis?.affectedBodyParts || []}
-                  gender={
-                    chartData?.input?.gender === "female" ? "female" : "male"
-                  }
-                />
-              </div>
-            </div>
+            {bodyMapCard}
           </motion.div>
-        </div>
+        )}
       </div>
+    </div>
+  );
+
+  if (forPdfCapture) {
+    return mainInner;
+  }
+
+  return (
+    <AnimatedWrapper delay={0.2} threshold={0.25}>
+      {mainInner}
     </AnimatedWrapper>
   );
 };

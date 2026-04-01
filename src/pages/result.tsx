@@ -10,7 +10,11 @@ import { ChartInput } from "../utils/zwds/types";
 import { useTierAccess } from "../context/TierContext";
 
 // PDF export functionality
-import { exportChartAsPdf, isPdfExportSupported } from "../utils/pdfExport";
+import {
+  exportChartAsPdf,
+  isPdfExportSupported,
+  type PdfResultExportContext,
+} from "../utils/pdfExport";
 import PdfExportModal from "../components/PdfExportModal";
 import { PdfChartData } from "../components/PdfDocument";
 import { useAlertContext } from "../context/AlertContext";
@@ -30,6 +34,8 @@ import { getCurrentLiuNianPalace, getCurrentDayunPalace, getMonthPalaceForLiuMon
 import type { LifeAspect } from "../types/destiny-navigator";
 // FourKeyPalaceAnalysis and LifeAreasExplanation are kept commented out for potential future use
 // import { FourKeyPalaceAnalysis, LifeAreasExplanation } from "../components/analysis";
+
+const ENABLE_PDF_EXPORT = false;
 
 /**
  * Chinese Earthly Branches for time periods (地支)
@@ -103,7 +109,7 @@ const ResultContent: React.FC = () => {
   const [chartData, setChartData] = useState<ChartData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [isCapturingForPdf] = useState<boolean>(false);
+  const [isCapturingForPdf, setIsCapturingForPdf] = useState<boolean>(false);
 
   // State for branch adjustment (allows users to cycle through the 12 time branches)
   const [branchOffset, setBranchOffset] = useState<number>(0);
@@ -633,9 +639,8 @@ const ResultContent: React.FC = () => {
   );
 
   /**
-   * Handle PDF export with progress modal (currently disabled)
+   * Handle PDF export with progress modal; mirrors active blueprint and palace overrides.
    */
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handlePdfExport = useCallback(async () => {
     if (!chartData || !calculatedChartData) {
       showAlert(
@@ -665,6 +670,26 @@ const ResultContent: React.FC = () => {
       },
     });
 
+    const resultExportContext: PdfResultExportContext = {
+      blueprintMode,
+      selectedLiuMonth,
+      palaceOverrides: {
+        life: getPalaceOverride("life"),
+        wealth: getPalaceOverride("wealth"),
+        health: getPalaceOverride("health"),
+      },
+      resolvePalaceName,
+      liuMonthCard:
+        blueprintMode === "liumonth" && currentLiuMonthPalace !== null
+          ? {
+              palaceNumber: currentLiuMonthPalace,
+              palaceName:
+                calculatedChartData.palaces[currentLiuMonthPalace - 1]?.name ??
+                "",
+            }
+          : null,
+    };
+
     try {
       await exportChartAsPdf(
         chartData,
@@ -687,7 +712,9 @@ const ResultContent: React.FC = () => {
           scale: 1.5,
           format: "a4",
           orientation: "portrait",
-        }
+          resultExportContext,
+        },
+        setIsCapturingForPdf
       );
     } catch (error) {
       console.error("PDF export error:", error);
@@ -701,8 +728,20 @@ const ResultContent: React.FC = () => {
         },
       }));
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chartData, calculatedChartData, formatDate, hasFullAnalysis, language, showAlert, t]);
+  }, [
+    blueprintMode,
+    calculatedChartData,
+    chartData,
+    currentLiuMonthPalace,
+    formatDate,
+    getPalaceOverride,
+    hasFullAnalysis,
+    language,
+    resolvePalaceName,
+    selectedLiuMonth,
+    showAlert,
+    t,
+  ]);
 
   // If loading profiles from context
   if (profilesLoading) {
@@ -1237,32 +1276,33 @@ const ResultContent: React.FC = () => {
                     </button>
                   </div> */}
 
-                  {/* PDF Export Button */}
-                  <div className="mt-3">
-                    <button
-                      onClick={handlePdfExport}
-                      disabled={!chartData || !calculatedChartData}
-                      className="w-full px-4 py-2 text-white font-medium rounded-lg transition-all 
-                            bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700
-                            focus:ring-4 focus:ring-red-300 focus:outline-none
-                            disabled:opacity-50 disabled:cursor-not-allowed
-                            flex items-center justify-center">
-                      <svg
-                        className="w-5 h-5 mr-2"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                        />
-                      </svg>
-                      {t("result.exportPdf") || "Export PDF"}
-                    </button>
-                  </div>
+                  {ENABLE_PDF_EXPORT ? (
+                    <div className="mt-3">
+                      <button
+                        onClick={handlePdfExport}
+                        disabled={!chartData || !calculatedChartData}
+                        className="w-full px-4 py-2 text-white font-medium rounded-lg transition-all 
+                              bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700
+                              focus:ring-4 focus:ring-red-300 focus:outline-none
+                              disabled:opacity-50 disabled:cursor-not-allowed
+                              flex items-center justify-center">
+                        <svg
+                          className="w-5 h-5 mr-2"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          xmlns="http://www.w3.org/2000/svg">
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                          />
+                        </svg>
+                        {t("result.exportPdf") || "Export PDF"}
+                      </button>
+                    </div>
+                  ) : null}
 
 
 
@@ -1411,12 +1451,14 @@ const ResultContent: React.FC = () => {
         )}
 
         {/* PDF Export Modal */}
-        <PdfExportModal
-          isOpen={pdfExportModal.isOpen}
-          onClose={closePdfExportModal}
-          progress={pdfExportModal.progress}
-          chartName={chartData?.name || ""}
-        />
+        {ENABLE_PDF_EXPORT ? (
+          <PdfExportModal
+            isOpen={pdfExportModal.isOpen}
+            onClose={closePdfExportModal}
+            progress={pdfExportModal.progress}
+            chartName={chartData?.name || ""}
+          />
+        ) : null}
 
         {/* Chart Settings Modal */}
         <ChartSettingsModal pageType="result" />

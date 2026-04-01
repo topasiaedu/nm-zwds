@@ -1,4 +1,12 @@
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
+  ReactNode,
+  type PropsWithChildren,
+} from "react";
 import en from "../translations/en";
 import zh from "../translations/zh";
 
@@ -105,4 +113,56 @@ export const useLanguage = (): LanguageContextType => {
     throw new Error("useLanguage must be used within a LanguageProvider");
   }
   return context;
+};
+
+/**
+ * Language provider for off-screen PDF captures (detached React roots).
+ * Uses PropsWithChildren so React.createElement(P, { language }, subtree) type-checks.
+ */
+type PdfCaptureLanguageProviderProps = PropsWithChildren<{
+  language: Language;
+}>;
+
+export const PdfCaptureLanguageProvider: React.FC<PdfCaptureLanguageProviderProps> = ({
+  language,
+  children,
+}) => {
+  const t = useCallback(
+    (key: string): string => {
+      const keys = key.split(".");
+      let value: TranslationMap | string = resources[language];
+
+      for (const k of keys) {
+        if (value && typeof value === "object" && k in value) {
+          value = value[k];
+        } else {
+          console.warn(`Translation key not found: ${key}`);
+          return key;
+        }
+      }
+
+      if (typeof value === "string") {
+        return value;
+      }
+
+      console.warn(`Translation key does not resolve to a string: ${key}`);
+      return key;
+    },
+    [language]
+  );
+
+  const value = useMemo(
+    (): LanguageContextType => ({
+      language,
+      changeLanguage: () => {
+        /* no-op for static capture trees */
+      },
+      t,
+    }),
+    [language, t]
+  );
+
+  return (
+    <LanguageContext.Provider value={value}>{children}</LanguageContext.Provider>
+  );
 };
