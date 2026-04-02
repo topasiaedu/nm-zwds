@@ -5,7 +5,7 @@
   "description": "Headless PDF export service for NM-ZWDS (Render Web Service)",
   "main": "dist/index.js",
   "scripts": {
-    "postinstall": "npx -y puppeteer browsers install chrome",
+    "postinstall": "npx -y puppeteer browsers install",
     "build": "tsc",
     "start": "node dist/index.js",
     "dev": "tsx watch src/index.ts"

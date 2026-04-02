@@ -6,7 +6,7 @@ services:
     name: nm-zwds-pdf-server
     runtime: node
     rootDir: server
-    buildCommand: npm install --include=dev && npx -y puppeteer browsers install chrome && npm run build
+    buildCommand: npm install --include=dev && npx -y puppeteer browsers install && npm run build
     startCommand: npm start
     plan: starter
     envVars:
