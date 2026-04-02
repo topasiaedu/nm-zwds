@@ -81,11 +81,11 @@ async function authorizeExportRequest(
   req: Request,
   relaxed: boolean
 ): Promise<{ ok: true } | AuthFailure> {
+  if (relaxed) {
+    return { ok: true };
+  }
   const token = readBearerToken(req);
   if (token === null) {
-    if (relaxed) {
-      return { ok: true };
-    }
     return {
       ok: false,
       status: 401,

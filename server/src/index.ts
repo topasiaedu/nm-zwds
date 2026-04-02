@@ -18,10 +18,20 @@ if (relaxed && process.env.NODE_ENV === "production") {
 }
 
 /**
- * CORS: relaxed mode reflects any origin; otherwise production allows only `ALLOWED_APP_ORIGIN`
- * and development allows localhost CRA ports.
+ * CORS: relaxed mode reflects any origin; otherwise production allows:
+ * - ALLOWED_APP_ORIGIN (single origin, backwards-compatible)
+ * - ALLOWED_APP_ORIGINS (comma-separated origin allowlist)
+ * Development also allows localhost CRA ports.
  */
-const allowedAppOrigin = process.env.ALLOWED_APP_ORIGIN;
+const allowedOriginEnv = process.env.ALLOWED_APP_ORIGINS ?? "";
+const allowedOrigins = allowedOriginEnv
+  .split(",")
+  .map((value) => value.trim())
+  .filter((value) => value.length > 0);
+const allowedAppOrigin = process.env.ALLOWED_APP_ORIGIN?.trim() ?? "";
+if (allowedAppOrigin.length > 0 && !allowedOrigins.includes(allowedAppOrigin)) {
+  allowedOrigins.push(allowedAppOrigin);
+}
 
 const corsOriginDelegate: cors.CorsOptions["origin"] = (origin, callback) => {
   if (origin === undefined || origin === "") {
@@ -37,11 +47,7 @@ const corsOriginDelegate: cors.CorsOptions["origin"] = (origin, callback) => {
       return;
     }
   }
-  if (
-    allowedAppOrigin !== undefined &&
-    allowedAppOrigin !== "" &&
-    origin === allowedAppOrigin
-  ) {
+  if (allowedOrigins.includes(origin)) {
     callback(null, true);
     return;
   }
