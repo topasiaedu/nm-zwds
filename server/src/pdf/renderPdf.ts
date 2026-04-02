@@ -5,6 +5,7 @@ const DEFAULT_MAX_JOB_MS = 90_000;
 
 /** `page.goto` idle wait; increase if flaky on slow SPAs. */
 const GOTO_TIMEOUT_MS = 60_000;
+const WAIT_FOR_PRINT_LAYOUT_MS = 45_000;
 
 /**
  * Thrown when the PDF job exceeds {@link DEFAULT_MAX_JOB_MS}.
@@ -37,6 +38,8 @@ function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
  * Renders a print-ready page at `url` to a PDF buffer using headless Chromium.
  */
 export async function renderPdfFromUrl(url: string): Promise<Buffer> {
+  const target = new URL(url);
+  const redactedTarget = `${target.origin}${target.pathname}`;
   const executablePathRaw = process.env.PUPPETEER_EXECUTABLE_PATH;
   const executablePath =
     executablePathRaw !== undefined && executablePathRaw !== ""
@@ -45,6 +48,7 @@ export async function renderPdfFromUrl(url: string): Promise<Buffer> {
 
   let browser: Awaited<ReturnType<typeof puppeteer.launch>> | undefined;
   try {
+    console.info(`pdf-server: launching chromium for ${redactedTarget}`);
     browser = await puppeteer.launch({
       headless: true,
       executablePath,
@@ -60,8 +64,10 @@ export async function renderPdfFromUrl(url: string): Promise<Buffer> {
     return await withTimeout(
       (async () => {
         const page = await launched.newPage();
+        console.info(`pdf-server: navigating to print page ${redactedTarget}`);
         await page.goto(url, {
-          waitUntil: "networkidle0",
+          // `networkidle2` avoids hanging forever on pages with persistent background polling.
+          waitUntil: "networkidle2",
           timeout: GOTO_TIMEOUT_MS,
         });
         /**
@@ -69,7 +75,7 @@ export async function renderPdfFromUrl(url: string): Promise<Buffer> {
          * before `page.pdf` (avoids blank heroes and missing icons).
          */
         try {
-          await page.waitForSelector(".print-cover-page", { timeout: 45_000 });
+          await page.waitForSelector(".print-cover-page", { timeout: WAIT_FOR_PRINT_LAYOUT_MS });
         } catch {
           /* Route may omit cover; still attempt PDF */
         }
@@ -89,6 +95,7 @@ export async function renderPdfFromUrl(url: string): Promise<Buffer> {
         await new Promise<void>((resolve) => {
           setTimeout(resolve, 1500);
         });
+        console.info(`pdf-server: generating PDF bytes for ${redactedTarget}`);
         const pdf = await page.pdf({
           format: "A4",
           printBackground: true,
@@ -99,6 +106,7 @@ export async function renderPdfFromUrl(url: string): Promise<Buffer> {
             right: "10mm",
           },
         });
+        console.info(`pdf-server: PDF generated for ${redactedTarget}`);
         return Buffer.from(pdf);
       })(),
       DEFAULT_MAX_JOB_MS

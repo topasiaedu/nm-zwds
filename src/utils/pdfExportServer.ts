@@ -29,6 +29,7 @@ export async function exportPdfViaServer(
   getAuthHeader: () => Promise<string | null>,
   filename = "report.pdf"
 ): Promise<void> {
+  const SERVER_REQUEST_TIMEOUT_MS = 120_000;
   const baseRaw = process.env.REACT_APP_PDF_SERVICE_URL;
   if (baseRaw === undefined || baseRaw === "") {
     throw new Error("REACT_APP_PDF_SERVICE_URL is not configured.");
@@ -46,14 +47,30 @@ export async function exportPdfViaServer(
     ? headerValue
     : `Bearer ${headerValue}`;
 
-  const response = await fetch(endpoint, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: authorization,
-    },
-    body: JSON.stringify({ targetUrl }),
-  });
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => {
+    controller.abort();
+  }, SERVER_REQUEST_TIMEOUT_MS);
+
+  let response: Response;
+  try {
+    response = await fetch(endpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: authorization,
+      },
+      body: JSON.stringify({ targetUrl }),
+      signal: controller.signal,
+    });
+  } catch (error) {
+    if (error instanceof DOMException && error.name === "AbortError") {
+      throw new Error("PDF export timed out. Please try again in a moment.");
+    }
+    throw error;
+  } finally {
+    clearTimeout(timeoutId);
+  }
 
   if (!response.ok) {
     let detail = response.statusText;
