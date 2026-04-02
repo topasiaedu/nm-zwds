@@ -10,7 +10,6 @@ import {
   safeMessageForUrlFailure,
   validateTargetUrlShape,
 } from "../utils/ssrf.js";
-import { validateBearerToken } from "../auth/validateBearer.js";
 import { PdfTimeoutError, renderPdfFromUrl } from "../pdf/renderPdf.js";
 
 const DEV_FALLBACK_ORIGIN = "http://localhost:3000";
@@ -73,33 +72,6 @@ const noopRateLimit = (_req: Request, _res: Response, next: NextFunction): void 
 };
 
 /**
- * When relaxed, Bearer is optional; if a token is sent, it is still validated.
- */
-type AuthFailure = { ok: false; status: 401; message: string };
-
-async function authorizeExportRequest(
-  req: Request,
-  relaxed: boolean
-): Promise<{ ok: true } | AuthFailure> {
-  if (relaxed) {
-    return { ok: true };
-  }
-  const token = readBearerToken(req);
-  if (token === null) {
-    return {
-      ok: false,
-      status: 401,
-      message: "Missing or invalid Authorization header.",
-    };
-  }
-  const authOk = await validateBearerToken(token);
-  if (!authOk) {
-    return { ok: false, status: 401, message: "Unauthorized." };
-  }
-  return { ok: true };
-}
-
-/**
  * POST /api/export-pdf — validates request, then renders PDF via Puppeteer.
  */
 exportPdfRouter.post(
@@ -107,11 +79,7 @@ exportPdfRouter.post(
   isPdfRelaxedSecurity() ? noopRateLimit : pdfExportRateLimiter,
   async (req: Request, res: Response) => {
   const relaxed = isPdfRelaxedSecurity();
-  const auth = await authorizeExportRequest(req, relaxed);
-  if (!auth.ok) {
-    res.status(auth.status).json({ error: auth.message });
-    return;
-  }
+  void readBearerToken(req); // Keep header parsing for future observability; auth is intentionally disabled.
 
   const body = req.body as ExportBody;
   if (body === null || typeof body !== "object") {

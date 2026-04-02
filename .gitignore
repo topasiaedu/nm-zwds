@@ -27,5 +27,7 @@ server/node_modules/
 server/dist/
 server/.env
 
+.env
+
 /src/flowbite-theme.ts
 .qodo
