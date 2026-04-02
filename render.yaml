@@ -6,12 +6,14 @@ services:
     name: nm-zwds-pdf-server
     runtime: node
     rootDir: server
-    buildCommand: npm install && npm run build
+    buildCommand: npm install --include=dev && npm run build
     startCommand: npm start
     plan: starter
     envVars:
       - key: NODE_ENV
         value: production
+      - key: NPM_CONFIG_PRODUCTION
+        value: "false"
       - key: ALLOWED_PDF_ORIGIN
         sync: false
       - key: ALLOWED_APP_ORIGIN

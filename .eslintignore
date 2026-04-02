@@ -9,3 +9,7 @@ scripts/
 
 # Node modules (ESLint ignores these by default, but listed for clarity)
 node_modules/
+
+# PDF server build/dependency output (not part of CRA frontend lint scope)
+server/dist/
+server/node_modules/

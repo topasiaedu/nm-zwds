@@ -536,7 +536,14 @@ const addPaginatedCanvasToPdf = (
      */
     sliceHeight = Math.min(sliceHeight, sliceHeightPxBase);
 
-    const nextHardBreak = sortedHardBreaks.find((b) => b > sourceY + 1 && b < sourceY + sliceHeight);
+    let nextHardBreak: number | undefined;
+    for (let i = 0; i < sortedHardBreaks.length; i += 1) {
+      const breakpointY = sortedHardBreaks[i];
+      if (breakpointY > sourceY + 1 && breakpointY < sourceY + sliceHeight) {
+        nextHardBreak = breakpointY;
+        break;
+      }
+    }
 
     let hardBreakSlice = false;
     if (nextHardBreak !== undefined) {

@@ -37,7 +37,7 @@ import type { LifeAspect } from "../types/destiny-navigator";
 // FourKeyPalaceAnalysis and LifeAreasExplanation are kept commented out for potential future use
 // import { FourKeyPalaceAnalysis, LifeAreasExplanation } from "../components/analysis";
 
-const ENABLE_PDF_EXPORT = false;
+const ENABLE_PDF_EXPORT = true;
 
 /**
  * Chinese Earthly Branches for time periods (地支)
