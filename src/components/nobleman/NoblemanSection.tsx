@@ -56,13 +56,16 @@ export const NoblemanSection: React.FC<NoblemanSectionProps> = ({
   return (
     <>
       {/* NOBLEMAN SECTION - Main Profile */}
-      <section className="mb-8 p-6 dark:bg-gray-900">
+      <section
+        className="mb-8 p-6 dark:bg-gray-900"
+        {...(forPdfCapture ? { "data-pdf-page-break-before": "" } : {})}
+      >
         {/* Section Header - Premium Gradient Header */}
         <GradientSectionHeader
           badgeText="03"
           title="NOBLEMAN ANALYSIS"
           subtitle="Key People Who Will Support Your Life Journey"
-          showDivider={true}
+          showDivider={!forPdfCapture}
           forPdfCapture={forPdfCapture}
         />
 
@@ -73,7 +76,7 @@ export const NoblemanSection: React.FC<NoblemanSectionProps> = ({
         <NoblemanProfileCard {...noblemanData} forPdfCapture={forPdfCapture} />
         
         {/* Other Life Areas - 3-card grid */}
-        <OtherLifeAreas areas={otherAreas} />
+        <OtherLifeAreas areas={otherAreas} forPdfCapture={forPdfCapture} />
       </section>
 
       {/* ZODIAC INSIGHTS SECTION - Understanding Your Nobleman */}
@@ -81,12 +84,13 @@ export const NoblemanSection: React.FC<NoblemanSectionProps> = ({
         <ZodiacInsightsSection
           zodiacInsights={mainZodiacInsights}
           noblemanZodiac={noblemanData.zodiac}
+          forPdfCapture={forPdfCapture}
         />
       )}
 
       {/* MINI ZODIAC CARDS - Other Life Areas Quick Reference */}
       {miniZodiacData.length > 0 && (
-        <ZodiacMiniCardsGrid miniData={miniZodiacData} />
+        <ZodiacMiniCardsGrid miniData={miniZodiacData} forPdfCapture={forPdfCapture} />
       )}
     </>
   );

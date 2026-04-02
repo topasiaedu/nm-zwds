@@ -104,7 +104,7 @@ const Overview: React.FC<OverviewProps> = ({ chartData, palaceOverride, forPdfCa
         badgeText="01"
         title="PERSONALITY BLUEPRINT"
         subtitle="Discover your core strengths, challenges, and strategic growth opportunities"
-        showDivider={true}
+        showDivider={!forPdfCapture}
         forPdfCapture={forPdfCapture}
       />
 
@@ -134,7 +134,13 @@ const Overview: React.FC<OverviewProps> = ({ chartData, palaceOverride, forPdfCa
       </div>
 
       {/* Strengths and Challenges - Premium Cards */}
-      <div data-pdf-break-anchor="overview-strengths-challenges" className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+      <div
+        data-pdf-break-anchor="overview-strengths-challenges"
+        {...(forPdfCapture ? { "data-pdf-page-break-before": "" } : {})}
+        className={`grid gap-6 mb-12 ${
+          forPdfCapture ? "grid-cols-1" : "grid-cols-1 md:grid-cols-2"
+        }`}
+      >
         {/* Strengths Column */}
         <div className="rounded-2xl shadow-lg border bg-gradient-to-br from-green-50/50 to-emerald-50/50 dark:from-green-900/10 dark:to-emerald-900/10 border-green-200 dark:border-green-700 p-6">
           <div className="flex items-center gap-3 mb-6">
@@ -182,7 +188,7 @@ const Overview: React.FC<OverviewProps> = ({ chartData, palaceOverride, forPdfCa
             Growth Tips
           </h3>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className={forPdfCapture ? "grid grid-cols-2 gap-4" : "grid grid-cols-1 md:grid-cols-2 gap-4"}>
           {featuresData.tips.length > 0 ? (
             renderTipItems(featuresData.tips)
           ) : (

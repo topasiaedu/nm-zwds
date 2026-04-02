@@ -147,7 +147,11 @@ const PremiumHeroCard: React.FC<{ profile: WealthCodeAnalysisResult; forPdfCaptu
       <div className="relative px-8 py-10">
         <div className="flex items-start justify-between flex-wrap gap-4">
           <div className="flex-1 min-w-[300px]">
-            <div className="inline-flex items-center gap-2 bg-black/20 backdrop-blur-sm rounded-full px-4 py-1.5 mb-4 border border-white/20">
+            <div
+              className={`inline-flex items-center gap-2 rounded-full px-4 py-1.5 mb-4 border border-white/20 ${
+                forPdfCapture ? "bg-black/40" : "bg-black/20 backdrop-blur-sm"
+              }`}
+            >
               <div className={`w-2 h-2 rounded-full bg-white ${forPdfCapture ? "" : "animate-pulse"}`} />
               <span className="text-white text-xs font-bold uppercase tracking-wider drop-shadow-lg">
                 Dominant Wealth Code
@@ -163,7 +167,11 @@ const PremiumHeroCard: React.FC<{ profile: WealthCodeAnalysisResult; forPdfCaptu
 
           {/* Score Badge */}
           <div className="flex-shrink-0">
-            <div className="bg-black/20 backdrop-blur-md rounded-2xl p-6 border border-white/30 shadow-2xl">
+            <div
+              className={`rounded-2xl p-6 border border-white/30 shadow-2xl ${
+                forPdfCapture ? "bg-black/45" : "bg-black/20 backdrop-blur-md"
+              }`}
+            >
               <div className="text-center">
                 <div
                   className={
@@ -314,11 +322,13 @@ const ModernInsights: React.FC<{
   if (strengths.length === 0 && blindSpots.length === 0) return null;
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+    <div className={forPdfCapture ? "grid grid-cols-2 gap-4 mb-6" : "grid grid-cols-1 md:grid-cols-2 gap-4 mb-6"}>
       {/* Strengths */}
       {strengths.length > 0 && (
         <div className="relative overflow-hidden rounded-2xl p-6 border shadow-md bg-gradient-to-br from-emerald-50 to-green-50 dark:from-emerald-900/30 dark:to-green-900/30 border-green-200 dark:border-green-700/50">
-          <div className="absolute top-0 right-0 w-32 h-32 rounded-full blur-3xl bg-gradient-to-br from-green-400/10 to-emerald-400/10 dark:from-green-400/5 dark:to-emerald-400/5" />
+          {forPdfCapture ? null : (
+            <div className="absolute top-0 right-0 w-32 h-32 rounded-full blur-3xl bg-gradient-to-br from-green-400/10 to-emerald-400/10 dark:from-green-400/5 dark:to-emerald-400/5" />
+          )}
           <div className="relative">
             <div className="flex items-center gap-2 mb-4">
               <div
@@ -366,8 +376,13 @@ const ModernInsights: React.FC<{
 
       {/* Blind Spots */}
       {blindSpots.length > 0 && (
-        <div className="relative overflow-hidden rounded-2xl p-6 border shadow-md bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/30 dark:to-orange-900/30 border-amber-200 dark:border-amber-700/50">
-          <div className="absolute top-0 right-0 w-32 h-32 rounded-full blur-3xl bg-gradient-to-br from-amber-400/10 to-orange-400/10 dark:from-amber-400/5 dark:to-orange-400/5" />
+        <div
+          {...(forPdfCapture ? { "data-pdf-page-break-before": "" } : {})}
+          className="relative overflow-hidden rounded-2xl p-6 border shadow-md bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/30 dark:to-orange-900/30 border-amber-200 dark:border-amber-700/50"
+        >
+          {forPdfCapture ? null : (
+            <div className="absolute top-0 right-0 w-32 h-32 rounded-full blur-3xl bg-gradient-to-br from-amber-400/10 to-orange-400/10 dark:from-amber-400/5 dark:to-orange-400/5" />
+          )}
           <div className="relative">
             <div className="flex items-center gap-2 mb-4">
               <div
@@ -435,7 +450,7 @@ const ModernCareerPaths: React.FC<{
       <div
         className={
           forPdfCapture
-            ? "space-y-6"
+            ? "flex flex-col gap-8"
             : "grid grid-cols-1 lg:grid-cols-2 gap-6"
         }
       >
@@ -470,7 +485,7 @@ const ModernCareerPaths: React.FC<{
 
         {/* Non-Ideal Roles */}
         {nonIdealRoles.length > 0 && (
-          <div>
+          <div {...(forPdfCapture ? { "data-pdf-page-break-before": "" } : {})}>
             <div className="flex items-center gap-2 mb-4">
               <div className="w-6 h-6 bg-gradient-to-br from-gray-400 to-gray-500 rounded-md flex items-center justify-center shadow-sm">
                 <span className="text-white text-xs">-</span>
@@ -547,6 +562,7 @@ const WealthCode: React.FC<WealthCodeProps> = ({
       {resolvedHeader.badgeText ? (
         <div
           data-pdf-break-anchor="wealth-header"
+          {...(forPdfCapture ? { "data-pdf-page-break-before": "" } : {})}
           className="relative rounded-3xl overflow-hidden mb-8"
           style={{
             background: "linear-gradient(135deg, #fb923c 0%, #f97316 50%, #ea580c 100%)",

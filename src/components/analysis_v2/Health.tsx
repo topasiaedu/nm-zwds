@@ -273,34 +273,39 @@ const Health: React.FC<HealthAnalysisProps> = ({
     Boolean(forPdfCapture || expandedTips[index]);
 
   const bodyMapCard = (
-    <div className="w-full max-w-md mx-auto">
-      <div className="rounded-2xl shadow-lg border bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 border-gray-200 dark:border-gray-700 p-6">
+    <div className={forPdfCapture ? "w-full max-w-[420px] mx-auto" : "w-full max-w-md mx-auto"}>
+      <div
+        className="rounded-2xl shadow-lg border bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 border-gray-200 dark:border-gray-700 p-6"
+        style={forPdfCapture ? { padding: "16px" } : undefined}
+      >
         <div className="flex items-center gap-3 mb-4">
           <span className="text-2xl">🧍</span>
           <h4 className="text-base font-bold text-gray-900 dark:text-white">
             Body Map
           </h4>
         </div>
-        <HumanBodySVG
-          affectedParts={healthAnalysis?.affectedBodyParts || []}
-          gender={
-            chartData?.input?.gender === "female" ? "female" : "male"
-          }
-          forPdfCapture={forPdfCapture}
-        />
+        <div style={forPdfCapture ? { height: "420px" } : { height: "360px" }}>
+          <HumanBodySVG
+            affectedParts={healthAnalysis?.affectedBodyParts || []}
+            gender={chartData?.input?.gender === "female" ? "female" : "male"}
+            forPdfCapture={forPdfCapture}
+          />
+        </div>
       </div>
     </div>
   );
 
   const mainInner = (
     <div className="p-6 dark:bg-gray-900">
-      <GradientSectionHeader
-        badgeText="04"
-        title="HEALTH CODE SCAN"
-        subtitle="Decode your body's energetic blueprint — where vitality flows and where it breaks down."
-        showDivider={true}
-        forPdfCapture={forPdfCapture}
-      />
+      <div {...(forPdfCapture ? { "data-pdf-page-break-before": "" } : {})}>
+        <GradientSectionHeader
+          badgeText="04"
+          title="HEALTH CODE SCAN"
+          subtitle="Decode your body's energetic blueprint — where vitality flows and where it breaks down."
+          showDivider={!forPdfCapture}
+          forPdfCapture={forPdfCapture}
+        />
+      </div>
 
       <div className={forPdfCapture ? "space-y-6" : "grid grid-cols-1 lg:grid-cols-3 gap-8"}>
         {forPdfCapture ? (
@@ -308,7 +313,11 @@ const Health: React.FC<HealthAnalysisProps> = ({
         ) : null}
         <div className={forPdfCapture ? "space-y-6" : "flex flex-col space-y-6 order-2 lg:order-1 col-span-2"}>
           {healthAnalysis && healthAnalysis.affectedBodyParts.length > 0 ? (
-            <div data-pdf-break-anchor="health-analysis-tips" className="rounded-2xl shadow-lg border bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700 p-8">
+            <div
+              {...(forPdfCapture ? { "data-pdf-page-break-before": "" } : {})}
+              data-pdf-break-anchor="health-analysis-tips"
+              className="rounded-2xl shadow-lg border bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700 p-8"
+            >
               <div className="flex items-center gap-3 mb-6">
                 <span className="text-3xl">🏥</span>
                 <h3 className="text-lg font-bold text-gray-900 dark:text-white">

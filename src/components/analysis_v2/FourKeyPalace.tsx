@@ -194,12 +194,15 @@ const FourKeyPalace: React.FC<FourKeyPalaceProps> = ({ chartData, resolvePalaceN
   if (analysisResult.alerts.length === 0) {
     return (
       <div className="dark:bg-gray-900">
-        <GradientSectionHeader
-          badgeText="05"
-          title="DESTINY ALERT MAP"
-          subtitle="Four signals showing where your life force is most activated."
-          forPdfCapture={forPdfCapture}
-        />
+        <div {...(forPdfCapture ? { "data-pdf-page-break-before": "" } : {})}>
+          <GradientSectionHeader
+            badgeText="05"
+            title="DESTINY ALERT MAP"
+            subtitle="Four signals showing where your life force is most activated."
+            showDivider={!forPdfCapture}
+            forPdfCapture={forPdfCapture}
+          />
+        </div>
         <p className="text-center text-gray-500 dark:text-gray-400 py-8 px-6">
           No transformation data available.
         </p>
@@ -210,16 +213,26 @@ const FourKeyPalace: React.FC<FourKeyPalaceProps> = ({ chartData, resolvePalaceN
   return (
     <div className="dark:bg-gray-900">
       {/* Section header — matches all other analysis sections */}
-      <GradientSectionHeader
-        badgeText="05"
-        title="DESTINY ALERT MAP"
-        subtitle="Four signals showing where your life force is most activated."
-        forPdfCapture={forPdfCapture}
-      />
+      <div {...(forPdfCapture ? { "data-pdf-page-break-before": "" } : {})}>
+        <GradientSectionHeader
+          badgeText="05"
+          title="DESTINY ALERT MAP"
+          subtitle="Four signals showing where your life force is most activated."
+          showDivider={!forPdfCapture}
+          forPdfCapture={forPdfCapture}
+        />
+      </div>
 
       {/* 2 × 2 card grid */}
-      <div data-pdf-break-anchor="four-key-grid" className="grid grid-cols-1 sm:grid-cols-2 gap-5 px-6 pb-6">
-        {analysisResult.alerts.map((alert) => {
+      <div
+        data-pdf-break-anchor="four-key-grid"
+        className={
+          forPdfCapture
+            ? "grid grid-cols-1 gap-5 px-6 pb-6"
+            : "grid grid-cols-1 sm:grid-cols-2 gap-5 px-6 pb-6"
+        }
+      >
+        {analysisResult.alerts.map((alert, index) => {
           const key = normaliseTransformation(alert.transformation);
           const config = TRANSFORMATION_CONFIG[key] ?? TRANSFORMATION_CONFIG["化忌"];
 
@@ -231,6 +244,9 @@ const FourKeyPalace: React.FC<FourKeyPalaceProps> = ({ chartData, resolvePalaceN
           return (
             <div
               key={`${alert.palaceNumber}-${alert.transformation}`}
+              {...(forPdfCapture && index === 2
+                ? { "data-pdf-page-break-before": "" }
+                : {})}
               className="relative rounded-2xl overflow-hidden flex flex-col"
               style={{
                 background: config.bodyGradient,

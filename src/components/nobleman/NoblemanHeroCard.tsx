@@ -50,7 +50,11 @@ const NoblemanHeroCard: React.FC<NoblemanHeroCardProps> = ({
         {/* Full Width - Title & Description */}
         <div className="flex-1">
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 bg-black/20 backdrop-blur-sm rounded-full px-4 py-1.5 mb-4 border border-white/20">
+          <div
+            className={`inline-flex items-center gap-2 rounded-full px-4 py-1.5 mb-4 border border-white/20 ${
+              forPdfCapture ? "bg-black/40" : "bg-black/20 backdrop-blur-sm"
+            }`}
+          >
             <div className={`w-2 h-2 rounded-full bg-white ${forPdfCapture ? "" : "animate-pulse"}`} />
             <span className="text-white text-xs font-bold uppercase tracking-wider drop-shadow-lg">
               Nobleman Analysis

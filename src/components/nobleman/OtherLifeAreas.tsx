@@ -14,9 +14,12 @@ import type { OtherAreaData } from "../../types/nobleman";
 interface OtherLifeAreasProps {
   /** Array of other area data (typically 4 areas) */
   areas: OtherAreaData[];
-  
+
   /** Optional: Theme (light/dark) */
   theme?: "light" | "dark";
+
+  /** PDF capture: disable hover motion for stable rasterization. */
+  forPdfCapture?: boolean;
 }
 
 /**
@@ -101,13 +104,17 @@ const getAreaIcon = (objective: string): JSX.Element => {
 const OtherLifeAreas: React.FC<OtherLifeAreasProps> = ({
   areas,
   theme = "light",
+  forPdfCapture,
 }) => {
   if (areas.length === 0) {
     return null;
   }
 
   return (
-    <div className="rounded-3xl shadow-2xl border border-gray-200 dark:border-gray-700 bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 p-8 mb-8">
+    <div
+      {...(forPdfCapture ? { "data-pdf-page-break-before": "" } : {})}
+      className="rounded-3xl shadow-2xl border border-gray-200 dark:border-gray-700 bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 p-8 mb-8"
+    >
       {/* Section Header */}
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-2">
@@ -122,11 +129,15 @@ const OtherLifeAreas: React.FC<OtherLifeAreasProps> = ({
       </div>
       
       {/* Grid of Cards - 3 columns */}
-      <div className="grid md:grid-cols-3 gap-6">
+      <div className={forPdfCapture ? "grid grid-cols-2 gap-6" : "grid md:grid-cols-3 gap-6"}>
         {areas.map((area) => (
           <div
             key={`${area.objective}-${area.palaceName}`}
-            className="group relative rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
+            className={
+              forPdfCapture
+                ? "group relative rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800"
+                : "group relative rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
+            }
           >
             {/* Gradient Header with Icon */}
             <div 

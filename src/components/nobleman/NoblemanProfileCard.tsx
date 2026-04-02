@@ -98,7 +98,10 @@ const NoblemanProfileCard: React.FC<NoblemanProfileCardProps> = ({
   const currentImage = getProfileImage(currentProfile);
   
   return (
-    <div className="rounded-3xl shadow-2xl border border-gray-200 dark:border-gray-700 bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 overflow-hidden mb-8">
+    <div
+      {...(forPdfCapture ? { "data-pdf-page-break-before": "" } : {})}
+      className="rounded-3xl shadow-2xl border border-gray-200 dark:border-gray-700 bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 overflow-hidden mb-8"
+    >
       {/* Header Section - More Prominent */}
       <div className="relative px-8 py-8 border-b border-gray-200 dark:border-gray-700">
         <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-indigo-500/10 dark:from-purple-600/20 dark:to-indigo-600/20" />
@@ -123,12 +126,17 @@ const NoblemanProfileCard: React.FC<NoblemanProfileCardProps> = ({
         {/* Image block first for PDF layout */}
         {forPdfCapture ? (
           <div className="p-8 pt-6">
-            <div className="w-full">
+            <div className="w-full flex justify-center">
               <img
                 src={currentImage}
                 alt={`${currentProfile.type} Nobleman`}
-                className="rounded-3xl w-full object-cover"
-                style={{ aspectRatio: "16 / 9", maxHeight: "360px" }}
+                className="rounded-3xl object-cover"
+                style={{
+                  height: "360px",
+                  width: "auto",
+                  maxWidth: "100%",
+                  aspectRatio: "3 / 4",
+                }}
               />
             </div>
           </div>
@@ -201,7 +209,13 @@ const NoblemanProfileCard: React.FC<NoblemanProfileCardProps> = ({
               </div>
               
               {/* Characteristics Card */}
-              <div className="bg-white/50 dark:bg-gray-800/50 rounded-2xl p-6 border border-gray-200 dark:border-gray-700 backdrop-blur-sm">
+              <div
+                className={
+                  forPdfCapture
+                    ? "bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700"
+                    : "bg-white/50 dark:bg-gray-800/50 rounded-2xl p-6 border border-gray-200 dark:border-gray-700 backdrop-blur-sm"
+                }
+              >
                 <div className="flex items-center gap-2 mb-4">
                   <svg className="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />

@@ -11,13 +11,14 @@ import { supabase } from "../utils/supabase-client";
 
 // PDF export functionality
 import { exportChartAsPdf, isPdfExportSupported } from "../utils/pdfExport";
+import { buildPrintResultTargetUrl, exportPdfViaServer } from "../utils/pdfExportServer";
 import PdfExportModal from "../components/PdfExportModal";
 import { PdfChartData } from "../components/PdfDocument";
 import { useAlertContext } from "../context/AlertContext";
 import { ChartSettingsProvider } from "../context/ChartSettingsContext";
 import ChartSettingsModal from "../components/ChartSettingsModal";
 
-const ENABLE_PDF_EXPORT = false;
+const ENABLE_PDF_EXPORT = true;
 
 /**
  * Interface for chart data - using PdfChartData for consistency
@@ -443,6 +444,52 @@ const FreeResultContent: React.FC = () => {
         error: undefined,
       },
     });
+
+    const pdfServiceUrl = process.env.REACT_APP_PDF_SERVICE_URL;
+    if (pdfServiceUrl !== undefined && pdfServiceUrl !== "") {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const accessToken = sessionData.session?.access_token;
+      if (accessToken !== undefined) {
+        try {
+          setPdfExportModal((prev) => ({
+            ...prev,
+            progress: {
+              ...prev.progress,
+              step: t("pdfExport.serverRendering") || "Putting your chart into a print-ready report...",
+              percentage: 10,
+            },
+          }));
+          const targetUrl = buildPrintResultTargetUrl(
+            window.location.origin,
+            String(chartData.id),
+            accessToken
+          );
+          await exportPdfViaServer(targetUrl, async () => `Bearer ${accessToken}`);
+          setPdfExportModal({
+            isOpen: true,
+            progress: {
+              step: t("pdfExport.complete") || "Complete",
+              percentage: 100,
+              isComplete: true,
+              error: undefined,
+            },
+          });
+          return;
+        } catch (error) {
+          console.error("PDF server export error:", error);
+          setPdfExportModal((prev) => ({
+            ...prev,
+            progress: {
+              step: t("pdfExport.failed") || "Export failed",
+              percentage: 0,
+              isComplete: true,
+              error: error instanceof Error ? error.message : "Unknown error",
+            },
+          }));
+          return;
+        }
+      }
+    }
 
     try {
       await exportChartAsPdf(

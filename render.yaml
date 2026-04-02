@@ -1,0 +1,22 @@
+# Render Blueprint (optional): PDF Web Service only.
+# Adjust the service name and plan before deploy. The CRA app is deployed separately (e.g. Vercel).
+
+services:
+  - type: web
+    name: nm-zwds-pdf-server
+    runtime: node
+    rootDir: server
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    plan: starter
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: ALLOWED_PDF_ORIGIN
+        sync: false
+      - key: ALLOWED_APP_ORIGIN
+        sync: false
+      - key: SUPABASE_JWT_SECRET
+        sync: false
+      - key: PDF_API_SECRET
+        sync: false

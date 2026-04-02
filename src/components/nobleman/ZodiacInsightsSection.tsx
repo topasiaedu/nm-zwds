@@ -18,9 +18,12 @@ import ZodiacIconWrapper from "../zwds/components/ZodiacIconWrapper";
 interface ZodiacInsightsSectionProps {
   /** Complete zodiac insights data */
   zodiacInsights: ZodiacInsights;
-  
+
   /** Nobleman zodiac name for dynamic icon selection */
   noblemanZodiac: string;
+
+  /** Avoid backdrop-filter / blur so raster PDF capture shows icons and text. */
+  forPdfCapture?: boolean;
 }
 
 /**
@@ -32,13 +35,26 @@ interface ZodiacInsightsSectionProps {
 export const ZodiacInsightsSection: React.FC<ZodiacInsightsSectionProps> = ({
   zodiacInsights,
   noblemanZodiac,
+  forPdfCapture,
 }) => {
+  const iconInnerClass = forPdfCapture
+    ? "w-32 h-32 md:w-40 md:h-40 bg-white/35 rounded-3xl p-6 flex items-center justify-center shadow-lg"
+    : "w-32 h-32 md:w-40 md:h-40 bg-white/20 backdrop-blur-sm rounded-3xl p-6 flex items-center justify-center shadow-lg";
+  const traitPillClass = forPdfCapture
+    ? "px-4 py-2 rounded-full bg-white/35 text-white font-medium text-sm"
+    : "px-4 py-2 rounded-full bg-white/20 backdrop-blur-sm text-white font-medium text-sm";
+  const elementBadgeClass = forPdfCapture
+    ? "inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/45 text-white font-semibold"
+    : "inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/30 backdrop-blur-sm text-white font-semibold";
   // Get the zodiac icon dynamically
   const zodiacKey = noblemanZodiac.toLowerCase() as keyof typeof ZodiacIcons;
   const ZodiacIcon = ZodiacIcons[zodiacKey];
   
   return (
-    <section className="mb-8">
+    <section
+      className="mb-8"
+      {...(forPdfCapture ? { "data-pdf-page-break-before": "" } : {})}
+    >
       {/* Section Header */}
       <div className="text-center mb-8 pt-8 border-t border-gray-200 dark:border-gray-700">
         <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-2 uppercase tracking-wide">
@@ -55,7 +71,7 @@ export const ZodiacInsightsSection: React.FC<ZodiacInsightsSectionProps> = ({
           {/* Zodiac Icon */}
           {ZodiacIcon && (
             <div className="flex justify-center mb-6">
-              <div className="w-32 h-32 md:w-40 md:h-40 bg-white/20 backdrop-blur-sm rounded-3xl p-6 flex items-center justify-center shadow-lg">
+              <div className={iconInnerClass}>
                 <ZodiacIconWrapper Icon={ZodiacIcon} className="w-full h-full text-white brightness-0 invert" />
               </div>
             </div>
@@ -72,24 +88,25 @@ export const ZodiacInsightsSection: React.FC<ZodiacInsightsSectionProps> = ({
           {/* Core Traits */}
           <div className="flex flex-wrap justify-center gap-3 mb-4">
             {zodiacInsights.coreTraits.map((trait) => (
-              <span
-                key={trait}
-                className="px-4 py-2 rounded-full bg-white/20 backdrop-blur-sm text-white font-medium text-sm"
-              >
+              <span key={trait} className={traitPillClass}>
                 {trait}
               </span>
             ))}
           </div>
           
           {/* Element Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/30 backdrop-blur-sm text-white font-semibold">
+          <div className={elementBadgeClass}>
             {zodiacInsights.element} Element
           </div>
         </div>
       </div>
 
       {/* 4-Card Grid - Practical Guidance */}
-      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div
+        className={
+          forPdfCapture ? "grid grid-cols-2 gap-4" : "grid md:grid-cols-2 lg:grid-cols-4 gap-4"
+        }
+      >
         {/* Card 1: How to Recognize */}
         <GuidanceCard
           title="How to Recognize"
@@ -112,6 +129,7 @@ export const ZodiacInsightsSection: React.FC<ZodiacInsightsSectionProps> = ({
           icon="🤝"
           gradient="purple"
           items={zodiacInsights.approachStrategies}
+          pdfPageBreakBefore={forPdfCapture}
         />
         
         {/* Card 4: Watch Out For */}
@@ -137,7 +155,8 @@ const GuidanceCard: React.FC<{
   icon: string;
   gradient: string;
   items: string[];
-}> = ({ title, icon, gradient, items }) => {
+  pdfPageBreakBefore?: boolean;
+}> = ({ title, icon, gradient, items, pdfPageBreakBefore }) => {
   // Convert gradient identifier to actual CSS gradient
   const getGradientStyle = (gradientKey: string): string => {
     const gradientMap: Record<string, string> = {
@@ -151,7 +170,10 @@ const GuidanceCard: React.FC<{
   };
   
   return (
-    <div className="rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 transition-all hover:shadow-lg">
+    <div
+      {...(pdfPageBreakBefore ? { "data-pdf-page-break-before": "" } : {})}
+      className="rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 transition-all hover:shadow-lg"
+    >
       {/* Header with gradient */}
       <div 
         className="p-4"

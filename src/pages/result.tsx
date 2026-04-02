@@ -18,6 +18,8 @@ import {
 import PdfExportModal from "../components/PdfExportModal";
 import { PdfChartData } from "../components/PdfDocument";
 import { useAlertContext } from "../context/AlertContext";
+import { buildPrintResultTargetUrl, exportPdfViaServer } from "../utils/pdfExportServer";
+import { supabase } from "../utils/supabase-client";
 import {
   Overview,
   Health,
@@ -35,7 +37,7 @@ import type { LifeAspect } from "../types/destiny-navigator";
 // FourKeyPalaceAnalysis and LifeAreasExplanation are kept commented out for potential future use
 // import { FourKeyPalaceAnalysis, LifeAreasExplanation } from "../components/analysis";
 
-const ENABLE_PDF_EXPORT = false;
+const ENABLE_PDF_EXPORT = true;
 
 /**
  * Chinese Earthly Branches for time periods (地支)
@@ -670,6 +672,69 @@ const ResultContent: React.FC = () => {
       },
     });
 
+    const pdfServiceUrl = process.env.REACT_APP_PDF_SERVICE_URL;
+    if (pdfServiceUrl !== undefined && pdfServiceUrl !== "") {
+      try {
+        const { data: sessionData } = await supabase.auth.getSession();
+        const accessToken = sessionData.session?.access_token;
+        if (accessToken === undefined) {
+          showAlert(
+            t("pdfExport.noSession") || "Please sign in first so we can prepare your chart.",
+            "error"
+          );
+          setPdfExportModal({
+            isOpen: false,
+            progress: {
+              step: "",
+              percentage: 0,
+              isComplete: false,
+              error: undefined,
+            },
+          });
+          return;
+        }
+
+        setPdfExportModal((prev) => ({
+          ...prev,
+          progress: {
+            ...prev.progress,
+            step: t("pdfExport.serverRendering") || "Putting your chart into a print-ready report...",
+            percentage: 10,
+          },
+        }));
+
+        const targetUrl = buildPrintResultTargetUrl(
+          window.location.origin,
+          String(chartData.id),
+          accessToken
+        );
+        await exportPdfViaServer(targetUrl, async () => `Bearer ${accessToken}`);
+
+        setPdfExportModal({
+          isOpen: true,
+          progress: {
+            step: t("pdfExport.complete") || "Complete",
+            percentage: 100,
+            isComplete: true,
+            error: undefined,
+          },
+        });
+        return;
+      } catch (error) {
+        console.error("PDF server export error:", error);
+        setPdfExportModal((prev) => ({
+          ...prev,
+          progress: {
+            step: t("pdfExport.failed") || "Export failed",
+            percentage: 0,
+            isComplete: true,
+            error: error instanceof Error ? error.message : "Unknown error",
+          },
+        }));
+        return;
+      }
+    }
+
     const resultExportContext: PdfResultExportContext = {
       blueprintMode,
       selectedLiuMonth,
@@ -739,6 +804,7 @@ const ResultContent: React.FC = () => {
     language,
     resolvePalaceName,
     selectedLiuMonth,
+    setIsCapturingForPdf,
     showAlert,
     t,
   ]);

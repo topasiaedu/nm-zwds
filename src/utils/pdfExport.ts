@@ -14,6 +14,7 @@ import ReactDOM from "react-dom/client";
 import { PdfChartData } from "../components/PdfDocument";
 import {
   PdfCaptureLanguageProvider,
+  useLanguage,
   type Language,
 } from "../context/LanguageContext";
 import type { ChartData } from "../utils/zwds/types";
@@ -86,6 +87,47 @@ const PAGINATION_ANCHOR_TOLERANCE_RATIO = 0.16;
 const MIN_PAGE_FILL_RATIO = 0.72;
 const MIN_RESIDUAL_RATIO = 0.2;
 
+/**
+ * html2canvas often drops text and inline SVG inside `backdrop-filter` layers, and large
+ * CSS `filter: blur()` regions mis-size the raster. Strip these in the **cloned** document only.
+ */
+function sanitizeDocumentCloneForRasterPdf(clonedDoc: Document): void {
+  const patch = clonedDoc.createElement("style");
+  patch.setAttribute("data-pdf-raster-sanitize", "true");
+  patch.textContent = `
+    * {
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+    }
+  `;
+  const head = clonedDoc.head;
+  if (head !== null) {
+    head.appendChild(patch);
+  }
+
+  const win = clonedDoc.defaultView;
+  if (win === null) {
+    return;
+  }
+
+  const all = clonedDoc.querySelectorAll("*");
+  for (let i = 0; i < all.length; i += 1) {
+    const node = all[i];
+    if (!(node instanceof win.HTMLElement)) {
+      continue;
+    }
+    let filterVal = node.style.filter;
+    if (filterVal !== "" && filterVal.toLowerCase().includes("blur")) {
+      node.style.filter = "none";
+    } else {
+      const computed = win.getComputedStyle(node);
+      if (computed.filter !== "none" && computed.filter.toLowerCase().includes("blur")) {
+        node.style.filter = "none";
+      }
+    }
+  }
+}
+
 type CaptureAnchorRange = {
   anchorId: string;
   startY: number;
@@ -95,6 +137,8 @@ type CaptureAnchorRange = {
 type CaptureResult = {
   canvas: HTMLCanvasElement;
   anchors: CaptureAnchorRange[];
+  /** Y offsets (px) into the captured canvas where a new PDF page must start (see `data-pdf-page-break-before`). */
+  hardBreakYs: number[];
 };
 
 type PdfLayoutState = {
@@ -129,6 +173,28 @@ const mergeResultExportContext = (
       ...partial?.palaceOverrides,
     },
   };
+};
+
+/**
+ * Title block matching `/print/result` + in-app analysis header; rendered inside `PdfCaptureLanguageProvider`.
+ */
+const PdfReportIntroBlock: React.FC = () => {
+  const { t } = useLanguage();
+  return React.createElement(
+    "div",
+    { className: "text-center py-6 mb-2 border-b border-gray-300" },
+    React.createElement(
+      "h2",
+      { className: "text-2xl font-bold text-gray-900" },
+      t("analysis.title") || "PERSONALIZED LIFE REPORT"
+    ),
+    React.createElement(
+      "p",
+      { className: "mt-2 text-sm italic text-gray-600" },
+      t("analysis.subtitle") ||
+        "A custom breakdown of your chart's strengths, patterns, and strategic focus areas."
+    )
+  );
 };
 
 const setupChineseFonts = (doc: jsPDF): void => {
@@ -229,6 +295,7 @@ const captureChartAsImage = async (
       onclone: (clonedDoc) => {
         clonedDoc.documentElement.classList.remove("dark");
         clonedDoc.body.classList.remove("dark");
+        sanitizeDocumentCloneForRasterPdf(clonedDoc);
       },
     });
 
@@ -318,6 +385,15 @@ const captureReactTreeAsCanvas = async (
       })
       .filter((anchor) => anchor.endY > anchor.startY);
 
+    const breakElements = Array.from(
+      tempContainer.querySelectorAll<HTMLElement>("[data-pdf-page-break-before]")
+    );
+    const breakYRaw = breakElements.map((element) => {
+      const rect = element.getBoundingClientRect();
+      return Math.floor(rect.top - containerRect.top);
+    });
+    const hardBreakYs = [...new Set(breakYRaw.filter((y) => y >= 0))].sort((a, b) => a - b);
+
     const canvas = await html2canvas(tempContainer, {
       scale,
       backgroundColor: "#ffffff",
@@ -329,12 +405,13 @@ const captureReactTreeAsCanvas = async (
       onclone: (clonedDoc) => {
         clonedDoc.documentElement.classList.remove("dark");
         clonedDoc.body.classList.remove("dark");
+        sanitizeDocumentCloneForRasterPdf(clonedDoc);
       },
     });
 
     root.unmount();
     document.body.removeChild(tempContainer);
-    return { canvas, anchors };
+    return { canvas, anchors, hardBreakYs };
   } catch (error) {
     console.error("captureReactTreeAsCanvas:", error);
     try {
@@ -354,7 +431,8 @@ const addPaginatedCanvasToPdf = (
   canvas: HTMLCanvasElement,
   layoutState: PdfLayoutState,
   forcePageBreakBefore: boolean,
-  anchors: CaptureAnchorRange[] = []
+  anchors: CaptureAnchorRange[] = [],
+  hardBreakYs: number[] = []
 ): number => {
   if (canvas.width <= 0 || canvas.height <= 0) {
     return 0;
@@ -371,6 +449,26 @@ const addPaginatedCanvasToPdf = (
   const devMode = process.env.NODE_ENV !== "production";
   let sourceY = 0;
   let tileCount = 0;
+
+  const sortedHardBreaks = [...hardBreakYs].filter((y) => y >= 0 && y < canvas.height).sort((a, b) => a - b);
+
+  /**
+   * When raster Y reaches a hard break, start a fresh PDF page so the following tile aligns with print CSS.
+   */
+  const applyHardPageBreakIfAtMarker = (y: number): void => {
+    const eps = 2;
+    const hit = sortedHardBreaks.some((b) => Math.abs(b - y) <= eps);
+    if (!hit) {
+      return;
+    }
+    const atTop = layoutState.cursorYMm <= PAGE_MARGIN_Y_MM + 0.05;
+    const needFresh = layoutState.hasContentOnPage || !atTop;
+    if (needFresh) {
+      doc.addPage();
+      layoutState.cursorYMm = PAGE_MARGIN_Y_MM;
+      layoutState.hasContentOnPage = false;
+    }
+  };
 
   /**
    * Ensures the next tile fits on the current PDF page, adding pages when needed.
@@ -401,6 +499,8 @@ const addPaginatedCanvasToPdf = (
   };
 
   while (sourceY < canvas.height) {
+    applyHardPageBreakIfAtMarker(sourceY);
+
     const remaining = canvas.height - sourceY;
     let sliceHeight = Math.min(sliceHeightPxBase, remaining);
 
@@ -427,6 +527,23 @@ const addPaginatedCanvasToPdf = (
       const fillRatio = sliceHeight / sliceHeightPxBase;
       if (residual > 0 && residual < minResidualPx && fillRatio >= MIN_PAGE_FILL_RATIO) {
         sliceHeight = remaining;
+      }
+    }
+
+    /**
+     * Never emit a tile taller than one printable page; oversized tiles overflow jsPDF's page
+     * and produce huge blank areas / clipped content on following pages.
+     */
+    sliceHeight = Math.min(sliceHeight, sliceHeightPxBase);
+
+    const nextHardBreak = sortedHardBreaks.find((b) => b > sourceY + 1 && b < sourceY + sliceHeight);
+
+    let hardBreakSlice = false;
+    if (nextHardBreak !== undefined) {
+      const upToBreak = nextHardBreak - sourceY;
+      if (upToBreak >= 1) {
+        sliceHeight = Math.min(sliceHeight, upToBreak);
+        hardBreakSlice = true;
       }
     }
 
@@ -494,22 +611,30 @@ const addPaginatedCanvasToPdf = (
     if (sliceHeight === remaining) {
       break;
     }
-    const overlapPx =
-      sliceHeight >= sliceHeightPxBase * 0.92
-        ? Math.max(2, TILE_OVERLAP_PX - 4)
-        : Math.max(2, TILE_OVERLAP_PX - 2);
-    sourceY += Math.max(1, sliceHeight - overlapPx);
+    if (hardBreakSlice) {
+      sourceY += sliceHeight;
+    } else {
+      const overlapPx =
+        sliceHeight >= sliceHeightPxBase * 0.92
+          ? Math.max(2, TILE_OVERLAP_PX - 4)
+          : Math.max(2, TILE_OVERLAP_PX - 2);
+      sourceY += Math.max(1, sliceHeight - overlapPx);
+    }
   }
 
   return tileCount;
 };
 
-const trimCanvasVerticalWhitespace = (
-  sourceCanvas: HTMLCanvasElement
-): HTMLCanvasElement => {
+type TrimCanvasResult = {
+  canvas: HTMLCanvasElement;
+  /** Rows cropped from the top; subtract from hard-break Y values. */
+  topTrimPx: number;
+};
+
+const trimCanvasVerticalWhitespace = (sourceCanvas: HTMLCanvasElement): TrimCanvasResult => {
   const context = sourceCanvas.getContext("2d");
   if (!context) {
-    return sourceCanvas;
+    return { canvas: sourceCanvas, topTrimPx: 0 };
   }
   const { width, height } = sourceCanvas;
   const imageData = context.getImageData(0, 0, width, height).data;
@@ -543,7 +668,7 @@ const trimCanvasVerticalWhitespace = (
 
   const contentHeight = bottom - top + 1;
   if (contentHeight <= 0 || contentHeight >= height) {
-    return sourceCanvas;
+    return { canvas: sourceCanvas, topTrimPx: 0 };
   }
 
   const trimmedCanvas = document.createElement("canvas");
@@ -551,7 +676,7 @@ const trimCanvasVerticalWhitespace = (
   trimmedCanvas.height = contentHeight;
   const trimmedContext = trimmedCanvas.getContext("2d");
   if (!trimmedContext) {
-    return sourceCanvas;
+    return { canvas: sourceCanvas, topTrimPx: 0 };
   }
   trimmedContext.fillStyle = "#ffffff";
   trimmedContext.fillRect(0, 0, width, contentHeight);
@@ -566,7 +691,7 @@ const trimCanvasVerticalWhitespace = (
     width,
     contentHeight
   );
-  return trimmedCanvas;
+  return { canvas: trimmedCanvas, topTrimPx: top };
 };
 
 const isCaptureCanvasValid = (canvas: HTMLCanvasElement | null): canvas is HTMLCanvasElement => {
@@ -730,13 +855,17 @@ const appendMirroredAnalysisPages = async (
       return;
     }
 
-    const trimmedCanvas = trimCanvasVerticalWhitespace(captureResult.canvas);
+    const { canvas: trimmedCanvas, topTrimPx } = trimCanvasVerticalWhitespace(captureResult.canvas);
+    const adjustedHardBreaks = captureResult.hardBreakYs
+      .map((y) => y - topTrimPx)
+      .filter((y) => y >= 0 && y < trimmedCanvas.height);
     const pageTiles = addPaginatedCanvasToPdf(
       doc,
       trimmedCanvas,
       layoutState,
       startOnNewPage,
-      captureResult.anchors
+      captureResult.anchors,
+      adjustedHardBreaks
     );
     captureResult.canvas.remove();
     if (trimmedCanvas !== captureResult.canvas) {
@@ -826,11 +955,16 @@ const appendMirroredAnalysisPages = async (
     "正在添加总览...",
     "Adding overview...",
     66,
-    React.createElement(Overview, {
-      chartData: calculatedChartData,
-      palaceOverride: lifePalace,
-      forPdfCapture: true,
-    }),
+    React.createElement(
+      React.Fragment,
+      null,
+      React.createElement(PdfReportIntroBlock, null),
+      React.createElement(Overview, {
+        chartData: calculatedChartData,
+        palaceOverride: lifePalace,
+        forPdfCapture: true,
+      })
+    ),
     900,
     "总览截图失败",
     "Overview capture failed",
@@ -844,11 +978,11 @@ const appendMirroredAnalysisPages = async (
     React.createElement(WealthCode, {
       chartData: calculatedChartData,
       header: WEALTH_HEADER,
-      showTopDivider: true,
+      showTopDivider: false,
       palaceOverride: wealthPalace,
       forPdfCapture: true,
     }),
-    1300,
+    2000,
     "财富分析截图失败",
     "Wealth section capture failed"
   );

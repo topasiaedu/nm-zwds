@@ -15,6 +15,8 @@ import ZodiacIconWrapper from "../zwds/components/ZodiacIconWrapper";
 interface ZodiacMiniCardsGridProps {
   /** Mini zodiac data for the 4 other life areas */
   miniData: ZodiacMiniData[];
+  /** PDF / raster capture: drop backdrop-filter so SVG zodiac icons paint. */
+  forPdfCapture?: boolean;
 }
 
 /**
@@ -23,7 +25,10 @@ interface ZodiacMiniCardsGridProps {
  * Compact grid showing zodiac summaries for other life areas.
  * Clicking a card opens a modal with full personality details.
  */
-export const ZodiacMiniCardsGrid: React.FC<ZodiacMiniCardsGridProps> = ({ miniData }) => {
+export const ZodiacMiniCardsGrid: React.FC<ZodiacMiniCardsGridProps> = ({
+  miniData,
+  forPdfCapture,
+}) => {
   if (miniData.length === 0) {
     return null;
   }
@@ -43,10 +48,7 @@ export const ZodiacMiniCardsGrid: React.FC<ZodiacMiniCardsGridProps> = ({ miniDa
       {/* Grid of Mini Cards */}
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
         {miniData.map((mini) => (
-          <ZodiacMiniCard
-            key={mini.area}
-            miniData={mini}
-          />
+          <ZodiacMiniCard key={mini.area} miniData={mini} forPdfCapture={forPdfCapture} />
         ))}
       </div>
     </div>
@@ -60,7 +62,8 @@ export const ZodiacMiniCardsGrid: React.FC<ZodiacMiniCardsGridProps> = ({ miniDa
  */
 const ZodiacMiniCard: React.FC<{
   miniData: ZodiacMiniData;
-}> = ({ miniData }) => {
+  forPdfCapture?: boolean;
+}> = ({ miniData, forPdfCapture }) => {
   // Get the zodiac icon dynamically
   const zodiacKey = miniData.zodiac.toLowerCase() as keyof typeof ZodiacIcons;
   const ZodiacIcon = ZodiacIcons[zodiacKey];
@@ -88,7 +91,13 @@ const ZodiacMiniCard: React.FC<{
         {/* Zodiac Icon */}
         {ZodiacIcon && (
           <div className="flex justify-center mb-2">
-            <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl p-2 flex items-center justify-center">
+            <div
+              className={
+                forPdfCapture
+                  ? "w-12 h-12 bg-white/35 rounded-xl p-2 flex items-center justify-center"
+                  : "w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl p-2 flex items-center justify-center"
+              }
+            >
               <ZodiacIconWrapper Icon={ZodiacIcon} className="w-full h-full text-white brightness-0 invert" />
             </div>
           </div>

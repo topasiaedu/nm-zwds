@@ -38,6 +38,10 @@ npm start
 
 The app will open at [http://localhost:3000](http://localhost:3000)
 
+## PDF export microservice (optional)
+
+High-fidelity PDF generation can run in a separate Node service under [`server/`](./server/). See [docs/PDF_RENDER_MICROSERVICE_OVERVIEW.md](./docs/PDF_RENDER_MICROSERVICE_OVERVIEW.md) for architecture, env vars, and Render deployment.
+
 ## 📚 Documentation
 
 Comprehensive documentation is available in the [`docs/`](./docs/) folder:

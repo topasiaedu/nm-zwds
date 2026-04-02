@@ -127,15 +127,21 @@ const AreasOfLife: React.FC<{
   return (
     <div className="p-6 dark:bg-gray-900">
       {/* Section Header */}
-      <GradientSectionHeader
-        badgeText="06"
-        title="DESTINY SCOREBOARD"
-        subtitle="Your personal scorecard across the 5 destiny pillars."
-        showDivider={true}
-        forPdfCapture={forPdfCapture}
-      />
+      <div {...(forPdfCapture ? { "data-pdf-page-break-before": "" } : {})}>
+        <GradientSectionHeader
+          badgeText="06"
+          title="DESTINY SCOREBOARD"
+          subtitle="Your personal scorecard across the 5 destiny pillars."
+          showDivider={!forPdfCapture}
+          forPdfCapture={forPdfCapture}
+        />
+      </div>
 
-      <div className={forPdfCapture ? "space-y-6" : "grid grid-cols-1 md:grid-cols-2 gap-8"}>
+      <div
+        className={
+          forPdfCapture ? "grid grid-cols-1 gap-6" : "grid grid-cols-1 md:grid-cols-2 gap-8"
+        }
+      >
         {/* Left Column - Radar Chart in Premium Card */}
         <div data-pdf-break-anchor="areas-radar-chart" className="rounded-2xl shadow-lg border bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 border-gray-200 dark:border-gray-700 p-8">
           <div className="flex items-center gap-3 mb-6">
@@ -198,10 +204,14 @@ const AreasOfLife: React.FC<{
           }>
           {lifeAreaAnalysis.length > 0 ? (
             <>
-              {lifeAreaAnalysis.map((area) => (
+              {lifeAreaAnalysis.map((area, index) => (
                 <div
                   data-pdf-break-anchor={`area-card-${area.area}`}
                   key={area.area}
+                  {...(forPdfCapture &&
+                  (index === 1 || index === lifeAreaAnalysis.length - 1)
+                    ? { "data-pdf-page-break-before": "" }
+                    : {})}
                   className={`relative rounded-xl border border-gray-200 dark:border-gray-700 bg-gradient-to-br from-indigo-50/30 to-purple-50/30 dark:from-indigo-900/10 dark:to-purple-900/10 p-5 overflow-hidden ${forPdfCapture ? "" : "hover:shadow-lg transition-all duration-300"}`}>
                   {/* Background Score Display with better opacity */}
                   <div className="absolute inset-0 pointer-events-none z-0">
