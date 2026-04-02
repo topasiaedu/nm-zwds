@@ -18,7 +18,7 @@ import { useAlertContext } from "../context/AlertContext";
 import { ChartSettingsProvider } from "../context/ChartSettingsContext";
 import ChartSettingsModal from "../components/ChartSettingsModal";
 
-const ENABLE_PDF_EXPORT = true;
+const ENABLE_PDF_EXPORT = false;
 
 /**
  * Interface for chart data - using PdfChartData for consistency

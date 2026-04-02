@@ -6,7 +6,7 @@ services:
     name: nm-zwds-pdf-server
     runtime: node
     rootDir: server
-    buildCommand: npm install --include=dev && npm run build
+    buildCommand: npm install --include=dev && npx -y puppeteer browsers install chrome && npm run build
     startCommand: npm start
     plan: starter
     envVars:
@@ -14,9 +14,13 @@ services:
         value: production
       - key: NPM_CONFIG_PRODUCTION
         value: "false"
+      - key: PUPPETEER_CACHE_DIR
+        value: /opt/render/.cache/puppeteer
       - key: ALLOWED_PDF_ORIGIN
         sync: false
       - key: ALLOWED_APP_ORIGIN
+        sync: false
+      - key: ALLOWED_APP_ORIGINS
         sync: false
       - key: SUPABASE_JWT_SECRET
         sync: false
