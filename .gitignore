@@ -22,5 +22,10 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# PDF microservice (Node server under server/)
+server/node_modules/
+server/dist/
+server/.env
+
 /src/flowbite-theme.ts
 .qodo

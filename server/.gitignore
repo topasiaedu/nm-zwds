@@ -1,0 +1,11 @@
+# Dependencies and build output (also listed in repo root .gitignore)
+node_modules/
+dist/
+
+# Local secrets — use .env.example for the template
+.env
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
