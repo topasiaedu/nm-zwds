@@ -68,10 +68,20 @@ See [`.env.example`](./.env.example).
 
 The repo includes `server/Dockerfile`: **Debian system Chromium** + `PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium`, so PDF generation does not rely on Puppeteer’s downloaded browser cache.
 
-1. In Render, set the Web Service **runtime** to **Docker** (or apply `render.yaml` from this repo).
-2. **Dockerfile path:** `server/Dockerfile`
-3. **Docker build context:** `server` (same folder as the Dockerfile).
-4. Keep setting `ALLOWED_PDF_ORIGIN`, CORS vars, and auth as before. You do **not** need `PUPPETEER_CACHE_DIR` for this image.
+**Important — Root Directory vs Docker paths**
+
+Render joins **Root Directory** with **Dockerfile path** / **context**. If Root Directory is already `server`, do **not** use `server/Dockerfile` or you get `lstat .../server/server` and the deploy fails.
+
+| Render **Root Directory** | **Dockerfile path** | **Docker build context** |
+|---------------------------|---------------------|----------------------------|
+| *(empty — repo root)* | `server/Dockerfile` | `server` |
+| `server` | `Dockerfile` | `.` |
+
+Steps:
+
+1. Set the Web Service **runtime** to **Docker** (or apply `render.yaml` from this repo).
+2. Pick the row above that matches your **Root Directory** setting.
+3. Keep setting `ALLOWED_PDF_ORIGIN`, CORS vars, and auth as before. You do **not** need `PUPPETEER_CACHE_DIR` for this image.
 
 Local Docker smoke test:
 

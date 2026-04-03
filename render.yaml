@@ -1,5 +1,9 @@
 # Render Blueprint (optional): PDF Web Service only.
 # Adjust the service name and plan before deploy. The CRA app is deployed separately (e.g. Vercel).
+#
+# Docker paths below assume the service Root Directory is the REPO ROOT (empty in the dashboard).
+# If you set Root Directory to "server", use dockerfilePath: ./Dockerfile and dockerContext: . instead
+# (otherwise Render resolves server/server and the build fails).
 
 services:
   - type: web
