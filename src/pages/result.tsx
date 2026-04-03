@@ -1067,7 +1067,7 @@ const ResultContent: React.FC = () => {
                         { key: "dna", label: "DNA Chart" },
                         { key: "dayun", label: "Da Yun (10 Year)" },
                         { key: "liunian", label: "Liu Nian (Yearly)" },
-                        { key: "liumonth", label: "Liu Month ( coming soon )" },
+                        { key: "liumonth", label: "Liu Month (Coming Soon)" },
                       ].map((blueprint) => {
                         const active = blueprintMode === blueprint.key;
                         const isDisabled = blueprint.key === "liumonth";
