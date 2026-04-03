@@ -1,7 +1,10 @@
 import puppeteer from "puppeteer";
 
-/** Total budget for launch, navigation, and PDF render (SPA wait can exceed 90s). */
-const DEFAULT_MAX_JOB_MS = 150_000;
+/**
+ * Total budget for launch, navigation, wait-for-ready, and PDF render.
+ * Must cover {@link GOTO_TIMEOUT_MS} + {@link WAIT_FOR_PDF_PAGE_MS} + settle + {@link PAGE_PDF_CDPTIMEOUT_MS}.
+ */
+const DEFAULT_MAX_JOB_MS = 270_000;
 
 /** `page.goto` idle wait; increase if flaky on slow SPAs. */
 const GOTO_TIMEOUT_MS = 60_000;
@@ -12,6 +15,11 @@ const GOTO_TIMEOUT_MS = 60_000;
 const WAIT_FOR_PDF_PAGE_MS = 75_000;
 /** Extra time for chart/SVG/fonts after the DOM signals ready. */
 const PDF_SETTLE_AFTER_READY_MS = 3_500;
+/**
+ * `page.pdf()` defaults to 30s in Puppeteer; large print layouts (charts, backgrounds)
+ * often exceed that and throw TimeoutError before our outer job timeout runs.
+ */
+const PAGE_PDF_CDPTIMEOUT_MS = 120_000;
 
 /**
  * Thrown when the PDF job exceeds {@link DEFAULT_MAX_JOB_MS}.
@@ -157,6 +165,7 @@ export async function renderPdfFromUrl(url: string): Promise<Buffer> {
         const pdf = await page.pdf({
           format: "A4",
           printBackground: true,
+          timeout: PAGE_PDF_CDPTIMEOUT_MS,
           margin: {
             top: "12mm",
             bottom: "12mm",
