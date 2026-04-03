@@ -23,6 +23,10 @@ import {
   exportPdfViaServer,
   resolvePrintPageOrigin,
 } from "../utils/pdfExportServer";
+import {
+  createPdfServerExportProgressTicker,
+  DEFAULT_PDF_SERVER_EXPORT_TICKER,
+} from "../utils/pdfServerExportProgressTicker";
 import { supabase } from "../utils/supabase-client";
 import {
   Overview,
@@ -712,7 +716,48 @@ const ResultContent: React.FC = () => {
           String(chartData.id),
           accessToken
         );
-        await exportPdfViaServer(targetUrl, async () => `Bearer ${accessToken}`);
+
+        const serverProgressTicker = createPdfServerExportProgressTicker({
+          ...DEFAULT_PDF_SERVER_EXPORT_TICKER,
+          onTick: ({ percentage, elapsedMs }) => {
+            const step =
+              elapsedMs < 15_000
+                ? t("pdfExport.serverRendering") ||
+                  "Putting your chart into a print-ready report..."
+                : elapsedMs < 38_000
+                  ? t("pdfExport.serverPhase2") ||
+                    "Rendering your report on our servers (this may take a minute)..."
+                  : t("pdfExport.serverPhase3") ||
+                    "Almost done — finalizing your PDF...";
+            setPdfExportModal((prev) => ({
+              ...prev,
+              progress: {
+                ...prev.progress,
+                step,
+                percentage,
+              },
+            }));
+          },
+        });
+
+        serverProgressTicker.start();
+        try {
+          await exportPdfViaServer(targetUrl, async () => `Bearer ${accessToken}`);
+        } catch (error) {
+          console.error("PDF server export error:", error);
+          setPdfExportModal((prev) => ({
+            ...prev,
+            progress: {
+              step: t("pdfExport.failed") || "Export failed",
+              percentage: 0,
+              isComplete: true,
+              error: error instanceof Error ? error.message : "Unknown error",
+            },
+          }));
+          return;
+        } finally {
+          serverProgressTicker.stop();
+        }
 
         setPdfExportModal({
           isOpen: true,

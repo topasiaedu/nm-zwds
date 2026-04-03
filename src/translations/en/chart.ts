@@ -101,6 +101,9 @@ const chart = {
     step5: "Wrapping up your download...",
     starting: "We are getting your chart ready...",
     serverRendering: "Putting your chart into a print-ready report...",
+    serverPhase2:
+      "Rendering your report on our servers (large charts can take a minute)...",
+    serverPhase3: "Almost done — packing everything into your PDF...",
     noSession: "Please sign in first so we can prepare your chart.",
     noData: "No chart data available for export",
     notSupported: "PDF export is not supported in this browser",

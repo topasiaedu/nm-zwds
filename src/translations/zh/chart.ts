@@ -136,6 +136,8 @@ const chart = {
     step5: "即将完成下载...",
     starting: "我们正在为您准备命盘，请稍候...",
     serverRendering: "正在将您的命盘整理成可下载报告...",
+    serverPhase2: "正在云端排版您的报告（内容较多时可能需要一分钟）...",
+    serverPhase3: "即将完成，正在生成 PDF 文件...",
     noSession: "请先登录后再下载命盘报告。",
     noData: "没有可导出的命盘数据",
     notSupported: "此浏览器不支持PDF导出",
