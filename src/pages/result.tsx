@@ -199,7 +199,7 @@ const ResultContent: React.FC = () => {
       updateSetting("showSecondaryBottomLabel", false);
       updateSetting("showSecondaryOverlayName", false);
       updateSetting("yearAgeClickInteraction", false);
-      updateSetting("daXianClickInteraction", true);
+      updateSetting("daXianClickInteraction", false);
       updateSetting("palaceNameClickInteraction", false);
     } else if (mode === "liunian") {
       // LiuNian mode - matches Destiny Navigator getLiuNianConfig
@@ -212,23 +212,19 @@ const ResultContent: React.FC = () => {
       updateSetting("showSecondaryOverlayName", false);
       updateSetting("yearAgeClickInteraction", false);
       updateSetting("daXianClickInteraction", false);
-      updateSetting("palaceNameClickInteraction", true);
+      updateSetting("palaceNameClickInteraction", false);
     } else if (mode === "liumonth") {
-      // Liu Month mode — shows monthly view by auto-triggering the year-click
-      // interaction on the current year palace via showMonthsControlled.
-      // yearAgeClickInteraction must be TRUE so getMonthForPalace() renders
-      // the month labels (it gates on this setting internally).
-      // palaceClickInteraction is FALSE to prevent transformation lines from
-      // appearing when the user clicks a palace in this mode.
+      // Liu Month: month labels come from controlled showMonths + ZWDSChart uniform mode,
+      // not from year clicks (yearAgeClickInteraction stays false so bottom row is inert).
       updateSetting("liuNianTag", true);
       updateSetting("showDaYunHighlight", false);
       updateSetting("showDaMingCornerTag", false);
       updateSetting("showDaMingBottomLabel", false);
       updateSetting("showSecondaryBottomLabel", true);
       updateSetting("showSecondaryOverlayName", false);
-      updateSetting("yearAgeClickInteraction", true);
+      updateSetting("yearAgeClickInteraction", false);
       updateSetting("daXianClickInteraction", false);
-      updateSetting("palaceNameClickInteraction", true);
+      updateSetting("palaceNameClickInteraction", false);
       updateSetting("palaceClickInteraction", false);
     }
   }, [updateSetting]);
@@ -563,6 +559,14 @@ const ResultContent: React.FC = () => {
   const currentLiuNianPalace = useMemo(() => {
     if (!calculatedChartData) return null;
     return getCurrentLiuNianPalace(calculatedChartData);
+  }, [calculatedChartData]);
+
+  /**
+   * Liu Nian life palace (secondary 命宫) for amber highlight in Liu Nian blueprint mode.
+   */
+  const currentLiuNianLifePalace = useMemo<number | null>(() => {
+    if (!calculatedChartData) return null;
+    return getPalaceForAspectLiuNian("life", calculatedChartData);
   }, [calculatedChartData]);
 
   /**
@@ -1166,9 +1170,15 @@ const ResultContent: React.FC = () => {
                           blueprintMode === "liumonth" ? currentLiuMonthYearPalace : null
                         }
                         uniformAnnualYearForMonths={blueprintMode === "liumonth"}
-                        highlightLifePalaceLikeDayun={blueprintMode === "liumonth"}
+                        highlightLifePalaceLikeDayun={
+                          blueprintMode === "liumonth" || blueprintMode === "liunian"
+                        }
                         liuMonthLifeHighlightPalaceNumber={
-                          blueprintMode === "liumonth" ? currentLiuMonthLifePalace : null
+                          blueprintMode === "liumonth"
+                            ? currentLiuMonthLifePalace
+                            : blueprintMode === "liunian"
+                              ? currentLiuNianLifePalace
+                              : null
                         }
                         // Persist palace name clicks only while in DNA mode
                         onPalaceNameChange={(palace) => {

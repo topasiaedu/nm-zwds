@@ -57,7 +57,7 @@ interface PalaceProps {
   isPdfExport?: boolean; // Optional prop to indicate PDF export mode
   disableInteraction?: boolean; // Optional prop to disable all user interactions
   chartSettings: ChartSettings; // Chart settings to control feature visibility
-  /** Amber Da Yun-style glow for the Liu Month life palace (no corner tag; bottom label already shows Life). */
+  /** Amber Da Yun-style glow for Liu Month / Liu Nian timeframe life palace (bottom label shows Life). */
   isLifePalaceLiuMonthHighlight?: boolean;
 }
 
@@ -359,12 +359,17 @@ const Palace: React.FC<PalaceProps> = ({
 
   // Handle click on the Major Limit (Da Xian) section
   const handleMajorLimitClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
     if (disableInteraction) return;
-    e.stopPropagation(); // Prevent the palace click from triggering
+    if (!chartSettings.daXianClickInteraction) return;
     if (palace.majorLimit) {
       handleDaXianClick(palaceNumber);
     }
   };
+
+  const yearRowInteractive = chartSettings.yearAgeClickInteraction;
+  const palaceNameInteractive = chartSettings.palaceNameClickInteraction;
+  const majorLimitInteractive = chartSettings.daXianClickInteraction;
 
   // Desktop year display section
   const renderYearOrMonth = () => {
@@ -374,18 +379,34 @@ const Palace: React.FC<PalaceProps> = ({
           ? "text-red-300"
           : "text-red-600 dark:text-red-400"
         : ""
-    } font-medium hidden sm:flex cursor-pointer hover:opacity-80`;
+    } font-medium hidden sm:flex ${
+      yearRowInteractive ? "cursor-pointer hover:opacity-80" : "cursor-default"
+    }`;
 
     return (
       <div className="flex flex-col items-center">
         <div 
           className={yearClassName}
-          onClick={(e) => handleYearClick(palaceNumber, e)}>
+          onClick={(e) => {
+            if (!yearRowInteractive) {
+              e.stopPropagation();
+              return;
+            }
+            handleYearClick(palaceNumber, e);
+          }}>
           {palaceYear}
         </div>
         <div 
-          className="text-2xs xs:text-2xs hidden sm:block cursor-pointer hover:opacity-80"
-          onClick={(e) => handleYearClick(palaceNumber, e)}>
+          className={`text-2xs xs:text-2xs hidden sm:block ${
+            yearRowInteractive ? "cursor-pointer hover:opacity-80" : "cursor-default"
+          }`}
+          onClick={(e) => {
+            if (!yearRowInteractive) {
+              e.stopPropagation();
+              return;
+            }
+            handleYearClick(palaceNumber, e);
+          }}>
           {monthDisplay || getAgeAtYear(palaceYear)}
         </div>
       </div>
@@ -400,12 +421,20 @@ const Palace: React.FC<PalaceProps> = ({
           ? "text-red-300"
           : "text-red-600 dark:text-red-400"
         : ""
-    } font-medium cursor-pointer hover:opacity-80`;
+    } font-medium ${
+      yearRowInteractive ? "cursor-pointer hover:opacity-80" : "cursor-default"
+    }`;
 
     return (
       <div 
         className={yearClassName}
-        onClick={(e) => handleYearClick(palaceNumber, e)}>
+        onClick={(e) => {
+          if (!yearRowInteractive) {
+            e.stopPropagation();
+            return;
+          }
+          handleYearClick(palaceNumber, e);
+        }}>
         <span>
           {palaceYear}/
         </span>
@@ -779,8 +808,16 @@ const Palace: React.FC<PalaceProps> = ({
             <div
               className={`sm:hidden ${
                 isSelected ? "text-white dark:text-white" : ""
-              } cursor-pointer font-bold hover:opacity-80`}
-              onClick={(e) => handlePalaceNameClick(palaceNumber, e)}>
+              } font-bold ${
+                palaceNameInteractive ? "cursor-pointer hover:opacity-80" : "cursor-default"
+              }`}
+              onClick={(e) => {
+                if (!palaceNameInteractive) {
+                  e.stopPropagation();
+                  return;
+                }
+                handlePalaceNameClick(palaceNumber, e);
+              }}>
               {bottomLabel}
             </div>
             {/* Mobile view: Heavenly Stem and Earthly Branch on one line */}
@@ -813,9 +850,11 @@ const Palace: React.FC<PalaceProps> = ({
             {palace.majorLimit && (
               <div
                 className={`sm:hidden text-zinc-500 dark:text-zinc-400 ${
-                  isCurrentDaXian
-                    ? "text-amber-900 dark:text-amber-200 font-bold cursor-pointer"
-                    : "cursor-pointer hover:text-amber-600 dark:hover:text-amber-400"
+                  majorLimitInteractive
+                    ? isCurrentDaXian
+                      ? "text-amber-900 dark:text-amber-200 font-bold cursor-pointer"
+                      : "cursor-pointer hover:text-amber-600 dark:hover:text-amber-400"
+                    : "cursor-default"
                 }`}
                 onClick={handleMajorLimitClick}>
                 {palace.majorLimit.startAge}-{palace.majorLimit.endAge}
@@ -831,16 +870,26 @@ const Palace: React.FC<PalaceProps> = ({
               isSelected ? "text-white dark:text-white" : ""
             }`}>
             <div 
-              className="font-medium cursor-pointer hover:opacity-80"
-              onClick={(e) => handlePalaceNameClick(palaceNumber, e)}>
+              className={`font-medium ${
+                palaceNameInteractive ? "cursor-pointer hover:opacity-80" : "cursor-default"
+              }`}
+              onClick={(e) => {
+                if (!palaceNameInteractive) {
+                  e.stopPropagation();
+                  return;
+                }
+                handlePalaceNameClick(palaceNumber, e);
+              }}>
               {bottomLabel}
             </div>
             {palace.majorLimit && (
               <div
                 className={`text-zinc-500 dark:text-zinc-400 ${
-                  isCurrentDaXian
-                    ? "text-amber-900 dark:text-amber-200 font-bold cursor-pointer"
-                    : "cursor-pointer hover:text-amber-600 dark:hover:text-amber-400"
+                  majorLimitInteractive
+                    ? isCurrentDaXian
+                      ? "text-amber-900 dark:text-amber-200 font-bold cursor-pointer"
+                      : "cursor-pointer hover:text-amber-600 dark:hover:text-amber-400"
+                    : "cursor-default"
                 }`}
                 onClick={handleMajorLimitClick}>
                 {palace.majorLimit.startAge}-{palace.majorLimit.endAge}

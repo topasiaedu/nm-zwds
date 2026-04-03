@@ -126,13 +126,12 @@ interface ZWDSChartProps {
    */
   uniformAnnualYearForMonths?: boolean;
   /**
-   * When true, the Liu Month life palace (secondary 命宫 for the month anchor) receives the same
-   * amber styling as Da Yun. Pair with `liuMonthLifeHighlightPalaceNumber` (1–12).
+   * When true, the timeframe life palace gets amber Da Yun-style styling. Used for Liu Month
+   * and Liu Nian. Pair with `liuMonthLifeHighlightPalaceNumber` (life palace 1–12 from resolver).
    */
   highlightLifePalaceLikeDayun?: boolean;
   /**
-   * Physical palace (1–12) that carries the life aspect in Liu Month mode; from
-   * `getPalaceForAspectLiuMonth("life", …)`. Ignored when null.
+   * Physical palace (1–12) for life-aspect highlight: Liu Month or Liu Nian secondary 命宫.
    */
   liuMonthLifeHighlightPalaceNumber?: number | null;
   /**
@@ -282,8 +281,7 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
   const getPalaceTag = (
     palaceNumber: number
   ): { tag: string | null; delay: number } => {
-    if (!selectedDaXian || !settings.daXianClickInteraction)
-      return { tag: null, delay: 0 };
+    if (!selectedDaXian) return { tag: null, delay: 0 };
 
     // Determine direction from chart data
     // const gender = chartData.input.gender;
@@ -368,13 +366,12 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
 
   // Sync selectedPalaceName with controlled prop (mimic palace name click interaction)
   useEffect(() => {
-    if (!settings.palaceNameClickInteraction) return;
     if (selectedPalaceNameControlled !== undefined && selectedPalaceNameControlled !== null) {
       setSelectedPalaceName(selectedPalaceNameControlled);
     } else if (selectedPalaceNameControlled === null) {
       setSelectedPalaceName(null);
     }
-  }, [selectedPalaceNameControlled, settings.palaceNameClickInteraction]);
+  }, [selectedPalaceNameControlled]);
 
   /**
    * Handle Da Xian click
@@ -454,7 +451,8 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
     clickedPalaceNumber: number,
     currentPalaceNumber: number
   ): string | null => {
-    if (!showMonths || !settings.yearAgeClickInteraction) return null;
+    if (!showMonths) return null;
+    if (!settings.yearAgeClickInteraction && !uniformAnnualYearForMonths) return null;
 
     // Get the bottom right palace (palace number 10)
     const bottomRightPalace = chartData.palaces[9];
@@ -481,7 +479,7 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
     // Calculate the final month index
     const monthIndex = (startingMonthIndex + distance) % 12;
     return months[monthIndex];
-  }, [showMonths, settings.yearAgeClickInteraction, chartData.palaces, language]);
+  }, [showMonths, settings.yearAgeClickInteraction, uniformAnnualYearForMonths, chartData.palaces, language]);
 
   /**
    * Get secondary palace name based on clicked palace
@@ -490,8 +488,7 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
   const getSecondaryPalaceName = useCallback((
     currentPalaceNumber: number
   ): string | null => {
-    if (!selectedPalaceName || !settings.palaceNameClickInteraction)
-      return null;
+    if (!selectedPalaceName) return null;
 
     // Calculate how many positions to move from the clicked palace
     let distance = selectedPalaceName - currentPalaceNumber;
@@ -508,7 +505,7 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
       // Note: we cannot call t here (not in this file), so fallback is handled in Palace overlay rendering
     }
     return nameCn;
-  }, [selectedPalaceName, settings.palaceNameClickInteraction, language]);
+  }, [selectedPalaceName, language]);
 
   /**
    * Render a single palace in the chart
