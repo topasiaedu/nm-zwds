@@ -446,7 +446,7 @@ const FreeResultContent: React.FC = () => {
     setPdfExportModal({
       isOpen: true,
       progress: {
-        step: t("pdfExport.starting") || "Starting export...",
+        step: t("pdfExport.starting") || "Getting your report ready...",
         percentage: 0,
         isComplete: false,
         error: undefined,
@@ -463,7 +463,8 @@ const FreeResultContent: React.FC = () => {
             ...prev,
             progress: {
               ...prev.progress,
-              step: t("pdfExport.serverRendering") || "Putting your chart into a print-ready report...",
+              step: t("pdfExport.serverRendering") ||
+                "Sorting your chart into neat pages you can save or print...",
               percentage: 10,
             },
           }));
@@ -479,12 +480,12 @@ const FreeResultContent: React.FC = () => {
               const step =
                 elapsedMs < 15_000
                   ? t("pdfExport.serverRendering") ||
-                    "Putting your chart into a print-ready report..."
+                    "Sorting your chart into neat pages you can save or print..."
                   : elapsedMs < 38_000
                     ? t("pdfExport.serverPhase2") ||
-                      "Rendering your report on our servers (this may take a minute)..."
+                      "Still working—full reports like yours can take a little longer..."
                     : t("pdfExport.serverPhase3") ||
-                      "Almost done — finalizing your PDF...";
+                      "Almost there—just tidying the last details...";
               setPdfExportModal((prev) => ({
                 ...prev,
                 progress: {
