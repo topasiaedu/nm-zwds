@@ -1067,21 +1067,26 @@ const ResultContent: React.FC = () => {
                         { key: "dna", label: "DNA Chart" },
                         { key: "dayun", label: "Da Yun (10 Year)" },
                         { key: "liunian", label: "Liu Nian (Yearly)" },
-                        { key: "liumonth", label: "Liu Month (Monthly)" },
+                        { key: "liumonth", label: "Liu Month ( coming soon )" },
                       ].map((blueprint) => {
                         const active = blueprintMode === blueprint.key;
+                        const isDisabled = blueprint.key === "liumonth";
                         return (
                           <button
                             key={blueprint.key}
                             type="button"
+                            disabled={isDisabled}
                             onClick={() =>
                               handleBlueprintChange(
                                 blueprint.key as "dna" | "dayun" | "liunian" | "liumonth"
                               )
                             }
-                            className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${active
-                              ? "bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-md"
-                              : "bg-white/60 dark:bg-gray-700/60 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-600 hover:border-purple-300 dark:hover:border-purple-500 hover:bg-purple-50 dark:hover:bg-purple-900/20"
+                            className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                              isDisabled
+                                ? "bg-white/30 dark:bg-gray-700/30 text-gray-400 dark:text-gray-500 border border-gray-200/50 dark:border-gray-600/50 cursor-not-allowed opacity-60"
+                                : active
+                                ? "bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-md"
+                                : "bg-white/60 dark:bg-gray-700/60 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-600 hover:border-purple-300 dark:hover:border-purple-500 hover:bg-purple-50 dark:hover:bg-purple-900/20"
                               }`}
                           >
                             {blueprint.label}
