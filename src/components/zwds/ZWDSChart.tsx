@@ -563,64 +563,71 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
   };
 
   return (
-    <motion.div
-      className="w-full mx-auto aspect-square md:aspect-square relative"
-      initial={isPdfExport ? false : "hidden"}
-      animate={isPdfExport ? false : "visible"}
-      variants={containerVariants}
-      ref={chartRef}
-      data-zwds-chart-container="true"
-      style={{
-        minHeight:
-          windowSize.width < SCREEN_SM ? "calc(100vh - 50px)" : undefined,
-        height:
-          windowSize.width < SCREEN_SM ? "calc(100vh - 260px)" : undefined,
-        maxHeight: "900px", // Increased from 800px to give more room
-      }}>
+    <div className="w-full overflow-x-auto overflow-y-hidden scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0" style={{ msOverflowStyle: 'none', scrollbarWidth: 'none' }}>
+      <style>{`
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+      `}</style>
       <motion.div
-        className={`grid grid-cols-4 grid-rows-4 gap-1.5 xs:gap-2 sm:gap-1.5 md:gap-1 p-1 xs:p-1.5 sm:p-1 md:p-1 h-full rounded-xl ${isPdfExport ? "bg-white" : ""
-          }`}
-        initial={isPdfExport ? false : { opacity: 0 }}
-        animate={isPdfExport ? false : { opacity: 1 }}
-        transition={isPdfExport ? { duration: 0 } : { duration: 0.5 }}>
-        {/* First row (top) */}
-        {renderPalace(1)}
-        {renderPalace(2)}
-        {renderPalace(3)}
-        {renderPalace(4)}
+        className="w-full mx-auto aspect-[4/5] md:aspect-square relative min-w-[640px] md:min-w-0"
+        initial={isPdfExport ? false : "hidden"}
+        animate={isPdfExport ? false : "visible"}
+        variants={containerVariants}
+        ref={chartRef}
+        data-zwds-chart-container="true"
+        style={{
+          minHeight:
+            windowSize.width < SCREEN_SM ? "600px" : undefined,
+          height:
+            windowSize.width < SCREEN_SM ? "100%" : undefined,
+          maxHeight: "900px",
+        }}>
+        <motion.div
+          className={`grid grid-cols-4 grid-rows-4 gap-1.5 xs:gap-2 sm:gap-1.5 md:gap-1 p-1 xs:p-1.5 sm:p-1 md:p-1 h-full rounded-xl ${isPdfExport ? "bg-white" : ""
+            }`}
+          initial={isPdfExport ? false : { opacity: 0 }}
+          animate={isPdfExport ? false : { opacity: 1 }}
+          transition={isPdfExport ? { duration: 0 } : { duration: 0.5 }}>
+          {/* First row (top) */}
+          {renderPalace(1)}
+          {renderPalace(2)}
+          {renderPalace(3)}
+          {renderPalace(4)}
 
-        {/* Second row */}
-        {renderPalace(12)}
-        {/* Center info spans 2x2 */}
-        <div className="col-span-2 row-span-2">
-          <CenterInfo chartData={chartData} isPdfExport={isPdfExport} />
-        </div>
-        {renderPalace(5)}
+          {/* Second row */}
+          {renderPalace(12)}
+          {/* Center info spans 2x2 */}
+          <div className="col-span-2 row-span-2">
+            <CenterInfo chartData={chartData} isPdfExport={isPdfExport} />
+          </div>
+          {renderPalace(5)}
 
-        {/* Third row */}
-        {renderPalace(11)}
-        {/* Center info already spans here */}
-        {renderPalace(6)}
+          {/* Third row */}
+          {renderPalace(11)}
+          {/* Center info already spans here */}
+          {renderPalace(6)}
 
-        {/* Fourth row (bottom) */}
-        {renderPalace(10)}
-        {renderPalace(9)}
-        {renderPalace(8)}
-        {renderPalace(7)}
+          {/* Fourth row (bottom) */}
+          {renderPalace(10)}
+          {renderPalace(9)}
+          {renderPalace(8)}
+          {renderPalace(7)}
+        </motion.div>
+
+        {/* Render transformation lines as overlay */}
+        <TransformationLines
+          transformations={getAllTransformations}
+          chartRef={chartRef}
+          palaceRefs={palaceRefs}
+          starRefs={starRefs}
+          refsReady={refsReady}
+          selectedPalace={selectedPalace}
+          windowSize={windowSize}
+          disableAnimations={isPdfExport}
+        />
       </motion.div>
-
-      {/* Render transformation lines as overlay */}
-      <TransformationLines
-        transformations={getAllTransformations}
-        chartRef={chartRef}
-        palaceRefs={palaceRefs}
-        starRefs={starRefs}
-        refsReady={refsReady}
-        selectedPalace={selectedPalace}
-        windowSize={windowSize}
-        disableAnimations={isPdfExport}
-      />
-    </motion.div>
+    </div>
   );
 };
 

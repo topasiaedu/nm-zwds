@@ -5,7 +5,10 @@ const DEFAULT_MAX_JOB_MS = 150_000;
 
 /** `page.goto` idle wait; increase if flaky on slow SPAs. */
 const GOTO_TIMEOUT_MS = 60_000;
-/** Wait for React print route: `[data-pdf-render-ready]` or `[data-pdf-error]`. */
+/**
+ * Wait for React print route: new markers (`data-pdf-*`) or legacy `.print-cover-page`
+ * (deployed frontends may not have the PrintResult.tsx marker patch yet).
+ */
 const WAIT_FOR_PDF_PAGE_MS = 75_000;
 /** Extra time for chart/SVG/fonts after the DOM signals ready. */
 const PDF_SETTLE_AFTER_READY_MS = 3_500;
@@ -100,7 +103,8 @@ export async function renderPdfFromUrl(url: string): Promise<Buffer> {
               };
               return (
                 w.document.querySelector("[data-pdf-render-ready=\"true\"]") !== null ||
-                w.document.querySelector("[data-pdf-error=\"true\"]") !== null
+                w.document.querySelector("[data-pdf-error=\"true\"]") !== null ||
+                w.document.querySelector(".print-cover-page") !== null
               );
             },
             { timeout: WAIT_FOR_PDF_PAGE_MS }
@@ -122,12 +126,15 @@ export async function renderPdfFromUrl(url: string): Promise<Buffer> {
           if (w.document.querySelector("[data-pdf-render-ready=\"true\"]") !== null) {
             return { kind: "ready" as const, message: "" };
           }
+          if (w.document.querySelector(".print-cover-page") !== null) {
+            return { kind: "legacy_ready" as const, message: "" };
+          }
           return { kind: "unknown" as const, message: "Print page did not expose a ready or error marker." };
         });
         if (pageState.kind === "error") {
           throw new PdfPageContentError(pageState.message);
         }
-        if (pageState.kind !== "ready") {
+        if (pageState.kind !== "ready" && pageState.kind !== "legacy_ready") {
           throw new PdfPageContentError(pageState.message);
         }
         await page.evaluate(async () => {

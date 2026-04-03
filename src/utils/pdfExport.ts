@@ -235,27 +235,27 @@ const captureChartAsImage = async (
   const chartElement = document.querySelector(
     "[data-zwds-chart-container=\"true\"]"
   ) as HTMLElement | null;
-  if (!chartElement) {
-    return null;
-  }
+    if (!chartElement) {
+      return null;
+    }
 
   const gridElement = chartElement.querySelector(
     ".grid.grid-cols-4.grid-rows-4"
   ) as HTMLElement | null;
 
   const originalChartStyles: Partial<CSSStyleDeclaration> = {
-    width: chartElement.style.width,
-    height: chartElement.style.height,
-    minWidth: chartElement.style.minWidth,
-    minHeight: chartElement.style.minHeight,
-    maxWidth: chartElement.style.maxWidth,
-    maxHeight: chartElement.style.maxHeight,
-    aspectRatio: chartElement.style.aspectRatio,
-  };
+      width: chartElement.style.width,
+      height: chartElement.style.height,
+      minWidth: chartElement.style.minWidth,
+      minHeight: chartElement.style.minHeight,
+      maxWidth: chartElement.style.maxWidth,
+      maxHeight: chartElement.style.maxHeight,
+      aspectRatio: chartElement.style.aspectRatio,
+    };
   const originalGridStyles: Partial<CSSStyleDeclaration> | null = gridElement
     ? {
-        gap: gridElement.style.gap,
-        padding: gridElement.style.padding,
+      gap: gridElement.style.gap,
+      padding: gridElement.style.padding,
       }
     : null;
 
@@ -467,10 +467,10 @@ const addPaginatedCanvasToPdf = (
       doc.addPage();
       layoutState.cursorYMm = PAGE_MARGIN_Y_MM;
       layoutState.hasContentOnPage = false;
-    }
-  };
+  }
+};
 
-  /**
+/**
    * Ensures the next tile fits on the current PDF page, adding pages when needed.
    * Analysis tiles must never be drawn on the chart page: the caller primes a fresh page
    * before the first tile and `hasContentOnPage` tracks whether this layout pass has placed
@@ -657,8 +657,8 @@ const trimCanvasVerticalWhitespace = (sourceCanvas: HTMLCanvasElement): TrimCanv
       if (a > 8 && (r < 246 || g < 246 || b < 246)) {
         nonWhiteCount += 1;
         if (nonWhiteCount > Math.max(3, Math.floor(width * 0.0025))) {
-          return false;
-        }
+    return false;
+  }
       }
     }
     return true;
@@ -728,12 +728,12 @@ const addCoverPage = (
     align: "center",
   });
 
-  doc.setDrawColor(226, 232, 240);
-  doc.setFillColor(248, 250, 252);
+    doc.setDrawColor(226, 232, 240);
+    doc.setFillColor(248, 250, 252);
   doc.roundedRect(30, 80, 150, 80, 3, 3, "FD");
 
-  doc.setFontSize(14);
-  doc.setTextColor(31, 41, 55);
+    doc.setFontSize(14);
+    doc.setTextColor(31, 41, 55);
   addText(doc, zh ? "个人信息" : "Profile Information", 105, 95, { align: "center" });
 
   const genderText = chartData.gender === "male" ? (zh ? "男" : "Male") : zh ? "女" : "Female";
@@ -744,16 +744,16 @@ const addCoverPage = (
     { label: zh ? "出生时间" : "Birth Time", value: chartData.birthTime, y: 146 },
   ] as const;
 
-  doc.setFontSize(11);
+    doc.setFontSize(11);
   profileLines.forEach((line) => {
     doc.setTextColor(107, 114, 128);
     addText(doc, `${line.label}:`, 40, line.y);
-    doc.setTextColor(31, 41, 55);
+       doc.setTextColor(31, 41, 55);
     addText(doc, line.value, 90, line.y);
   });
 
-  doc.setFontSize(9);
-  doc.setTextColor(156, 163, 175);
+    doc.setFontSize(9);
+    doc.setTextColor(156, 163, 175);
   addText(
     doc,
     `${zh ? "报告生成日期" : "Report Generated"}: ${new Date().toLocaleDateString()}`,
@@ -779,14 +779,14 @@ const addChartPage = async (
 ): Promise<void> => {
   const zh = language === "zh";
 
-  doc.addPage();
-  doc.setFontSize(18);
-  doc.setTextColor(31, 41, 55);
+     doc.addPage();
+     doc.setFontSize(18);
+     doc.setTextColor(31, 41, 55);
   addText(doc, zh ? "紫微斗数图表" : "Zi Wei Dou Shu Chart", 20, 30);
 
-  doc.setFontSize(10);
-  doc.setTextColor(107, 114, 128);
-  addText(doc, `${chartData.name} • ${formatDate(chartData.birthDate)} • ${chartData.birthTime}`, 20, 45);
+     doc.setFontSize(10);
+     doc.setTextColor(107, 114, 128);
+     addText(doc, `${chartData.name} • ${formatDate(chartData.birthDate)} • ${chartData.birthTime}`, 20, 45);
 
   const imageData = await captureChartAsImage(setPdfModeCallback);
   if (!imageData) {
@@ -827,7 +827,7 @@ const appendMirroredAnalysisPages = async (
    * Adds a fresh PDF page and resets the vertical cursor so analysis rasters never land on the chart page.
    */
   const beginAnalysisDocumentPages = (): void => {
-    doc.addPage();
+       doc.addPage();
     layoutState.cursorYMm = PAGE_MARGIN_Y_MM;
     layoutState.hasContentOnPage = false;
   };
@@ -842,11 +842,11 @@ const appendMirroredAnalysisPages = async (
     fallbackTextEn: string,
     startOnNewPage: boolean = false
   ): Promise<void> => {
-    onProgress({
+       onProgress({
       step: zh ? progressTextZh : progressTextEn,
       percentage,
-      isComplete: false,
-    });
+         isComplete: false,
+       });
 
     const captureResult = await captureReactTreeAsCanvas(
       langCapture,
@@ -855,7 +855,7 @@ const appendMirroredAnalysisPages = async (
       qualityScale
     );
     if (!captureResult || !isCaptureCanvasValid(captureResult.canvas)) {
-      doc.addPage();
+       doc.addPage();
       doc.setFontSize(12);
       doc.setTextColor(220, 38, 38);
       addText(doc, zh ? fallbackTextZh : fallbackTextEn, 105, 40, { align: "center" });
@@ -879,7 +879,7 @@ const appendMirroredAnalysisPages = async (
       trimmedCanvas.remove();
     }
     if (pageTiles <= 0) {
-      doc.addPage();
+       doc.addPage();
       doc.setFontSize(12);
       doc.setTextColor(220, 38, 38);
       addText(doc, zh ? fallbackTextZh : fallbackTextEn, 105, 40, { align: "center" });
@@ -889,7 +889,7 @@ const appendMirroredAnalysisPages = async (
   if (ctx.blueprintMode === "dayun") {
     const cycle = calculateCurrentDayunCycle(calculatedChartData);
     if (!cycle) {
-      doc.addPage();
+         doc.addPage();
       doc.setFontSize(12);
       doc.setTextColor(107, 114, 128);
       addText(
@@ -921,7 +921,7 @@ const appendMirroredAnalysisPages = async (
 
   if (ctx.blueprintMode === "liumonth") {
     if (!ctx.liuMonthCard) {
-      doc.addPage();
+       doc.addPage();
       doc.setFontSize(12);
       doc.setTextColor(107, 114, 128);
       addText(
@@ -1065,11 +1065,11 @@ export const exportChartAsPdf = async (
   const zh = language === "zh";
 
   try {
-    onProgress({
+         onProgress({
       step: zh ? "正在准备您的报告..." : "Preparing your report...",
       percentage: 10,
-      isComplete: false,
-    });
+           isComplete: false,
+         });
 
     const chartDataSafe = assertChartData(calculatedChartData);
 
@@ -1082,19 +1082,19 @@ export const exportChartAsPdf = async (
 
     setupChineseFonts(doc);
 
-    onProgress({
+       onProgress({
       step: zh ? "正在创建封面..." : "Creating cover page...",
       percentage: 24,
-      isComplete: false,
-    });
+         isComplete: false,
+       });
 
     addCoverPage(doc, chartData, formatDate, language);
 
-    onProgress({
+       onProgress({
       step: zh ? "正在准备图表..." : "Preparing chart page...",
       percentage: 40,
-      isComplete: false,
-    });
+         isComplete: false,
+       });
 
     await addChartPage(doc, chartData, formatDate, language, setPdfModeCallback);
 
@@ -1110,28 +1110,28 @@ export const exportChartAsPdf = async (
       );
     }
 
-    onProgress({
+     onProgress({
       step: zh ? "正在完成 PDF..." : "Finalizing PDF...",
-      percentage: 99,
-      isComplete: false,
-    });
+       percentage: 99,
+       isComplete: false,
+     });
 
-    const pageCount = doc.getNumberOfPages();
+     const pageCount = doc.getNumberOfPages();
     for (let index = 2; index <= pageCount; index += 1) {
       doc.setPage(index);
-      doc.setFontSize(8);
-      doc.setTextColor(107, 114, 128);
+       doc.setFontSize(8);
+       doc.setTextColor(107, 114, 128);
       addText(doc, `${zh ? "第" : "Page"} ${index}`, 105, 288, { align: "center" });
-    }
+     }
 
-    doc.setProperties({
-      title: `${chartData.name} - ZWDS Chart`,
-      subject: "ZWDS Chart Analysis",
-      author: "ZWDS System",
-      creator: "ZWDS System",
-    });
+     doc.setProperties({
+       title: `${chartData.name} - ZWDS Chart`,
+       subject: "ZWDS Chart Analysis",
+       author: "ZWDS System",
+       creator: "ZWDS System",
+     });
 
-    const safeName = chartData.name.replace(/[^a-zA-Z0-9\u4e00-\u9fa5]/g, "_");
+     const safeName = chartData.name.replace(/[^a-zA-Z0-9\u4e00-\u9fa5]/g, "_");
     doc.save(`${safeName}_zwds.pdf`);
 
     onProgress({
@@ -1139,14 +1139,14 @@ export const exportChartAsPdf = async (
       percentage: 100,
       isComplete: true,
     });
-  } catch (error) {
-    console.error("PDF export error:", error);
-    onProgress({
+   } catch (error) {
+     console.error("PDF export error:", error);
+     onProgress({
       step: zh ? "导出失败" : "Export failed",
-      percentage: 0,
-      isComplete: true,
-      error: error instanceof Error ? error.message : "Unknown error occurred",
-    });
+       percentage: 0,
+       isComplete: true,
+       error: error instanceof Error ? error.message : "Unknown error occurred",
+     });
   }
 };
 
@@ -1179,7 +1179,7 @@ export const estimatePdfSize = (
   const totalPages = basePages + analysisPages;
   const estimatedSizeMB = totalPages * 0.45;
   const memoryUsageMB = totalPages * 4;
-
+  
   return {
     pages: totalPages,
     estimatedSizeMB: Math.round(estimatedSizeMB * 100) / 100,
@@ -1228,4 +1228,5 @@ export const exportChartAsPdfLegacy = (
     showAlert(language === "en" ? "PDF export failed" : "PDF导出失败", "error");
     console.error("PDF export error:", error);
   }
-};
+}; 
+ 

@@ -4,6 +4,24 @@
  */
 
 /**
+ * Origin for the print page URL that Puppeteer opens server-side.
+ *
+ * On Render, `http://localhost:3000` is the container itself, not your CRA dev server — you get
+ * `ERR_CONNECTION_REFUSED`. When testing local UI against a remote PDF service, set
+ * `REACT_APP_PDF_PRINT_ORIGIN` to your publicly reachable app URL (e.g. production).
+ */
+export function resolvePrintPageOrigin(): string {
+  const fromEnv = process.env.REACT_APP_PDF_PRINT_ORIGIN?.trim() ?? "";
+  if (fromEnv.length > 0) {
+    return fromEnv.replace(/\/$/, "");
+  }
+  if (typeof window !== "undefined" && window.location.origin.length > 0) {
+    return window.location.origin;
+  }
+  return "";
+}
+
+/**
  * Build the print URL the PDF service will open (allowlisted in `ALLOWED_PDF_ORIGIN`).
  */
 export function buildPrintResultTargetUrl(

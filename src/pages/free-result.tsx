@@ -11,7 +11,11 @@ import { supabase } from "../utils/supabase-client";
 
 // PDF export functionality
 import { exportChartAsPdf, isPdfExportSupported } from "../utils/pdfExport";
-import { buildPrintResultTargetUrl, exportPdfViaServer } from "../utils/pdfExportServer";
+import {
+  buildPrintResultTargetUrl,
+  exportPdfViaServer,
+  resolvePrintPageOrigin,
+} from "../utils/pdfExportServer";
 import PdfExportModal from "../components/PdfExportModal";
 import { PdfChartData } from "../components/PdfDocument";
 import { useAlertContext } from "../context/AlertContext";
@@ -460,7 +464,7 @@ const FreeResultContent: React.FC = () => {
             },
           }));
           const targetUrl = buildPrintResultTargetUrl(
-            window.location.origin,
+            resolvePrintPageOrigin(),
             String(chartData.id),
             accessToken
           );

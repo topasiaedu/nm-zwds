@@ -60,9 +60,9 @@ export const DayunSeasonHero: React.FC<DayunSeasonHeroProps> = ({ dayun }) => {
       />
       
       {/* Content */}
-      <div className="relative px-8 py-10">
-        <div className="flex items-start justify-between flex-wrap gap-4">
-          <div className="flex-1 min-w-[300px]">
+      <div className="relative px-6 sm:px-8 py-8 sm:py-10">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-start justify-between gap-6 sm:gap-4">
+          <div className="flex-1 w-full">
             <div className="inline-flex items-center gap-2 bg-black/20 backdrop-blur-sm rounded-full px-4 py-1.5 mb-4 border border-white/20">
               <div className="w-2 h-2 rounded-full bg-white animate-pulse" />
               <span className="text-white text-xs font-bold uppercase tracking-wider drop-shadow-lg">

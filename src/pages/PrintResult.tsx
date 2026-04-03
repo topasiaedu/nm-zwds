@@ -233,6 +233,18 @@ const PrintResultContent: React.FC = () => {
     }
   }, [chartData]);
 
+  /**
+   * When profile loaded but natal calculation fails, avoid a totally empty print page for Puppeteer.
+   */
+  useEffect(() => {
+    if (loading || error !== null || chartData === null) {
+      return;
+    }
+    if (calculatedChartData === null) {
+      setError("Chart could not be calculated for this profile.");
+    }
+  }, [loading, error, chartData, calculatedChartData]);
+
   const getPalaceOverride = useCallback((_aspect: LifeAspect): number | null => null, []);
 
   const resolvePalaceName = useCallback((_palaceNumber: number): string => "", []);
@@ -275,7 +287,7 @@ const PrintResultContent: React.FC = () => {
         `}
       </style>
       {loading ? (
-        <div className="flex justify-center py-24">
+        <div className="flex justify-center py-24" data-pdf-loading="true">
           <div className="text-center">
             <div className="inline-block h-10 w-10 animate-spin rounded-full border-2 border-purple-500 border-t-transparent" />
             <p className="mt-4 text-gray-600 dark:text-gray-400">
@@ -286,13 +298,16 @@ const PrintResultContent: React.FC = () => {
       ) : null}
 
       {!loading && error !== null ? (
-        <div className="rounded-lg border border-red-200 bg-red-50 p-6 text-center dark:border-red-900 dark:bg-red-950/40">
+        <div
+          className="rounded-lg border border-red-200 bg-red-50 p-6 text-center dark:border-red-900 dark:bg-red-950/40"
+          data-pdf-error="true"
+        >
           <p className="text-red-800 dark:text-red-200">{error}</p>
         </div>
       ) : null}
 
       {!loading && error === null && chartData !== null && calculatedChartData !== null ? (
-        <div className="space-y-8">
+        <div className="space-y-8" data-pdf-render-ready="true">
           {/* Cover page: dedicated sheet for server Puppeteer PDF (matches jsPDF cover intent). */}
           <section
             className="print-cover-page mx-auto max-w-lg rounded-2xl border border-violet-200 bg-gradient-to-b from-white to-slate-50 px-8 py-12 text-center shadow-sm"

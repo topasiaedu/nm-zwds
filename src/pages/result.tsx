@@ -18,7 +18,11 @@ import {
 import PdfExportModal from "../components/PdfExportModal";
 import { PdfChartData } from "../components/PdfDocument";
 import { useAlertContext } from "../context/AlertContext";
-import { buildPrintResultTargetUrl, exportPdfViaServer } from "../utils/pdfExportServer";
+import {
+  buildPrintResultTargetUrl,
+  exportPdfViaServer,
+  resolvePrintPageOrigin,
+} from "../utils/pdfExportServer";
 import { supabase } from "../utils/supabase-client";
 import {
   Overview,
@@ -704,7 +708,7 @@ const ResultContent: React.FC = () => {
         }));
 
         const targetUrl = buildPrintResultTargetUrl(
-          window.location.origin,
+          resolvePrintPageOrigin(),
           String(chartData.id),
           accessToken
         );

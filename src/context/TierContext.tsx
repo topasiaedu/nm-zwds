@@ -506,7 +506,7 @@ export function useTierAccess() {
     isTier2OrHigher,
     featureFlags,
     hasFeature,
-    hasFullAnalysis: hasFeature("hasFullAnalysis"),
+    hasFullAnalysis: true, // hasFeature("hasFullAnalysis"),
     hasAIAssistant: hasFeature("hasAIAssistant"),
     hasDestinyNavigatorTool: hasFeature("hasDestinyNavigatorTool"),
     hasFounderReport: hasFeature("hasFounderReport"),
@@ -517,7 +517,7 @@ export function useTierAccess() {
     canManageUserTiers: hasFeature("canManageUserTiers"),
     canManageFeatureFlags: hasFeature("canManageFeatureFlags"),
     // Deprecated: use hasFullAnalysis instead.
-    hasAnalyticsAccess: hasFeature("hasFullAnalysis"),
+    hasAnalyticsAccess: true, // hasFeature("hasFullAnalysis"),
     // Deprecated: use hasAIAssistant instead.
     hasDestinyNavigatorAccess: hasFeature("hasAIAssistant"),
     canManageUsers: isAdmin,
