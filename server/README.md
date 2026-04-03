@@ -63,4 +63,23 @@ See [`.env.example`](./.env.example).
 - Use a plan with **≥ 1024 MB RAM** (2 GB safer for heavy pages).
 - **Max duration:** allow ~90s for generation + idle wait; clients may see **504** if the job exceeds the server timeout.
 - **Rate limit:** `POST /api/export-pdf` is limited in-process (30 requests / minute / IP) unless `PDF_RELAX_SECURITY` is set; scale-out needs a shared store or edge limiter.
-- If `puppeteer` fails to download or run Chromium on Render’s image, switch to **`puppeteer-core`**, install system Chromium, and set `PUPPETEER_EXECUTABLE_PATH` (documented in Puppeteer docs).
+
+### Docker on Render (recommended)
+
+The repo includes `server/Dockerfile`: **Debian system Chromium** + `PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium`, so PDF generation does not rely on Puppeteer’s downloaded browser cache.
+
+1. In Render, set the Web Service **runtime** to **Docker** (or apply `render.yaml` from this repo).
+2. **Dockerfile path:** `server/Dockerfile`
+3. **Docker build context:** `server` (same folder as the Dockerfile).
+4. Keep setting `ALLOWED_PDF_ORIGIN`, CORS vars, and auth as before. You do **not** need `PUPPETEER_CACHE_DIR` for this image.
+
+Local Docker smoke test:
+
+```bash
+docker build -t nm-zwds-pdf ./server
+docker run --rm -p 8787:8787 -e ALLOWED_PDF_ORIGIN=http://localhost:3000 nm-zwds-pdf
+```
+
+### Local dev without Docker
+
+After `npm install`, Puppeteer downloads its bundled Chromium unless `PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true`. Use `npm run dev` as usual.

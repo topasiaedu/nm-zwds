@@ -4,18 +4,13 @@
 services:
   - type: web
     name: nm-zwds-pdf-server
-    runtime: node
-    rootDir: server
-    buildCommand: npm install --include=dev && npx -y puppeteer browsers install && npm run build
-    startCommand: npm start
+    runtime: docker
+    dockerfilePath: ./server/Dockerfile
+    dockerContext: ./server
     plan: starter
     envVars:
       - key: NODE_ENV
         value: production
-      - key: NPM_CONFIG_PRODUCTION
-        value: "false"
-      - key: PUPPETEER_CACHE_DIR
-        value: /opt/render/project/.cache/puppeteer
       - key: ALLOWED_PDF_ORIGIN
         sync: false
       - key: ALLOWED_APP_ORIGIN
