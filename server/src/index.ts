@@ -7,6 +7,11 @@ import { exportPdfRouter } from "./routes/exportPdf.js";
  * HTTP port: Render injects PORT; local default matches agent prompt.
  */
 const PORT = parseInt(process.env.PORT ?? "8787", 10);
+/**
+ * Render / Docker: must bind 0.0.0.0 so the platform health check sees an open port.
+ * Binding only :: or 127.0.0.1 can produce "No open ports detected" on deploy.
+ */
+const LISTEN_HOST = "0.0.0.0";
 
 const app = express();
 
@@ -83,6 +88,6 @@ app.use((_req, res) => {
   res.status(404).json({ error: "Not found." });
 });
 
-app.listen(PORT, () => {
-  console.log(`pdf-server listening on port ${PORT}`);
+app.listen(PORT, LISTEN_HOST, () => {
+  console.log(`pdf-server listening on ${LISTEN_HOST}:${PORT}`);
 });
