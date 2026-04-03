@@ -1,11 +1,14 @@
 import puppeteer from "puppeteer";
 
-/** Total budget for launch, navigation, and PDF render (Prompt 3: ~90s). */
-const DEFAULT_MAX_JOB_MS = 90_000;
+/** Total budget for launch, navigation, and PDF render (SPA wait can exceed 90s). */
+const DEFAULT_MAX_JOB_MS = 150_000;
 
 /** `page.goto` idle wait; increase if flaky on slow SPAs. */
 const GOTO_TIMEOUT_MS = 60_000;
-const WAIT_FOR_PRINT_LAYOUT_MS = 45_000;
+/** Wait for React print route: `[data-pdf-render-ready]` or `[data-pdf-error]`. */
+const WAIT_FOR_PDF_PAGE_MS = 75_000;
+/** Extra time for chart/SVG/fonts after the DOM signals ready. */
+const PDF_SETTLE_AFTER_READY_MS = 3_500;
 
 /**
  * Thrown when the PDF job exceeds {@link DEFAULT_MAX_JOB_MS}.
@@ -14,6 +17,16 @@ export class PdfTimeoutError extends Error {
   constructor() {
     super("PDF_GENERATION_TIMEOUT");
     this.name = "PdfTimeoutError";
+  }
+}
+
+/**
+ * Print page reported an error (e.g. profile missing) or never reached ready state.
+ */
+export class PdfPageContentError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "PdfPageContentError";
   }
 }
 
@@ -64,20 +77,58 @@ export async function renderPdfFromUrl(url: string): Promise<Buffer> {
     return await withTimeout(
       (async () => {
         const page = await launched.newPage();
+        page.on("console", (msg) => {
+          const text = msg.text();
+          if (msg.type() === "error") {
+            console.error(`pdf-server: page console [error]: ${text}`);
+          }
+        });
+        page.on("pageerror", (err) => {
+          console.error("pdf-server: page uncaught error:", err);
+        });
         console.info(`pdf-server: navigating to print page ${redactedTarget}`);
         await page.goto(url, {
           // `networkidle2` avoids hanging forever on pages with persistent background polling.
           waitUntil: "networkidle2",
           timeout: GOTO_TIMEOUT_MS,
         });
-        /**
-         * SPA: wait for print layout (cover + chart) and fonts so SVG zodiac / text render
-         * before `page.pdf` (avoids blank heroes and missing icons).
-         */
         try {
-          await page.waitForSelector(".print-cover-page", { timeout: WAIT_FOR_PRINT_LAYOUT_MS });
+          await page.waitForFunction(
+            () => {
+              const w = globalThis as unknown as {
+                document: { querySelector: (sel: string) => { textContent: string | null } | null };
+              };
+              return (
+                w.document.querySelector("[data-pdf-render-ready=\"true\"]") !== null ||
+                w.document.querySelector("[data-pdf-error=\"true\"]") !== null
+              );
+            },
+            { timeout: WAIT_FOR_PDF_PAGE_MS }
+          );
         } catch {
-          /* Route may omit cover; still attempt PDF */
+          throw new PdfPageContentError(
+            "Print page did not finish loading in time. Check the print URL, Supabase env on the app host, and browser console logs above."
+          );
+        }
+        const pageState = await page.evaluate(() => {
+          const w = globalThis as unknown as {
+            document: { querySelector: (sel: string) => { textContent: string | null } | null };
+          };
+          const errEl = w.document.querySelector("[data-pdf-error=\"true\"]");
+          if (errEl !== null) {
+            const text = errEl.textContent?.trim() ?? "";
+            return { kind: "error" as const, message: text.length > 0 ? text : "Print page reported an error." };
+          }
+          if (w.document.querySelector("[data-pdf-render-ready=\"true\"]") !== null) {
+            return { kind: "ready" as const, message: "" };
+          }
+          return { kind: "unknown" as const, message: "Print page did not expose a ready or error marker." };
+        });
+        if (pageState.kind === "error") {
+          throw new PdfPageContentError(pageState.message);
+        }
+        if (pageState.kind !== "ready") {
+          throw new PdfPageContentError(pageState.message);
         }
         await page.evaluate(async () => {
           const w = globalThis as typeof globalThis & {
@@ -93,7 +144,7 @@ export async function renderPdfFromUrl(url: string): Promise<Buffer> {
           }
         });
         await new Promise<void>((resolve) => {
-          setTimeout(resolve, 1500);
+          setTimeout(resolve, PDF_SETTLE_AFTER_READY_MS);
         });
         console.info(`pdf-server: generating PDF bytes for ${redactedTarget}`);
         const pdf = await page.pdf({

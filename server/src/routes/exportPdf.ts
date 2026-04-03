@@ -10,7 +10,11 @@ import {
   safeMessageForUrlFailure,
   validateTargetUrlShape,
 } from "../utils/ssrf.js";
-import { PdfTimeoutError, renderPdfFromUrl } from "../pdf/renderPdf.js";
+import {
+  PdfPageContentError,
+  PdfTimeoutError,
+  renderPdfFromUrl,
+} from "../pdf/renderPdf.js";
 
 const DEV_FALLBACK_ORIGIN = "http://localhost:3000";
 
@@ -132,6 +136,10 @@ exportPdfRouter.post(
   } catch (err) {
     if (err instanceof PdfTimeoutError) {
       res.status(504).json({ error: "PDF generation timed out." });
+      return;
+    }
+    if (err instanceof PdfPageContentError) {
+      res.status(422).json({ error: err.message });
       return;
     }
     console.error("pdf-server: export failed", err);
