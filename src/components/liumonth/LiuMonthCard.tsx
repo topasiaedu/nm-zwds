@@ -46,8 +46,10 @@ const getScoreLabel = (pct: number): string => {
  * Props for the LiuMonthCard component.
  */
 export interface LiuMonthCardProps {
-  /** The current month number (1–12) */
+  /** Chinese lunar month ordinal (1-12); headline uses the matching English month name as a label. */
   selectedMonth: number;
+  /** Gregorian (solar) year shown in the hero (defaults to system year if omitted). */
+  solarYear?: number;
   /** The physical palace number (1–12) that is active for this month */
   palaceNumber: number;
   /** The Chinese name of the active palace (e.g. "官禄") */
@@ -407,13 +409,14 @@ const MetricsAndReflection: React.FC<{
  */
 export const LiuMonthCard: React.FC<LiuMonthCardProps> = ({
   selectedMonth,
+  solarYear,
   palaceNumber,
   palaceName,
 }) => {
   const monthData = PALACE_MONTH_DATA[palaceName];
   const guidanceData = PALACE_GUIDANCE_DATA[palaceName];
 
-  const currentYear = new Date().getFullYear();
+  const currentYear = solarYear ?? new Date().getFullYear();
   const monthName = new Date(currentYear, selectedMonth - 1).toLocaleString("default", { month: "long" });
 
   /** Graceful fallback when palace data is unavailable */

@@ -122,6 +122,20 @@ interface ZWDSChartProps {
   /** Optional controlled showMonths state (1-12). When set, automatically shows months for that palace. */
   showMonthsControlled?: number | null;
   /**
+   * When true, every palace shows the chart `targetYear` in the year row (used for Liu Month month view).
+   */
+  uniformAnnualYearForMonths?: boolean;
+  /**
+   * When true, the Liu Month life palace (secondary 命宫 for the month anchor) receives the same
+   * amber styling as Da Yun. Pair with `liuMonthLifeHighlightPalaceNumber` (1–12).
+   */
+  highlightLifePalaceLikeDayun?: boolean;
+  /**
+   * Physical palace (1–12) that carries the life aspect in Liu Month mode; from
+   * `getPalaceForAspectLiuMonth("life", …)`. Ignored when null.
+   */
+  liuMonthLifeHighlightPalaceNumber?: number | null;
+  /**
    * Callback fired when the user changes the palace name selection via click.
    * Only called for user-driven interactions, not controlled prop syncs.
    */
@@ -149,6 +163,9 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
   onPalaceNameChange,
   onDaXianChange,
   showMonthsControlled = null,
+  uniformAnnualYearForMonths = false,
+  highlightLifePalaceLikeDayun = false,
+  liuMonthLifeHighlightPalaceNumber = null,
 }) => {
   // State to track the selected palace for transformations
   const [selectedPalace, setSelectedPalace] = useState<number | null>(null);
@@ -528,8 +545,14 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
     // Get the secondary palace name if a palace was clicked
     const secondaryPalaceName = getSecondaryPalaceName(palaceNumber);
 
-    // Calculate the year for this palace
-    const palaceYear = calculateYearForPalace(palaceNumber);
+    const palaceYear = uniformAnnualYearForMonths
+      ? targetYear
+      : calculateYearForPalace(palaceNumber);
+
+    const isLifePalaceLiuMonthHighlight =
+      highlightLifePalaceLikeDayun &&
+      liuMonthLifeHighlightPalaceNumber !== null &&
+      palaceNumber === liuMonthLifeHighlightPalaceNumber;
 
     return (
       <Palace
@@ -558,6 +581,7 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
         isPdfExport={isPdfExport}
         disableInteraction={disableInteraction}
         chartSettings={settings}
+        isLifePalaceLiuMonthHighlight={isLifePalaceLiuMonthHighlight}
       />
     );
   };

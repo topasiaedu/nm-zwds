@@ -8,6 +8,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { LifeAspect } from "../../../types/destiny-navigator";
 import { getAspectConfig } from "../../../utils/destiny-navigator/aspect-config";
+import { getLiuMonthAnchorFromLocalDate } from "../../../utils/destiny-navigator/palace-resolver";
 
 /**
  * Component props
@@ -61,10 +62,8 @@ const MonthSelector: React.FC<MonthSelectorProps> = ({
    */
   const aspectConfig = selectedAspect ? getAspectConfig(selectedAspect) : null;
 
-  /**
-   * Get current month to highlight it
-   */
-  const currentMonth = new Date().getMonth() + 1; // 1-12
+  /** Highlight the lunar month slot (1-12) that matches today, not Gregorian month. */
+  const currentMonth = getLiuMonthAnchorFromLocalDate().lunarMonth;
 
   /**
    * Handle month selection

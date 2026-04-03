@@ -28,6 +28,7 @@ import { LiuMonthCard } from "../components/liumonth";
 import { NoblemanSection } from "../components/nobleman";
 import { calculateCurrentDayunCycle } from "../utils/dayun/calculator";
 import { calculateNoblemanData } from "../utils/nobleman/calculator";
+import { getLiuMonthAnchorFromLocalDate } from "./destiny-navigator/palace-resolver";
 
 // Re-export PdfChartData for external use
 export type { PdfChartData };
@@ -36,7 +37,10 @@ export type PdfResultBlueprintMode = "dna" | "dayun" | "liunian" | "liumonth";
 
 export interface PdfResultExportContext {
   blueprintMode: PdfResultBlueprintMode;
+  /** Lunar month 1-12 for Liu Month wheel (same convention as `getLiuMonthAnchorFromLocalDate`). */
   selectedLiuMonth: number;
+  /** Gregorian year for annual-flow palace on the chart. */
+  liuMonthSolarYear: number;
   palaceOverrides: {
     life: number | null;
     wealth: number | null;
@@ -153,13 +157,17 @@ const WEALTH_HEADER = {
     "Decode your natural earning style and ideal business model aligned to your energy.",
 } as const;
 
-const defaultResultExportContext = (): PdfResultExportContext => ({
-  blueprintMode: "dna",
-  selectedLiuMonth: new Date().getMonth() + 1,
-  palaceOverrides: { life: null, wealth: null, health: null },
-  resolvePalaceName: () => "",
-  liuMonthCard: null,
-});
+const defaultResultExportContext = (): PdfResultExportContext => {
+  const anchor = getLiuMonthAnchorFromLocalDate();
+  return {
+    blueprintMode: "dna",
+    selectedLiuMonth: anchor.lunarMonth,
+    liuMonthSolarYear: anchor.solarYear,
+    palaceOverrides: { life: null, wealth: null, health: null },
+    resolvePalaceName: () => "",
+    liuMonthCard: null,
+  };
+};
 
 const mergeResultExportContext = (
   partial?: PdfResultExportContext
@@ -941,6 +949,7 @@ const appendMirroredAnalysisPages = async (
       72,
       React.createElement(LiuMonthCard, {
         selectedMonth: ctx.selectedLiuMonth,
+        solarYear: ctx.liuMonthSolarYear,
         palaceNumber: ctx.liuMonthCard.palaceNumber,
         palaceName: ctx.liuMonthCard.palaceName,
       }),

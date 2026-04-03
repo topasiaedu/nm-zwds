@@ -57,6 +57,8 @@ interface PalaceProps {
   isPdfExport?: boolean; // Optional prop to indicate PDF export mode
   disableInteraction?: boolean; // Optional prop to disable all user interactions
   chartSettings: ChartSettings; // Chart settings to control feature visibility
+  /** Amber Da Yun-style glow for the Liu Month life palace (no corner tag; bottom label already shows Life). */
+  isLifePalaceLiuMonthHighlight?: boolean;
 }
 
 /**
@@ -87,6 +89,7 @@ const Palace: React.FC<PalaceProps> = ({
   isPdfExport = false,
   disableInteraction = false,
   chartSettings,
+  isLifePalaceLiuMonthHighlight = false,
 }) => {
   const { t, language } = useLanguage();
   const clickTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
@@ -146,6 +149,9 @@ const Palace: React.FC<PalaceProps> = ({
     palace.majorLimit &&
     palace.majorLimit.startAge <= ageToCheck &&
     palace.majorLimit.endAge >= ageToCheck;
+
+  /** Amber gradient / ring / pulse; includes Liu Month Life Palace when requested. */
+  const hasDayunStyleGlow = isCurrentDaXian || isLifePalaceLiuMonthHighlight;
 
   // Animation variants for palaces
   const palaceVariants = isPdfExport ? undefined : {
@@ -304,9 +310,9 @@ const Palace: React.FC<PalaceProps> = ({
     };
   }
 
-  // Fixed style for current da xian with glow effect
+  // Fixed style for current da xian (or Life Palace in Liu Month) with glow effect
   const daXianStyle =
-    isCurrentDaXian && !isSelected
+    hasDayunStyleGlow && !isSelected
       ? {
           backgroundImage:
             "linear-gradient(135deg, rgba(252, 211, 77, 0.7), rgba(251, 191, 36, 0.65))",
@@ -322,7 +328,7 @@ const Palace: React.FC<PalaceProps> = ({
       ? { boxShadow: "0 0 15px rgba(79, 70, 229, 0.25)" }
       : isTargetPalace
       ? targetHighlightStyle
-      : isCurrentDaXian
+      : hasDayunStyleGlow
       ? {
           /* boxShadow already set in daXianStyle */
         }
@@ -427,10 +433,10 @@ const Palace: React.FC<PalaceProps> = ({
   return (
     <motion.div
       key={`palace-${palaceNumber}-${selectedPalace}`}
-      className={`relative border ${isCurrentDaXian ? "pulse-button" : ""} border-gray-100 dark:border-gray-700 p-0.5 xs:p-1 sm:p-2 md:p-3 h-full overflow-hidden min-h-[140px] xs:min-h-[180px] sm:min-h-[130px] md:min-h-[150px] ${
+      className={`relative border ${hasDayunStyleGlow ? "pulse-button" : ""} border-gray-100 dark:border-gray-700 p-0.5 xs:p-1 sm:p-2 md:p-3 h-full overflow-hidden min-h-[140px] xs:min-h-[180px] sm:min-h-[130px] md:min-h-[150px] ${
         isSelected
           ? "bg-indigo-50/80 dark:bg-indigo-900/30 text-white"
-          : isCurrentDaXian && !isSelected
+          : hasDayunStyleGlow && !isSelected
           ? "bg-gradient-to-br from-yellow-100 to-amber-300 dark:from-yellow-400/70 dark:to-amber-400/60"
           : 
            "bg-white dark:bg-gray-800"
@@ -439,7 +445,7 @@ const Palace: React.FC<PalaceProps> = ({
           ? "ring-1 sm:ring-2 ring-indigo-500"
           : isTargetPalace
           ? `ring-1 sm:ring-1 ${transformationBorderColor}`
-          : isCurrentDaXian && !isSelected
+          : hasDayunStyleGlow && !isSelected
           ? "ring-2 ring-amber-400/80 dark:ring-amber-400/80"
           : isHighlighted
           ? "ring-2 ring-red-500 dark:ring-red-500"

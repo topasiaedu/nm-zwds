@@ -6,6 +6,7 @@
 import { ChartData } from "../zwds/types";
 import { LifeAspect } from "../../types/destiny-navigator";
 import { PALACE_NAMES } from "../zwds/constants";
+import { lunar } from "../lunar";
 
 /**
  * Palace name to month index mapping (0 = January, 11 = December).
@@ -25,6 +26,29 @@ const PALACE_TO_MONTH_INDEX: Record<string, number> = {
   "福德": 10,
   "父母": 11
 };
+
+/**
+ * Today’s date converted for Liu Month: **lunar month** (1–12, 正月…腊月) picks the active palace
+ * on the month wheel; **solar year** still matches `annualFlow.year` (Gregorian) on the chart.
+ */
+export function getLiuMonthAnchorFromLocalDate(): {
+  solarYear: number;
+  lunarMonth: number;
+  lunarYear: number;
+  isLeapMonth: boolean;
+} {
+  const d = new Date();
+  const solarYear = d.getFullYear();
+  const solarMonth = d.getMonth() + 1;
+  const solarDay = d.getDate();
+  const conv = lunar.convertSolarToLunar(solarYear, solarMonth, solarDay);
+  return {
+    solarYear,
+    lunarMonth: conv.month,
+    lunarYear: conv.year,
+    isLeapMonth: conv.isLeap,
+  };
+}
 
 /**
  * English name parallel to PALACE_NAMES (index 0 = 命宫 → "Life Palace").
@@ -372,8 +396,8 @@ export function getCurrentLiuNianPalace(chartData: ChartData): number | null {
  * when analyzing Liu Month (the palace the user would click on to see its secondary name).
  *
  * @param chartData - Complete chart data
- * @param selectedMonth - Selected month (1-12)
- * @param selectedYear - Selected year (defaults to current year)
+ * @param selectedMonth - Month index 1–12 for the wheel (use **Chinese lunar month** from `getLiuMonthAnchorFromLocalDate` for “today”)
+ * @param selectedYear - Gregorian calendar year for annual flow (defaults to local solar year)
  * @returns Palace number representing that month, or null if not found
  */
 export function getMonthPalaceForLiuMonth(
@@ -421,7 +445,7 @@ export function getMonthPalaceForLiuMonth(
  * This is the palace where months will be displayed (the year palace).
  *
  * @param chartData - Complete chart data
- * @param selectedYear - Selected year (defaults to current year)
+ * @param selectedYear - Gregorian year (defaults to local solar current year)
  * @returns Palace number with that year's annual flow, or null if not found
  */
 export function getYearPalaceForLiuMonth(
@@ -646,8 +670,8 @@ export function getPalaceForAspectLiuNian(aspect: LifeAspect, chartData: ChartDa
  *
  * @param aspect - The life aspect
  * @param chartData - Complete chart data
- * @param selectedMonth - Selected month (1-12)
- * @param selectedYear - Selected year (defaults to current year)
+ * @param selectedMonth - Lunar month 1–12 when anchoring “now” (see `getLiuMonthAnchorFromLocalDate`)
+ * @param selectedYear - Gregorian year for annual flow (defaults to local solar year)
  * @returns Palace number or null if not found
  */
 export function getPalaceForAspectLiuMonth(
@@ -733,14 +757,16 @@ export function getPalaceForAspectLiuMonth(
  * @param physicalPalaceNumber - The physical palace number (1–12) from natal chart
  * @param chartData - Complete chart data
  * @param mode - Active blueprint/timeframe mode
- * @param selectedMonth - Required for "liumonth" mode (1–12); defaults to current month
+ * @param selectedMonth - Required for "liumonth" mode: lunar month 1–12; defaults from `getLiuMonthAnchorFromLocalDate`
+ * @param liuMonthSolarYear - For "liumonth": Gregorian year for annual-flow lookup; defaults to local solar year
  * @returns English palace name (e.g. "Wealth Palace") or null if not resolvable
  */
 export function getPalaceEnglishNameForTimeframe(
   physicalPalaceNumber: number,
   chartData: ChartData,
   mode: "dna" | "liunian" | "dayun" | "liumonth",
-  selectedMonth?: number
+  selectedMonth?: number,
+  liuMonthSolarYear?: number
 ): string | null {
   // Validate the palace number input.
   if (
@@ -767,9 +793,11 @@ export function getPalaceEnglishNameForTimeframe(
   }
 
   if (mode === "liumonth") {
-    // Resolve month palace and build secondary names.
-    const month = selectedMonth ?? new Date().getMonth() + 1;
-    const monthPalace = getMonthPalaceForLiuMonth(chartData, month);
+    // Resolve month palace and build secondary names (lunar month index, Gregorian year on chart).
+    const anchor = getLiuMonthAnchorFromLocalDate();
+    const month = selectedMonth ?? anchor.lunarMonth;
+    const solarYear = liuMonthSolarYear ?? anchor.solarYear;
+    const monthPalace = getMonthPalaceForLiuMonth(chartData, month, solarYear);
     if (!monthPalace) {
       console.warn("getPalaceEnglishNameForTimeframe: could not resolve Liu Month palace.");
       return null;

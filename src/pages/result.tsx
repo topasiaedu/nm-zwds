@@ -40,7 +40,7 @@ import ChartSettingsModal from "../components/ChartSettingsModal";
 import { DayunSection } from "../components/dayun";
 import { NoblemanSection } from "../components/nobleman";
 import { LiuMonthCard } from "../components/liumonth";
-import { getCurrentLiuNianPalace, getCurrentDayunPalace, getMonthPalaceForLiuMonth, getYearPalaceForLiuMonth, getPalaceForAspectLiuNian, getPalaceForAspectLiuMonth, getPalaceForAspectDayun, getPalaceEnglishNameForTimeframe } from "../utils/destiny-navigator/palace-resolver";
+import { getCurrentLiuNianPalace, getCurrentDayunPalace, getMonthPalaceForLiuMonth, getYearPalaceForLiuMonth, getPalaceForAspectLiuNian, getPalaceForAspectLiuMonth, getPalaceForAspectDayun, getPalaceEnglishNameForTimeframe, getLiuMonthAnchorFromLocalDate } from "../utils/destiny-navigator/palace-resolver";
 import type { LifeAspect } from "../types/destiny-navigator";
 // FourKeyPalaceAnalysis and LifeAreasExplanation are kept commented out for potential future use
 // import { FourKeyPalaceAnalysis, LifeAreasExplanation } from "../components/analysis";
@@ -127,8 +127,12 @@ const ResultContent: React.FC = () => {
   // State for blueprint mode switching (controls chart overlay presets)
   const [blueprintMode, setBlueprintMode] = useState<"dna" | "dayun" | "liunian" | "liumonth">("dna");
 
-  /** Current month (1–12) for Liu Month mode. Fixed at the current calendar month. */
-  const selectedLiuMonth = new Date().getMonth() + 1;
+  /**
+   * Liu Month anchor: **lunar month** (1-12) from today's solar date, plus **solar year** for 流年 palace.
+   * E.g. Gregorian Apr 3, 2026 -> lunar second month -> wheel slot 2 ("February" label), not April.
+   */
+  const { solarYear: liuMonthSolarYear, lunarMonth: selectedLiuMonth } =
+    getLiuMonthAnchorFromLocalDate();
 
   /**
    * Persisted palace name selection for DNA (natal) mode.
@@ -575,8 +579,8 @@ const ResultContent: React.FC = () => {
    */
   const currentLiuMonthYearPalace = useMemo<number | null>(() => {
     if (!calculatedChartData) return null;
-    return getYearPalaceForLiuMonth(calculatedChartData);
-  }, [calculatedChartData]);
+    return getYearPalaceForLiuMonth(calculatedChartData, liuMonthSolarYear);
+  }, [calculatedChartData, liuMonthSolarYear]);
 
   /**
    * The month palace anchor for Liu Month mode.
@@ -584,8 +588,25 @@ const ResultContent: React.FC = () => {
    */
   const currentLiuMonthPalace = useMemo<number | null>(() => {
     if (!calculatedChartData) return null;
-    return getMonthPalaceForLiuMonth(calculatedChartData, selectedLiuMonth);
-  }, [calculatedChartData, selectedLiuMonth]);
+    return getMonthPalaceForLiuMonth(
+      calculatedChartData,
+      selectedLiuMonth,
+      liuMonthSolarYear
+    );
+  }, [calculatedChartData, selectedLiuMonth, liuMonthSolarYear]);
+
+  /**
+   * Liu Month "life" palace for the current **lunar** month (see `getLiuMonthAnchorFromLocalDate`).
+   */
+  const currentLiuMonthLifePalace = useMemo<number | null>(() => {
+    if (!calculatedChartData) return null;
+    return getPalaceForAspectLiuMonth(
+      "life",
+      calculatedChartData,
+      selectedLiuMonth,
+      liuMonthSolarYear
+    );
+  }, [calculatedChartData, selectedLiuMonth, liuMonthSolarYear]);
 
   /**
    * Resolve the physical palace number override for a given life aspect
@@ -610,7 +631,12 @@ const ResultContent: React.FC = () => {
           return getPalaceForAspectLiuNian(aspect, calculatedChartData);
 
         case "liumonth":
-          return getPalaceForAspectLiuMonth(aspect, calculatedChartData, selectedLiuMonth);
+          return getPalaceForAspectLiuMonth(
+            aspect,
+            calculatedChartData,
+            selectedLiuMonth,
+            liuMonthSolarYear
+          );
 
         case "dayun":
           return getPalaceForAspectDayun(aspect, calculatedChartData, "current");
@@ -619,7 +645,7 @@ const ResultContent: React.FC = () => {
           return null;
       }
     },
-    [calculatedChartData, blueprintMode, selectedLiuMonth]
+    [calculatedChartData, blueprintMode, selectedLiuMonth, liuMonthSolarYear]
   );
 
   /**
@@ -641,11 +667,12 @@ const ResultContent: React.FC = () => {
           palaceNumber,
           calculatedChartData,
           blueprintMode,
-          blueprintMode === "liumonth" ? selectedLiuMonth : undefined
+          blueprintMode === "liumonth" ? selectedLiuMonth : undefined,
+          blueprintMode === "liumonth" ? liuMonthSolarYear : undefined
         ) ?? ""
       );
     },
-    [calculatedChartData, blueprintMode, selectedLiuMonth]
+    [calculatedChartData, blueprintMode, selectedLiuMonth, liuMonthSolarYear]
   );
 
   /**
@@ -788,6 +815,7 @@ const ResultContent: React.FC = () => {
     const resultExportContext: PdfResultExportContext = {
       blueprintMode,
       selectedLiuMonth,
+      liuMonthSolarYear,
       palaceOverrides: {
         life: getPalaceOverride("life"),
         wealth: getPalaceOverride("wealth"),
@@ -854,6 +882,7 @@ const ResultContent: React.FC = () => {
     language,
     resolvePalaceName,
     selectedLiuMonth,
+    liuMonthSolarYear,
     setIsCapturingForPdf,
     showAlert,
     t,
@@ -1067,24 +1096,20 @@ const ResultContent: React.FC = () => {
                         { key: "dna", label: "DNA Chart" },
                         { key: "dayun", label: "Da Yun (10 Year)" },
                         { key: "liunian", label: "Liu Nian (Yearly)" },
-                        { key: "liumonth", label: "Liu Month (Coming Soon)" },
+                        { key: "liumonth", label: "Liu Month (Monthly)" },
                       ].map((blueprint) => {
                         const active = blueprintMode === blueprint.key;
-                        const isDisabled = blueprint.key === "liumonth";
                         return (
                           <button
                             key={blueprint.key}
                             type="button"
-                            disabled={isDisabled}
                             onClick={() =>
                               handleBlueprintChange(
                                 blueprint.key as "dna" | "dayun" | "liunian" | "liumonth"
                               )
                             }
                             className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                              isDisabled
-                                ? "bg-white/30 dark:bg-gray-700/30 text-gray-400 dark:text-gray-500 border border-gray-200/50 dark:border-gray-600/50 cursor-not-allowed opacity-60"
-                                : active
+                              active
                                 ? "bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-md"
                                 : "bg-white/60 dark:bg-gray-700/60 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-600 hover:border-purple-300 dark:hover:border-purple-500 hover:bg-purple-50 dark:hover:bg-purple-900/20"
                               }`}
@@ -1107,6 +1132,9 @@ const ResultContent: React.FC = () => {
                       }}>
                       <ZWDSChart
                         chartData={calculatedChartData}
+                        targetYear={
+                          blueprintMode === "liumonth" ? liuMonthSolarYear : undefined
+                        }
                         isPdfExport={isCapturingForPdf}
                         // DaYun: drive with current dayun palace
                         // DNA: restore saved DNA selection (null clears on first render)
@@ -1136,6 +1164,11 @@ const ResultContent: React.FC = () => {
                         // Other modes: clear any stale months display.
                         showMonthsControlled={
                           blueprintMode === "liumonth" ? currentLiuMonthYearPalace : null
+                        }
+                        uniformAnnualYearForMonths={blueprintMode === "liumonth"}
+                        highlightLifePalaceLikeDayun={blueprintMode === "liumonth"}
+                        liuMonthLifeHighlightPalaceNumber={
+                          blueprintMode === "liumonth" ? currentLiuMonthLifePalace : null
                         }
                         // Persist palace name clicks only while in DNA mode
                         onPalaceNameChange={(palace) => {
@@ -1515,6 +1548,7 @@ const ResultContent: React.FC = () => {
               {blueprintMode === "liumonth" && currentLiuMonthPalace !== null ? (
                 <LiuMonthCard
                   selectedMonth={selectedLiuMonth}
+                  solarYear={liuMonthSolarYear}
                   palaceNumber={currentLiuMonthPalace}
                   palaceName={calculatedChartData.palaces[currentLiuMonthPalace - 1]?.name ?? ""}
                 />
