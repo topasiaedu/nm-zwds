@@ -1,29 +1,31 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useLanguage, Language } from "../context/LanguageContext";
+import { useLanguage, type Language } from "../context/LanguageContext";
 
 /**
- * Language toggle component with a frosted glass dropdown menu
+ * Language display metadata
+ */
+interface LanguageOption {
+  code: Language;
+  flag: string;
+  label: string;
+  shortLabel: string;
+}
+
+const LANGUAGE_OPTIONS: LanguageOption[] = [
+  { code: "en", flag: "🇺🇸", label: "English", shortLabel: "EN" },
+  { code: "zh-CN", flag: "🇨🇳", label: "简体中文", shortLabel: "简体" },
+  { code: "zh-TW", flag: "🇹🇼", label: "繁體中文", shortLabel: "繁體" },
+];
+
+/**
+ * Language toggle component with a frosted glass dropdown menu.
+ * Renders a flag icon that opens a dropdown with all available languages.
  */
 const LanguageToggle: React.FC = () => {
   const { language, changeLanguage } = useLanguage();
   const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  
-  /**
-   * Toggle the dropdown menu
-   */
-  const toggleDropdown = (): void => {
-    setDropdownOpen(!dropdownOpen);
-  };
-  
-  /**
-   * Handle language selection
-   */
-  const handleLanguageSelect = (lang: Language): void => {
-    changeLanguage(lang);
-    setDropdownOpen(false);
-  };
-  
+
   /**
    * Close dropdown when clicking outside
    */
@@ -33,79 +35,59 @@ const LanguageToggle: React.FC = () => {
         setDropdownOpen(false);
       }
     };
-    
+
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
-  
-  /**
-   * Get the language icon and text
-   */
-  const getLanguageDisplay = (lang: Language): { icon: string; text: string } => {
-    switch (lang) {
-      case "en":
-        return {
-          icon: "🇺🇸",
-          text: "English",
-        };
-      case "zh":
-        return {
-          icon: "🇨🇳",
-          text: "中文",
-        };
-      default:
-        return {
-          icon: "🌐",
-          text: "Unknown",
-        };
-    }
-  };
-  
-  const currentLanguage = getLanguageDisplay(language);
-  
+
+  const currentOption = LANGUAGE_OPTIONS.find((o) => o.code === language) ?? LANGUAGE_OPTIONS[0];
+
   return (
     <div className="relative" ref={dropdownRef}>
       <button
-        onClick={toggleDropdown}
-        className="flex items-center space-x-2 px-3 py-2 rounded-full text-gray-700 dark:text-gray-300 hover:bg-white/20 dark:hover:bg-black/20 transition-all duration-300"
+        onClick={() => setDropdownOpen((prev) => !prev)}
+        className="flex items-center space-x-1 px-3 py-2 rounded-full text-gray-700 dark:text-gray-300 hover:bg-white/20 dark:hover:bg-black/20 transition-all duration-300"
         aria-expanded={dropdownOpen}
+        aria-haspopup="listbox"
         type="button"
       >
-        <span className="text-xl">{currentLanguage.icon}</span>
+        <span className="text-xl">{currentOption.flag}</span>
+        <span className="text-xs font-medium hidden sm:inline">{currentOption.shortLabel}</span>
       </button>
-      
+
       {dropdownOpen && (
-        <div className="absolute left-0 mt-2 z-50 w-48 sm:w-56 rounded-2xl shadow-xl
+        <div
+          className="absolute left-0 mt-2 z-50 w-44 rounded-2xl shadow-xl
                       border border-white/20
-                      backdrop-filter backdrop-blur-lg 
-                      bg-white/80 hover:bg-white/90 
+                      backdrop-filter backdrop-blur-lg
+                      bg-white/80 hover:bg-white/90
                       dark:bg-black/85 dark:hover:bg-black/95
-                      transition-all duration-300 max-h-[80vh] overflow-y-auto">
+                      transition-all duration-300"
+          role="listbox"
+        >
           <ul className="py-2">
-            <li>
-              <button
-                onClick={() => handleLanguageSelect("en")}
-                className={`flex items-center w-full px-4 py-3 sm:py-2 text-left hover:bg-white/30 dark:hover:bg-black/40 transition-all duration-200 ${
-                  language === "en" ? "bg-white/30 dark:bg-black/40" : ""
-                }`}
-              >
-                <span className="text-xl mr-2">🇺🇸</span>
-                <span className="dark:text-white text-gray-800 font-medium">English</span>
-              </button>
-            </li>
-            <li>
-              <button
-                onClick={() => handleLanguageSelect("zh")}
-                className={`flex items-center w-full px-4 py-3 sm:py-2 text-left hover:bg-white/30 dark:hover:bg-black/40 transition-all duration-200 ${
-                  language === "zh" ? "bg-white/30 dark:bg-black/40" : ""
-                }`}
-              >
-                <span className="text-xl mr-2">🇨🇳</span>
-                <span className="dark:text-white text-gray-800 font-medium">中文</span>
-              </button>
-            </li>
+            {LANGUAGE_OPTIONS.map((option) => (
+              <li key={option.code}>
+                <button
+                  onClick={() => {
+                    changeLanguage(option.code);
+                    setDropdownOpen(false);
+                  }}
+                  className={`flex items-center w-full px-4 py-3 sm:py-2 text-left hover:bg-white/30 dark:hover:bg-black/40 transition-all duration-200 ${
+                    language === option.code ? "bg-white/30 dark:bg-black/40" : ""
+                  }`}
+                  role="option"
+                  aria-selected={language === option.code}
+                >
+                  <span className="text-xl mr-2">{option.flag}</span>
+                  <span className="dark:text-white text-gray-800 font-medium text-sm">
+                    {option.label}
+                  </span>
+                </button>
+              </li>
+            ))}
           </ul>
         </div>
       )}

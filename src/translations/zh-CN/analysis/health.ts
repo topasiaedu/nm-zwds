@@ -1,0 +1,57 @@
+const health = {
+  health: {
+    title: "健康分析",
+    basedOnStars: "根据你的星位",
+    potentialAreas: "潜在的领域",
+    disclaimer:
+      "This health analysis is based on astrological interpretations and should not replace professional medical advice.",
+
+    // Body Parts
+    头: "头",
+    眼: "眼",
+    耳: "耳",
+    左耳: "左耳",
+    右耳: "右耳",
+    口: "口",
+    鼻: "鼻",
+    心脏: "心脏",
+    肝脏: "肝脏",
+    肺: "肺",
+    胃: "胃",
+    肠: "肠",
+    肾: "肾",
+    膀胱: "膀胱",
+    生殖器: "生殖器",
+    左手: "左手",
+    右手: "右手",
+    手: "手",
+    左脚: "左脚",
+    右脚: "右脚",
+    脚: "脚",
+    关节: "关节",
+    神经系统: "神经系统",
+    膝盖: "膝盖",
+
+    // Stars
+    太阳: "太阳",
+    武曲: "武曲",
+    廉贞: "廉贞",
+    天府: "天府",
+    太阴: "太阴",
+    贪狼: "贪狼",
+    巨门: "巨门",
+    天相: "天相",
+    天梁: "天梁",
+    七杀: "七杀",
+    天机: "天机",
+    破军: "破军",
+    紫微: "紫微",
+    天同: "天同",
+    文曲: "文曲",
+    文昌: "文昌",
+    右弼: "右弼",
+    左辅: "左辅",
+  },
+};
+
+export default health;

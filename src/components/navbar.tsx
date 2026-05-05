@@ -1,22 +1,29 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState, useRef, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useTierAccess } from "../context/TierContext";
 import { useLanguage } from "../context/LanguageContext";
-// import LanguageToggle from "./LanguageToggle";
+import LanguageToggle from "./LanguageToggle";
 import ThemeToggle from "./ThemeToggle";
 
 /**
  * Navbar component with authentication status and user controls
  */
+const FREE_TEST_ROUTE_PREFIXES = ["/free-test", "/free-result", "/free-test-ended"];
+
 const Navbar: React.FC = () => {
   const { user, signOut } = useAuth();
   const { t } = useLanguage();
   const { isAdmin } = useTierAccess();
   const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
   const navigate = useNavigate();
+  const location = useLocation();
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const isFreeTestRoute = FREE_TEST_ROUTE_PREFIXES.some((prefix) =>
+    location.pathname.startsWith(prefix)
+  );
 
   /**
    * Handle sign out action
@@ -53,10 +60,12 @@ const Navbar: React.FC = () => {
     <nav className="fixed top-0 left-0 right-0 z-50 h-14 bg-white/10 dark:bg-gray-900/10 border-gray-200 px-2 sm:px-4 border-b border-white/10 dark:border-gray-800/50 backdrop-blur-md">
       <div className="h-full max-w-screen-xl flex flex-wrap items-center justify-between mx-auto">
         <div className="flex items-center space-x-1 sm:space-x-3">
-          {/* Language toggle - Hidden to force English only */}
-          {/* <div className="flex items-center">
-            <LanguageToggle />
-          </div> */}
+          {/* Language toggle - visible on free-test routes only for now */}
+          {isFreeTestRoute && (
+            <div className="flex items-center">
+              <LanguageToggle />
+            </div>
+          )}
 
           {/* Theme toggle */}
           <div className="flex items-center">

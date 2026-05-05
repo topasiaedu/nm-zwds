@@ -12,7 +12,7 @@ import misc from "./misc";
 import freeTest from "./freeTest";
 import membership from "./membership";
 
-const en = {
+const zh = {
   ...common,
   ...validation,
   ...navigation,
@@ -27,19 +27,17 @@ const en = {
   ...freeTest,
   ...membership,
   general:{
-    back: "Back",
-    cancel: "Cancel",
-    close: "Close",
-    confirm: "Confirm",
-    error: "Error",
-    loadingText: "Loading...",
-    noSearchResults: "No results match your search",
-    retry: "Retry",
-    search: "Search",
-    unknown: "Unknown",
+    back: "返回",
+    cancel: "取消",
+    close: "关闭",
+    confirm: "确认",
+    error: "错误",
+    loadingText: "加载中...",
+    noSearchResults: "没有符合搜索条件的结果",
+    retry: "重试",
+    search: "搜索",
+    unknown: "未知",
   }
 };
 
-
-
-export default en; 
+export default zh; 

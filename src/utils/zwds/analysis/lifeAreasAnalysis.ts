@@ -1,4 +1,5 @@
 import { AREAS_OF_LIFE_ANALYSIS_CONSTANTS } from "../analysis_constants/areas_of_life_analysis";
+import { isChineseLanguage, type Language } from "../../../context/LanguageContext";
 
 /**
  * Star analysis data structure
@@ -139,7 +140,7 @@ export const mainLifeAreas = [
  */
 export function calculateLifeAreaScores(
   chartData: ChartDataType | null | undefined,
-  language: string,
+  language: Language,
   palaceNumberOverride?: number
 ): RadarDataPoint[] {
   if (!chartData || !chartData.palaces) {
@@ -217,8 +218,7 @@ export function calculateLifeAreaScores(
     const { total, count } = areaScores[area];
     const averageScore = count > 0 ? Math.round(total / count) : 0;
 
-    // Get the user-friendly name based on language
-    const displayName = language === "zh"
+    const displayName = isChineseLanguage(language)
       ? palaceNameMap[area]?.zh || area
       : palaceNameMap[area]?.en || area;
 
@@ -252,7 +252,7 @@ interface StarAnalysisResult {
  */
 export function analyzeLifeAreas(
   chartData: ChartDataType | null | undefined,
-  language: string,
+  language: Language,
   palaceNumberOverride?: number
 ): LifeAreaResult[] {
   if (!chartData || !chartData.palaces) {
@@ -331,8 +331,7 @@ export function analyzeLifeAreas(
 
     // Add areas with at least one star (from primary or opposite palace)
     if (analysisResult.starCount > 0) {
-      // Get the user-friendly name based on language
-      const displayName = language === "zh"
+      const displayName = isChineseLanguage(language)
         ? palaceNameMap[areaName]?.zh || areaName
         : palaceNameMap[areaName]?.en || areaName;
 

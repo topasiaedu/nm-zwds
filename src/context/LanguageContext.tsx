@@ -8,15 +8,28 @@ import React, {
   type PropsWithChildren,
 } from "react";
 import en from "../translations/en";
-import zh from "../translations/zh";
+import zhCN from "../translations/zh-CN";
+import zhTW from "../translations/zh-TW";
 
 /**
- * Available languages
+ * Available languages.
+ * "en"    = English
+ * "zh-CN" = Simplified Chinese (Malaysia audience)
+ * "zh-TW" = Traditional Chinese (Taiwan audience)
  */
-export type Language = "en" | "zh";
+export type Language = "en" | "zh-CN" | "zh-TW";
 
 /**
- * Translation map type
+ * Returns true for any Chinese-script language.
+ * Use this instead of `language !== "en"` so that adding a new non-Chinese
+ * language (e.g. "ms") does not accidentally activate Chinese layout.
+ * Update this function when adding new Chinese variants.
+ */
+export const isChineseLanguage = (lang: Language): boolean =>
+  lang === "zh-CN" || lang === "zh-TW";
+
+/**
+ * Translation map type — nested key → value structure.
  */
 interface TranslationMap {
   [key: string]: string | TranslationMap;
@@ -32,11 +45,63 @@ export interface LanguageContextType {
 }
 
 /**
- * Translation resources for each language
+ * All translation resources keyed by language code.
  */
 const resources: Record<Language, TranslationMap> = {
   en,
-  zh,
+  "zh-CN": zhCN,
+  "zh-TW": zhTW,
+};
+
+/**
+ * Fallback order for each language.
+ * When a key is missing in the primary language, the lookup walks this chain
+ * before returning the raw key. This makes partially-complete zh-TW safe to
+ * ship — missing keys fall through to zh-CN, then English.
+ */
+const fallbackChain: Record<Language, Language[]> = {
+  en: ["en"],
+  "zh-CN": ["zh-CN", "en"],
+  "zh-TW": ["zh-TW", "zh-CN", "en"],
+};
+
+/**
+ * Detect the initial language from localStorage, then browser preference.
+ * Defaults to English if neither provides a supported value.
+ */
+const detectInitialLanguage = (): Language => {
+  const stored = localStorage.getItem("language");
+  if (stored === "en" || stored === "zh-CN" || stored === "zh-TW") {
+    return stored;
+  }
+
+  const nav = navigator.language.toLowerCase();
+  if (nav.startsWith("zh-tw") || nav.startsWith("zh-hk") || nav.startsWith("zh-mo")) {
+    return "zh-TW";
+  }
+  if (nav.startsWith("zh")) {
+    return "zh-CN";
+  }
+  return "en";
+};
+
+/**
+ * Resolve a dotted key path against a TranslationMap.
+ * Returns the string value or undefined if not found.
+ */
+const resolveKey = (map: TranslationMap, key: string): string | undefined => {
+  const parts = key.split(".");
+  let current: TranslationMap | string = map;
+
+  for (const part of parts) {
+    if (current && typeof current === "object" && part in current) {
+      current = current[part];
+    } else {
+      return undefined;
+    }
+  }
+
+  return typeof current === "string" ? current : undefined;
 };
 
 /**
@@ -52,42 +117,37 @@ interface LanguageProviderProps {
 }
 
 /**
- * Provider component for language context
+ * Provider component for language context.
+ * Detects the initial language from localStorage / browser, and provides
+ * the t() function with a fallback chain so partially-translated languages
+ * never show raw key strings.
  */
 export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) => {
-  // Force language to always be English, ignore localStorage
-  const [language, setLanguage] = useState<Language>("en");
+  const [language, setLanguage] = useState<Language>(detectInitialLanguage);
 
   /**
-   * Change the current language (disabled - always stays English)
+   * Change the current language and persist to localStorage.
    */
   const changeLanguage = (lang: Language): void => {
-    // Force language to always stay English
-    setLanguage("en");
-    localStorage.setItem("language", "en");
+    setLanguage(lang);
+    localStorage.setItem("language", lang);
   };
 
   /**
-   * Get translation for a key
+   * Get the translated string for a dot-separated key.
+   * Walks the fallback chain (e.g. zh-TW → zh-CN → en) before giving up.
    */
   const t = (key: string): string => {
-    const keys = key.split(".");
-    let value: TranslationMap | string = resources[language];
+    const chain = fallbackChain[language];
 
-    for (const k of keys) {
-      if (value && typeof value === "object" && k in value) {
-        value = value[k];
-      } else {
-        console.warn(`Translation key not found: ${key}`);
-        return key;
+    for (const fallbackLang of chain) {
+      const value = resolveKey(resources[fallbackLang], key);
+      if (value !== undefined) {
+        return value;
       }
     }
 
-    if (typeof value === "string") {
-      return value;
-    }
-
-    console.warn(`Translation key does not resolve to a string: ${key}`);
+    console.warn(`Translation key not found in any language: ${key}`);
     return key;
   };
 
@@ -129,23 +189,16 @@ export const PdfCaptureLanguageProvider: React.FC<PdfCaptureLanguageProviderProp
 }) => {
   const t = useCallback(
     (key: string): string => {
-      const keys = key.split(".");
-      let value: TranslationMap | string = resources[language];
+      const chain = fallbackChain[language];
 
-      for (const k of keys) {
-        if (value && typeof value === "object" && k in value) {
-          value = value[k];
-        } else {
-          console.warn(`Translation key not found: ${key}`);
-          return key;
+      for (const fallbackLang of chain) {
+        const value = resolveKey(resources[fallbackLang], key);
+        if (value !== undefined) {
+          return value;
         }
       }
 
-      if (typeof value === "string") {
-        return value;
-      }
-
-      console.warn(`Translation key does not resolve to a string: ${key}`);
+      console.warn(`Translation key not found in any language: ${key}`);
       return key;
     },
     [language]

@@ -15,6 +15,7 @@ import { PdfChartData } from "../components/PdfDocument";
 import {
   PdfCaptureLanguageProvider,
   useLanguage,
+  isChineseLanguage,
   type Language,
 } from "../context/LanguageContext";
 import type { ChartData } from "../utils/zwds/types";
@@ -720,9 +721,9 @@ const addCoverPage = (
   doc: jsPDF,
   chartData: PdfChartData,
   formatDate: (date: string) => string,
-  language: string
+  language: Language
 ): void => {
-  const zh = language === "zh";
+  const zh = isChineseLanguage(language);
 
   doc.setFontSize(24);
   doc.setTextColor(124, 58, 237);
@@ -782,10 +783,10 @@ const addChartPage = async (
   doc: jsPDF,
   chartData: PdfChartData,
   formatDate: (date: string) => string,
-  language: string,
+  language: Language,
   setPdfModeCallback?: (enabled: boolean) => void
 ): Promise<void> => {
-  const zh = language === "zh";
+  const zh = isChineseLanguage(language);
 
      doc.addPage();
      doc.setFontSize(18);
@@ -818,13 +819,13 @@ const addChartPage = async (
 const appendMirroredAnalysisPages = async (
   doc: jsPDF,
   calculatedChartData: ChartData,
-  language: string,
+  language: Language,
   ctx: PdfResultExportContext,
   qualityScale: number,
   onProgress: PdfExportProgressCallback
 ): Promise<void> => {
-  const zh = language === "zh";
-  const langCapture: Language = zh ? "zh" : "en";
+  const zh = isChineseLanguage(language);
+  const langCapture: Language = language;
 
   const layoutState: PdfLayoutState = {
     cursorYMm: PAGE_MARGIN_Y_MM,
@@ -1065,13 +1066,13 @@ export const exportChartAsPdf = async (
   chartData: PdfChartData,
   calculatedChartData: unknown,
   formatDate: (date: string) => string,
-  language: string,
+  language: Language,
   onProgress: PdfExportProgressCallback,
   options: PdfExportOptions = {},
   setPdfModeCallback?: (enabled: boolean) => void
 ): Promise<void> => {
   const finalOptions = { ...DEFAULT_OPTIONS, ...options };
-  const zh = language === "zh";
+  const zh = isChineseLanguage(language);
 
   try {
          onProgress({

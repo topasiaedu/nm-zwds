@@ -17,9 +17,10 @@ const freeTest = {
     upgradeDescription: "Contact us on WhatsApp for full analysis, personalized consultation and more.",
     signUpCta: "Contact on WhatsApp",
     tryAgain: "Try Again",
-    
+
     // Free result page
     resultTitle: "Free Chart Results",
+    resultTitleSuffix: "'s Free Chart Results",
     resultSubtitle: "Purple Star Astrology chart free test results",
     upgradeTitle: "Unlock Full Analysis",
     upgradeBenefits: "Contact us on WhatsApp for full personalized analysis, consultation, and more!",
@@ -32,6 +33,12 @@ const freeTest = {
     moreAvailable: "More Analysis Available",
     moreAnalysisDesc: "Contact us on WhatsApp to unlock detailed personalized analysis including Four Key Palace Analysis, Career Insights, Relationship Compatibility, and much more.",
     createAccountCta: "Contact on WhatsApp Now",
+
+    // Error messages (free-result page)
+    errorNotFound: "Profile not found.",
+    errorLoadFailed: "Failed to load chart data.",
+    errorCalculationFailed: "Failed to calculate chart.",
+    errorExpired: "This profile may have expired or been removed.",
   },
   
   // Free test ended page

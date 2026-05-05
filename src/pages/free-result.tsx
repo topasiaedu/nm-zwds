@@ -84,12 +84,13 @@ const FreeResultContent: React.FC = () => {
    */
   const formatDate = useCallback((dateString: string): string => {
     const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", {
+    const locale = language === "en" ? "en-US" : language;
+    return date.toLocaleDateString(locale, {
       year: "numeric",
       month: "long",
       day: "numeric",
     });
-  }, []);
+  }, [language]);
 
 
 
@@ -135,7 +136,7 @@ const FreeResultContent: React.FC = () => {
    */
   const formatBirthTime = useCallback((birthTimeString: string): string => {
     const hour = parseInt(birthTimeString);
-    if (isNaN(hour)) return "Unknown";
+    if (isNaN(hour)) return t("general.unknown");
 
     // Map hour to time range
     const getTimeRange = (hour: number): string => {
@@ -171,7 +172,7 @@ const FreeResultContent: React.FC = () => {
     };
 
     return getTimeRange(hour);
-  }, []);
+  }, [t]);
 
   // Find profile in context to display - memoized to prevent infinite re-renders
   const profileToShow = useMemo(() => {
@@ -247,7 +248,7 @@ const FreeResultContent: React.FC = () => {
               }
               
               // console.log("FreeResult fetchData - Profile not found even with direct fetch, showing error");
-              setError(`Profile with ID ${id} not found.`);
+              setError(t("freeTest.errorNotFound"));
               setLoading(false);
             }
           } else {
@@ -319,9 +320,7 @@ const FreeResultContent: React.FC = () => {
               }
               
               // console.log("FreeResult fetchData - All retries exhausted, showing error");
-              setError(
-                "Unable to find the requested profile. It may have expired or been removed."
-              );
+              setError(t("freeTest.errorExpired"));
               setLoading(false);
             }
           }
@@ -329,7 +328,7 @@ const FreeResultContent: React.FC = () => {
       } catch (err) {
         console.error("FreeResult fetchData - Error:", err);
         if (isMounted) {
-          setError("Failed to load chart data");
+          setError(t("freeTest.errorLoadFailed"));
           setLoading(false);
         }
       }
@@ -343,7 +342,7 @@ const FreeResultContent: React.FC = () => {
     return () => {
       isMounted = false;
     };
-  }, [id, profileToShow, profiles, profilesLoading, formatBirthTime]);
+  }, [id, profileToShow, profiles, profilesLoading, formatBirthTime, t]);
 
   /**
    * Memoized chart calculation to prevent unnecessary recalculations
@@ -406,10 +405,10 @@ const FreeResultContent: React.FC = () => {
       return calculator.calculate();
     } catch (error) {
       console.error("Error calculating chart:", error);
-      setError(`Failed to calculate chart data: ${error}`);
+      setError(t("freeTest.errorCalculationFailed"));
       return null;
     }
-  }, [chartData]);
+  }, [chartData, t]);
 
   /**
    * Handle loading completion when chart calculation is ready
@@ -646,7 +645,7 @@ const FreeResultContent: React.FC = () => {
                       d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
                     />
                   </svg>
-                  {`${chartData?.name}'s ${t("freeTest.resultTitle")}`}
+                  {`${chartData?.name}${t("freeTest.resultTitleSuffix")}`}
                 </>
               )}
             </h1>

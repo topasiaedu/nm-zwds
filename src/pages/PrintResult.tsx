@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
-import { useLanguage } from "../context/LanguageContext";
+import { useLanguage, isChineseLanguage } from "../context/LanguageContext";
 import { useTierAccess } from "../context/TierContext";
 import type { Profile } from "../context/ProfileContext";
 import { supabase } from "../utils/supabase-client";
@@ -118,7 +118,7 @@ const PrintResultContent: React.FC = () => {
 
   const formatDate = useCallback((dateString: string): string => {
     const date = new Date(dateString);
-    return date.toLocaleDateString(language === "zh" ? "zh-TW" : "en-US", {
+    return date.toLocaleDateString(language === "en" ? "en-US" : language, {
       year: "numeric",
       month: "long",
       day: "numeric",
@@ -249,7 +249,7 @@ const PrintResultContent: React.FC = () => {
 
   const resolvePalaceName = useCallback((_palaceNumber: number): string => "", []);
 
-  const zhPrint = language === "zh";
+  const zhPrint = isChineseLanguage(language);
   const genderLabel =
     chartData !== null
       ? chartData.gender === "male"

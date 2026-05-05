@@ -12,7 +12,7 @@ import misc from "./misc";
 import freeTest from "./freeTest";
 import membership from "./membership";
 
-const en = {
+const zhTW = {
   ...common,
   ...validation,
   ...navigation,
@@ -26,20 +26,6 @@ const en = {
   ...misc,
   ...freeTest,
   ...membership,
-  general:{
-    back: "Back",
-    cancel: "Cancel",
-    close: "Close",
-    confirm: "Confirm",
-    error: "Error",
-    loadingText: "Loading...",
-    noSearchResults: "No results match your search",
-    retry: "Retry",
-    search: "Search",
-    unknown: "Unknown",
-  }
 };
 
-
-
-export default en; 
+export default zhTW;
