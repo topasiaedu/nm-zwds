@@ -60,10 +60,8 @@ const LanguageToggle: React.FC = () => {
       {dropdownOpen && (
         <div
           className="absolute left-0 mt-2 z-50 w-44 rounded-2xl shadow-xl
-                      border border-white/20
-                      backdrop-filter backdrop-blur-lg
-                      bg-white/80 hover:bg-white/90
-                      dark:bg-black/85 dark:hover:bg-black/95
+                      border border-gray-200 dark:border-gray-700
+                      bg-white dark:bg-gray-900
                       transition-all duration-300"
           role="listbox"
         >
@@ -75,8 +73,8 @@ const LanguageToggle: React.FC = () => {
                     changeLanguage(option.code);
                     setDropdownOpen(false);
                   }}
-                  className={`flex items-center w-full px-4 py-3 sm:py-2 text-left hover:bg-white/30 dark:hover:bg-black/40 transition-all duration-200 ${
-                    language === option.code ? "bg-white/30 dark:bg-black/40" : ""
+                  className={`flex items-center w-full px-4 py-3 sm:py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200 ${
+                    language === option.code ? "bg-gray-100 dark:bg-gray-800" : ""
                   }`}
                   role="option"
                   aria-selected={language === option.code}
