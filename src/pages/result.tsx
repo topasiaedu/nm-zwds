@@ -29,6 +29,11 @@ import {
 } from "../utils/pdfServerExportProgressTicker";
 import { supabase } from "../utils/supabase-client";
 import {
+  renderChartTitleWithNameGradient,
+  renderTitleWithZiWeiDouShuGradient,
+  wrapPhraseInBrandGradient,
+} from "../components/BrandGradientText";
+import {
   Overview,
   Health,
   AreasOfLife,
@@ -160,31 +165,6 @@ const ResultContent: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [isCapturingForPdf, setIsCapturingForPdf] = useState<boolean>(false);
-
-  /**
-   * Highlights the "Zi Wei Dou Shu" phrase with the navbar brand gradient.
-   */
-  const renderChartTitleWithBrandGradient = (title: string): React.ReactNode => {
-    const phrase = "Zi Wei Dou Shu";
-    const phraseIndex = title.indexOf(phrase);
-
-    if (phraseIndex === -1) {
-      return title;
-    }
-
-    const beforePhrase = title.slice(0, phraseIndex);
-    const afterPhrase = title.slice(phraseIndex + phrase.length);
-
-    return (
-      <>
-        {beforePhrase}
-        <span className="bg-gradient-to-r from-accent-goldDark to-accent-coralDark bg-clip-text text-transparent">
-          {phrase}
-        </span>
-        {afterPhrase}
-      </>
-    );
-  };
 
   // State for branch adjustment (allows users to cycle through the 12 time branches)
   const [branchOffset, setBranchOffset] = useState<number>(0);
@@ -997,7 +977,7 @@ const ResultContent: React.FC = () => {
                   <svg className={chartHeroTitleIconClass} fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                   </svg>
-                  {renderChartTitleWithBrandGradient(
+                  {renderTitleWithZiWeiDouShuGradient(
                     t("myChart.title") || "My 紫微斗数 Chart"
                   )}
                 </h1>
@@ -1064,10 +1044,15 @@ const ResultContent: React.FC = () => {
                       )}
                     </svg>
                     {isSelfProfile
-                      ? renderChartTitleWithBrandGradient(
+                      ? renderTitleWithZiWeiDouShuGradient(
                           t("myChart.title") || "My 紫微斗数 Chart"
                         )
-                      : `${chartData?.name}'s ${t("result.chart") || "Chart"}`}
+                      : chartData?.name
+                        ? renderChartTitleWithNameGradient(
+                            chartData.name,
+                            t("result.chart") || "Chart"
+                          )
+                        : t("result.chart") || "Chart"}
                   </>
                 )}
               </h1>
@@ -1553,7 +1538,10 @@ const ResultContent: React.FC = () => {
             {(blueprintMode === "dna" || blueprintMode === "liunian") && (
               <div className="flex flex-col justify-center items-center">
                 <h2 className={chartAnalysisTitleClass}>
-                  {t("analysis.title") || "PERSONALIZED LIFE REPORT"}
+                  {wrapPhraseInBrandGradient(
+                    t("analysis.title") || "PERSONALIZED LIFE REPORT",
+                    { phrase: "LIFE REPORT" }
+                  )}
                 </h2>
                 <p className={chartAnalysisSubtitleClass}>
                   {t("analysis.subtitle") ||

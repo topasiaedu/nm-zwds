@@ -97,14 +97,16 @@ const ZodiacMiniCard: React.FC<{
         <div className="flex items-start gap-3">
           {ZodiacIcon ? (
             <div
-              className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl p-2"
+              className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl p-2 shadow-sm"
               style={{
-                background: `linear-gradient(135deg, ${accent.from}22, ${accent.to}33)`,
+                background: `linear-gradient(135deg, ${accent.from}, ${accent.to})`,
               }}
             >
-              <div style={{ color: accent.from }}>
-                <ZodiacIconWrapper Icon={ZodiacIcon} className="h-full w-full" />
-              </div>
+              <ZodiacIconWrapper
+                Icon={ZodiacIcon}
+                className="h-full w-full"
+                invertToWhite
+              />
             </div>
           ) : null}
           <div className="min-w-0 flex-1">

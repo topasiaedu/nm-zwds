@@ -18,6 +18,7 @@ import {
   TrendingUp,
   type LucideIcon,
 } from "lucide-react";
+import { BrandGradientText } from "../BrandGradientText";
 import { ChartData } from "../../utils/zwds/types";
 import {
   analyzeWealthCode,
@@ -334,10 +335,11 @@ const PremiumHeroCard: React.FC<{ profile: WealthCodeAnalysisResult; forPdfCaptu
 /**
  * Scoreboard grid for wealth codes — layout refresh; archetype colors unchanged.
  */
-const ModernBarChart: React.FC<{ codes: WealthCodeScore[]; forPdfCapture?: boolean }> = ({
-  codes,
-  forPdfCapture,
-}) => {
+const ModernBarChart: React.FC<{
+  codes: WealthCodeScore[];
+  dominantArchetype?: string;
+  forPdfCapture?: boolean;
+}> = ({ codes, dominantArchetype, forPdfCapture }) => {
   const maxScore = 10;
   const hoverClass = forPdfCapture ? "" : "transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5";
 
@@ -362,6 +364,11 @@ const ModernBarChart: React.FC<{ codes: WealthCodeScore[]; forPdfCapture?: boole
             <h3 className="text-xl font-bold text-gray-900 dark:text-white">
               Wealth Code Analysis
             </h3>
+            {dominantArchetype ? (
+              <BrandGradientText as="p" className="mt-1 text-lg font-bold sm:text-xl">
+                {dominantArchetype}
+              </BrandGradientText>
+            ) : null}
           </div>
         </div>
         <div className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-gray-50 px-3 py-1.5 text-xs font-semibold text-gray-600 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300">
@@ -402,19 +409,7 @@ const ModernBarChart: React.FC<{ codes: WealthCodeScore[]; forPdfCapture?: boole
                 aria-hidden="true"
               />
 
-              {isTopRank ? (
-                <div
-                  className="absolute right-3 top-3 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white shadow-sm"
-                  style={{
-                    background: `linear-gradient(135deg, ${colorConfig.primary}, ${colorConfig.secondary})`,
-                  }}
-                >
-                  <Star className="h-3 w-3 fill-current" aria-hidden="true" />
-                  Top
-                </div>
-              ) : null}
-
-              <div className="relative z-10 p-5 pt-6">
+              <div className="relative z-10 p-5">
                 <div className="flex items-start gap-4">
                   <div
                     className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl shadow-md"
@@ -426,7 +421,7 @@ const ModernBarChart: React.FC<{ codes: WealthCodeScore[]; forPdfCapture?: boole
                   </div>
 
                   <div className="min-w-0 flex-1">
-                    <h4 className="pr-14 text-base font-bold text-gray-900 dark:text-white">
+                    <h4 className="text-base font-bold text-gray-900 dark:text-white">
                       {code.label}
                     </h4>
                     <p
@@ -437,16 +432,29 @@ const ModernBarChart: React.FC<{ codes: WealthCodeScore[]; forPdfCapture?: boole
                     </p>
                   </div>
 
-                  <div className="flex flex-col items-end">
-                    <span
-                      className="text-3xl font-black leading-none tabular-nums"
-                      style={{ color: colorConfig.primary }}
-                    >
-                      {code.score.toFixed(1)}
-                    </span>
-                    <span className="text-[10px] font-medium text-gray-500 dark:text-gray-400">
-                      / {maxScore}
-                    </span>
+                  <div className="flex shrink-0 flex-col items-end gap-1.5">
+                    {isTopRank ? (
+                      <div
+                        className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white shadow-sm"
+                        style={{
+                          background: `linear-gradient(135deg, ${colorConfig.primary}, ${colorConfig.secondary})`,
+                        }}
+                      >
+                        <Star className="h-3 w-3 fill-current" aria-hidden="true" />
+                        Top
+                      </div>
+                    ) : null}
+                    <div className="flex flex-col items-end">
+                      <span
+                        className="text-3xl font-black leading-none tabular-nums"
+                        style={{ color: colorConfig.primary }}
+                      >
+                        {code.score.toFixed(1)}
+                      </span>
+                      <span className="text-[10px] font-medium text-gray-500 dark:text-gray-400">
+                        / {maxScore}
+                      </span>
+                    </div>
                   </div>
                 </div>
 
@@ -753,7 +761,11 @@ const WealthCode: React.FC<WealthCodeProps> = ({
 
           {/* 2. Modern Bar Chart - Visual Comparison */}
           <div data-pdf-break-anchor="wealth-chart">
-            <ModernBarChart codes={wealthProfile.codes} forPdfCapture={forPdfCapture} />
+            <ModernBarChart
+              codes={wealthProfile.codes}
+              dominantArchetype={wealthProfile.dominantArchetype}
+              forPdfCapture={forPdfCapture}
+            />
           </div>
 
           {/* 3. Modern Insights - Actionable */}

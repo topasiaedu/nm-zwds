@@ -3,6 +3,8 @@
  * Colors: src/styles/color-scheme.css → Tailwind theme-* (see colorTokens.ts).
  */
 
+import { brandGradientTextClass } from "./typographyUi";
+
 const dashboardElevatedSurface = "bg-theme-surface-card";
 const dashboardInsetSurface = "bg-theme-surface-inset";
 
@@ -58,7 +60,7 @@ export const dashboardActionTitleClass = "text-lg font-medium text-theme-fg";
 /** Featured quick-action titles (matches navbar logo gradient). */
 export const dashboardActionTitleFeaturedClass = [
   "text-lg font-medium",
-  "bg-gradient-to-r from-accent-goldDark to-accent-coralDark bg-clip-text text-transparent",
+  brandGradientTextClass,
 ].join(" ");
 
 export const dashboardActionDescClass = "text-sm text-theme-fg-secondary";

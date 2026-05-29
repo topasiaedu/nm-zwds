@@ -33,6 +33,8 @@ import {
   type ChartDataType,
   type LifeAreaResult,
 } from "../../utils/zwds/analysis";
+import { BrandGradientText } from "../BrandGradientText";
+import { brandGradientTextClass } from "../../styles/typographyUi";
 import { pdfCaptureNumericBadgeStyle } from "./shared/pdfCaptureNumericBadgeStyle";
 
 const AREA_PREVIEW_CHAR_LIMIT = 300;
@@ -174,10 +176,11 @@ const DestinyScoreboardHero: React.FC<DestinyScoreboardHeroProps> = ({
 
 type ScorePillarChipProps = {
   area: LifeAreaResult;
+  isTopPillar?: boolean;
   forPdfCapture?: boolean;
 };
 
-const ScorePillarChip: React.FC<ScorePillarChipProps> = ({ area }) => {
+const ScorePillarChip: React.FC<ScorePillarChipProps> = ({ area, isTopPillar = false }) => {
   const accent = AREA_ACCENTS[area.area] ?? DEFAULT_AREA_ACCENT;
   const Icon = LIFE_AREA_ICONS[area.icon];
 
@@ -194,11 +197,23 @@ const ScorePillarChip: React.FC<ScorePillarChipProps> = ({ area }) => {
             {area.icon}
           </span>
         )}
-        <span className="truncate text-xs font-bold uppercase tracking-wide text-gray-700 dark:text-gray-300">
-          {area.displayName}
-        </span>
+        {isTopPillar ? (
+          <span
+            className={`truncate text-xs font-bold uppercase tracking-wide ${brandGradientTextClass}`}
+          >
+            {area.displayName}
+          </span>
+        ) : (
+          <span className="truncate text-xs font-bold uppercase tracking-wide text-gray-700 dark:text-gray-300">
+            {area.displayName}
+          </span>
+        )}
       </div>
-      <p className={`mt-2 text-2xl font-black ${getScoreBadgeClasses(area.score)}`}>
+      <p
+        className={`mt-2 text-2xl font-black ${
+          isTopPillar ? brandGradientTextClass : getScoreBadgeClasses(area.score)
+        }`}
+      >
         {area.score}%
       </p>
     </div>
@@ -359,6 +374,16 @@ const AreasOfLife: React.FC<{
     return analyzeLifeAreas(chartData, language, palaceOverride);
   }, [chartData, language, palaceOverride]);
 
+  const topPillarAreaKey = useMemo(() => {
+    if (lifeAreaAnalysis.length === 0) {
+      return null;
+    }
+    const top = lifeAreaAnalysis.reduce((best, current) =>
+      current.score > best.score ? current : best
+    );
+    return top.area;
+  }, [lifeAreaAnalysis]);
+
   const getCombinedDescription = (area: LifeAreaResult): string => {
     if (!area.stars || area.stars.length === 0) {
       return "";
@@ -418,6 +443,7 @@ const AreasOfLife: React.FC<{
             <ScorePillarChip
               key={`chip-${area.area}`}
               area={area}
+              isTopPillar={area.area === topPillarAreaKey}
               forPdfCapture={forPdfCapture}
             />
           ))}

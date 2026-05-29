@@ -6,6 +6,7 @@ import { useTierAccess } from "../context/TierContext";
 import { useLanguage } from "../context/LanguageContext";
 import LanguageToggle from "./LanguageToggle";
 import ThemeToggle from "./ThemeToggle";
+import { brandGradientTextClass } from "../styles/typographyUi";
 
 /**
  * Navbar component with authentication status and user controls
@@ -170,7 +171,9 @@ const Navbar: React.FC = () => {
           aria-label={t("navbar.dashboard")}
         >
           <div className="flex items-center">
-            <span className="text-xl sm:text-2xl md:text-3xl font-bold whitespace-nowrap bg-gradient-to-r from-accent-goldDark to-accent-coralDark bg-clip-text text-transparent">
+            <span
+              className={`text-xl sm:text-2xl md:text-3xl font-bold whitespace-nowrap ${brandGradientTextClass}`}
+            >
               紫微斗数
             </span>
             <span className="ml-1 text-xs sm:text-sm font-bold px-1 sm:px-2 py-0.5 rounded-lg bg-gradient-to-r from-accent-goldDark to-accent-coralDark text-surface-darkSecondary uppercase tracking-wider">

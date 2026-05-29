@@ -17,6 +17,7 @@ import {
 import { ChartData } from "../../utils/zwds/types";
 import { analyzeDestinyAlert } from "../../utils/zwds/analysis";
 import type { PalaceAlertData } from "../../utils/zwds/analysis/destinyAlertAnalysis";
+import { BrandGradientText } from "../BrandGradientText";
 import { pdfCaptureNumericBadgeStyle } from "./shared/pdfCaptureNumericBadgeStyle";
 
 /**
@@ -315,12 +316,12 @@ const DestinyAlertCard: React.FC<DestinyAlertCardProps> = ({
         {/* Palace + star */}
         <div className="mb-4 rounded-xl border border-black/5 bg-white/60 p-4 dark:border-white/10 dark:bg-gray-900/40">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <h3
+            <BrandGradientText
+              as="h3"
               className="text-xl font-black leading-tight sm:text-2xl"
-              style={{ color: config.palaceColor }}
             >
               {displayPalace}
-            </h3>
+            </BrandGradientText>
             <span
               className="inline-flex flex-shrink-0 items-center rounded-full px-3 py-1 text-sm font-bold"
               style={{
@@ -372,9 +373,9 @@ const DestinyAlertCard: React.FC<DestinyAlertCardProps> = ({
           <div className="mt-2 flex flex-col gap-2 text-sm leading-relaxed text-gray-700 dark:text-gray-300">
             <p>{alert.line1}</p>
             <p>{alert.line2}</p>
-            <p className="font-semibold italic" style={{ color: config.palaceColor }}>
+            <BrandGradientText as="p" className="font-semibold italic">
               {alert.line3}
-            </p>
+            </BrandGradientText>
           </div>
         </div>
       </div>

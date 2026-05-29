@@ -230,9 +230,9 @@ const Overview: React.FC<OverviewProps> = ({
         }`}
       >
         <div
-          className={`overflow-hidden rounded-2xl border border-emerald-200/80 dark:border-emerald-800 ${hoverClass}`}
+          className={`flex h-full flex-col overflow-hidden rounded-2xl border border-emerald-200/80 dark:border-emerald-800 ${hoverClass}`}
         >
-          <div className="flex items-center gap-3 bg-gradient-to-r from-emerald-600 to-teal-600 px-6 py-4">
+          <div className="flex shrink-0 items-center gap-3 bg-gradient-to-r from-emerald-600 to-teal-600 px-6 py-4">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/20">
               <Dumbbell className="h-5 w-5 text-white" aria-hidden="true" />
             </div>
@@ -243,7 +243,7 @@ const Overview: React.FC<OverviewProps> = ({
               <h3 className="text-lg font-bold text-white">Strengths</h3>
             </div>
           </div>
-          <ul className="space-y-3 bg-gradient-to-b from-emerald-50/90 to-white p-6 dark:from-emerald-950/30 dark:to-gray-800">
+          <ul className="flex flex-1 flex-col space-y-3 bg-emerald-50/90 p-6 dark:bg-gray-800">
             {featuresData.strengths.length > 0 ? (
               featuresData.strengths.map((item) => (
                 <li key={item.id} className="flex items-start gap-3">
@@ -264,9 +264,9 @@ const Overview: React.FC<OverviewProps> = ({
         </div>
 
         <div
-          className={`overflow-hidden rounded-2xl border border-amber-200/80 dark:border-amber-800 ${hoverClass}`}
+          className={`flex h-full flex-col overflow-hidden rounded-2xl border border-amber-200/80 dark:border-amber-800 ${hoverClass}`}
         >
-          <div className="flex items-center gap-3 bg-gradient-to-r from-amber-500 to-orange-600 px-6 py-4">
+          <div className="flex shrink-0 items-center gap-3 bg-gradient-to-r from-amber-500 to-orange-600 px-6 py-4">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/20">
               <Zap className="h-5 w-5 text-white" aria-hidden="true" />
             </div>
@@ -277,7 +277,7 @@ const Overview: React.FC<OverviewProps> = ({
               <h3 className="text-lg font-bold text-white">Potential Challenges</h3>
             </div>
           </div>
-          <ul className="space-y-3 bg-gradient-to-b from-amber-50/90 to-white p-6 dark:from-amber-950/25 dark:to-gray-800">
+          <ul className="flex flex-1 flex-col space-y-3 bg-amber-50/90 p-6 dark:bg-gray-800">
             {featuresData.weaknesses.length > 0 ? (
               featuresData.weaknesses.map((item) => (
                 <li key={item.id} className="flex items-start gap-3">

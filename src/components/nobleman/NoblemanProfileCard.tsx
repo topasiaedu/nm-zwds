@@ -11,6 +11,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles, Star } from "lucide-react";
 import type { NoblemanData, NoblemanProfile } from "../../types/nobleman";
 import type { NoblemanType } from "../../types/nobleman";
+import { BrandGradientText } from "../BrandGradientText";
 import { NOBLEMAN_TYPE_TO_IMAGE } from "../../constants/noblemanProfiles";
 
 interface NoblemanProfileCardProps extends NoblemanData {
@@ -191,9 +192,12 @@ const NoblemanProfileCard: React.FC<NoblemanProfileCardProps> = ({
                   {currentProfile.stars}
                 </span>
               </div>
-              <h4 className="mt-4 text-2xl font-black text-gray-900 dark:text-white sm:text-3xl">
+              <BrandGradientText
+                as="h4"
+                className="mt-4 text-2xl font-black sm:text-3xl"
+              >
                 {currentProfile.type}
-              </h4>
+              </BrandGradientText>
 
               <div className="mt-6 border-l-4 border-violet-500 pl-5 dark:border-violet-400">
                 <div className="mb-2 flex items-center gap-2">

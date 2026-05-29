@@ -1,5 +1,9 @@
 import React, { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link, Navigate } from "react-router-dom";
+import {
+  BrandGradientText,
+  wrapPhraseInBrandGradient,
+} from "../components/BrandGradientText";
 import PageTransition from "../components/PageTransition";
 import ZWDSChart from "../components/ZWDSChart";
 import { ZWDSCalculator } from "../utils/zwds/calculator";
@@ -699,11 +703,15 @@ const FounderReportContent: React.FC = () => {
                     d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                   />
                 </svg>
-                {"Founder Timing Decision System Report"}
+                {wrapPhraseInBrandGradient(
+                  "Founder Timing Decision System Report",
+                  { phrase: "Founder Timing" }
+                )}
               </h1>
               {!error && chartMeta ? (
                 <p className={founderReportHeroSubtitleClass}>
-                  {`Strategic Business Intelligence for ${chartMeta.name}`}
+                  {"Strategic Business Intelligence for "}
+                  <BrandGradientText>{chartMeta.name}</BrandGradientText>
                 </p>
               ) : null}
             </header>

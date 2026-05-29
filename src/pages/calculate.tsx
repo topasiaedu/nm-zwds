@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useLanguage } from "../context/LanguageContext";
 import { useProfileContext } from "../context/ProfileContext";
 import { Link, useNavigate } from "react-router-dom";
+import { renderTitleWithBrandGradientPhrases } from "../components/BrandGradientText";
 import PageTransition from "../components/PageTransition";
 import ProfileForm from "../components/ProfileForm";
 import ConfirmationModal from "../components/ConfirmationModal";
@@ -130,7 +131,9 @@ const Calculate: React.FC = () => {
               <p className={calculateHeroLabelClass}>
                 {t("calculate.newCalculation")}
               </p>
-              <h1 className={calculateHeroTitleClass}>{t("calculate.title")}</h1>
+              <h1 className={calculateHeroTitleClass}>
+                {renderTitleWithBrandGradientPhrases(t("calculate.title"))}
+              </h1>
               <p className={calculateHeroSubtitleClass}>{t("calculate.subtitle")}</p>
               {otherProfiles.length > 0 && (
                 <p className={calculateHeroMetaClass}>
@@ -287,13 +290,13 @@ const Calculate: React.FC = () => {
               <div className="lg:col-span-3 order-3">
                 <div className={calculateInfoCardClass}>
                   <h2 className={calculateInfoTitleClass}>
-                    {t("calculate.aboutZiWei")}
+                    {renderTitleWithBrandGradientPhrases(t("calculate.aboutZiWei"))}
                   </h2>
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div className={calculateCalloutClass}>
                       <h3 className={calculateCalloutHeadingClass}>
-                        {t("calculate.whatIsZiWei")}
+                        {renderTitleWithBrandGradientPhrases(t("calculate.whatIsZiWei"))}
                       </h3>
                       <p className={calculateCalloutBodyClass}>
                         {t("calculate.whatIsDescription")}

@@ -78,10 +78,11 @@ export const ZodiacInsightsSection: React.FC<ZodiacInsightsSectionProps> = ({
       >
         <div className="flex flex-col items-center gap-6 p-6 sm:flex-row sm:items-center sm:p-8">
           {ZodiacIcon ? (
-            <div className="flex h-28 w-28 flex-shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-100 to-violet-100 p-5 dark:from-indigo-950/60 dark:to-violet-950/40 sm:h-32 sm:w-32">
+            <div className="flex h-28 w-28 flex-shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 p-5 shadow-md sm:h-32 sm:w-32">
               <ZodiacIconWrapper
                 Icon={ZodiacIcon}
-                className="h-full w-full text-indigo-700 dark:text-indigo-200"
+                className="h-full w-full"
+                invertToWhite
               />
             </div>
           ) : null}

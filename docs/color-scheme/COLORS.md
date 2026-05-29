@@ -19,6 +19,25 @@ Authoritative list of theme colors used in **nm-zwds**. Tokens are defined in **
 | Card border | `accent-gold` (50% opacity common) | `brand-purpleDeep` |
 | Error / danger | `accent-coral` | `accent-coralDark` |
 | Logo gradient | `accent-goldDark` → `accent-coralDark` | same |
+| Premium gradient **text** | `accent-goldDark` → `accent-coralDark` (`bg-clip-text`) | same |
+
+---
+
+## Brand gradient text (premium highlights)
+
+**Token:** `brandGradientTextClass` in [`src/styles/typographyUi.ts`](../../src/styles/typographyUi.ts)  
+**Component:** [`BrandGradientText`](../../src/components/BrandGradientText.tsx), `wrapPhraseInBrandGradient`, `renderTitleWithBrandGradientPhrases`
+
+| Rule | Detail |
+|------|--------|
+| Gradient | `from-accent-goldDark to-accent-coralDark` + `bg-clip-text text-transparent` |
+| Surfaces | Cream page shell, white/`gray-800` cards, dark elevated cards — **not** purple/orange section heroes |
+| Budget | ~1–2 gradient targets per viewport (60-30-10 accent layer) |
+| Phrases | `Zi Wei Dou Shu`, `Purple Star Astrology`, `紫微斗数` (auto via `renderTitleWithBrandGradientPhrases`) |
+
+**Implemented highlights:** navbar wordmark; dashboard welcome name + featured actions; chart title (product phrase or other profile name); analysis block “LIFE REPORT”; profile display name; calculate/founder heroes; nobleman type; health primary tip; four-key palace name + closing insight; top destiny scoreboard pillar; wealth dominant archetype on scoreboard header.
+
+**Avoid:** `bg-clip-text` on colored hero banners (use white text); light cyan gradients on light backgrounds (see `GRADIENT_TEXT_FIXES.md`).
 
 ---
 
@@ -209,7 +228,16 @@ Same light purple / dark gold pattern for primary buttons, links, badges, and sp
 |---------|-------|------|
 | Bar | `bg-surface-elevated/80` | `bg-surface-darkSecondary/80` |
 | Border | `border-accent-gold/30` | `border-brand-purpleDeep` |
-| Logo | gold → coral gradient | same |
+| Logo | gold → coral gradient (`brandGradientTextClass`) | same |
+
+### Chart / analysis highlights
+
+| Element | Class / helper |
+|---------|----------------|
+| Self chart title phrase | `renderTitleWithBrandGradientPhrases` |
+| Other profile chart name | `renderChartTitleWithNameGradient` |
+| Analysis section title | `wrapPhraseInBrandGradient` — phrase `LIFE REPORT` |
+| Personalized labels | `BrandGradientText` in analysis_v2 + nobleman (see table above) |
 
 ---
 

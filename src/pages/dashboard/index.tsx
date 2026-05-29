@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 import PageTransition from "../../components/PageTransition";
 import { useAlertContext } from "../../context/AlertContext";
 import ConfirmationModal from "../../components/ConfirmationModal";
+import { BrandGradientText } from "../../components/BrandGradientText";
 import {
   dashboardActionDescClass,
   dashboardActionLinkClass,
@@ -141,9 +142,7 @@ const Dashboard: React.FC = () => {
             <header className={dashboardHeroClass}>
               <h1 className={dashboardHeroTitleClass}>
                 {t("dashboard.welcome")},{" "}
-                <span className="bg-gradient-to-r from-accent-goldDark to-accent-coralDark bg-clip-text text-transparent">
-                  {displayName}
-                </span>
+                <BrandGradientText>{displayName}</BrandGradientText>
               </h1>
               <p className={dashboardHeroSubtitleClass}>
                 {t("dashboard.subtitle")}

@@ -28,6 +28,7 @@ import {
 } from "lucide-react";
 import maleSvgContent from "../../assets/male-svg";
 import { ChartData } from "../../utils/zwds/types";
+import { BrandGradientText } from "../BrandGradientText";
 import { pdfCaptureNumericBadgeStyle } from "./shared/pdfCaptureNumericBadgeStyle";
 
 /**
@@ -540,13 +541,18 @@ const Health: React.FC<HealthAnalysisProps> = ({
                       >
                         {isFeatured ? "Primary focus" : "Body area"}
                       </p>
-                      <h4
-                        className={`font-bold text-gray-900 dark:text-white ${
-                          isFeatured ? "text-lg sm:text-xl" : "text-base"
-                        }`}
-                      >
-                        {tip.englishName || tip.bodyPart}
-                      </h4>
+                      {isFeatured ? (
+                        <BrandGradientText
+                          as="h4"
+                          className="text-lg font-bold sm:text-xl"
+                        >
+                          {tip.englishName || tip.bodyPart}
+                        </BrandGradientText>
+                      ) : (
+                        <h4 className="text-base font-bold text-gray-900 dark:text-white">
+                          {tip.englishName || tip.bodyPart}
+                        </h4>
+                      )}
                     </div>
                   </div>
 

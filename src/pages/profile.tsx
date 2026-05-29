@@ -4,6 +4,7 @@ import { Label, TextInput } from "flowbite-react";
 import { useAuth } from "../context/AuthContext";
 import { useAlertContext } from "../context/AlertContext";
 import { useTierContext } from "../context/TierContext";
+import { BrandGradientText } from "../components/BrandGradientText";
 import PageTransition from "../components/PageTransition";
 import { supabase } from "../utils/supabase-client";
 import {
@@ -261,7 +262,15 @@ const Profile: React.FC = () => {
                 </span>
                 <span>Back</span>
               </Link>
-              <h1 className={profileHeroTitleClass}>Profile</h1>
+              <h1 className={profileHeroTitleClass}>
+                Profile
+                {profile.display_name ? (
+                  <>
+                    {", "}
+                    <BrandGradientText>{profile.display_name}</BrandGradientText>
+                  </>
+                ) : null}
+              </h1>
               <p className={profileHeroSubtitleClass}>
                 Manage your account information and preferences
               </p>
