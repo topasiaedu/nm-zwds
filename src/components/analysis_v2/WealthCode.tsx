@@ -4,6 +4,20 @@
  */
 
 import React from "react";
+import {
+  AlertTriangle,
+  BarChart3,
+  Check,
+  Coins,
+  Handshake,
+  Minus,
+  Plus,
+  Sparkles,
+  Star,
+  Target,
+  TrendingUp,
+  type LucideIcon,
+} from "lucide-react";
 import { ChartData } from "../../utils/zwds/types";
 import {
   analyzeWealthCode,
@@ -103,11 +117,110 @@ const WEALTH_CODE_COLORS: Record<
 /**
  * Icons for wealth codes
  */
-const WEALTH_CODE_ICONS: Record<WealthCodeKey, string> = {
-  investmentBrain: "💰",
-  brandingMagnet: "✨",
-  strategyPlanner: "🎯",
-  collaborator: "🤝",
+const WEALTH_CODE_ICONS: Record<WealthCodeKey, LucideIcon> = {
+  investmentBrain: Coins,
+  brandingMagnet: Sparkles,
+  strategyPlanner: Target,
+  collaborator: Handshake,
+};
+
+type WealthCodeHeroProps = {
+  badgeText: string;
+  title: string;
+  subtitle: string;
+  forPdfCapture?: boolean;
+};
+
+/**
+ * Section hero — purple/indigo in light mode; warm orange in dark (matches sections 01, 03–06).
+ */
+const WealthCodeHero: React.FC<WealthCodeHeroProps> = ({
+  badgeText,
+  title,
+  subtitle,
+  forPdfCapture,
+}) => {
+  return (
+    <div
+      data-pdf-break-anchor="wealth-header"
+      {...(forPdfCapture ? { "data-pdf-page-break-before": "" } : {})}
+      className="relative mb-10 overflow-hidden rounded-3xl border-2 border-brand-purple/25 shadow-2xl dark:border-accent-gold/70 dark:shadow-[0_12px_48px_rgba(251,146,60,0.28)] dark:ring-2 dark:ring-accent-gold/40"
+    >
+      <div
+        className="absolute inset-0 bg-gradient-to-br from-brand-purpleDeep via-brand-purple to-indigo-700 dark:from-orange-600 dark:via-amber-600 dark:to-orange-700"
+        aria-hidden="true"
+      />
+      <div
+        className="absolute inset-0 opacity-[0.18] dark:opacity-[0.28]"
+        style={{
+          backgroundImage: `radial-gradient(circle at 18% 40%, rgba(255,255,255,0.35) 1px, transparent 1px),
+            radial-gradient(circle at 82% 70%, rgba(255,255,255,0.2) 1px, transparent 1px)`,
+          backgroundSize: "42px 42px",
+        }}
+        aria-hidden="true"
+      />
+      <div
+        className="absolute -right-8 -top-10 h-48 w-48 rounded-full bg-accent-gold/20 blur-3xl dark:bg-amber-300/30"
+        aria-hidden="true"
+      />
+      <div
+        className="absolute -bottom-12 -left-6 h-40 w-40 rounded-full bg-indigo-400/25 blur-3xl dark:bg-orange-400/20"
+        aria-hidden="true"
+      />
+
+      <div className="relative z-10 flex flex-col gap-6 px-6 py-10 sm:flex-row sm:items-center sm:justify-between sm:px-10 sm:py-12">
+        <div className="min-w-0 flex-1">
+          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-3 py-1.5 backdrop-blur-sm">
+            <TrendingUp className="h-3.5 w-3.5 text-accent-gold" aria-hidden="true" />
+            <span className="text-xs font-bold uppercase tracking-[0.2em] text-white/90">
+              Wealth profile
+            </span>
+          </div>
+          <div className="flex flex-wrap items-center gap-3">
+            <span
+              style={
+                forPdfCapture
+                  ? pdfCaptureNumericBadgeStyle("#4A3F6B")
+                  : {
+                      background: "rgba(255, 255, 255, 0.95)",
+                      color: "#4A3F6B",
+                      height: "40px",
+                      minWidth: "52px",
+                      padding: "0 14px",
+                      borderRadius: "12px",
+                      fontSize: "20px",
+                      fontWeight: "800",
+                      lineHeight: 1,
+                      display: "inline-flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }
+              }
+            >
+              {badgeText}
+            </span>
+            <h2 className="text-2xl font-black uppercase tracking-tight text-white sm:text-3xl md:text-4xl">
+              {title}
+            </h2>
+          </div>
+          <p className="mt-4 max-w-2xl text-base font-medium leading-relaxed text-white/90 sm:text-lg">
+            {subtitle}
+          </p>
+        </div>
+        <div
+          className={`flex h-20 w-20 flex-shrink-0 items-center justify-center rounded-2xl border border-white/20 bg-white/10 shadow-lg sm:h-24 sm:w-24 ${
+            forPdfCapture ? "" : "backdrop-blur-md"
+          }`}
+        >
+          <Coins className="h-10 w-10 text-white sm:h-12 sm:w-12" aria-hidden="true" />
+        </div>
+      </div>
+      <div
+        className="relative z-10 h-1.5 bg-gradient-to-r from-accent-goldDark via-accent-coralDark to-indigo-400 dark:from-amber-200 dark:via-white dark:to-amber-100"
+        aria-hidden="true"
+      />
+    </div>
+  );
 };
 
 /**
@@ -219,14 +332,15 @@ const PremiumHeroCard: React.FC<{ profile: WealthCodeAnalysisResult; forPdfCaptu
 };
 
 /**
- * Modern horizontal bar chart with premium styling
+ * Scoreboard grid for wealth codes — layout refresh; archetype colors unchanged.
  */
-const ModernBarChart: React.FC<{ codes: WealthCodeScore[]; forPdfCapture?: boolean }> = ({ codes, forPdfCapture }) => {
+const ModernBarChart: React.FC<{ codes: WealthCodeScore[]; forPdfCapture?: boolean }> = ({
+  codes,
+  forPdfCapture,
+}) => {
   const maxScore = 10;
+  const hoverClass = forPdfCapture ? "" : "transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5";
 
-  /**
-   * Get a human-readable descriptor for a score percent.
-   */
   const getScoreDescriptor = (scorePercent: number): string => {
     if (scorePercent >= 80) return "Exceptional";
     if (scorePercent >= 65) return "Strong";
@@ -235,79 +349,131 @@ const ModernBarChart: React.FC<{ codes: WealthCodeScore[]; forPdfCapture?: boole
   };
 
   return (
-    <div className="rounded-2xl shadow-lg border bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700 p-8 mb-6">
-      <div className="flex items-center justify-between mb-6">
-        <h3 className="text-lg font-bold text-gray-900 dark:text-white">
-          Wealth Code Analysis
-        </h3>
-        <div className="text-xs px-3 py-1.5 rounded-full text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-700">
-          Scale 0-10
+    <section className="mb-6">
+      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div className="flex items-center gap-3">
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 shadow-md">
+            <BarChart3 className="h-5 w-5 text-white" aria-hidden="true" />
+          </div>
+          <div>
+            <p className="text-xs font-bold uppercase tracking-widest text-amber-700 dark:text-amber-300">
+              Score breakdown
+            </p>
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+              Wealth Code Analysis
+            </h3>
+          </div>
+        </div>
+        <div className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-gray-50 px-3 py-1.5 text-xs font-semibold text-gray-600 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300">
+          <span className="h-2 w-2 rounded-full bg-amber-500" aria-hidden="true" />
+          Scale 0–10
         </div>
       </div>
 
-      <div className="space-y-6">
+      <div
+        className={
+          forPdfCapture ? "grid grid-cols-2 gap-4" : "grid grid-cols-1 gap-4 md:grid-cols-2"
+        }
+      >
         {codes.map((code, idx) => {
           const colorConfig = WEALTH_CODE_COLORS[code.key];
           const widthPercent = (code.score / maxScore) * 100;
+          const IconComponent = WEALTH_CODE_ICONS[code.key];
+          const isTopRank = idx === 0;
 
           return (
-            <div key={code.key} className="group">
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-3">
-                  <div className="relative">
-                    <div
-                      className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-md ${forPdfCapture ? "" : "group-hover:shadow-lg transition-shadow"}`}
-                      style={{
-                        background: `linear-gradient(135deg, ${colorConfig.primary} 0%, ${colorConfig.secondary} 100%)`,
-                      }}
-                    >
-                      <span className="text-lg">
-                        {WEALTH_CODE_ICONS[code.key]}
-                      </span>
-                    </div>
-                    {idx === 0 && (
-                      <div className="absolute -top-1 -right-1 w-5 h-5 bg-yellow-400 rounded-full flex items-center justify-center shadow-sm">
-                        <span className="text-xs">★</span>
-                      </div>
-                    )}
-                  </div>
-                  <div>
-                    <div className="text-sm font-semibold text-gray-900 dark:text-white">
-                      {code.label}
-                    </div>
-                    <div className="text-xs text-gray-500 dark:text-gray-400">
-                      {getScoreDescriptor(widthPercent)}
-                    </div>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <div
-                    className="text-2xl font-bold"
-                    style={{ color: colorConfig.primary }}
-                  >
-                    {code.score.toFixed(1)}
-                  </div>
-                </div>
-              </div>
+            <article
+              key={code.key}
+              className={`relative overflow-hidden rounded-2xl border bg-white shadow-md dark:border-gray-700 dark:bg-gray-800 ${hoverClass}`}
+              style={{ borderColor: `${colorConfig.primary}55` }}
+            >
+              <div
+                className="pointer-events-none absolute inset-0 dark:hidden"
+                style={{
+                  background: `linear-gradient(145deg, ${colorConfig.light} 0%, rgba(255,255,255,0.97) 55%)`,
+                }}
+                aria-hidden="true"
+              />
+              <div
+                className="absolute inset-x-0 top-0 z-[1] h-1"
+                style={{
+                  background: `linear-gradient(90deg, ${colorConfig.primary}, ${colorConfig.secondary})`,
+                }}
+                aria-hidden="true"
+              />
 
-              <div className="relative">
-                <div className="h-4 rounded-full overflow-hidden shadow-inner bg-gray-100 dark:bg-gray-700">
+              {isTopRank ? (
+                <div
+                  className="absolute right-3 top-3 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white shadow-sm"
+                  style={{
+                    background: `linear-gradient(135deg, ${colorConfig.primary}, ${colorConfig.secondary})`,
+                  }}
+                >
+                  <Star className="h-3 w-3 fill-current" aria-hidden="true" />
+                  Top
+                </div>
+              ) : null}
+
+              <div className="relative z-10 p-5 pt-6">
+                <div className="flex items-start gap-4">
                   <div
-                    className={`h-full rounded-full relative overflow-hidden ${forPdfCapture ? "" : "transition-all duration-700 ease-out"}`}
+                    className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl shadow-md"
                     style={{
-                      width: `${widthPercent}%`,
-                      background: `linear-gradient(90deg, ${colorConfig.primary}, ${colorConfig.primary}dd)`,
+                      background: `linear-gradient(135deg, ${colorConfig.primary} 0%, ${colorConfig.secondary} 100%)`,
                     }}
                   >
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+                    <IconComponent className="h-6 w-6 text-white" aria-hidden="true" />
+                  </div>
+
+                  <div className="min-w-0 flex-1">
+                    <h4 className="pr-14 text-base font-bold text-gray-900 dark:text-white">
+                      {code.label}
+                    </h4>
+                    <p
+                      className="mt-0.5 text-xs font-semibold uppercase tracking-wide"
+                      style={{ color: colorConfig.primary }}
+                    >
+                      {getScoreDescriptor(widthPercent)}
+                    </p>
+                  </div>
+
+                  <div className="flex flex-col items-end">
+                    <span
+                      className="text-3xl font-black leading-none tabular-nums"
+                      style={{ color: colorConfig.primary }}
+                    >
+                      {code.score.toFixed(1)}
+                    </span>
+                    <span className="text-[10px] font-medium text-gray-500 dark:text-gray-400">
+                      / {maxScore}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="mt-5">
+                  <div className="mb-1.5 flex justify-between text-[10px] font-medium text-gray-500 dark:text-gray-400">
+                    <span>Energy level</span>
+                    <span>{Math.round(widthPercent)}%</span>
+                  </div>
+                  <div
+                    className="h-2.5 overflow-hidden rounded-full shadow-inner"
+                    style={{ backgroundColor: `${colorConfig.primary}22` }}
+                  >
+                    <div
+                      className={`h-full rounded-full ${forPdfCapture ? "" : "transition-all duration-700 ease-out"}`}
+                      style={{
+                        width: `${widthPercent}%`,
+                        background: `linear-gradient(90deg, ${colorConfig.primary}, ${colorConfig.secondary})`,
+                      }}
+                    />
                   </div>
                 </div>
               </div>
-            </div>
+            </article>
           );
         })}
       </div>
-    </div>
+    </section>
   );
 };
 
@@ -340,7 +506,7 @@ const ModernInsights: React.FC<{
                   border: "2px solid rgba(5, 150, 105, 0.3)"
                 }}
               >
-                <span style={{ color: "#ffffff", fontSize: "1.125rem", fontWeight: "bold", textShadow: "0 1px 2px rgba(0,0,0,0.3)" }}>+</span>
+                <Plus className="w-4 h-4 text-white" aria-hidden="true" />
               </div>
               <h3 className="font-bold text-gray-900 dark:text-white">
                 Core Strengths
@@ -362,7 +528,7 @@ const ModernInsights: React.FC<{
                       border: "2px solid rgba(5, 150, 105, 0.3)"
                     }}
                   >
-                    <span style={{ color: "#ffffff", fontSize: "0.75rem", fontWeight: "800", textShadow: "0 1px 2px rgba(0,0,0,0.3)" }}>✓</span>
+                    <Check className="w-3 h-3 text-white" aria-hidden="true" />
                   </div>
                   <span className="text-sm font-medium text-gray-900 dark:text-gray-200">
                     {strength}
@@ -394,7 +560,7 @@ const ModernInsights: React.FC<{
                   border: "2px solid rgba(217, 119, 6, 0.3)"
                 }}
               >
-                <span style={{ color: "#ffffff", fontSize: "1.125rem", fontWeight: "bold", textShadow: "0 1px 2px rgba(0,0,0,0.3)" }}>!</span>
+                <AlertTriangle className="w-4 h-4 text-white" aria-hidden="true" />
               </div>
               <h3 className="font-bold text-gray-900 dark:text-white">
                 Areas to Watch
@@ -416,7 +582,7 @@ const ModernInsights: React.FC<{
                       border: "2px solid rgba(217, 119, 6, 0.3)"
                     }}
                   >
-                    <span style={{ color: "#ffffff", fontSize: "0.75rem", fontWeight: "800", textShadow: "0 1px 2px rgba(0,0,0,0.3)" }}>!</span>
+                    <AlertTriangle className="w-3 h-3 text-white" aria-hidden="true" />
                   </div>
                   <span className="text-sm font-medium text-gray-900 dark:text-gray-200">
                     {blindSpot}
@@ -459,7 +625,7 @@ const ModernCareerPaths: React.FC<{
           <div>
             <div className="flex items-center gap-2 mb-4">
               <div className="w-6 h-6 bg-gradient-to-br from-green-500 to-emerald-500 rounded-md flex items-center justify-center shadow-sm">
-                <span className="text-white text-xs">✓</span>
+                <Check className="w-3 h-3 text-white" aria-hidden="true" />
               </div>
               <h4 className="font-semibold text-gray-900 dark:text-white">
                 Ideal Career
@@ -488,7 +654,7 @@ const ModernCareerPaths: React.FC<{
           <div {...(forPdfCapture ? { "data-pdf-page-break-before": "" } : {})}>
             <div className="flex items-center gap-2 mb-4">
               <div className="w-6 h-6 bg-gradient-to-br from-gray-400 to-gray-500 rounded-md flex items-center justify-center shadow-sm">
-                <span className="text-white text-xs">-</span>
+                <Minus className="w-3 h-3 text-white" aria-hidden="true" />
               </div>
               <h4 className="font-semibold text-gray-900 dark:text-white">
                 Non-Ideal Career
@@ -523,7 +689,7 @@ const EmptyState: React.FC = () => {
   return (
     <div className="rounded-2xl shadow-lg border bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700 p-12 mb-6 text-center">
       <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-600 flex items-center justify-center">
-        <span className="text-2xl">💰</span>
+        <Coins className="w-8 h-8 text-gray-700 dark:text-gray-100" aria-hidden="true" />
       </div>
       <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
         No Wealth Code Data Available
@@ -552,7 +718,7 @@ const WealthCode: React.FC<WealthCodeProps> = ({
   const shouldShowTopDivider = showTopDivider ?? true;
 
   return (
-    <div className="p-6 dark:bg-gray-900">
+    <div className="p-6">
       {/* Divider */}
       {shouldShowTopDivider ? (
         <div className="w-full border-t border-gray-400 dark:border-gray-600 mb-6"></div>
@@ -560,78 +726,12 @@ const WealthCode: React.FC<WealthCodeProps> = ({
 
       {/* Section Title */}
       {resolvedHeader.badgeText ? (
-        <div
-          data-pdf-break-anchor="wealth-header"
-          {...(forPdfCapture ? { "data-pdf-page-break-before": "" } : {})}
-          className="relative rounded-3xl overflow-hidden mb-8"
-          style={{
-            background: "linear-gradient(135deg, #fb923c 0%, #f97316 50%, #ea580c 100%)",
-            padding: "32px 40px",
-            boxShadow: "0 10px 40px rgba(251, 146, 60, 0.3)",
-            border: "3px solid rgba(251, 146, 60, 0.8)",
-            animation: forPdfCapture ? "none" : "pulse-border 1.5s ease-in-out infinite",
-          }}
-        >
-          {forPdfCapture ? null : <style>{`
-            @keyframes pulse-border {
-              0%, 100% {
-                box-shadow: 0 10px 40px rgba(251, 146, 60, 0.4), 0 0 0 0 rgba(251, 146, 60, 1), 0 0 20px rgba(251, 146, 60, 0.6);
-              }
-              50% {
-                box-shadow: 0 10px 60px rgba(251, 146, 60, 0.8), 0 0 0 15px rgba(251, 146, 60, 0), 0 0 40px rgba(251, 146, 60, 0.3);
-              }
-            }
-          `}</style>}
-          <div className="relative z-10">
-            <div className="flex items-center gap-3 mb-3">
-              <span
-                style={
-                  forPdfCapture
-                    ? pdfCaptureNumericBadgeStyle("#ea580c")
-                    : {
-                        background: "rgba(255, 255, 255, 0.9)",
-                        color: "#ea580c",
-                        height: "32px",
-                        minWidth: "48px",
-                        padding: "0 12px",
-                        borderRadius: "8px",
-                        fontSize: "18px",
-                        fontWeight: "800",
-                        lineHeight: 1,
-                        display: "inline-flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        fontFamily: "inherit",
-                        verticalAlign: "middle",
-                      }
-                }
-              >
-                {resolvedHeader.badgeText}
-              </span>
-              <h2
-                style={{
-                  fontSize: "32px",
-                  fontWeight: "800",
-                  color: "#ffffff",
-                  textShadow: "0 2px 10px rgba(0,0,0,0.1)",
-                }}
-              >
-                {resolvedHeader.title}
-              </h2>
-            </div>
-            <p
-              style={{
-                color: "#fff",
-                fontSize: "15px",
-                fontWeight: "500",
-                marginTop: "8px",
-                opacity: 0.95,
-              }}
-            >
-              {resolvedHeader.subtitle}
-            </p>
-          </div>
-        </div>
+        <WealthCodeHero
+          badgeText={resolvedHeader.badgeText}
+          title={resolvedHeader.title}
+          subtitle={resolvedHeader.subtitle}
+          forPdfCapture={forPdfCapture}
+        />
       ) : (
         <div className="text-center mb-8">
           <h2 className="text-4xl mb-2 dark:text-white font-bold">

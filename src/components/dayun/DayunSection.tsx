@@ -67,7 +67,7 @@ export const DayunSection: React.FC<DayunSectionProps> = ({
   const dayunWithGuidance = generateDayunGuidance(dayunCycle);
 
   return (
-    <section className="mb-8 p-6 dark:bg-gray-900">
+    <section className="mb-8 p-6">
       {/* Section Header - Premium Gradient Header */}
       {shouldShowHeader ? (
         <GradientSectionHeader

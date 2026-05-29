@@ -1,0 +1,184 @@
+/**
+ * Color scheme template — single source for CSS custom properties.
+ * Docs: docs/color-scheme/COLORS.md · Tailwind: tailwind.config.js · TS: colorTokens.ts
+ */
+
+:root {
+  /* —— Palette (hex) —— */
+  --color-navy: #1a1e3f;
+  --color-cream: #f6f0e8;
+
+  --color-surface-cream: #f6f0e8;
+  --color-surface-warm: #f5e8d4;
+  --color-surface-elevated: #ffffff;
+  --color-surface-dark: #2d1b4e;
+  --color-surface-dark-secondary: #1a0f2e;
+  --color-surface-dark-elevated: #3d2860;
+
+  --color-brand-purple: #6b5b95;
+  --color-brand-purple-light: #9b8fb5;
+  --color-brand-purple-deep: #4a3f6b;
+
+  --color-accent-coral: #c84c5c;
+  --color-accent-coral-dark: #d97c6e;
+  --color-accent-gold: #d4b896;
+  --color-accent-gold-dark: #d4af7b;
+
+  --color-chart-orange: #e08b5c;
+
+  --color-muted: #5c5c5c;
+  --color-muted-dark: #c4c4c4;
+  --color-muted-subtle: #a89bc4;
+
+  /* RGB channels (alpha utilities) */
+  --color-surface-cream-rgb: 246 240 232;
+  --color-brand-purple-rgb: 107 91 149;
+  --color-brand-purple-light-rgb: 155 143 181;
+  --color-accent-gold-rgb: 212 184 150;
+  --color-accent-gold-dark-rgb: 212 175 123;
+
+  /* —— Semantic: shared —— */
+  --color-page-bg: var(--color-surface-cream);
+  --color-text-primary: var(--color-navy);
+  --color-text-secondary: var(--color-muted);
+  --color-text-subtle: var(--color-muted-subtle);
+
+  --color-accent-primary: var(--color-brand-purple);
+  --color-accent-primary-hover: var(--color-brand-purple-deep);
+  --color-accent-secondary: var(--color-accent-gold);
+
+  --color-text-accent-muted: rgb(var(--color-brand-purple-rgb) / 0.8);
+  --color-text-accent-muted-subtle: rgb(var(--color-brand-purple-rgb) / 0.5);
+  --color-text-accent-label: rgb(var(--color-brand-purple-rgb) / 0.7);
+
+  --color-border-default: rgb(var(--color-brand-purple-rgb) / 0.2);
+  --color-border-subtle: rgb(var(--color-brand-purple-rgb) / 0.1);
+  --color-border-strong: var(--color-brand-purple);
+
+  --color-surface-card: var(--color-surface-elevated);
+  --color-surface-inset: rgb(var(--color-surface-cream-rgb) / 0.5);
+
+  /* Auth card (elevated white; dashboard uses --color-surface-card) */
+  --color-surface-auth-card: var(--color-surface-elevated);
+  --color-border-auth: rgb(var(--color-accent-gold-rgb) / 0.5);
+
+  /* Primary button (sign-in / sign-up / dashboard CTA) */
+  --color-btn-primary-bg: var(--color-brand-purple);
+  --color-btn-primary-bg-hover: var(--color-brand-purple-deep);
+  --color-btn-primary-text: var(--color-cream);
+
+  /* Forgot-password page button (light: same purple; dark: light purple) */
+  --color-btn-alt-bg: var(--color-brand-purple);
+  --color-btn-alt-bg-hover: var(--color-brand-purple-deep);
+  --color-btn-alt-text: var(--color-cream);
+
+  /* Links */
+  --color-link-primary: var(--color-brand-purple);
+  --color-link-primary-hover: var(--color-brand-purple-deep);
+  --color-link-deemphasized: var(--color-brand-purple);
+  --color-link-deemphasized-hover: var(--color-brand-purple-deep);
+
+  /* Inputs — white fill + light purple border in light mode */
+  --color-surface-input: var(--color-surface-elevated);
+  --color-input-border: rgb(var(--color-brand-purple-rgb) / 0.18);
+  --color-input-focus-border: var(--color-brand-purple);
+  --color-input-focus-ring: rgb(var(--color-brand-purple-rgb) / 0.3);
+  --color-input-focus-border-alt: var(--color-brand-purple);
+  --color-input-focus-ring-alt: rgb(var(--color-brand-purple-rgb) / 0.3);
+
+  --color-ring-focus: rgb(var(--color-brand-purple-rgb) / 0.3);
+  --color-ring-focus-alt: var(--color-input-focus-ring-alt);
+
+  /* Banners */
+  --color-banner-error-bg: var(--color-accent-coral);
+  --color-banner-error-text: var(--color-cream);
+  --color-banner-success-bg: var(--color-surface-warm);
+  --color-banner-success-text: var(--color-navy);
+  --color-banner-success-border: rgb(var(--color-accent-gold-rgb) / 0.4);
+  --color-banner-info-bg: var(--color-brand-purple);
+  --color-banner-info-text: var(--color-cream);
+
+  --color-text-danger: var(--color-accent-coral);
+
+  /* Interactive surfaces */
+  --color-surface-hover: rgb(var(--color-brand-purple-rgb) / 0.04);
+  --color-border-hover: rgb(var(--color-brand-purple-rgb) / 0.35);
+  --color-surface-featured: rgb(var(--color-brand-purple-rgb) / 0.06);
+  --color-icon-accent-bg: rgb(var(--color-brand-purple-rgb) / 0.15);
+  --color-icon-neutral-bg: rgb(var(--color-brand-purple-rgb) / 0.08);
+  --color-spinner: var(--color-brand-purple);
+
+  /* Legacy aliases */
+  --background-light: var(--color-page-bg);
+  --text-light: var(--color-text-primary);
+  --background-dark: var(--color-surface-dark);
+  --text-dark: var(--color-cream);
+  --surface-elevated: var(--color-surface-elevated);
+  --accent-gold: var(--color-accent-gold);
+  --brand-purple: var(--color-brand-purple);
+}
+
+.dark {
+  --color-page-bg: var(--color-surface-dark);
+  --color-text-primary: var(--color-cream);
+  --color-text-secondary: var(--color-muted-dark);
+  --color-text-subtle: var(--color-muted-subtle);
+
+  --color-accent-primary: var(--color-accent-gold-dark);
+  --color-accent-primary-hover: var(--color-accent-gold);
+  --color-accent-secondary: var(--color-accent-gold);
+
+  --color-text-accent-muted: rgb(var(--color-accent-gold-rgb) / 0.8);
+  --color-text-accent-muted-subtle: rgb(var(--color-accent-gold-rgb) / 0.55);
+  --color-text-accent-label: rgb(var(--color-accent-gold-rgb) / 0.8);
+
+  --color-border-default: rgb(255 255 255 / 0.1);
+  --color-border-subtle: rgb(255 255 255 / 0.1);
+  --color-border-strong: var(--color-accent-gold-dark);
+
+  --color-surface-card: var(--color-surface-dark-elevated);
+  --color-surface-inset: rgb(255 255 255 / 0.04);
+
+  --color-surface-auth-card: var(--color-surface-dark-secondary);
+  --color-border-auth: var(--color-brand-purple-deep);
+
+  --color-btn-primary-bg: var(--color-accent-gold-dark);
+  --color-btn-primary-bg-hover: var(--color-accent-gold);
+  --color-btn-primary-text: var(--color-surface-dark-secondary);
+
+  --color-btn-alt-bg: var(--color-brand-purple-light);
+  --color-btn-alt-bg-hover: var(--color-brand-purple);
+  --color-btn-alt-text: var(--color-cream);
+
+  --color-link-primary: var(--color-accent-gold-dark);
+  --color-link-primary-hover: var(--color-accent-gold);
+  --color-link-deemphasized: var(--color-brand-purple-light);
+  --color-link-deemphasized-hover: var(--color-brand-purple);
+
+  --color-surface-input: var(--color-surface-dark);
+  --color-input-border: var(--color-brand-purple-deep);
+  --color-input-focus-border: var(--color-accent-gold-dark);
+  --color-input-focus-ring: rgb(var(--color-accent-gold-dark-rgb) / 0.3);
+  --color-input-focus-border-alt: var(--color-brand-purple-light);
+  --color-input-focus-ring-alt: rgb(var(--color-brand-purple-light-rgb) / 0.3);
+
+  --color-ring-focus: rgb(var(--color-accent-gold-dark-rgb) / 0.4);
+  --color-ring-focus-alt: var(--color-input-focus-ring-alt);
+
+  --color-banner-error-bg: var(--color-accent-coral-dark);
+  --color-banner-error-text: var(--color-cream);
+  --color-banner-success-bg: var(--color-brand-purple-deep);
+  --color-banner-success-text: var(--color-cream);
+  --color-banner-success-border: var(--color-brand-purple-deep);
+  --color-banner-info-bg: var(--color-brand-purple-deep);
+  --color-banner-info-text: var(--color-cream);
+
+  --color-text-danger: var(--color-accent-coral-dark);
+
+  --color-surface-hover: rgb(255 255 255 / 0.05);
+  --color-border-hover: rgb(var(--color-accent-gold-dark-rgb) / 0.35);
+  --color-surface-featured: rgb(255 255 255 / 0.06);
+  --color-icon-accent-bg: rgb(var(--color-accent-gold-dark-rgb) / 0.3);
+  --color-icon-neutral-bg: rgb(255 255 255 / 0.06);
+  --color-spinner: var(--color-accent-gold-dark);
+}

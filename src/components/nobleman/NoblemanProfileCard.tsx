@@ -8,6 +8,7 @@
 import React, { useState } from "react";
 import { Tilt } from "react-tilt";
 import { motion, AnimatePresence } from "framer-motion";
+import { Sparkles, Star } from "lucide-react";
 import type { NoblemanData, NoblemanProfile } from "../../types/nobleman";
 import type { NoblemanType } from "../../types/nobleman";
 import { NOBLEMAN_TYPE_TO_IMAGE } from "../../constants/noblemanProfiles";
@@ -23,11 +24,11 @@ interface NoblemanProfileCardProps extends NoblemanData {
  * Tilt options for the image effect
  */
 const tiltOptions = {
-  scale: 1.05,
+  scale: 1.02,
   speed: 1000,
-  max: 10,
-  glare: true,
-  "max-glare": 0.5,
+  max: 8,
+  glare: false,
+  "max-glare": 0,
 };
 
 /**
@@ -98,29 +99,27 @@ const NoblemanProfileCard: React.FC<NoblemanProfileCardProps> = ({
   const currentImage = getProfileImage(currentProfile);
   
   return (
-    <div
+    <section
       {...(forPdfCapture ? { "data-pdf-page-break-before": "" } : {})}
-      className="rounded-3xl shadow-2xl border border-gray-200 dark:border-gray-700 bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 overflow-hidden mb-8"
+      className="mb-8 overflow-hidden rounded-3xl border border-indigo-200/50 bg-white shadow-xl dark:border-indigo-900/50 dark:bg-gray-800"
     >
-      {/* Header Section - More Prominent */}
-      <div className="relative px-8 py-8 border-b border-gray-200 dark:border-gray-700">
-        <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-indigo-500/10 dark:from-purple-600/20 dark:to-indigo-600/20" />
-        <div className="relative">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="w-1.5 h-8 bg-gradient-to-b from-purple-500 to-indigo-500 rounded-full" />
-            <h3 className="text-3xl font-bold text-gray-900 dark:text-white">
-              Your Nobleman Profile
-            </h3>
-          </div>
-        </div>
+      <div className="border-b border-indigo-100 bg-gradient-to-r from-indigo-500/10 via-violet-500/5 to-transparent px-6 py-5 dark:border-indigo-900/50">
+        <p className="text-xs font-bold uppercase tracking-widest text-indigo-700 dark:text-indigo-300">
+          Primary match
+        </p>
+        <h3 className="mt-1 text-2xl font-bold text-gray-900 dark:text-white">
+          Your Nobleman Profile
+        </h3>
+        {palaceName ? (
+          <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">{palaceName}</p>
+        ) : null}
       </div>
-      
-      {/* Main Content */}
+
       <div
         className={
           forPdfCapture
             ? "flex flex-col"
-            : "flex flex-col md:flex-row min-h-[500px]"
+            : "flex flex-col lg:flex-row lg:min-h-[480px]"
         }
       >
         {/* Image block first for PDF layout */}
@@ -146,42 +145,35 @@ const NoblemanProfileCard: React.FC<NoblemanProfileCardProps> = ({
         <div
           className={
             forPdfCapture
-              ? "p-8 pt-2 flex flex-col justify-center"
-              : "md:w-1/2 p-8 flex flex-col justify-center"
+              ? "flex flex-col justify-center p-6 pt-2"
+              : "flex flex-1 flex-col justify-center p-6 lg:p-8"
           }
         >
-          {/* Selector Badges - Only show if multiple profiles */}
-          {hasMultipleProfiles && (
-            <div className="mb-8">
-              <div className="flex items-center gap-2 mb-4">
-                <svg className="w-5 h-5 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                </svg>
-                <span className="text-sm font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
-                  Your Nobleman Profiles
-                </span>
-              </div>
-              <div className="flex flex-wrap gap-3">
+          {hasMultipleProfiles ? (
+            <div className="mb-6">
+              <p className="mb-3 text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                Switch profile match
+              </p>
+              <div className="flex flex-wrap gap-2">
                 {matchedProfiles.map((profile, index) => (
                   <button
                     key={`${profile.type}-${index}`}
+                    type="button"
                     onClick={() => setSelectedIndex(index)}
-                    className={`group relative px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 ${
+                    className={`rounded-full px-4 py-2 text-xs font-semibold transition-all sm:text-sm ${
                       selectedIndex === index
-                        ? "bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg shadow-purple-500/50 dark:shadow-purple-900/50"
-                        : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 hover:shadow-md"
+                        ? "bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-md"
+                        : "border border-gray-200 bg-gray-50 text-gray-700 hover:border-indigo-300 dark:border-gray-600 dark:bg-gray-700/50 dark:text-gray-200"
                     }`}
                     aria-label={`Select ${profile.type}`}
+                    aria-pressed={selectedIndex === index}
                   >
                     {profile.type}
-                    {selectedIndex === index && (
-                      <div className="absolute inset-0 rounded-xl bg-white opacity-20 animate-pulse" />
-                    )}
                   </button>
                 ))}
               </div>
             </div>
-          )}
+          ) : null}
           
           {/* Profile Content with Slide Animation */}
           <AnimatePresence mode="wait">
@@ -193,35 +185,21 @@ const NoblemanProfileCard: React.FC<NoblemanProfileCardProps> = ({
               transition={forPdfCapture ? { duration: 0 } : { duration: 0.4, ease: "easeInOut" }}
               className="space-y-6"
             >
-              {/* Nobleman Type Title */}
-              <div>
-                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 mb-3">
-                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                  </svg>
-                  <span className="text-xs font-bold uppercase tracking-wider">
-                    {currentProfile.stars}
-                  </span>
-                </div>
-                <h4 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-                  {currentProfile.type}
-                </h4>
+              <div className="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-indigo-800 dark:border-indigo-800 dark:bg-indigo-950/50 dark:text-indigo-200">
+                <Star className="h-3.5 w-3.5 fill-current" aria-hidden="true" />
+                <span className="text-xs font-bold uppercase tracking-wider">
+                  {currentProfile.stars}
+                </span>
               </div>
-              
-              {/* Characteristics Card */}
-              <div
-                className={
-                  forPdfCapture
-                    ? "bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700"
-                    : "bg-white/50 dark:bg-gray-800/50 rounded-2xl p-6 border border-gray-200 dark:border-gray-700 backdrop-blur-sm"
-                }
-              >
-                <div className="flex items-center gap-2 mb-4">
-                  <svg className="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                  </svg>
-                  <h5 className="text-sm font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
-                    Key Characteristics
+              <h4 className="mt-4 text-2xl font-black text-gray-900 dark:text-white sm:text-3xl">
+                {currentProfile.type}
+              </h4>
+
+              <div className="mt-6 border-l-4 border-violet-500 pl-5 dark:border-violet-400">
+                <div className="mb-2 flex items-center gap-2">
+                  <Sparkles className="h-4 w-4 text-violet-600 dark:text-violet-400" aria-hidden="true" />
+                  <h5 className="text-xs font-bold uppercase tracking-widest text-violet-700 dark:text-violet-300">
+                    Key characteristics
                   </h5>
                 </div>
                 <p className="text-base leading-relaxed text-gray-700 dark:text-gray-300">
@@ -234,30 +212,30 @@ const NoblemanProfileCard: React.FC<NoblemanProfileCardProps> = ({
         
         {/* Right Column - Image with Tilt Effect */}
         {!forPdfCapture ? (
-          <div className="md:w-1/2 p-8 flex items-center justify-center">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={selectedIndex}
-              initial={{ opacity: 0, x: 30 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -30 }}
-              transition={{ duration: 0.4, ease: "easeInOut" }}
-              className="w-full max-w-md"
-            >
-              <Tilt options={tiltOptions} className="w-full">
-                <img
-                  src={currentImage}
-                  alt={`${currentProfile.type} Nobleman`}
-                  className="rounded-3xl w-full object-contain"
-                  style={{ maxHeight: "450px" }}
-                />
-              </Tilt>
-            </motion.div>
-          </AnimatePresence>
+          <div className="flex items-center justify-center p-6 lg:w-[42%] lg:p-8">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={selectedIndex}
+                initial={{ opacity: 0, x: 30 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -30 }}
+                transition={{ duration: 0.4, ease: "easeInOut" }}
+                className="relative w-full max-w-sm"
+              >
+                <Tilt options={tiltOptions} className="relative w-full">
+                  <img
+                    src={currentImage}
+                    alt={`${currentProfile.type} Nobleman`}
+                    className="w-full rounded-[1.75rem] object-contain"
+                    style={{ maxHeight: "450px" }}
+                  />
+                </Tilt>
+              </motion.div>
+            </AnimatePresence>
           </div>
         ) : null}
       </div>
-    </div>
+    </section>
   );
 };
 

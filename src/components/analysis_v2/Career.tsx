@@ -91,7 +91,7 @@ const Career: React.FC<CareerProps> = ({ chartData }) => {
 
   return (
     <>
-      <div className="p-6 dark:bg-gray-900">
+      <div className="p-6">
         {/* Divider */}
         <div className="w-full border-t border-gray-400 dark:border-gray-600 mb-6"></div>
 

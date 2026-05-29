@@ -1,10 +1,44 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Card, Button, Label, TextInput } from "flowbite-react";
+import { Link } from "react-router-dom";
+import { Label, TextInput } from "flowbite-react";
 import { useAuth } from "../context/AuthContext";
 import { useAlertContext } from "../context/AlertContext";
 import { useTierContext } from "../context/TierContext";
 import PageTransition from "../components/PageTransition";
 import { supabase } from "../utils/supabase-client";
+import {
+  profileFormHintClass,
+  profileFormLabelClass,
+} from "../styles/profileFormUi";
+import {
+  profileActionsEndClass,
+  profileActionsRowClass,
+  profileContainerClass,
+  profileFieldFullWidthClass,
+  profileFormGridClass,
+  profileBackButtonClass,
+  profileBackIconWrapClass,
+  profileGlowClass,
+  profileHeroClass,
+  profileHeroSubtitleClass,
+  profileHeroTitleClass,
+  profileInfoBoxClass,
+  profileInfoBoxHintClass,
+  profileInfoBoxLabelClass,
+  profileInfoBoxValueClass,
+  profileInfoGridClass,
+  profilePageClass,
+  profilePrimaryButtonClass,
+  profilePrimaryButtonLargeClass,
+  profileSecondaryButtonClass,
+  profileSectionCardClass,
+  profileSectionHeaderRowClass,
+  profileSectionHeaderTitleClass,
+  profileSectionsStackClass,
+  profileSectionTitleClass,
+  profileSignInPromptClass,
+  profileTextInputTheme,
+} from "../styles/profileUi";
 
 interface UserProfile {
   id: string;
@@ -47,12 +81,13 @@ const Profile: React.FC = () => {
    * Load user profile data from Supabase
    */
   const loadProfile = useCallback(async (): Promise<void> => {
-    if (!user) return;
+    if (!user) {
+      return;
+    }
 
     try {
       setIsLoading(true);
 
-      // Set basic profile data from auth user
       setProfile({
         id: user.id,
         email: user.email || "",
@@ -73,12 +108,13 @@ const Profile: React.FC = () => {
    * Save profile changes to Supabase Auth
    */
   const saveProfile = async (): Promise<void> => {
-    if (!user) return;
+    if (!user) {
+      return;
+    }
 
     try {
       setIsLoading(true);
 
-      // Update user metadata in auth.users
       const { error } = await supabase.auth.updateUser({
         data: {
           display_name: profile.display_name,
@@ -86,11 +122,13 @@ const Profile: React.FC = () => {
         },
       });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       showAlert("Profile updated successfully", "success");
 
-      await loadProfile(); // Reload to get updated data
+      await loadProfile();
     } catch (error) {
       console.error("Error saving profile:", error);
       showAlert("Error saving profile", "error");
@@ -103,9 +141,10 @@ const Profile: React.FC = () => {
    * Change user password
    */
   const changePassword = async (): Promise<void> => {
-    if (!user) return;
+    if (!user) {
+      return;
+    }
 
-    // Validation
     if (!passwordForm.newPassword || !passwordForm.confirmPassword) {
       showAlert("Please fill in all password fields", "error");
       return;
@@ -124,12 +163,13 @@ const Profile: React.FC = () => {
     try {
       setIsLoading(true);
 
-      // Update password in Supabase Auth
       const { error } = await supabase.auth.updateUser({
         password: passwordForm.newPassword,
       });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       showAlert("Password changed successfully", "success");
       setIsChangingPassword(false);
@@ -158,14 +198,15 @@ const Profile: React.FC = () => {
   /**
    * Handle password form input changes
    */
-  const handlePasswordChange = (field: keyof PasswordChangeForm, value: string): void => {
+  const handlePasswordChange = (
+    field: keyof PasswordChangeForm,
+    value: string
+  ): void => {
     setPasswordForm((prev) => ({
       ...prev,
       [field]: value,
     }));
   };
-
-
 
   /**
    * Cancel password change and clear form
@@ -186,202 +227,218 @@ const Profile: React.FC = () => {
   }, [loadProfile]);
 
   if (!user) {
-    return <div>Please sign in to view your profile.</div>;
+    return (
+      <PageTransition>
+        <p className={profileSignInPromptClass}>
+          Please sign in to view your profile.
+        </p>
+      </PageTransition>
+    );
   }
 
   return (
-    <PageTransition>
-      <div className="max-w-4xl mx-auto py-8">
-        <Card className="w-full relative z-10 rounded-2xl shadow-2xl 
-                       border border-gray-200 dark:border-gray-700
-                       bg-white dark:bg-gray-800
-                       transition-all duration-300">
-          <div className="space-y-6">
-            {/* Header */}
-            <div className="flex justify-between items-start">
-              <div>
-                <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-                  Profile
-                </h1>
-                <p className="text-gray-600 dark:text-gray-400 mt-2">
-                  Manage your account information and preferences
-                </p>
-              </div>
-              <div className="flex space-x-2">
-                <Button
-                  color="gray"
-                  onClick={() => window.history.back()}
-                  disabled={isLoading}
-                >
-                  Back
-                </Button>
-              </div>
-            </div>
+    <>
+      <div className={profileGlowClass} aria-hidden="true" />
+      <PageTransition>
+        <div className={profilePageClass}>
+          <div className={profileContainerClass}>
+            <header className={profileHeroClass}>
+              <Link to="/dashboard" className={profileBackButtonClass}>
+                <span className={profileBackIconWrapClass} aria-hidden="true">
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M15 19l-7-7 7-7"
+                    />
+                  </svg>
+                </span>
+                <span>Back</span>
+              </Link>
+              <h1 className={profileHeroTitleClass}>Profile</h1>
+              <p className={profileHeroSubtitleClass}>
+                Manage your account information and preferences
+              </p>
+            </header>
 
-            {/* Profile Information Section */}
-            <div className="space-y-6">
-              <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
-                <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">
-                  Profile Information
-                </h2>
+            <div className={profileSectionsStackClass}>
+              <section className={profileSectionCardClass}>
+                <h2 className={profileSectionTitleClass}>Profile Information</h2>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* Email (read-only) */}
+                <div className={profileFormGridClass}>
                   <div>
-                    <Label htmlFor="email" value="Email Address" />
+                    <Label htmlFor="email" value="Email Address" className={profileFormLabelClass} />
                     <TextInput
                       id="email"
                       type="email"
                       value={profile.email}
                       disabled
+                      theme={profileTextInputTheme}
                       className="mt-1"
                     />
-                    <p className="text-sm text-gray-500 mt-1">
+                    <p className={`${profileFormHintClass} mt-1`}>
                       Email cannot be changed
                     </p>
                   </div>
 
-                  {/* Display Name */}
                   <div>
-                    <Label htmlFor="display_name" value="Display Name" />
+                    <Label
+                      htmlFor="display_name"
+                      value="Display Name"
+                      className={profileFormLabelClass}
+                    />
                     <TextInput
                       id="display_name"
                       type="text"
                       value={profile.display_name}
-                      onChange={(e) => handleProfileChange("display_name", e.target.value)}
+                      onChange={(e) =>
+                        handleProfileChange("display_name", e.target.value)
+                      }
+                      theme={profileTextInputTheme}
                       className="mt-1"
                       placeholder="Enter your display name"
                     />
                   </div>
 
-                  {/* Phone */}
-                  <div className="md:col-span-2">
-                    <Label htmlFor="phone" value="Phone Number" />
+                  <div className={profileFieldFullWidthClass}>
+                    <Label htmlFor="phone" value="Phone Number" className={profileFormLabelClass} />
                     <TextInput
                       id="phone"
                       type="tel"
                       value={profile.phone}
                       onChange={(e) => handleProfileChange("phone", e.target.value)}
+                      theme={profileTextInputTheme}
                       className="mt-1"
                       placeholder="Enter your phone number"
                     />
                   </div>
                 </div>
 
-                {/* Save Button */}
-                <div className="flex justify-end mt-6">
+                <div className={profileActionsEndClass}>
                   <button
+                    type="button"
                     onClick={saveProfile}
                     disabled={isLoading || isChangingPassword}
-                    className="px-6 py-3 bg-purple-600 hover:bg-purple-700 disabled:bg-purple-400 text-white font-medium rounded-lg transition-colors duration-200 shadow-sm"
+                    className={profilePrimaryButtonLargeClass}
                   >
                     {isLoading ? "Saving..." : "Save Profile"}
                   </button>
                 </div>
-              </div>
+              </section>
 
-              {/* Account Information Section */}
-              <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
-                <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">
-                  Account Information
-                </h2>
+              <section className={profileSectionCardClass}>
+                <h2 className={profileSectionTitleClass}>Account Information</h2>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* Membership Expiration */}
-                  <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
-                    <h3 className="text-sm font-medium text-gray-900 dark:text-white mb-2">
-                      Membership Expiration
-                    </h3>
-                    <p className="text-lg font-semibold text-gray-900 dark:text-white">
+                <div className={profileInfoGridClass}>
+                  <div className={profileInfoBoxClass}>
+                    <h3 className={profileInfoBoxLabelClass}>Membership Expiration</h3>
+                    <p className={profileInfoBoxValueClass}>
                       {profile.membership_expiration
                         ? new Date(profile.membership_expiration).toLocaleDateString()
                         : "Unlimited"}
                     </p>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                    <p className={profileInfoBoxHintClass}>
                       Contact support to modify membership
                     </p>
                   </div>
 
-                  {/* Account Created */}
-                  {profile.created_at && (
-                    <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
-                      <h3 className="text-sm font-medium text-gray-900 dark:text-white mb-2">
-                        Member Since
-                      </h3>
-                      <p className="text-lg font-semibold text-gray-900 dark:text-white">
+                  {profile.created_at ? (
+                    <div className={profileInfoBoxClass}>
+                      <h3 className={profileInfoBoxLabelClass}>Member Since</h3>
+                      <p className={profileInfoBoxValueClass}>
                         {new Date(profile.created_at).toLocaleDateString()}
                       </p>
                     </div>
-                  )}
+                  ) : null}
                 </div>
-              </div>
+              </section>
 
-              {/* Password Change Section */}
-              <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
-                <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-                    Password
-                  </h2>
+              <section className={profileSectionCardClass}>
+                <div className={profileSectionHeaderRowClass}>
+                  <h2 className={profileSectionHeaderTitleClass}>Password</h2>
                   {!isChangingPassword ? (
-                    <Button
-                      color="indigo"
+                    <button
+                      type="button"
                       onClick={() => setIsChangingPassword(true)}
                       disabled={isLoading}
+                      className={profilePrimaryButtonClass}
                     >
                       Change Password
-                    </Button>
+                    </button>
                   ) : (
-                    <div className="flex space-x-2">
-                      <Button
-                        color="gray"
+                    <div className={profileActionsRowClass}>
+                      <button
+                        type="button"
                         onClick={cancelPasswordChange}
                         disabled={isLoading}
+                        className={profileSecondaryButtonClass}
                       >
                         Cancel
-                      </Button>
-                      <Button
-                        color="indigo"
+                      </button>
+                      <button
+                        type="button"
                         onClick={changePassword}
                         disabled={isLoading}
+                        className={profilePrimaryButtonClass}
                       >
                         {isLoading ? "Updating..." : "Update Password"}
-                      </Button>
+                      </button>
                     </div>
                   )}
                 </div>
 
-                {isChangingPassword && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {isChangingPassword ? (
+                  <div className={profileFormGridClass}>
                     <div>
-                      <Label htmlFor="new_password" value="New Password" />
+                      <Label
+                        htmlFor="new_password"
+                        value="New Password"
+                        className={profileFormLabelClass}
+                      />
                       <TextInput
                         id="new_password"
                         type="password"
                         value={passwordForm.newPassword}
-                        onChange={(e) => handlePasswordChange("newPassword", e.target.value)}
+                        onChange={(e) =>
+                          handlePasswordChange("newPassword", e.target.value)
+                        }
+                        theme={profileTextInputTheme}
                         className="mt-1"
                         placeholder="Enter new password (min 6 characters)"
                       />
                     </div>
                     <div>
-                      <Label htmlFor="confirm_password" value="Confirm New Password" />
+                      <Label
+                        htmlFor="confirm_password"
+                        value="Confirm New Password"
+                        className={profileFormLabelClass}
+                      />
                       <TextInput
                         id="confirm_password"
                         type="password"
                         value={passwordForm.confirmPassword}
-                        onChange={(e) => handlePasswordChange("confirmPassword", e.target.value)}
+                        onChange={(e) =>
+                          handlePasswordChange("confirmPassword", e.target.value)
+                        }
+                        theme={profileTextInputTheme}
                         className="mt-1"
                         placeholder="Confirm new password"
                       />
                     </div>
                   </div>
-                )}
-              </div>
+                ) : null}
+              </section>
             </div>
           </div>
-        </Card>
-      </div>
-    </PageTransition>
+        </div>
+      </PageTransition>
+    </>
   );
 };
 

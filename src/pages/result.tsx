@@ -37,6 +37,46 @@ import {
 } from "../components/analysis_v2";
 import { ChartSettingsProvider, useChartSettings } from "../context/ChartSettingsContext";
 import ChartSettingsModal from "../components/ChartSettingsModal";
+import {
+  chartAdminButtonClass,
+  chartAdminPanelClass,
+  chartAdminPanelDescClass,
+  chartAdminPanelTitleClass,
+  chartAnalysisSubtitleClass,
+  chartAnalysisTitleClass,
+  chartBackButtonClass,
+  chartBackIconWrapClass,
+  chartBadgeOtherClass,
+  chartBadgeSelfClass,
+  chartBlueprintActiveClass,
+  chartBlueprintInactiveClass,
+  chartBranchAdjustedClass,
+  chartBranchOriginalClass,
+  chartCardClass,
+  chartCardTitleClass,
+  chartChartLoadingOverlayClass,
+  chartContainerClass,
+  chartErrorPanelClass,
+  chartErrorRetryClass,
+  chartErrorTextClass,
+  chartErrorTitleClass,
+  chartExportButtonClass,
+  chartFieldLabelClass,
+  chartFieldValueClass,
+  chartGlowClass,
+  chartHeroClass,
+  chartHeroLabelClass,
+  chartHeroSubtitleClass,
+  chartHeroTitleClass,
+  chartHeroTitleIconClass,
+  chartLoadingTextClass,
+  chartPageClass,
+  chartPrimaryButtonClass,
+  chartSidebarCardClass,
+  chartSidebarTitleClass,
+  chartSpinnerClass,
+  chartSpinnerSmallClass,
+} from "../styles/chartUi";
 import { DayunSection } from "../components/dayun";
 import { NoblemanSection } from "../components/nobleman";
 import { LiuMonthCard } from "../components/liumonth";
@@ -120,6 +160,31 @@ const ResultContent: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [isCapturingForPdf, setIsCapturingForPdf] = useState<boolean>(false);
+
+  /**
+   * Highlights the "Zi Wei Dou Shu" phrase with the navbar brand gradient.
+   */
+  const renderChartTitleWithBrandGradient = (title: string): React.ReactNode => {
+    const phrase = "Zi Wei Dou Shu";
+    const phraseIndex = title.indexOf(phrase);
+
+    if (phraseIndex === -1) {
+      return title;
+    }
+
+    const beforePhrase = title.slice(0, phraseIndex);
+    const afterPhrase = title.slice(phraseIndex + phrase.length);
+
+    return (
+      <>
+        {beforePhrase}
+        <span className="bg-gradient-to-r from-accent-goldDark to-accent-coralDark bg-clip-text text-transparent">
+          {phrase}
+        </span>
+        {afterPhrase}
+      </>
+    );
+  };
 
   // State for branch adjustment (allows users to cycle through the 12 time branches)
   const [branchOffset, setBranchOffset] = useState<number>(0);
@@ -895,171 +960,146 @@ const ResultContent: React.FC = () => {
   // If loading profiles from context
   if (profilesLoading) {
     return (
-      <PageTransition>
-        <div className="container mx-auto px-4 py-8">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
+      <>
+        <div className={chartGlowClass} aria-hidden="true" />
+        <PageTransition>
+          <div className={chartPageClass}>
+            <div className={chartContainerClass}>
+              <div className="text-center py-12">
+                <div className={chartSpinnerClass} />
+              </div>
+            </div>
           </div>
-        </div>
-      </PageTransition>
+        </PageTransition>
+      </>
     );
   }
 
   // If viewing self profile but none exists, show profile form
   if (isSelfProfile && !selfProfile) {
     return (
-      <PageTransition>
-        <div className="container mx-auto px-4 py-8">
-          <div className="mb-8">
-            <div className="flex items-center mb-4">
-              <Link
-                to="/dashboard"
-                className="flex items-center text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 mr-4">
-                <svg
-                  className="w-5 h-5 mr-1"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M10 19l-7-7m0 0l7-7m-7 7h18"
-                  />
-                </svg>
-                {t("general.back") || "Back"}
-              </Link>
-              <h1 className="text-3xl font-bold dark:text-white flex items-center">
-                <svg
-                  className="w-7 h-7 mr-2 text-blue-500"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                  />
-                </svg>
-                {t("myChart.title") || "My 紫微斗数 Chart"}
-              </h1>
-            </div>
-            <p className="text-gray-600 dark:text-gray-400">
-              {t("myChart.subtitle") ||
-                "View your personal Zi Wei Dou Shu chart and analysis"}
-            </p>
-          </div>
+      <>
+        <div className={chartGlowClass} aria-hidden="true" />
+        <PageTransition>
+          <div className={chartPageClass}>
+            <div className={chartContainerClass}>
+              <header className={chartHeroClass}>
+                <Link to="/dashboard" className={chartBackButtonClass}>
+                  <span className={chartBackIconWrapClass} aria-hidden="true">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                    </svg>
+                  </span>
+                  <span>{t("general.back") || "Back"}</span>
+                </Link>
+                <p className={chartHeroLabelClass}>{t("myChart.title") || "My Chart"}</p>
+                <h1 className={chartHeroTitleClass}>
+                  <svg className={chartHeroTitleIconClass} fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                  {renderChartTitleWithBrandGradient(
+                    t("myChart.title") || "My 紫微斗数 Chart"
+                  )}
+                </h1>
+                <p className={chartHeroSubtitleClass}>
+                  {t("myChart.subtitle") ||
+                    "View your personal Zi Wei Dou Shu chart and analysis"}
+                </p>
+              </header>
 
-          <ProfileForm
-            isSelfProfile={true}
-            onSuccess={() => navigate("/chart")}
-          />
-        </div>
-      </PageTransition>
+              <ProfileForm isSelfProfile={true} onSuccess={() => navigate("/chart")} />
+            </div>
+          </div>
+        </PageTransition>
+      </>
     );
   }
 
   return (
-    <PageTransition>
-      {/* Regular View */}
-      <div className="container mx-auto px-0 xs:px-1 sm:px-2 md:px-4 py-2 sm:py-4 md:py-8">
-        <div className="mb-8">
-          <div className="flex items-center mb-4">
-            <Link
-              to="/dashboard"
-              className="flex items-center text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 mr-4">
-              <svg
-                className="w-5 h-5 mr-1"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M10 19l-7-7m0 0l7-7m-7 7h18"
-                />
-              </svg>
-              {t("general.back") || "Back"}
-            </Link>
-            <h1 className="text-3xl font-bold dark:text-white flex items-center">
-              {loading ? (
-                t("result.loading") || "Loading Chart..."
-              ) : (
-                <>
-                  {isSelfProfile ? (
-                    <>
-                      <svg
-                        className="w-7 h-7 mr-2 text-blue-500"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg">
+    <>
+      <div className={chartGlowClass} aria-hidden="true" />
+      <PageTransition>
+        <div className={chartPageClass}>
+          <div className={chartContainerClass}>
+            <header className={chartHeroClass}>
+              <Link to="/dashboard" className={chartBackButtonClass}>
+                <span className={chartBackIconWrapClass} aria-hidden="true">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                </span>
+                <span>{t("general.back") || "Back"}</span>
+              </Link>
+              <p className={chartHeroLabelClass}>
+                {isSelfProfile
+                  ? t("myChart.title") || "My Chart"
+                  : t("result.chart") || "Chart"}
+              </p>
+              <h1 className={chartHeroTitleClass}>
+                {loading ? (
+                  t("result.loading") || "Loading Chart..."
+                ) : (
+                  <>
+                    <svg
+                      className={chartHeroTitleIconClass}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                    >
+                      {isSelfProfile ? (
                         <path
                           strokeLinecap="round"
                           strokeLinejoin="round"
                           strokeWidth={2}
                           d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
                         />
-                      </svg>
-                      {t("myChart.title") || "My 紫微斗数 Chart"}
-                    </>
-                  ) : (
-                    <>
-                      <svg
-                        className="w-7 h-7 mr-2 text-purple-500"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg">
+                      ) : (
                         <path
                           strokeLinecap="round"
                           strokeLinejoin="round"
                           strokeWidth={2}
                           d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
                         />
-                      </svg>
-                      {`${chartData?.name}'s ${t("result.chart") || "Chart"}`}
-                    </>
-                  )}
-                </>
+                      )}
+                    </svg>
+                    {isSelfProfile
+                      ? renderChartTitleWithBrandGradient(
+                          t("myChart.title") || "My 紫微斗数 Chart"
+                        )
+                      : `${chartData?.name}'s ${t("result.chart") || "Chart"}`}
+                  </>
+                )}
+              </h1>
+              {!loading && chartData && (
+                <p className={chartHeroSubtitleClass}>
+                  {isSelfProfile
+                    ? t("myChart.subtitle") ||
+                      "View your personal Zi Wei Dou Shu chart and analysis"
+                    : t("result.subtitle") ||
+                      `紫微斗数 (Zi Wei Dou Shu) chart analysis for ${chartData.name}`}
+                </p>
               )}
-            </h1>
-          </div>
-          {!loading && chartData && (
-            <p className="text-gray-600 dark:text-gray-400">
-              {isSelfProfile
-                ? t("myChart.subtitle") ||
-                "View your personal Zi Wei Dou Shu chart and analysis"
-                : t("result.subtitle") ||
-                `紫微斗数 (Zi Wei Dou Shu) chart analysis for ${chartData.name}`}
-            </p>
-          )}
-        </div>
+            </header>
 
         {loading ? (
-          // Loading state
           <div className="flex items-center justify-center min-h-[400px]">
             <div className="text-center">
-              <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500 mb-4"></div>
-              <p className="text-gray-600 dark:text-gray-400">
+              <div className={`${chartSpinnerClass} mb-4`} />
+              <p className={chartLoadingTextClass}>
                 {t("general.loadingText") || "Loading chart data..."}
               </p>
             </div>
           </div>
         ) : error ? (
-          // Error state
-          <div className="bg-red-50 dark:bg-red-900/20 p-6 rounded-lg text-center">
+          <div className={chartErrorPanelClass}>
             <svg
-              className="mx-auto h-12 w-12 text-red-500 mb-4"
+              className="mx-auto h-12 w-12 text-theme-danger mb-4"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg">
+              aria-hidden="true"
+            >
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -1067,13 +1107,15 @@ const ResultContent: React.FC = () => {
                 d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
               />
             </svg>
-            <h2 className="text-xl font-bold text-red-800 dark:text-red-300 mb-2">
+            <h2 className={chartErrorTitleClass}>
               {t("general.error") || "Error"}
             </h2>
-            <p className="text-red-600 dark:text-red-400">{error}</p>
+            <p className={chartErrorTextClass}>{error}</p>
             <button
-              className="mt-4 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg"
-              onClick={() => window.location.reload()}>
+              type="button"
+              className={chartErrorRetryClass}
+              onClick={() => window.location.reload()}
+            >
               {t("general.retry") || "Retry"}
             </button>
           </div>
@@ -1082,14 +1124,8 @@ const ResultContent: React.FC = () => {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 sm:gap-3 md:gap-6">
               {/* Chart visualization */}
               <div className="lg:col-span-2">
-                <div
-                  className="rounded-2xl shadow-2xl overflow-hidden
-                            border border-white/10
-                            backdrop-filter backdrop-blur-2xl 
-                            bg-white/10 hover:bg-white/15 
-                            dark:bg-black/10 dark:hover:bg-black/20 
-                            transition-all duration-300 p-1 sm:p-2 md:p-4 lg:p-6">
-                  <h2 className="text-lg sm:text-xl md:text-2xl font-bold mb-2 sm:mb-3 md:mb-4 dark:text-white">
+                <div className={chartCardClass}>
+                  <h2 className={chartCardTitleClass}>
                     {t("result.chartVisualization") || "Chart Visualization"}
                   </h2>
 
@@ -1112,11 +1148,9 @@ const ResultContent: React.FC = () => {
                                 blueprint.key as "dna" | "dayun" | "liunian" | "liumonth"
                               )
                             }
-                            className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                              active
-                                ? "bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-md"
-                                : "bg-white/60 dark:bg-gray-700/60 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-600 hover:border-purple-300 dark:hover:border-purple-500 hover:bg-purple-50 dark:hover:bg-purple-900/20"
-                              }`}
+                            className={
+                              active ? chartBlueprintActiveClass : chartBlueprintInactiveClass
+                            }
                           >
                             {blueprint.label}
                           </button>
@@ -1195,10 +1229,10 @@ const ResultContent: React.FC = () => {
                       />
                     </div>
                   ) : (
-                    <div className="absolute inset-0 flex items-center justify-center bg-white dark:bg-gray-800">
+                    <div className={chartChartLoadingOverlayClass}>
                       <div className="text-center">
-                        <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-purple-500 mb-4"></div>
-                        <p className="text-gray-600 dark:text-gray-400">
+                        <div className={`${chartSpinnerSmallClass} mb-4`} />
+                        <p className={chartLoadingTextClass}>
                           {t("general.loadingText") ||
                             "Calculating chart data..."}
                         </p>
@@ -1210,81 +1244,75 @@ const ResultContent: React.FC = () => {
 
               {/* Profile information */}
               <div className="lg:col-span-1">
-                <div
-                  className="rounded-2xl shadow-2xl overflow-hidden
-                            border border-white/10
-                            backdrop-filter backdrop-blur-2xl 
-                            bg-white/10 hover:bg-white/15 
-                            dark:bg-black/10 dark:hover:bg-black/20 
-                            transition-all duration-300 p-6 mb-6">
-                  <h2 className="text-xl font-bold mb-4 dark:text-white">
+                <div className={chartSidebarCardClass}>
+                  <h2 className={chartSidebarTitleClass}>
                     {t("result.profileDetails") || "Profile Details"}
                   </h2>
 
                   <div className="space-y-3">
                     <div className="grid grid-cols-3 gap-4">
-                      <div className="text-gray-500 dark:text-gray-400">
+                      <div className={chartFieldLabelClass}>
                         {t("myChart.fields.name") || "Name"}:
                       </div>
-                      <div className="col-span-2 font-medium dark:text-white">
+                      <div className={chartFieldValueClass}>
                         {chartData.name}
                       </div>
                     </div>
                     <div className="grid grid-cols-3 gap-4">
-                      <div className="text-gray-500 dark:text-gray-400">
+                      <div className={chartFieldLabelClass}>
                         {t("myChart.fields.type") || "Type"}:
                       </div>
-                      <div className="col-span-2 font-medium dark:text-white">
+                      <div className={chartFieldValueClass}>
                         {isSelfProfile ? (
-                          <span className="px-2 py-1 bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300 rounded-full text-xs">
+                          <span className={chartBadgeSelfClass}>
                             {t("myChart.fields.self") || "Self"}
                           </span>
                         ) : (
-                          <span className="px-2 py-1 bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300 rounded-full text-xs">
+                          <span className={chartBadgeOtherClass}>
                             {t("myChart.fields.other") || "Other"}
                           </span>
                         )}
                       </div>
                     </div>
                     <div className="grid grid-cols-3 gap-4">
-                      <div className="text-gray-500 dark:text-gray-400">
+                      <div className={chartFieldLabelClass}>
                         {t("myChart.fields.birthDate") || "Birth Date"}:
                       </div>
-                      <div className="col-span-2 font-medium dark:text-white">
+                      <div className={chartFieldValueClass}>
                         {formatDate(chartData.birthDate)}
                       </div>
                     </div>
                     <div className="grid grid-cols-3 gap-4">
-                      <div className="text-gray-500 dark:text-gray-400">
+                      <div className={chartFieldLabelClass}>
                         {t("myChart.fields.birthTime") || "Birth Time"}:
                       </div>
-                      <div className="col-span-2 font-medium dark:text-white">
+                      <div className={chartFieldValueClass}>
                         {chartData.birthTime}
                       </div>
                     </div>
                     <div className="grid grid-cols-3 gap-4">
-                      <div className="text-gray-500 dark:text-gray-400">
+                      <div className={chartFieldLabelClass}>
                         {t("myChart.fields.gender") || "Gender"}:
                       </div>
-                      <div className="col-span-2 font-medium dark:text-white">
+                      <div className={chartFieldValueClass}>
                         {chartData.gender === "male" ? (
                           <span className="flex items-center">
-                            <span className="w-3 h-3 rounded-full bg-blue-500 mr-2"></span>
+                            <span className="w-3 h-3 rounded-full bg-theme-link-primary mr-2" />
                             {t("myChart.fields.male") || "Male"}
                           </span>
                         ) : (
                           <span className="flex items-center">
-                            <span className="w-3 h-3 rounded-full bg-pink-500 mr-2"></span>
+                            <span className="w-3 h-3 rounded-full bg-accent-coral mr-2" />
                             {t("myChart.fields.female") || "Female"}
                           </span>
                         )}
                       </div>
                     </div>
                     <div className="grid grid-cols-3 gap-4">
-                      <div className="text-gray-500 dark:text-gray-400">
+                      <div className={chartFieldLabelClass}>
                         {t("result.fields.generated") || "Generated"}:
                       </div>
-                      <div className="col-span-2 font-medium dark:text-white">
+                      <div className={chartFieldValueClass}>
                         {formatDate(chartData.createdAt)}
                       </div>
                     </div>
@@ -1294,10 +1322,10 @@ const ResultContent: React.FC = () => {
                   {isAdmin && (() => {
                     const currentBranchInfo = getCurrentBranchInfo();
                     return (
-                      <div className="mt-6 p-4 bg-gradient-to-br from-amber-50/50 to-orange-50/50 dark:bg-gradient-to-br dark:from-gray-800/50 dark:to-gray-700/50 rounded-lg border border-amber-200/50 dark:border-gray-600/50">
-                        <h3 className="text-sm font-semibold mb-3 text-gray-800 dark:text-white flex items-center">
+                      <div className={chartAdminPanelClass}>
+                        <h3 className={chartAdminPanelTitleClass}>
                           <svg
-                            className="w-4 h-4 mr-2 text-amber-600 dark:text-blue-400"
+                            className="w-4 h-4 mr-2 text-theme-link-primary"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -1311,18 +1339,16 @@ const ResultContent: React.FC = () => {
                           </svg>
                           {t("result.hourAdjustment.title") || "Adjust Birth Hour"}
                         </h3>
-                        <p className="text-xs text-gray-600 dark:text-gray-300 mb-3">
+                        <p className={chartAdminPanelDescClass}>
                           {t("result.hourAdjustment.description") || "Cycle through the 12 time branches (地支) to explore chart variations"}
                         </p>
 
                         <div className="flex items-center justify-between gap-3">
-                          {/* Previous Branch Button */}
                           <button
+                            type="button"
                             onClick={() => setBranchOffset(prev => prev - 1)}
-                            className="flex-1 px-3 py-2 bg-white dark:bg-gray-700/50 border border-gray-300 dark:border-gray-600 
-                                       rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600/50 
-                                       transition-colors font-medium text-sm text-gray-700 dark:text-gray-200
-                                       flex items-center justify-center gap-1">
+                            className={chartAdminButtonClass}
+                          >
                             <svg
                               className="w-4 h-4"
                               fill="none"
@@ -1341,10 +1367,13 @@ const ResultContent: React.FC = () => {
 
                           {/* Current Branch Display */}
                           <div className="flex-[2] text-center">
-                            <div className={`px-3 py-2 rounded-lg font-bold text-sm ${branchOffset === 0
-                              ? "bg-green-100 dark:bg-green-500/20 text-green-800 dark:text-green-300 border border-green-200 dark:border-green-500/30"
-                              : "bg-amber-100 dark:bg-blue-500/20 text-amber-800 dark:text-blue-300 border border-amber-200 dark:border-blue-500/30"
-                              }`}>
+                            <div
+                              className={
+                                branchOffset === 0
+                                  ? chartBranchOriginalClass
+                                  : chartBranchAdjustedClass
+                              }
+                            >
                               {currentBranchInfo ? (
                                 <div className="flex flex-col">
                                   <span className="text-lg">{currentBranchInfo.branch}</span>
@@ -1360,11 +1389,10 @@ const ResultContent: React.FC = () => {
 
                           {/* Next Branch Button */}
                           <button
+                            type="button"
                             onClick={() => setBranchOffset(prev => prev + 1)}
-                            className="flex-1 px-3 py-2 bg-white dark:bg-gray-700/50 border border-gray-300 dark:border-gray-600 
-                                       rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600/50 
-                                       transition-colors font-medium text-sm text-gray-700 dark:text-gray-200
-                                       flex items-center justify-center gap-1">
+                            className={chartAdminButtonClass}
+                          >
                             <span>{t("result.hourAdjustment.next") || "Next"}</span>
                             <svg
                               className="w-4 h-4"
@@ -1385,10 +1413,10 @@ const ResultContent: React.FC = () => {
                         {/* Reset Button */}
                         {branchOffset !== 0 && (
                           <button
+                            type="button"
                             onClick={() => setBranchOffset(0)}
-                            className="w-full mt-3 px-3 py-2 bg-gradient-to-r from-gray-500 to-gray-600 dark:from-gray-600 dark:to-gray-700
-                                       hover:from-gray-600 hover:to-gray-700 dark:hover:from-gray-500 dark:hover:to-gray-600 text-white rounded-lg 
-                                       transition-all text-sm font-medium flex items-center justify-center gap-2 shadow-sm">
+                            className={`w-full mt-3 ${chartPrimaryButtonClass}`}
+                          >
                             <svg
                               className="w-4 h-4"
                               fill="none"
@@ -1413,10 +1441,8 @@ const ResultContent: React.FC = () => {
                   {/* <div className="mt-6">
                     <button
                       onClick={toggleModal}
-                      className="w-full px-4 py-2 text-white font-medium rounded-lg transition-all 
-                            bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700
-                            focus:ring-4 focus:ring-purple-300 focus:outline-none
-                            flex items-center justify-center mb-3">
+                      className={`${chartPrimaryButtonClass} mb-3`}
+                    >
                       <svg
                         className="w-5 h-5 mr-2"
                         fill="none"
@@ -1443,13 +1469,11 @@ const ResultContent: React.FC = () => {
                   {ENABLE_PDF_EXPORT ? (
                     <div className="mt-3">
                       <button
+                        type="button"
                         onClick={handlePdfExport}
                         disabled={!chartData || !calculatedChartData}
-                        className="w-full px-4 py-2 text-white font-medium rounded-lg transition-all 
-                              bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700
-                              focus:ring-4 focus:ring-red-300 focus:outline-none
-                              disabled:opacity-50 disabled:cursor-not-allowed
-                              flex items-center justify-center">
+                        className={chartExportButtonClass}
+                      >
                         <svg
                           className="w-5 h-5 mr-2"
                           fill="none"
@@ -1474,11 +1498,8 @@ const ResultContent: React.FC = () => {
                   <div className="mt-6">
                     <Link
                       to={`/timing-chart/${chartData.id}`}
-                      className="w-full px-4 py-2 text-white font-medium rounded-lg transition-all 
-                            bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700
-                            focus:ring-4 focus:ring-purple-300 focus:outline-none block text-center
-                            flex items-center justify-center">
-
+                      className={chartPrimaryButtonClass}
+                    >
                       {"View Timing Analysis"}
                     </Link>
                   </div>
@@ -1488,10 +1509,8 @@ const ResultContent: React.FC = () => {
                     <div className="mt-3">
                       <Link
                         to={`/destiny-navigator/${chartData.id}`}
-                        className="w-full px-4 py-2 text-white font-medium rounded-lg transition-all 
-                              bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700
-                              focus:ring-4 focus:ring-cyan-300 focus:outline-none block text-center
-                              flex items-center justify-center">
+                        className={chartPrimaryButtonClass}
+                      >
                         <svg
                           className="w-5 h-5 mr-2"
                           fill="none"
@@ -1512,11 +1531,7 @@ const ResultContent: React.FC = () => {
 
                   {isSelfProfile && (
                     <div className="mt-6">
-                      <Link
-                        to="/calculate"
-                        className="w-full px-4 py-2 text-white font-medium rounded-lg transition-all 
-                              bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700
-                              focus:ring-4 focus:ring-purple-300 focus:outline-none block text-center">
+                      <Link to="/calculate" className={chartPrimaryButtonClass}>
                         {t("myChart.createOtherProfile") ||
                           "Create Profile for Someone Else"}
                       </Link>
@@ -1537,10 +1552,10 @@ const ResultContent: React.FC = () => {
             {/* ── Title block — only for DNA and Liu Nian modes ── */}
             {(blueprintMode === "dna" || blueprintMode === "liunian") && (
               <div className="flex flex-col justify-center items-center">
-                <h2 className="text-4xl mb-2 font-bold dark:text-white flex items-center text-center pt-4">
+                <h2 className={chartAnalysisTitleClass}>
                   {t("analysis.title") || "PERSONALIZED LIFE REPORT"}
                 </h2>
-                <p className="text-lg mb-6 dark:text-white text-center italic">
+                <p className={chartAnalysisSubtitleClass}>
                   {t("analysis.subtitle") ||
                     "A custom breakdown of your chart's strengths, patterns, and strategic focus areas."}
                 </p>
@@ -1627,8 +1642,10 @@ const ResultContent: React.FC = () => {
 
         {/* Chart Settings Modal */}
         <ChartSettingsModal pageType="result" />
-      </div>
-    </PageTransition>
+          </div>
+        </div>
+      </PageTransition>
+    </>
   );
 };
 

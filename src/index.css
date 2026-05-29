@@ -1,30 +1,112 @@
 /* see https://github.com/themesberg/flowbite-admin-dashboard/blob/main/src/css/input.css */
 
+@import "./styles/color-scheme.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Basic styling */
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+/* Auth pages: opposite-color radial glow (cream bg → purple glow; dark bg → cream glow) */
+.auth-page-bg {
+  /* Must stay fixed — do not set position: relative (it overrides Tailwind fixed and clips the glow) */
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #F6F0E8;
+  overflow: hidden;
 }
 
-/* Dark mode styling */
-:root {
-  --background-light: #f3f4f6;
-  --background-dark: #111827;
-  --text-light: #111827;
-  --text-dark: #f3f4f6;
+.auth-page-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background: radial-gradient(
+    ellipse 90% 80% at 88% 8%,
+    rgba(107, 91, 149, 0.42) 0%,
+    rgba(74, 63, 107, 0.2) 32%,
+    transparent 68%
+  );
+}
+
+.auth-page-bg::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3px;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.55;
+  background: linear-gradient(to right, #1A1E3F, #D4B896);
+}
+
+.dark .auth-page-bg {
+  background-color: #2D1B4E;
+}
+
+.dark .auth-page-bg::before {
+  background: radial-gradient(
+    ellipse 90% 80% at 88% 8%,
+    rgba(246, 240, 232, 0.28) 0%,
+    rgba(212, 175, 123, 0.14) 28%,
+    rgba(232, 169, 137, 0.06) 48%,
+    transparent 72%
+  );
+}
+
+.dark .auth-page-bg::after {
+  opacity: 0.85;
+  background: linear-gradient(to right, #1A0F2E, #D4B896, #E8A989);
+}
+
+/*
+ * Dashboard radial glow — fixed to viewport (not the content box).
+ * Avoids diagonal cutoff from: (1) glow sized to ~546px content area,
+ * (2) PageTransition motion.div transform creating a containing block.
+ */
+/* Light: purple radial (matches .auth-page-bg) — no warm/orange stops */
+.dashboard-glow {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background: radial-gradient(
+    ellipse 90% 80% at 88% 8%,
+    rgba(107, 91, 149, 0.28) 0%,
+    rgba(74, 63, 107, 0.12) 32%,
+    transparent 68%
+  );
+}
+
+/* Dark: cream/gold radial (matches .dark .auth-page-bg) */
+.dark .dashboard-glow {
+  background: radial-gradient(
+    ellipse 90% 80% at 88% 8%,
+    rgba(246, 240, 232, 0.22) 0%,
+    rgba(212, 175, 123, 0.12) 28%,
+    rgba(232, 169, 137, 0.05) 48%,
+    transparent 72%
+  );
+}
+
+body {
+  margin: 0;
+  font-family: Inter, InterVariable, ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--color-page-bg);
+  color: var(--color-text-primary);
 }
 
 .dark {
-  background-color: var(--background-dark);
-  color: var(--text-dark);
+  background-color: var(--color-page-bg);
+  color: var(--color-text-primary);
 }
 
 html {
@@ -39,10 +121,10 @@ html, body, #root {
   padding: 0;
 }
 
-/* Tailwind dark mode background */
+/* Tailwind dark mode shell (class-based) */
 @media (prefers-color-scheme: dark) {
   .dark {
-    @apply bg-gray-900 text-gray-300;
+    @apply bg-surface-dark text-cream;
   }
 }
 
@@ -119,27 +201,27 @@ html, body, #root {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #d1d5db;
+  background: #D4B896;
   border-radius: 6px !important;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #9ca3af;
+  background: #9B8FB5;
 }
 
 /* Dark mode scrollbar styles */
 .dark ::-webkit-scrollbar-thumb {
-  background: #4b5563;
+  background: #4A3F6B;
 }
 
 .dark ::-webkit-scrollbar-thumb:hover {
-  background: #6b7280;
+  background: #6B5B95;
 }
 
 /* Custom scrollbar styles for our app */
 .custom-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: #d1d5db transparent;
+  scrollbar-color: #D4B896 transparent;
 }
 
 .custom-scrollbar::-webkit-scrollbar {
@@ -151,24 +233,24 @@ html, body, #root {
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #d1d5db;
+  background: #D4B896;
   border-radius: 6px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #9ca3af;
+  background: #9B8FB5;
 }
 
 .dark .custom-scrollbar {
-  scrollbar-color: #4b5563 transparent;
+  scrollbar-color: #4A3F6B transparent;
 }
 
 .dark .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #4b5563;
+  background: #4A3F6B;
 }
 
 .dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #6b7280;
+  background: #6B5B95;
 }
 
 /* Custom scrollbar for Firefox */
@@ -178,17 +260,17 @@ html, body, #root {
 
 /* Track */
 * {
-  scrollbar-color: #d1d5db transparent;
+  scrollbar-color: #D4B896 transparent;
 }
 
 /* Handle on hover */
 * {
-  scrollbar-color: #9ca3af transparent;
+  scrollbar-color: #9B8FB5 transparent;
 }
 
 /* Dark mode Firefox scrollbar */
 .dark * {
-  scrollbar-color: #4b5563 transparent;
+  scrollbar-color: #4A3F6B transparent;
 }
 
 /* Moving neon border animation for CAEGPT card */

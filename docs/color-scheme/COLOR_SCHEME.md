@@ -2,6 +2,9 @@
 
 Color palette extracted from Light and Dark mode designs for a Purple Star Astrology project.
 
+> **Full token list (hex, Tailwind classes, CSS variables, usage):** see **[COLORS.md](./COLORS.md)**.  
+> **How to apply these rules in code:** see **[IMPLEMENTATION.md](./IMPLEMENTATION.md)**.
+
 ---
 
 ## 🎨 Light Mode
@@ -9,7 +12,7 @@ Color palette extracted from Light and Dark mode designs for a Purple Star Astro
 ### Primary Colors
 | Color | Hex Code | Usage |
 |-------|----------|-------|
-| Cream Background | `#F5F1ED` | Main background |
+| Cream Background | `#F6F0E8` | Main background (subtle warm yellow) |
 | Dark Navy | `#1A1E3F` | Primary text, headings |
 | Text Gray | `#5C5C5C` | Secondary text, body copy |
 
@@ -18,7 +21,7 @@ Color palette extracted from Light and Dark mode designs for a Purple Star Astro
 |-------|----------|-------|
 | Coral Red | `#C84C5C` | Highlights, important text |
 | Gold/Tan | `#D4B896` | Accent borders, dividers |
-| Warm Yellow | `#F5E6D3` | Subtle backgrounds |
+| Warm Yellow | `#F5E8D4` | Subtle backgrounds |
 
 ### Component Colors
 | Color | Hex Code | Usage |
@@ -41,7 +44,7 @@ Color palette extracted from Light and Dark mode designs for a Purple Star Astro
 |-------|----------|-------|
 | Dark Background | `#2D1B4E` | Main background |
 | Dark Navy | `#1A0F2E` | Secondary background |
-| Cream Text | `#F5F1ED` | Primary text, headings |
+| Cream Text | `#F6F0E8` | Primary text, headings |
 
 ### Accent Colors
 | Color | Hex Code | Usage |
@@ -77,7 +80,7 @@ module.exports = {
     extend: {
       colors: {
         light: {
-          bg: '#F5F1ED',
+          bg: '#F6F0E8',
           text: '#1A1E3F',
           textSecondary: '#5C5C5C',
           accent: '#C84C5C',
@@ -89,7 +92,7 @@ module.exports = {
         dark: {
           bg: '#2D1B4E',
           bgSecondary: '#1A0F2E',
-          text: '#F5F1ED',
+          text: '#F6F0E8',
           textSecondary: '#C4C4C4',
           textTertiary: '#A89BC4',
           accent: '#D4AF7B',
@@ -117,9 +120,9 @@ module.exports = {
 ```javascript
 const lightColors = {
   // Backgrounds
-  background: '#F5F1ED',
+  background: '#F6F0E8',
   surfacePrimary: '#FFFFFF',
-  surfaceSecondary: '#F5E6D3',
+  surfaceSecondary: '#F5E8D4',
   
   // Text
   textPrimary: '#1A1E3F',
@@ -153,7 +156,7 @@ const darkColors = {
   surfaceSecondary: '#3D2860',
   
   // Text
-  textPrimary: '#F5F1ED',
+  textPrimary: '#F6F0E8',
   textSecondary: '#C4C4C4',
   textMuted: '#A89BC4',
   
@@ -253,7 +256,7 @@ export default function Header() {
 
 :root {
   /* Light Mode */
-  --bg-light: #F5F1ED;
+  --bg-light: #F6F0E8;
   --text-light: #1A1E3F;
   --text-secondary-light: #5C5C5C;
   --accent-light: #C84C5C;
@@ -265,7 +268,7 @@ export default function Header() {
 [data-theme='dark'] {
   /* Dark Mode */
   --bg-light: #2D1B4E;
-  --text-light: #F5F1ED;
+  --text-light: #F6F0E8;
   --text-secondary-light: #C4C4C4;
   --accent-light: #D4AF7B;
   --gold-light: #D4AF7B;
@@ -298,8 +301,8 @@ body {
 - Purple remains consistent for both modes in charts
 
 ### Contrast & Accessibility
-- Light mode: Cream bg (#F5F1ED) with Dark Navy text (#1A1E3F) = ✅ 9.2:1 ratio
-- Dark mode: Dark bg (#2D1B4E) with Cream text (#F5F1ED) = ✅ 8.5:1 ratio
+- Light mode: Cream bg (#F6F0E8) with Dark Navy text (#1A1E3F) = ✅ ~9:1 ratio
+- Dark mode: Dark bg (#2D1B4E) with Cream text (#F6F0E8) = ✅ ~8.5:1 ratio
 - All accent colors meet WCAG AA standards for interactive elements
 
 ---
