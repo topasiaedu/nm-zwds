@@ -1,5 +1,9 @@
 import React from "react";
 import { motion } from "framer-motion";
+import {
+  getTransformationLineColors,
+  type TransformationType,
+} from "../../../styles/chartSemanticColors";
 
 // Breakpoint constants - matching TailwindCSS defaults
 const SCREEN_SM = 640;
@@ -192,30 +196,9 @@ const TransformationLines: React.FC<TransformationLinesProps> = ({
       const toStarY = toStarRect.top - chartRect.top + toStarRect.height / 2;
       
       // Determine line color based on transformation type
-      let lineColor;
-      let shadowColor;
-      switch (transformation.type) {
-        case "祿": 
-          lineColor = "rgba(16, 185, 129, 0.7)"; // semi-transparent green
-          shadowColor = "rgba(16, 185, 129, 0.3)";
-          break;
-        case "權": 
-          lineColor = "rgba(56, 189, 248, 0.85)"; // brighter sky blue with higher opacity
-          shadowColor = "rgba(56, 189, 248, 0.4)";
-          break;
-        case "科": 
-          lineColor = "rgba(245, 158, 11, 0.7)"; // semi-transparent yellow
-          shadowColor = "rgba(245, 158, 11, 0.3)";
-          break;
-        case "忌": 
-          lineColor = "rgba(239, 68, 68, 0.7)"; // semi-transparent red
-          shadowColor = "rgba(239, 68, 68, 0.3)";
-          break;
-        default: 
-          lineColor = "rgba(107, 114, 128, 0.7)"; // semi-transparent gray
-          shadowColor = "rgba(107, 114, 128, 0.3)";
-          break;
-      }
+      const { lineColor, shadowColor } = getTransformationLineColors(
+        transformation.type as TransformationType
+      );
       
       // Use the windowSize prop to determine screen size
       const isSmallScreen = windowSize.width < SCREEN_SM; // sm breakpoint
@@ -387,30 +370,9 @@ const TransformationLines: React.FC<TransformationLinesProps> = ({
       const dx = toX - fromX;
       const dy = toY - fromY;
       // Determine line color based on transformation type
-      let lineColor;
-      let shadowColor;
-      switch (transformation.type) {
-        case "祿": 
-          lineColor = "rgba(16, 185, 129, 0.7)"; // semi-transparent green
-          shadowColor = "rgba(16, 185, 129, 0.3)";
-          break;
-        case "權": 
-          lineColor = "rgba(56, 189, 248, 0.85)"; // brighter sky blue with higher opacity
-          shadowColor = "rgba(56, 189, 248, 0.4)";
-          break;
-        case "科": 
-          lineColor = "rgba(245, 158, 11, 0.7)"; // semi-transparent yellow
-          shadowColor = "rgba(245, 158, 11, 0.3)";
-          break;
-        case "忌": 
-          lineColor = "rgba(239, 68, 68, 0.7)"; // semi-transparent red
-          shadowColor = "rgba(239, 68, 68, 0.3)";
-          break;
-        default: 
-          lineColor = "rgba(107, 114, 128, 0.7)"; // semi-transparent gray
-          shadowColor = "rgba(107, 114, 128, 0.3)";
-          break;
-      }
+      const { lineColor, shadowColor } = getTransformationLineColors(
+        transformation.type as TransformationType
+      );
       
       // Use the windowSize prop to determine screen size
       const isSmallScreen = windowSize.width < SCREEN_SM; // sm breakpoint

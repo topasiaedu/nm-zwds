@@ -19,6 +19,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { BrandGradientText } from "../BrandGradientText";
+import { analysisHeroTitleClass } from "../../styles/typographyUi";
 import { ChartData } from "../../utils/zwds/types";
 import {
   analyzeWealthCode,
@@ -200,9 +201,9 @@ const WealthCodeHero: React.FC<WealthCodeHeroProps> = ({
             >
               {badgeText}
             </span>
-            <h2 className="text-2xl font-black uppercase tracking-tight text-white sm:text-3xl md:text-4xl">
+            <BrandGradientText as="h2" className={analysisHeroTitleClass}>
               {title}
-            </h2>
+            </BrandGradientText>
           </div>
           <p className="mt-4 max-w-2xl text-base font-medium leading-relaxed text-white/90 sm:text-lg">
             {subtitle}

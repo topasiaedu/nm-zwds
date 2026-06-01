@@ -23,8 +23,10 @@ const ZodiacIconWrapper: React.FC<ZodiacIconWrapperProps> = ({
   iconClassName = DEFAULT_ICON_CLASS,
   invertToWhite = false,
 }) => {
-  const shouldInvert =
-    invertToWhite || iconClassName.includes("text-white");
+  // Only invert when explicitly requested. Do not substring-match "text-white" on
+  // DEFAULT_ICON_CLASS ("text-black dark:text-white") — that always matched and
+  // turned palace watermarks white-on-white in light mode.
+  const shouldInvert = invertToWhite;
 
   const iconClasses = shouldInvert
     ? "h-full max-h-full w-full max-w-full object-contain brightness-0 invert"

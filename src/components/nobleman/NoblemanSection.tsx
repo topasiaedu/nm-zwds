@@ -13,7 +13,9 @@ import {
   calculateMainZodiacInsights,
   calculateMiniZodiacInsights,
 } from "../../utils/nobleman/zodiacInsightsCalculator";
+import { BrandGradientText } from "../BrandGradientText";
 import { pdfCaptureNumericBadgeStyle } from "../analysis_v2/shared/pdfCaptureNumericBadgeStyle";
+import { analysisHeroTitleClass } from "../../styles/typographyUi";
 import NoblemanProfileCard from "./NoblemanProfileCard";
 import OtherLifeAreas from "./OtherLifeAreas";
 import ZodiacInsightsSection from "./ZodiacInsightsSection";
@@ -93,9 +95,9 @@ const NoblemanAnalysisHero: React.FC<NoblemanAnalysisHeroProps> = ({ forPdfCaptu
             >
               03
             </span>
-            <h2 className="text-2xl font-black uppercase tracking-tight text-white sm:text-3xl md:text-4xl">
+            <BrandGradientText as="h2" className={analysisHeroTitleClass}>
               Nobleman Analysis
-            </h2>
+            </BrandGradientText>
           </div>
           <p className="mt-4 max-w-2xl text-base font-medium leading-relaxed text-white/90 sm:text-lg">
             Key people who will support your life journey — aligned with your chart

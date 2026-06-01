@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { ChartData } from "../../../utils/zwds/types";
 import { useLanguage } from "../../../context/LanguageContext";
 import { EARTHLY_BRANCHES } from "../../../utils/zwds/constants";
+import { chartBrandChrome } from "../../../styles/chartSemanticColors";
 
 interface CenterInfoProps {
   chartData: ChartData;
@@ -31,18 +32,18 @@ const CenterInfo: React.FC<CenterInfoProps> = ({ chartData, isPdfExport = false 
 
   return (
     <motion.div
-      className="col-span-2 row-span-2 border border-indigo-400/40 dark:border-indigo-500/40 bg-white/95 dark:bg-indigo-900/30 flex flex-col h-full w-full rounded-lg shadow-md overflow-hidden relative"
+      className={`zwds-center-info col-span-2 row-span-2 border ${chartBrandChrome.centerPanelBorderClass} ${chartBrandChrome.centerPanelBgClass} flex flex-col h-full w-full rounded-lg shadow-md overflow-hidden relative`}
       variants={centerInfoVariants}
       initial={isPdfExport ? false : "hidden"}
       animate={isPdfExport ? false : "visible"}
       style={{
-        boxShadow: "0 4px 16px rgba(79, 70, 229, 0.1)",
+        boxShadow: chartBrandChrome.centerPanelShadow,
       }}>
       {/* Background Logo Watermark */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
         <div className="flex flex-col items-center">
           <div className="flex items-center opacity-[0.15] dark:opacity-[0.12] transform scale-150">
-            <span className="text-2xl font-bold px-3 py-1 rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 text-white dark:from-purple-500 dark:to-indigo-500 uppercase tracking-wider">
+            <span className="text-2xl font-bold px-3 py-1 rounded-lg bg-gradient-brand-purple text-cream uppercase tracking-wider">
               CAE
             </span>
           </div>
@@ -53,7 +54,7 @@ const CenterInfo: React.FC<CenterInfoProps> = ({ chartData, isPdfExport = false 
       <div className="flex flex-col h-full z-10 relative">
         {/* Name with animation */}
         <motion.div
-          className="text-base sm:text-lg font-medium py-2 px-3 sm:px-4 text-indigo-900 dark:text-indigo-100 text-center bg-gradient-to-r from-indigo-100/90 to-purple-100/90 dark:from-indigo-800/70 dark:to-purple-900/70"
+          className={`text-base sm:text-lg font-medium py-2 px-3 sm:px-4 text-cream text-center ${chartBrandChrome.centerPanelHeaderClass}`}
           initial={isPdfExport ? false : { opacity: 0 }}
           animate={isPdfExport ? false : { opacity: 1 }}
           transition={isPdfExport ? { duration: 0 } : { duration: 0.5 }}>
@@ -61,14 +62,14 @@ const CenterInfo: React.FC<CenterInfoProps> = ({ chartData, isPdfExport = false 
         </motion.div>
 
         {/* Compact "LABEL: VALUE" layout */}
-        <div className="flex-grow overflow-auto p-2 sm:p-3 bg-gradient-to-br from-white to-indigo-50/30 dark:from-indigo-900/10 dark:to-purple-900/20">
+        <div className={`flex-grow overflow-auto p-2 sm:p-3 ${chartBrandChrome.centerPanelBodyClass}`}>
           <div className="flex flex-col space-y-2 text-sm text-xs sm:text-sm">
             {/* Solar Birthday */}
             <div className="flex flex-col xs:flex-row items-start">
-              <span className="text-indigo-700 dark:text-indigo-300 font-medium w-full xs:w-auto xs:min-w-[85px] sm:min-w-[95px] mb-0.5 xs:mb-0">
+              <span className={`${chartBrandChrome.centerPanelLabelClass} font-medium w-full xs:w-auto xs:min-w-[85px] sm:min-w-[95px] mb-0.5 xs:mb-0`}>
                 {t("chartInfo.solarDate")}:
               </span>
-              <span className="text-zinc-700 dark:text-zinc-200 pl-2 xs:pl-0">
+              <span className={`${chartBrandChrome.centerPanelValueClass} pl-2 xs:pl-0`}>
                 {input.year} {language === "en" ? t("zwds.chart.年") : "年"}{" "}
                 {input.month} {language === "en" ? t("zwds.chart.月") : "月"}{" "}
                 {input.day} {language === "en" ? t("zwds.chart.日") : "日"}{" "}
@@ -78,10 +79,10 @@ const CenterInfo: React.FC<CenterInfoProps> = ({ chartData, isPdfExport = false 
 
             {/* Lunar Birthday */}
             <div className="flex flex-col xs:flex-row items-start">
-              <span className="text-indigo-700 dark:text-indigo-300 font-medium w-full xs:w-auto xs:min-w-[85px] sm:min-w-[95px] mb-0.5 xs:mb-0">
+              <span className={`${chartBrandChrome.centerPanelLabelClass} font-medium w-full xs:w-auto xs:min-w-[85px] sm:min-w-[95px] mb-0.5 xs:mb-0`}>
                 {t("chartInfo.lunarDate") || t("zwds.chart.阴历")}:
               </span>
-              <span className="text-zinc-700 dark:text-zinc-200 flex flex-wrap items-center pl-2 xs:pl-0">
+              <span className={`${chartBrandChrome.centerPanelValueClass} flex flex-wrap items-center pl-2 xs:pl-0`}>
                 <span className="mr-1">
                   {t(`zwds.stems.${chartData.heavenlyStem}`)}
                   {language === "en" ? " " : ""}
@@ -144,7 +145,7 @@ const CenterInfo: React.FC<CenterInfoProps> = ({ chartData, isPdfExport = false 
                   })()}{" "}
                   {language === "en" ? t("zwds.chart.日") : "日"}
                 </span>
-                <span className="text-zinc-600 dark:text-zinc-300 ml-1">
+                <span className={`${chartBrandChrome.centerPanelValueClass} opacity-80 ml-1`}>
                   {t(
                     `zwds.dayBranches.${
                       [
@@ -170,10 +171,10 @@ const CenterInfo: React.FC<CenterInfoProps> = ({ chartData, isPdfExport = false 
 
             {/* Five Elements */}
             <div className="flex flex-col xs:flex-row items-start">
-              <span className="text-indigo-700 dark:text-indigo-300 font-medium w-full xs:w-auto xs:min-w-[85px] sm:min-w-[95px] mb-0.5 xs:mb-0">
+              <span className={`${chartBrandChrome.centerPanelLabelClass} font-medium w-full xs:w-auto xs:min-w-[85px] sm:min-w-[95px] mb-0.5 xs:mb-0`}>
                 {t("chartInfo.fiveElement") || t("zwds.chart.五行")}:
               </span>
-              <span className="text-zinc-700 dark:text-zinc-200 pl-2 xs:pl-0">
+              <span className={`${chartBrandChrome.centerPanelValueClass} pl-2 xs:pl-0`}>
                 {chartData.fiveElements
                   ? t(`zwds.fiveElements.${chartData.fiveElements}`)
                   : ""}
@@ -182,10 +183,10 @@ const CenterInfo: React.FC<CenterInfoProps> = ({ chartData, isPdfExport = false 
 
             {/* Gender */}
             <div className="flex flex-col xs:flex-row items-start">
-              <span className="text-indigo-700 dark:text-indigo-300 font-medium w-full xs:w-auto xs:min-w-[85px] sm:min-w-[95px] mb-0.5 xs:mb-0">
+              <span className={`${chartBrandChrome.centerPanelLabelClass} font-medium w-full xs:w-auto xs:min-w-[85px] sm:min-w-[95px] mb-0.5 xs:mb-0`}>
                 {t("chartInfo.gender")}:
               </span>
-              <span className="text-zinc-700 dark:text-zinc-200 pl-2 xs:pl-0">
+              <span className={`${chartBrandChrome.centerPanelValueClass} pl-2 xs:pl-0`}>
                 {language === "en"
                   ? t(
                       `myChart.fields.${
@@ -203,10 +204,10 @@ const CenterInfo: React.FC<CenterInfoProps> = ({ chartData, isPdfExport = false 
 
             {/* Age */}
             <div className="flex flex-col xs:flex-row items-start">
-              <span className="text-indigo-700 dark:text-indigo-300 font-medium w-full xs:w-auto xs:min-w-[85px] sm:min-w-[95px] mb-0.5 xs:mb-0">
+              <span className={`${chartBrandChrome.centerPanelLabelClass} font-medium w-full xs:w-auto xs:min-w-[85px] sm:min-w-[95px] mb-0.5 xs:mb-0`}>
                 {t("zwds.chart.age") || (language === "en" ? "Age" : "年齡")}:
               </span>
-              <span className="text-zinc-700 dark:text-zinc-200 pl-2 xs:pl-0">
+              <span className={`${chartBrandChrome.centerPanelValueClass} pl-2 xs:pl-0`}>
                 {new Date().getFullYear() - chartData.lunarDate.year + 1}
                 {language === "en" ? "" : t("zwds.chart.歲") || "歲"}
               </span>
@@ -214,10 +215,10 @@ const CenterInfo: React.FC<CenterInfoProps> = ({ chartData, isPdfExport = false 
 
             {/* Chinese Zodiac */}
             <div className="flex flex-col xs:flex-row items-start">
-              <span className="text-indigo-700 dark:text-indigo-300 font-medium w-full xs:w-auto xs:min-w-[85px] sm:min-w-[95px] mb-0.5 xs:mb-0">
+              <span className={`${chartBrandChrome.centerPanelLabelClass} font-medium w-full xs:w-auto xs:min-w-[85px] sm:min-w-[95px] mb-0.5 xs:mb-0`}>
                 {t("chartInfo.shengXiao") || t("zwds.chart.生肖")}:
               </span>
-              <span className="flex items-center text-zinc-700 dark:text-zinc-200 pl-2 xs:pl-0">
+              <span className={`${chartBrandChrome.centerPanelValueClass} flex items-center pl-2 xs:pl-0`}>
                 <span className="text-lg mr-1">
                   {
                     [
@@ -292,12 +293,12 @@ const CenterInfo: React.FC<CenterInfoProps> = ({ chartData, isPdfExport = false 
 
             {/* Western Zodiac */}
             <div className="flex flex-col xs:flex-row items-start">
-              <span className="text-indigo-700 dark:text-indigo-300 font-medium w-full xs:w-auto xs:min-w-[85px] sm:min-w-[95px] mb-0.5 xs:mb-0">
+              <span className={`${chartBrandChrome.centerPanelLabelClass} font-medium w-full xs:w-auto xs:min-w-[85px] sm:min-w-[95px] mb-0.5 xs:mb-0`}>
                 {t("zwds.chart.westernZodiac") ||
                   (language === "en" ? "Western Zodiac" : "星座")}
                 :
               </span>
-              <span className="flex items-center text-zinc-700 dark:text-zinc-200 pl-2 xs:pl-0">
+              <span className={`${chartBrandChrome.centerPanelValueClass} flex items-center pl-2 xs:pl-0`}>
                 <span className="text-lg mr-1">
                   {(() => {
                     const month = input.month;

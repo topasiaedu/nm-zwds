@@ -13,7 +13,7 @@ Authoritative list of theme colors used in **nm-zwds**. Tokens are defined in **
 | Primary interactive (buttons, links) | `brand-purple` → `brand-purpleDeep` on hover | `accent-goldDark` → `accent-gold` on hover (see auth exceptions below) |
 | Primary text | `navy` | `cream` |
 | Secondary text | `muted` | `muted-dark` |
-| Subtle / metadata text | `muted-subtle` | `muted-subtle` |
+| Subtle / metadata text | `muted-subtle-light` (`#7A6B96`) | `muted-subtle` (`#B8AED0` on dark) |
 | Page background | `surface-cream` | `surface-dark` |
 | Card / elevated surface | `surface-elevated` | `surface-darkSecondary` |
 | Card border | `accent-gold` (50% opacity common) | `brand-purpleDeep` |
@@ -115,11 +115,12 @@ Used by Flowbite calendar and some older components. Prefer `brand-*` / `accent-
 
 | Variable | Light | Dark |
 |----------|-------|------|
-| `--color-text-accent-muted` | Purple 80% | Gold (`accent-gold`) 80% |
-| `--color-text-accent-muted-subtle` | Purple 50% | Gold 55% |
-| `--color-text-accent-label` | Purple 70% | Gold 80% |
+| `--color-text-accent-muted` | Purple 85% | Gold (`accent-gold`) 80% |
+| `--color-text-accent-muted-subtle` | Purple 72% | Gold 55% |
+| `--color-text-accent-label` | Purple 78% | Gold 80% |
+| `--color-border-default` | Purple 32% | White 10% |
+| `--color-surface-featured` | Purple 9% | White 6% |
 | `--color-surface-card` | White elevated | `#3D2860` dark elevated |
-| `--color-border-default` | Purple 20% | White 10% |
 
 Tailwind: `text-theme-accent-muted`, `bg-theme-surface-card`, `border-theme-border`, etc.
 
@@ -238,6 +239,8 @@ Same light purple / dark gold pattern for primary buttons, links, badges, and sp
 | Other profile chart name | `renderChartTitleWithNameGradient` |
 | Analysis section title | `wrapPhraseInBrandGradient` — phrase `LIFE REPORT` |
 | Personalized labels | `BrandGradientText` in analysis_v2 + nobleman (see table above) |
+| Chart 四化 semantics (frozen) | `src/styles/chartSemanticColors.ts` — green/blue/yellow/red |
+| Chart UI chrome (selection, center) | `chartBrandChrome` in `chartSemanticColors.ts` — brand purple |
 
 ---
 
@@ -291,7 +294,9 @@ Tailwind-style blues, greens, reds, violets (e.g. `#2563eb`, `#059669`, `#e11d48
 
 #5C5C5C  muted
 #C4C4C4  muted-dark
-#A89BC4  muted-subtle
+#A89BC4  muted-subtle (dark metadata)
+#7A6B96  muted-subtle-light (light metadata)
+#B8AED0  muted-subtle (dark mode text-subtle)
 
 #E8A989  footer-dark stop (unnamed token)
 ```

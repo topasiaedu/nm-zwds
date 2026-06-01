@@ -46,9 +46,9 @@ const ToggleSwitch: React.FC<ToggleSwitchProps> = ({
         type="button"
         disabled={disabled}
         onClick={() => onChange(!enabled)}
-        className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2 ${
+        className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-theme-focus focus:ring-offset-2 ${
           enabled 
-            ? "bg-indigo-600" 
+            ? "bg-theme-btn-primary" 
             : "bg-gray-200 dark:bg-gray-700"
         } ${disabled ? "cursor-not-allowed" : ""}`}
         role="switch"
@@ -310,7 +310,7 @@ const ChartSettingsModal: React.FC<ChartSettingsModalProps> = ({ pageType }) => 
         <div className="flex justify-end items-center p-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-750">
           <button
             onClick={closeModal}
-            className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+            className="px-4 py-2 bg-theme-btn-primary text-theme-btn-primary-text rounded-lg hover:bg-theme-btn-primary-hover transition-colors focus:outline-none focus:ring-2 focus:ring-theme-focus focus:ring-offset-2">
             Done
           </button>
         </div>

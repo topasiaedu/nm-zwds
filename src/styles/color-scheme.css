@@ -29,6 +29,8 @@
   --color-muted: #5c5c5c;
   --color-muted-dark: #c4c4c4;
   --color-muted-subtle: #a89bc4;
+  /* Light-mode subtle text — darker purple-gray for WCAG AA on cream */
+  --color-muted-subtle-light: #7a6b96;
 
   /* RGB channels (alpha utilities) */
   --color-surface-cream-rgb: 246 240 232;
@@ -41,18 +43,18 @@
   --color-page-bg: var(--color-surface-cream);
   --color-text-primary: var(--color-navy);
   --color-text-secondary: var(--color-muted);
-  --color-text-subtle: var(--color-muted-subtle);
+  --color-text-subtle: var(--color-muted-subtle-light);
 
   --color-accent-primary: var(--color-brand-purple);
   --color-accent-primary-hover: var(--color-brand-purple-deep);
   --color-accent-secondary: var(--color-accent-gold);
 
-  --color-text-accent-muted: rgb(var(--color-brand-purple-rgb) / 0.8);
-  --color-text-accent-muted-subtle: rgb(var(--color-brand-purple-rgb) / 0.5);
-  --color-text-accent-label: rgb(var(--color-brand-purple-rgb) / 0.7);
+  --color-text-accent-muted: rgb(var(--color-brand-purple-rgb) / 0.85);
+  --color-text-accent-muted-subtle: rgb(var(--color-brand-purple-rgb) / 0.72);
+  --color-text-accent-label: rgb(var(--color-brand-purple-rgb) / 0.78);
 
-  --color-border-default: rgb(var(--color-brand-purple-rgb) / 0.2);
-  --color-border-subtle: rgb(var(--color-brand-purple-rgb) / 0.1);
+  --color-border-default: rgb(var(--color-brand-purple-rgb) / 0.32);
+  --color-border-subtle: rgb(var(--color-brand-purple-rgb) / 0.14);
   --color-border-strong: var(--color-brand-purple);
 
   --color-surface-card: var(--color-surface-elevated);
@@ -101,9 +103,9 @@
   --color-text-danger: var(--color-accent-coral);
 
   /* Interactive surfaces */
-  --color-surface-hover: rgb(var(--color-brand-purple-rgb) / 0.04);
-  --color-border-hover: rgb(var(--color-brand-purple-rgb) / 0.35);
-  --color-surface-featured: rgb(var(--color-brand-purple-rgb) / 0.06);
+  --color-surface-hover: rgb(var(--color-brand-purple-rgb) / 0.05);
+  --color-border-hover: rgb(var(--color-brand-purple-rgb) / 0.42);
+  --color-surface-featured: rgb(var(--color-brand-purple-rgb) / 0.09);
   --color-icon-accent-bg: rgb(var(--color-brand-purple-rgb) / 0.15);
   --color-icon-neutral-bg: rgb(var(--color-brand-purple-rgb) / 0.08);
   --color-spinner: var(--color-brand-purple);
@@ -122,7 +124,7 @@
   --color-page-bg: var(--color-surface-dark);
   --color-text-primary: var(--color-cream);
   --color-text-secondary: var(--color-muted-dark);
-  --color-text-subtle: var(--color-muted-subtle);
+  --color-text-subtle: #b8aed0;
 
   --color-accent-primary: var(--color-accent-gold-dark);
   --color-accent-primary-hover: var(--color-accent-gold);

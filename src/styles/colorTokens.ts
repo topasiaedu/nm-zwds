@@ -63,6 +63,7 @@ export const palette = {
     DEFAULT: "#5C5C5C",
     dark: "#C4C4C4",
     subtle: "#A89BC4",
+    subtleLight: "#7A6B96",
   },
 } as const;
 

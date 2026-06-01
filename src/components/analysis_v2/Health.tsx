@@ -29,6 +29,7 @@ import {
 import maleSvgContent from "../../assets/male-svg";
 import { ChartData } from "../../utils/zwds/types";
 import { BrandGradientText } from "../BrandGradientText";
+import { analysisHeroTitleClass } from "../../styles/typographyUi";
 import { pdfCaptureNumericBadgeStyle } from "./shared/pdfCaptureNumericBadgeStyle";
 
 /**
@@ -135,9 +136,9 @@ const HealthCodeScanHero: React.FC<HealthCodeScanHeroProps> = ({ forPdfCapture }
           >
             04
           </span>
-          <h2 className="text-2xl font-black uppercase tracking-tight text-white sm:text-3xl md:text-4xl">
+          <BrandGradientText as="h2" className={analysisHeroTitleClass}>
             Health Code Scan
-          </h2>
+          </BrandGradientText>
         </div>
         <p className="mt-4 max-w-2xl text-base font-medium leading-relaxed text-white/90 sm:text-lg">
           Decode your body&apos;s energetic blueprint — where vitality flows and where it

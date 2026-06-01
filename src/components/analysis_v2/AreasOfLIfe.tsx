@@ -34,7 +34,10 @@ import {
   type LifeAreaResult,
 } from "../../utils/zwds/analysis";
 import { BrandGradientText } from "../BrandGradientText";
-import { brandGradientTextClass } from "../../styles/typographyUi";
+import {
+  analysisHeroTitleClass,
+  brandGradientTextClass,
+} from "../../styles/typographyUi";
 import { pdfCaptureNumericBadgeStyle } from "./shared/pdfCaptureNumericBadgeStyle";
 
 const AREA_PREVIEW_CHAR_LIMIT = 300;
@@ -150,9 +153,9 @@ const DestinyScoreboardHero: React.FC<DestinyScoreboardHeroProps> = ({
           >
             06
           </span>
-          <h2 className="text-2xl font-black uppercase tracking-tight text-white sm:text-3xl md:text-4xl">
+          <BrandGradientText as="h2" className={analysisHeroTitleClass}>
             Destiny Scoreboard
-          </h2>
+          </BrandGradientText>
         </div>
         <p className="mt-4 max-w-2xl text-base font-medium leading-relaxed text-white/90 sm:text-lg">
           Your personal scorecard across the five destiny pillars — see the shape

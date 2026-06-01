@@ -14,7 +14,9 @@ import {
   analyzeOverview,
   OverviewAnalysisResult,
 } from "../../utils/zwds/analysis/overviewAnalysis";
+import { BrandGradientText } from "../BrandGradientText";
 import { pdfCaptureNumericBadgeStyle } from "./shared/pdfCaptureNumericBadgeStyle";
+import { analysisHeroTitleLargeClass } from "../../styles/typographyUi";
 
 /**
  * Type definition for a feature item to be displayed in lists
@@ -114,9 +116,9 @@ const PersonalityBlueprintHero: React.FC<PersonalityBlueprintHeroProps> = ({
             >
               01
             </span>
-            <h2 className="text-3xl font-black uppercase tracking-tight text-white sm:text-4xl">
+            <BrandGradientText as="h2" className={analysisHeroTitleLargeClass}>
               Personality Blueprint
-            </h2>
+            </BrandGradientText>
           </div>
 
           <p className="mt-4 max-w-2xl text-base font-medium leading-relaxed text-white/90 sm:text-lg">

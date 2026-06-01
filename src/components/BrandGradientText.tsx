@@ -52,9 +52,17 @@ export const wrapPhraseInBrandGradient = (
     .filter(Boolean)
     .join(" ");
 
+  const beforeTrimmed = beforePhrase.trimEnd();
+  const phraseStartsWithSpace = phrase.startsWith(" ");
+  const needsGap =
+    beforeTrimmed.length > 0 &&
+    phrase.trim().length > 0 &&
+    !phraseStartsWithSpace;
+
   return (
     <>
-      {beforePhrase}
+      {beforeTrimmed}
+      {needsGap ? " " : null}
       <span className={spanClassName}>{phrase}</span>
       {afterPhrase}
     </>

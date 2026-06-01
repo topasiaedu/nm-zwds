@@ -47,6 +47,7 @@ import {
   chartAdminPanelClass,
   chartAdminPanelDescClass,
   chartAdminPanelTitleClass,
+  chartAnalysisDividerClass,
   chartAnalysisSubtitleClass,
   chartAnalysisTitleClass,
   chartBackButtonClass,
@@ -57,8 +58,12 @@ import {
   chartBlueprintInactiveClass,
   chartBranchAdjustedClass,
   chartBranchOriginalClass,
+  chartCardAccentBarClass,
+  chartCardBlueprintToolbarClass,
+  chartCardBodyClass,
   chartCardClass,
   chartCardTitleClass,
+  chartCardToolbarClass,
   chartChartLoadingOverlayClass,
   chartContainerClass,
   chartErrorPanelClass,
@@ -1110,12 +1115,15 @@ const ResultContent: React.FC = () => {
               {/* Chart visualization */}
               <div className="lg:col-span-2">
                 <div className={chartCardClass}>
-                  <h2 className={chartCardTitleClass}>
-                    {t("result.chartVisualization") || "Chart Visualization"}
-                  </h2>
+                  <div className={chartCardAccentBarClass} aria-hidden="true" />
+                  <div className={chartCardToolbarClass}>
+                    <h2 className={chartCardTitleClass}>
+                      {t("result.chartVisualization") || "Chart Visualization"}
+                    </h2>
+                  </div>
 
-                  {/* Blueprint Mode Switcher - Under title */}
-                  <div className="mb-4">
+                  {/* Blueprint Mode Switcher — branded toolbar */}
+                  <div className={chartCardBlueprintToolbarClass}>
                     <div className="flex gap-2 flex-wrap">
                       {[
                         { key: "dna", label: "DNA Chart" },
@@ -1144,6 +1152,7 @@ const ResultContent: React.FC = () => {
                     </div>
                   </div>
 
+                  <div className={chartCardBodyClass}>
                   {calculatedChartData ? (
                     <div
                       className="flex-grow overflow-auto p-0"
@@ -1224,6 +1233,7 @@ const ResultContent: React.FC = () => {
                       </div>
                     </div>
                   )}
+                  </div>
                 </div>
               </div>
 
@@ -1532,7 +1542,7 @@ const ResultContent: React.FC = () => {
 
         {/* Analysis Section - Always show Overview, but other components require Tier 2+ */}
         {calculatedChartData && !loading && !error && hasFullAnalysis && (
-          <div className="mt-8">
+          <div className={chartAnalysisDividerClass}>
 
             {/* ── Title block — only for DNA and Liu Nian modes ── */}
             {(blueprintMode === "dna" || blueprintMode === "liunian") && (
@@ -1540,7 +1550,7 @@ const ResultContent: React.FC = () => {
                 <h2 className={chartAnalysisTitleClass}>
                   {wrapPhraseInBrandGradient(
                     t("analysis.title") || "PERSONALIZED LIFE REPORT",
-                    { phrase: "LIFE REPORT" }
+                    { phrase: " LIFE REPORT" }
                   )}
                 </h2>
                 <p className={chartAnalysisSubtitleClass}>

@@ -2,7 +2,7 @@
  * Chart / result page styling — colors from src/styles/color-scheme.css (theme-*).
  */
 
-export const chartGlowClass = "dashboard-glow";
+export const chartGlowClass = "chart-glow";
 
 export const chartPageClass = "relative z-[1]";
 
@@ -29,22 +29,45 @@ export const chartBackIconWrapClass = [
 export const chartHeroLabelClass =
   "text-xs font-semibold uppercase tracking-wider text-theme-accent-label mb-1";
 
-export const chartHeroTitleClass =
-  "text-3xl sm:text-4xl font-bold text-theme-fg flex items-center flex-wrap gap-2";
+export const chartHeroTitleClass = [
+  "text-3xl sm:text-4xl font-bold text-theme-fg flex items-center flex-wrap gap-2",
+  "border-b-2 border-theme-border-strong pb-3",
+].join(" ");
 
-export const chartHeroTitleIconClass = "w-7 h-7 shrink-0 text-theme-link-primary";
+export const chartHeroTitleIconClass = [
+  "w-7 h-7 shrink-0 text-theme-link-primary",
+  "p-1 rounded-md bg-theme-icon-accent",
+].join(" ");
 
 export const chartHeroSubtitleClass =
   "mt-2 text-base text-theme-fg-secondary max-w-2xl leading-relaxed";
 
 export const chartCardClass = [
-  "rounded-2xl shadow-lg overflow-hidden",
-  "border border-theme-border bg-theme-surface-card",
-  "p-1 sm:p-2 md:p-4 lg:p-6",
+  "rounded-2xl overflow-hidden",
+  "border-2 border-theme-border-strong",
+  "border-accent-gold/40 dark:border-accent-gold/35",
+  "bg-theme-surface-card",
+  "shadow-lg shadow-brand-purple/10 dark:shadow-black/30",
+].join(" ");
+
+export const chartCardAccentBarClass =
+  "h-0.5 w-full bg-gradient-brand-purple shrink-0";
+
+export const chartCardToolbarClass = [
+  "px-2 sm:px-3 md:px-4 lg:px-6 pt-3 sm:pt-4 md:pt-5",
+  "bg-theme-surface-featured border-b border-theme-border",
+].join(" ");
+
+export const chartCardBodyClass =
+  "p-1 sm:p-2 md:p-4 lg:p-6";
+
+export const chartCardBlueprintToolbarClass = [
+  "px-2 sm:px-3 md:px-4 lg:px-6 py-3",
+  "bg-theme-surface-featured border-b border-theme-border-subtle",
 ].join(" ");
 
 export const chartCardTitleClass =
-  "text-lg sm:text-xl md:text-2xl font-bold mb-2 sm:mb-3 md:mb-4 text-theme-fg";
+  "text-lg sm:text-xl md:text-2xl font-bold text-theme-fg";
 
 export const chartSpinnerClass =
   "animate-spin rounded-full h-12 w-12 border-b-2 border-theme-spinner mx-auto";
@@ -64,8 +87,11 @@ export const chartErrorTextClass = "text-theme-danger";
 export const chartErrorRetryClass =
   "mt-4 px-4 py-2 rounded-lg text-theme-banner-error-text bg-theme-banner-error hover:opacity-90 transition-opacity";
 
-export const chartBlueprintActiveClass =
-  "flex-1 px-3 py-2 rounded-lg text-sm font-medium bg-theme-btn-primary text-theme-btn-primary-text shadow-sm transition-colors";
+export const chartBlueprintActiveClass = [
+  "flex-1 px-3 py-2 rounded-lg text-sm font-medium",
+  "bg-theme-btn-primary text-theme-btn-primary-text shadow-sm",
+  "ring-2 ring-theme-focus transition-colors",
+].join(" ");
 
 export const chartBlueprintInactiveClass = [
   "flex-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
@@ -75,7 +101,9 @@ export const chartBlueprintInactiveClass = [
 
 export const chartSidebarCardClass = [
   "rounded-2xl shadow-lg overflow-hidden mb-6",
-  "border border-theme-border bg-theme-surface-card p-6",
+  "border-2 border-theme-border-strong border-accent-gold/30 dark:border-accent-gold/25",
+  "bg-theme-surface-card p-6",
+  "shadow-brand-purple/10 dark:shadow-black/20",
 ].join(" ");
 
 export const chartSidebarTitleClass = "text-xl font-bold mb-4 text-theme-fg";
@@ -100,7 +128,7 @@ export const chartPrimaryButtonClass = [
 export const chartExportButtonClass = [
   "w-full px-4 py-2 font-medium rounded-lg transition-all shadow-sm",
   "bg-accent-coral hover:opacity-90 dark:bg-accent-coralDark",
-  "text-cream focus:ring-4 focus:ring-theme-focus focus:outline-none",
+  "text-cream focus:ring-4 focus:ring-accent-coral/40 dark:focus:ring-accent-coralDark/40 focus:outline-none",
   "disabled:opacity-50 disabled:cursor-not-allowed",
   "flex items-center justify-center",
 ].join(" ");
@@ -130,8 +158,11 @@ export const chartBranchAdjustedClass = [
   "bg-theme-icon-accent text-theme-link-primary border border-theme-border-subtle",
 ].join(" ");
 
+export const chartAnalysisDividerClass =
+  "mt-8 pt-6 border-t-2 border-theme-border-strong";
+
 export const chartAnalysisTitleClass =
-  "text-4xl mb-2 font-bold text-theme-fg flex items-center text-center pt-4";
+  "text-4xl mb-2 font-bold text-theme-fg text-center pt-4";
 
 export const chartAnalysisSubtitleClass =
   "text-lg mb-6 text-theme-fg-secondary text-center italic";

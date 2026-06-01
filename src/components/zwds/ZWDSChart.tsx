@@ -599,8 +599,9 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
         maxHeight: "900px",
       }}>
       <motion.div
-        className={`grid grid-cols-4 grid-rows-4 gap-1.5 xs:gap-2 sm:gap-1.5 md:gap-1 p-1 xs:p-1.5 sm:p-1 md:p-1 h-full rounded-xl ${isPdfExport ? "bg-white" : ""
-          }`}
+        className={`zwds-chart-grid grid grid-cols-4 grid-rows-4 gap-1.5 xs:gap-2 sm:gap-1.5 md:gap-1 p-1 xs:p-1.5 sm:p-1 md:p-1 h-full rounded-xl ${
+          isPdfExport ? "bg-white" : "bg-surface-warm/50 dark:bg-surface-darkSecondary/80"
+        }`}
         initial={isPdfExport ? false : { opacity: 0 }}
         animate={isPdfExport ? false : { opacity: 1 }}
         transition={isPdfExport ? { duration: 0 } : { duration: 0.5 }}>

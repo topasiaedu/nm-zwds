@@ -10,6 +10,13 @@ import ZodiacIcons from "../icons";
 import ZodiacIconWrapper from "./ZodiacIconWrapper";
 import { FaSyncAlt } from "react-icons/fa";
 import { ChartSettings } from "../../../context/ChartSettingsContext";
+import {
+  chartBrandChrome,
+  getTransformationBorderRgba,
+  getTransformationRingClass,
+  isChartDarkMode,
+  type TransformationType,
+} from "../../../styles/chartSemanticColors";
 
 // Map earthly branches to their zodiac animals
 const getZodiacIcon = (earthlyBranch: string): React.ElementType | null => {
@@ -174,7 +181,7 @@ const Palace: React.FC<PalaceProps> = ({
     },
     selected: {
       scale: 1.02,
-      boxShadow: "0 0 0 2px rgba(79, 70, 229, 0.5)",
+      boxShadow: chartBrandChrome.selectionBoxShadow,
       transition: {
         duration: 0.3,
       },
@@ -182,11 +189,7 @@ const Palace: React.FC<PalaceProps> = ({
     pulse: {
       scale: [1.02, 1.03, 1.02],
       opacity: 1,
-      boxShadow: [
-        "0 0 0 2px rgba(79, 70, 229, 0.5)",
-        "0 0 0 3px rgba(79, 70, 229, 0.4)",
-        "0 0 0 2px rgba(79, 70, 229, 0.5)",
-      ],
+      boxShadow: [...chartBrandChrome.selectionBoxShadowPulse],
       transition: {
         duration: 2,
         repeat: Infinity,
@@ -224,7 +227,7 @@ const Palace: React.FC<PalaceProps> = ({
     daxian: {
       opacity: 1,
       scale: 1,
-      boxShadow: "0 0 0 2px rgba(124, 58, 237, 0.7)",
+      boxShadow: chartBrandChrome.daxianRingShadow,
       transition: {
         duration: 0.3,
         ease: [0.4, 0, 0.2, 1] as const,
@@ -243,67 +246,39 @@ const Palace: React.FC<PalaceProps> = ({
 
   // Get transformation border color
   let transformationBorderColor = "";
-  if (isTargetPalace) {
-    switch (transformationType) {
-      case "祿":
-        transformationBorderColor = "ring-green-500";
-        break;
-      case "權":
-        transformationBorderColor = "ring-blue-500";
-        break;
-      case "科":
-        transformationBorderColor = "ring-yellow-500";
-        break;
-      case "忌":
-        transformationBorderColor = "ring-red-500";
-        break;
-      default:
-        transformationBorderColor = "";
-    }
+  if (isTargetPalace && transformationType) {
+    transformationBorderColor = getTransformationRingClass(
+      transformationType as TransformationType
+    );
   }
 
-  // Determine gradient background for selected palace
-  // Purple to indigo gradient like the main button
+  // Brand purple gradient for selected palace
   const gradientStyle = isSelected
     ? {
-        background:
-          "linear-gradient(135deg, rgb(124, 58, 237), rgb(79, 70, 229))",
+        background: chartBrandChrome.selectionGradientLight,
         backgroundSize: "200% 200%",
       }
     : {};
 
-  // Dark mode gradient
   const darkGradientStyle = isSelected
     ? {
-        background:
-          "linear-gradient(135deg, rgb(124, 58, 237, 0.8), rgb(79, 70, 229, 0.8))",
+        background: chartBrandChrome.selectionGradientDark,
         backgroundSize: "200% 200%",
       }
     : {};
 
-  // Choose which style to apply based on color scheme preference
-  const isDarkMode =
-    window.matchMedia &&
-    window.matchMedia("(prefers-color-scheme: dark)").matches;
   const selectedStyle = isSelected
-    ? isDarkMode
+    ? isChartDarkMode()
       ? darkGradientStyle
       : gradientStyle
     : {};
 
   // Define border highlight style for target palaces
   let targetHighlightStyle = {};
-  if (isTargetPalace && !isSelected) {
-    const borderColor =
-      transformationType === "祿"
-        ? "rgba(16, 185, 129, 0.7)" // green
-        : transformationType === "權"
-        ? "rgba(56, 189, 248, 0.85)" // brighter sky blue with higher opacity
-        : transformationType === "科"
-        ? "rgba(245, 158, 11, 0.7)" // yellow
-        : transformationType === "忌"
-        ? "rgba(239, 68, 68, 0.7)" // red
-        : "rgba(107, 114, 128, 0.7)"; // gray fallback
+  if (isTargetPalace && !isSelected && transformationType) {
+    const borderColor = getTransformationBorderRgba(
+      transformationType as TransformationType
+    );
 
     targetHighlightStyle = {
       boxShadow: `0 0 0 2px ${borderColor}`,
@@ -325,7 +300,7 @@ const Palace: React.FC<PalaceProps> = ({
     ...selectedStyle,
     ...daXianStyle,
     ...(isSelected
-      ? { boxShadow: "0 0 15px rgba(79, 70, 229, 0.25)" }
+      ? { boxShadow: chartBrandChrome.selectionGlow }
       : isTargetPalace
       ? targetHighlightStyle
       : hasDayunStyleGlow
@@ -334,11 +309,11 @@ const Palace: React.FC<PalaceProps> = ({
         }
       : isHighlighted
       ? { 
-          borderColor: "#ef4444", // solid red
+          borderColor: chartBrandChrome.highlightBorderColor,
           borderWidth: "4px",
           borderStyle: "solid"
         }
-      : { boxShadow: "none" }), // Explicitly reset boxShadow when not selected or target
+      : { boxShadow: "none" }),
     transition: "all 0.3s ease",
   };
 
@@ -462,16 +437,15 @@ const Palace: React.FC<PalaceProps> = ({
   return (
     <motion.div
       key={`palace-${palaceNumber}-${selectedPalace}`}
-      className={`relative border ${hasDayunStyleGlow ? "pulse-button" : ""} border-gray-100 dark:border-gray-700 p-0.5 xs:p-1 sm:p-2 md:p-3 h-full overflow-hidden min-h-[140px] xs:min-h-[180px] sm:min-h-[130px] md:min-h-[150px] ${
+      className={`relative border ${hasDayunStyleGlow ? "pulse-button" : ""} ${chartBrandChrome.palaceBorderClass} p-0.5 xs:p-1 sm:p-2 md:p-3 h-full overflow-hidden min-h-[140px] xs:min-h-[180px] sm:min-h-[130px] md:min-h-[150px] ${
         isSelected
-          ? "bg-indigo-50/80 dark:bg-indigo-900/30 text-white"
+          ? "zwds-palace-selected bg-gradient-brand-purple"
           : hasDayunStyleGlow && !isSelected
           ? "bg-gradient-to-br from-yellow-100 to-amber-300 dark:from-yellow-400/70 dark:to-amber-400/60"
-          : 
-           "bg-white dark:bg-gray-800"
+          : chartBrandChrome.palaceSurfaceClass
       } flex flex-col rounded-lg shadow-sm cursor-pointer ${
         isSelected
-          ? "ring-1 sm:ring-2 ring-indigo-500"
+          ? `ring-1 sm:ring-2 ${chartBrandChrome.selectionRingClass}`
           : isTargetPalace
           ? `ring-1 sm:ring-1 ${transformationBorderColor}`
           : hasDayunStyleGlow && !isSelected
@@ -544,7 +518,7 @@ const Palace: React.FC<PalaceProps> = ({
             className={`text-2xs xs:text-xs sm:text-sm font-semibold px-1 py-0.5 rounded-md ${
               isSelected
                 ? "bg-white/20 text-white"
-                : "bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300"
+                : `${chartBrandChrome.daMingTagBgClass} ${chartBrandChrome.daMingTagTextClass}`
             }`}
             initial={{ opacity: 0, scale: 0.8, y: -5 }}
             animate={{
@@ -558,9 +532,9 @@ const Palace: React.FC<PalaceProps> = ({
                     "0 0 0px rgba(255, 255, 255, 0.5)",
                   ]
                 : [
-                    "0 0 0px rgba(79, 70, 229, 0.3)",
-                    "0 0 6px rgba(79, 70, 229, 0.2)",
-                    "0 0 0px rgba(79, 70, 229, 0.3)",
+                    "0 0 0px rgba(107, 91, 149, 0.3)",
+                    "0 0 6px rgba(107, 91, 149, 0.2)",
+                    "0 0 0px rgba(107, 91, 149, 0.3)",
                   ],
             }}
             transition={{
@@ -607,12 +581,12 @@ const Palace: React.FC<PalaceProps> = ({
           {palace.minorStars.map((star, idx) => (
             <div
               key={`minor-${idx}`}
-              className={`text-3xs xs:text-2xs sm:text-xs mb-1 flex flex-col items-start ${
+              className={`zwds-palace-star-text text-3xs xs:text-2xs sm:text-xs mb-1 flex flex-col items-start ${
                 isSelected
-                  ? "font-medium text-white dark:text-white"
+                  ? "font-medium"
                   : star.brightness === "bright"
-                  ? "font-medium text-zinc-700 dark:text-zinc-300"
-                  : "text-zinc-500 dark:text-zinc-400"
+                  ? "font-medium"
+                  : ""
               }`}
               ref={(el) => registerStarRef(palaceNumber, star.name, el)}>
               {/* Split star name by spaces and render each word vertically */}
@@ -621,7 +595,7 @@ const Palace: React.FC<PalaceProps> = ({
                 .map((word, wordIdx) => (
                   <span
                     key={`word-${wordIdx}`}
-                    className="mb-0.5 leading-none sm:leading-tight">
+                    className="zwds-palace-star-text mb-0.5 leading-none sm:leading-tight">
                     {word}
                   </span>
                 ))}
@@ -674,10 +648,8 @@ const Palace: React.FC<PalaceProps> = ({
             palace.mainStar.map((star, starIndex) => (
               <div
                 key={`main-${starIndex}`}
-                className={`mb-1 flex flex-col items-start font-medium text-3xs xs:text-2xs sm:text-xs ${
-                  isSelected
-                    ? "text-white dark:text-white font-semibold"
-                    : "text-zinc-800 dark:text-zinc-200 font-semibold"
+                className={`zwds-palace-star-text mb-1 flex flex-col items-start font-medium text-3xs xs:text-2xs sm:text-xs ${
+                  isSelected ? "font-semibold" : "font-semibold"
                 }`}
                 ref={(el) => registerStarRef(palaceNumber, star.name, el)}>
                 {/* Split star name by spaces and render each word vertically */}
@@ -686,7 +658,7 @@ const Palace: React.FC<PalaceProps> = ({
                   .map((word, wordIdx) => (
                     <span
                       key={`word-${wordIdx}`}
-                      className="mb-0.5 leading-none sm:leading-tight">
+                      className="zwds-palace-star-text mb-0.5 leading-none sm:leading-tight">
                       {word}
                     </span>
                   ))}
@@ -740,12 +712,9 @@ const Palace: React.FC<PalaceProps> = ({
       {/* Bottom section with grid layout - positioned absolute at bottom */}
       {isPdfExport ? (
         // PDF Export Version - Static 3-column layout without responsive classes
-        <div className="absolute bottom-0 left-0 right-0 grid grid-cols-3 w-full text-xs text-zinc-800 dark:text-zinc-200 border-t border-gray-200 dark:border-gray-700 z-20">
+        <div className="absolute bottom-0 left-0 right-0 grid grid-cols-3 w-full text-xs zwds-palace-bottom-text border-t border-gray-200 dark:border-gray-700 z-20">
           {/* First column - Heavenly Stem and Earthly Branch */}
-          <div
-            className={`flex flex-col items-center justify-center py-1.5 border-r border-gray-200 dark:border-gray-700 ${
-              isSelected ? "text-white/90 dark:text-white/90" : ""
-            }`}>
+          <div className="flex flex-col items-center justify-center py-1.5 border-r border-gray-200 dark:border-gray-700">
             <div>
               {language === "en" && t(`zwds.stems.${palace.heavenlyStem}`)
                 ? t(`zwds.stems.${palace.heavenlyStem}`)
@@ -759,30 +728,22 @@ const Palace: React.FC<PalaceProps> = ({
           </div>
 
           {/* Second column - Palace Name and Major Limit */}
-          <div
-            className={`flex flex-col items-center justify-center py-1.5 border-r border-gray-200 dark:border-gray-700 ${
-              isSelected ? "text-white dark:text-white" : ""
-            }`}>
+          <div className="flex flex-col items-center justify-center py-1.5 border-r border-gray-200 dark:border-gray-700">
             <div className="font-medium">{bottomLabel}</div>
             {palace.majorLimit && (
               <div
-                className={`text-zinc-500 dark:text-zinc-400 ${
+                className={
                   isCurrentDaXian
                     ? "text-amber-900 dark:text-amber-200 font-bold"
                     : ""
-                }`}>
+                }>
                 {palace.majorLimit.startAge}-{palace.majorLimit.endAge}
               </div>
             )}
           </div>
 
           {/* Third column - Year and Age */}
-          <div
-            className={`flex flex-col items-center justify-center py-1.5 ${
-              isSelected
-                ? "text-white/80 dark:text-white/80"
-                : "text-zinc-500 dark:text-zinc-400"
-            }`}>
+          <div className="flex flex-col items-center justify-center py-1.5">
             <div className={`${
               showAnnualFlow
                 ? isSelected
@@ -798,17 +759,12 @@ const Palace: React.FC<PalaceProps> = ({
           </div>
         </div>
       ) : (
-        <div className="absolute bottom-0 left-0 right-0 grid grid-cols-1 sm:grid-cols-3 w-full text-3xs xs:text-2xs sm:text-xs text-zinc-800 dark:text-zinc-200 border-t border-gray-200 dark:border-gray-700 z-20">
+        <div className="absolute bottom-0 left-0 right-0 grid grid-cols-1 sm:grid-cols-3 w-full text-3xs xs:text-2xs sm:text-xs zwds-palace-bottom-text border-t border-gray-200 dark:border-gray-700 z-20">
           {/* First column (mobile and desktop) */}
-          <div
-            className={`flex flex-col items-start sm:items-center justify-center py-0.5 xs:py-1 sm:py-1.5 border-r border-gray-200 dark:border-gray-700 ${
-              isSelected ? "text-white/90 dark:text-white/90" : ""
-            }`}>
+          <div className="flex flex-col items-start sm:items-center justify-center py-0.5 xs:py-1 sm:py-1.5 border-r border-gray-200 dark:border-gray-700">
             {/* Mobile view: Palace Name - Updated with click handler */}
             <div
-              className={`sm:hidden ${
-                isSelected ? "text-white dark:text-white" : ""
-              } font-bold ${
+              className={`sm:hidden font-bold ${
                 palaceNameInteractive ? "cursor-pointer hover:opacity-80" : "cursor-default"
               }`}
               onClick={(e) => {
@@ -849,7 +805,7 @@ const Palace: React.FC<PalaceProps> = ({
             {/* Mobile view: Major Limit */}
             {palace.majorLimit && (
               <div
-                className={`sm:hidden text-zinc-500 dark:text-zinc-400 ${
+                className={`sm:hidden ${
                   majorLimitInteractive
                     ? isCurrentDaXian
                       ? "text-amber-900 dark:text-amber-200 font-bold cursor-pointer"
@@ -865,10 +821,7 @@ const Palace: React.FC<PalaceProps> = ({
           </div>
 
           {/* Second column (desktop only) - Updated with click handler */}
-          <div
-            className={`hidden sm:flex flex-col items-center justify-center py-0.5 xs:py-1 sm:py-1.5 border-r border-gray-200 dark:border-gray-700 ${
-              isSelected ? "text-white dark:text-white" : ""
-            }`}>
+          <div className="hidden sm:flex flex-col items-center justify-center py-0.5 xs:py-1 sm:py-1.5 border-r border-gray-200 dark:border-gray-700">
             <div 
               className={`font-medium ${
                 palaceNameInteractive ? "cursor-pointer hover:opacity-80" : "cursor-default"
@@ -884,13 +837,13 @@ const Palace: React.FC<PalaceProps> = ({
             </div>
             {palace.majorLimit && (
               <div
-                className={`text-zinc-500 dark:text-zinc-400 ${
+                className={
                   majorLimitInteractive
                     ? isCurrentDaXian
                       ? "text-amber-900 dark:text-amber-200 font-bold cursor-pointer"
                       : "cursor-pointer hover:text-amber-600 dark:hover:text-amber-400"
                     : "cursor-default"
-                }`}
+                }
                 onClick={handleMajorLimitClick}>
                 {palace.majorLimit.startAge}-{palace.majorLimit.endAge}
               </div>
@@ -898,12 +851,7 @@ const Palace: React.FC<PalaceProps> = ({
           </div>
 
           {/* Third column (desktop only) - Modified to use renderYearOrMonth */}
-          <div
-            className={`hidden sm:flex flex-col items-center justify-center py-0.5 xs:py-1 sm:py-1.5 ${
-              isSelected
-                ? "text-white/80 dark:text-white/80"
-                : "text-zinc-500 dark:text-zinc-400"
-            }`}>
+          <div className="hidden sm:flex flex-col items-center justify-center py-0.5 xs:py-1 sm:py-1.5">
             {renderYearOrMonth()}
           </div>
         </div>
