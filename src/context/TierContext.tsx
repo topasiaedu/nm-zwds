@@ -510,6 +510,7 @@ export function useTierAccess() {
     hasAIAssistant: hasFeature("hasAIAssistant"),
     hasDestinyNavigatorTool: hasFeature("hasDestinyNavigatorTool"),
     hasFounderReport: hasFeature("hasFounderReport"),
+    hasAlignmentAdvantage: hasFeature("hasAlignmentAdvantage"),
     hasExperimentalCharts: hasFeature("hasExperimentalCharts"),
     hasHourAdjustment: hasFeature("hasHourAdjustment"),
     hasUserManagement: hasFeature("hasUserManagement"),

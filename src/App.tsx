@@ -47,6 +47,11 @@ import WealthCodePreviewPage from "./pages/dev/wealth-code-preview";
 // Import 12-month forecast
 import TwelveMonthForecast from "./pages/12month-forecast";
 import PrintResult from "./pages/PrintResult";
+// Import Alignment Advantage pages
+import AlignmentAdvantage from "./pages/alignment-advantage/index";
+import AlignmentAdvantageTimingPage from "./pages/alignment-advantage/timing";
+import AlignmentAdvantageWealthPage from "./pages/alignment-advantage/wealth";
+import AlignmentAdvancePrint from "./pages/print/AlignmentAdvancePrint";
 // Import centralized config
 import FREE_TEST_CONFIG from "./config/freeTestConfig";
 import { Analytics } from "@vercel/analytics/react"
@@ -134,6 +139,7 @@ const App: React.FC = () => {
                     <Route path="/chart-only" element={<ChartOnly />} />
                     <Route path="/chart-test" element={<ChartTest />} />
                     <Route path="/print/result/:id" element={<PrintResult />} />
+                    <Route path="/print/alignment-advantage" element={<AlignmentAdvancePrint />} />
                     <Route path="/membership-expired" element={<MembershipExpired />} />
                     <Route path="/membership-paused" element={<MembershipPaused />} />
                     <Route path="/12month-forecast" element={<TwelveMonthForecast />} />
@@ -292,6 +298,30 @@ const App: React.FC = () => {
                         element={
                           <ProtectedRoute>
                             <FounderReport />
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="/alignment-advantage"
+                        element={
+                          <ProtectedRoute>
+                            <AlignmentAdvantage />
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="/alignment-advantage/timing"
+                        element={
+                          <ProtectedRoute>
+                            <AlignmentAdvantageTimingPage />
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="/alignment-advantage/wealth"
+                        element={
+                          <ProtectedRoute>
+                            <AlignmentAdvantageWealthPage />
                           </ProtectedRoute>
                         }
                       />
