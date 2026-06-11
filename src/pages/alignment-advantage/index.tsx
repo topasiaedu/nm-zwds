@@ -1,26 +1,27 @@
 /**
- * Alignment Advantage — PDF Document Viewer
+ * Alignment Advantage: PDF Document Viewer
  *
  * Layout mirrors the Joey Yap Monthly Planner reference:
- *  - Fixed-width dark sidebar on the left for chapter navigation.
- *  - Right content area rendered as a PDF viewer — warm-gray background
+ * : Fixed-width dark sidebar on the left for chapter navigation.
+ * : Right content area rendered as a PDF viewer: warm-gray background
  *    with centered white "pages" that have drop shadows, mimicking actual
  *    printed pages in a browser-based PDF reader.
  *
  * Chapters:
- *  Cover   — Client name, at-a-glance summary chips, PDF download
- *  Ch 01   — Structure: Speed/Endurance Player + Formation Profile
- *  Ch 02   — Timing: DaYun phase summary + 12-month roadmap grid
- *  Ch 03   — Wealth: Archetype profile + Phase × Wealth intersection
- *  Ch 04   — Decision Framework: 3-axis alignment checker
+ *  Cover  : Client name, at-a-glance summary chips, PDF download
+ *  Ch 01  : Structure: Speed/Endurance Player + Formation Profile
+ *  Ch 02  : Timing: DaYun phase summary + 12-month roadmap grid
+ *  Ch 03  : Wealth: Archetype profile + Phase × Wealth intersection
+ *  Ch 04  : Decision Framework: 3-axis alignment checker
  *
  * Access is gated behind the `hasAlignmentAdvantage` feature flag.
- * Always uses the account-owner's (`is_self`) profile — one per account.
+ * Always uses the account-owner's (`is_self`) profile: one per account.
  */
 
 import React, { useMemo, useState, useEffect, useCallback } from "react";
 import { Compass, Users, Zap, Shield } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useLanguage } from "../../context/LanguageContext";
 import PageTransition from "../../components/PageTransition";
 import { useProfileContext } from "../../context/ProfileContext";
 import { useTierAccess } from "../../context/TierContext";
@@ -122,9 +123,9 @@ const DAYUN_TO_PHASE: Record<string, PhaseAlignmentSeasonKey> = {
 
 // ─── Mini-chart helpers ───────────────────────────────────────────────────────
 
-/** The 6 Northern (Ziwei) main stars — simplified Chinese matching calculator output */
+/** The 6 Northern (Ziwei) main stars: simplified Chinese matching calculator output */
 const NORTHERN_MAIN_STARS = new Set(["紫微", "天机", "太阳", "武曲", "天同", "廉贞"]);
-/** The 8 Southern (Tianfu) main stars — simplified Chinese matching calculator output */
+/** The 8 Southern (Tianfu) main stars: simplified Chinese matching calculator output */
 const SOUTHERN_MAIN_STARS = new Set(["天府", "太阴", "贪狼", "巨门", "天相", "天梁", "七杀", "破军"]);
 
 /** Returns whether a main star is Northern, Southern, or auxiliary. */
@@ -210,7 +211,7 @@ function buildMonthPills(chartData: ChartData): MonthPillData[] {
     return {
       monthIndex: i,
       shortName:  MONTH_NAMES_SHORT[i] ?? String(m),
-      palaceName: palace?.name ?? "—",
+      palaceName: palace?.name ?? "-",
       signal,
       stars:      (pData?.stars ?? 4) as 3 | 4 | 5,
     };
@@ -386,7 +387,7 @@ const SectionGraphic: React.FC<{ type: string }> = ({ type }) => {
   return null;
 };
 
-/** Section header — navy→coral gradient bar, matches dashboard */
+/** Section header: navy→coral gradient bar, matches dashboard */
 const SectionHeader: React.FC<{ chapter: string; title: string; subtitle?: string; graphicType?: string }> = ({
   chapter, title, subtitle, graphicType
 }) => (
@@ -411,7 +412,7 @@ const SectionHeader: React.FC<{ chapter: string; title: string; subtitle?: strin
   </div>
 );
 
-/** Decision axis card — styled with Cae Goh tokens */
+/** Decision axis card: styled with Cae Goh tokens */
 const AxisCard: React.FC<{
   title:        string;
   description:  string;
@@ -487,7 +488,7 @@ const AxisCard: React.FC<{
             color: aligned ? "#16a34a" : notAligned ? C.coral : C.muted,
           }}
         >
-          {aligned ? "Aligned ✓" : notAligned ? "Caution" : "—"}
+          {aligned ? "Aligned ✓" : notAligned ? "Caution" : "-"}
         </div>
       )}
     </div>
@@ -513,7 +514,9 @@ const AxisCard: React.FC<{
 
 const TRANSFORMATION_ENGLISH: Record<string, string> = {
   "化禄": "Hua Lu",
+  "化祿": "Hua Lu",
   "化权": "Hua Quan",
+  "化權": "Hua Quan",
   "化科": "Hua Ke",
   "化忌": "Hua Ji",
 };
@@ -524,14 +527,16 @@ const TRANSFORMATION_ENGLISH: Record<string, string> = {
  * The highlighted palace is the active Life Palace.
  */
 const TwelvePalaceMiniGrid: React.FC<{ chartData: ChartData; highlightPalaces?: string[] }> = ({ chartData, highlightPalaces }) => {
+  const { t } = useLanguage();
   const lifePalaceNum = chartData.lifePalace;
 
-  /** Single cell — either a palace or the center */
+  /** Single cell: either a palace or the center */
   const Cell: React.FC<{ palace: Palace }> = ({ palace }) => {
     const isLife  = palace.number === lifePalaceNum;
     const isHighlighted = highlightPalaces ? highlightPalaces.includes(palace.name) : isLife;
     const isBody  = palace.name === chartData.palaces[chartData.bodyPalace - 1]?.name;
     let mainStars = palace.mainStar ?? [];
+    let minorStars = palace.minorStars ?? [];
 
     const englishName = PALACE_ENGLISH[palace.name] ?? "Palace";
 
@@ -549,6 +554,8 @@ const TwelvePalaceMiniGrid: React.FC<{ chartData: ChartData; highlightPalaces?: 
           flexDirection: "column",
           justifyContent: "space-between",
           overflow: "hidden",
+          opacity: highlightPalaces && !isHighlighted ? 0.35 : 1,
+          transition: "opacity 0.3s ease",
         }}
       >
         {/* Authentic Watermark */}
@@ -558,13 +565,32 @@ const TwelvePalaceMiniGrid: React.FC<{ chartData: ChartData; highlightPalaces?: 
 
         {/* Top: Stars */}
         <div className="relative z-10 flex flex-col gap-0.5">
-          {mainStars.slice(0, 2).map((star) => {
-            const trans = star.transformations?.[0];
-            const transEng = trans ? TRANSFORMATION_ENGLISH[trans] : null;
+          {minorStars.map((star) => {
+            return (
+              <div key={star.name} className="flex items-center gap-1 flex-wrap">
+                <span
+                  className="text-[9px] font-medium tracking-wide"
+                  style={{
+                    color: C.navy,
+                    fontFamily: "Georgia, serif"
+                  }}
+                >
+                  {STAR_BRIEF[star.name]?.pinyin ?? star.name}
+                </span>
+                {star.transformations?.map((trans, idx) => {
+                  const transEng = TRANSFORMATION_ENGLISH[trans];
+                  return transEng ? (
+                    <span key={idx} style={{ color: C.gold, fontSize: 7, fontWeight: "bold" }}>[{transEng}]</span>
+                  ) : null;
+                })}
+              </div>
+            );
+          })}
+          {mainStars.map((star) => {
             const ns = classifyMainStar(star.name);
             
             return (
-              <div key={star.name} className="flex items-center gap-1">
+              <div key={star.name} className="flex items-center gap-1 flex-wrap">
                 <span
                   className="text-[9px] font-bold tracking-wide"
                   style={{
@@ -574,9 +600,12 @@ const TwelvePalaceMiniGrid: React.FC<{ chartData: ChartData; highlightPalaces?: 
                 >
                   {STAR_BRIEF[star.name]?.pinyin ?? star.name}
                 </span>
-                {transEng && (
-                  <span style={{ color: C.gold, fontSize: 7, fontWeight: "bold" }}>[{transEng}]</span>
-                )}
+                {star.transformations?.map((trans, idx) => {
+                  const transEng = TRANSFORMATION_ENGLISH[trans];
+                  return transEng ? (
+                    <span key={idx} style={{ color: C.gold, fontSize: 7, fontWeight: "bold" }}>[{transEng}]</span>
+                  ) : null;
+                })}
               </div>
             );
           })}
@@ -623,7 +652,7 @@ const TwelvePalaceMiniGrid: React.FC<{ chartData: ChartData; highlightPalaces?: 
         <Cell key={palace.number} palace={palace} />
       ))}
 
-      {/* Center — person info */}
+      {/* Center: person info */}
       <div
         style={{
           gridArea: "center",
@@ -632,35 +661,71 @@ const TwelvePalaceMiniGrid: React.FC<{ chartData: ChartData; highlightPalaces?: 
           borderRadius: 2,
           display: "flex",
           flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: 6,
-          padding: "16px",
+          overflow: "hidden",
         }}
       >
-        <p className="text-[10px] font-bold uppercase tracking-[0.2em]" style={{ color: C.coral }}>
-          {chartData.input.name}
-        </p>
+        {/* Header */}
+        <div style={{ background: C.navy, padding: "8px 0", textAlign: "center" }}>
+          <p className="text-sm font-bold tracking-wider" style={{ color: C.cream, textTransform: "uppercase" }}>
+            {chartData.input.name}
+          </p>
+        </div>
         
-        {chartData.transformations !== undefined && (
-          <div className="flex flex-col gap-1.5 w-full mt-2" style={{ borderTop: `1px solid ${C.border}40`, paddingTop: 12 }}>
-            <p className="text-[7px] font-bold uppercase tracking-widest text-center mb-1" style={{ color: C.muted }}>Key Drivers</p>
-            {[
-              { t: "Hua Lu", v: chartData.transformations.huaLu },
-              { t: "Hua Quan", v: chartData.transformations.huaQuan },
-              { t: "Hua Ke", v: chartData.transformations.huaKe },
-              { t: "Hua Ji", v: chartData.transformations.huaJi },
-            ].map(({ t, v }) => {
-              const pinyin = STAR_BRIEF[v]?.pinyin ?? v;
-              return (
-                <div key={t} className="flex justify-between items-center w-full px-2">
-                  <span className="text-[8px] font-semibold" style={{ color: C.navy }}>{pinyin}</span>
-                  <span className="text-[7px] font-bold uppercase tracking-wider" style={{ color: C.gold }}>{t}</span>
-                </div>
-              );
-            })}
+        {/* Body */}
+        <div className="flex flex-col gap-1.5 p-3 text-[9px] flex-1 overflow-y-auto hide-scrollbar" style={{ color: C.navy }}>
+          <div className="flex">
+            <span className="w-20 font-semibold shrink-0" style={{ color: C.muted }}>Solar Date:</span>
+            <span>
+              {chartData.input.year} Year {chartData.input.month} Month {chartData.input.day} Day {chartData.input.hour} Hour
+            </span>
           </div>
-        )}
+          <div className="flex">
+            <span className="w-20 font-semibold shrink-0" style={{ color: C.muted }}>Lunar Date:</span>
+            <span>
+              {t(`zwds.stems.${chartData.heavenlyStem}`)} {t(`zwds.branches.${chartData.earthlyBranch}`)}{chartData.lunarDate.year} Year {chartData.lunarDate.month} Month {chartData.lunarDate.day} Day {chartData.input.hour} Hour
+            </span>
+          </div>
+          <div className="flex">
+            <span className="w-20 font-semibold shrink-0" style={{ color: C.muted }}>Five Element:</span>
+            <span>{t(`zwds.fiveElements.${chartData.fiveElements}`)}</span>
+          </div>
+          <div className="flex">
+            <span className="w-20 font-semibold shrink-0" style={{ color: C.muted }}>Gender:</span>
+            <span>{chartData.input.gender === "male" ? "Male" : "Female"}</span>
+          </div>
+          <div className="flex">
+            <span className="w-20 font-semibold shrink-0" style={{ color: C.muted }}>Age:</span>
+            <span>{new Date().getFullYear() - chartData.lunarDate.year + 1}</span>
+          </div>
+          <div className="flex">
+            <span className="w-20 font-semibold shrink-0" style={{ color: C.muted }}>Chinese Zodiac:</span>
+            <span>
+              {["🐭", "🐂", "🐯", "🐰", "🐲", "🐍", "🐴", "🐑", "🐵", "🐔", "🐶", "🐷"][(chartData.lunarDate.year - 4) % 12]}{" "}
+              {["Rat", "Ox", "Tiger", "Rabbit", "Dragon", "Snake", "Horse", "Sheep", "Monkey", "Rooster", "Dog", "Pig"][(chartData.lunarDate.year - 4) % 12]}
+            </span>
+          </div>
+          <div className="flex">
+            <span className="w-20 font-semibold shrink-0" style={{ color: C.muted }}>Western Zodiac:</span>
+            <span>
+              {(() => {
+                const month = chartData.input.month;
+                const day = chartData.input.day;
+                if ((month === 3 && day >= 21) || (month === 4 && day <= 19)) return "♈ Aries";
+                if ((month === 4 && day >= 20) || (month === 5 && day <= 20)) return "♉ Taurus";
+                if ((month === 5 && day >= 21) || (month === 6 && day <= 21)) return "♊ Gemini";
+                if ((month === 6 && day >= 22) || (month === 7 && day <= 22)) return "♋ Cancer";
+                if ((month === 7 && day >= 23) || (month === 8 && day <= 22)) return "♌ Leo";
+                if ((month === 8 && day >= 23) || (month === 9 && day <= 22)) return "♍ Virgo";
+                if ((month === 9 && day >= 23) || (month === 10 && day <= 23)) return "♎ Libra";
+                if ((month === 10 && day >= 24) || (month === 11 && day <= 22)) return "♏ Scorpio";
+                if ((month === 11 && day >= 23) || (month === 12 && day <= 21)) return "♐ Sagittarius";
+                if ((month === 12 && day >= 22) || (month === 1 && day <= 19)) return "♑ Capricorn";
+                if ((month === 1 && day >= 20) || (month === 2 && day <= 18)) return "♒ Aquarius";
+                return "♓ Pisces";
+              })()}
+            </span>
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -767,6 +832,52 @@ const AlignmentAdvantage: React.FC = () => {
   }, [chartData]);
 
   const monthPills = useMemo(() => (chartData ? buildMonthPills(chartData) : []), [chartData]);
+
+  const frameworkData = useMemo(() => {
+    if (!chartData) return null;
+    const lifePalace = chartData.palaces.find(p => p.name === "命宫");
+    const wealthPalace = chartData.palaces.find(p => p.name === "财帛");
+    const careerPalace = chartData.palaces.find(p => p.name === "官禄");
+    const corePalaces = [lifePalace, wealthPalace, careerPalace].filter(Boolean) as Palace[];
+
+    // 1. Core Triad (Strategic Focus)
+    // Add base weight of 1 to ensure no 0%
+    const visionScore = Math.max(1, (lifePalace?.mainStar?.length || 0) * 2 + (lifePalace?.minorStars?.length || 0));
+    const capitalScore = Math.max(1, (wealthPalace?.mainStar?.length || 0) * 2 + (wealthPalace?.minorStars?.length || 0));
+    const executionScore = Math.max(1, (careerPalace?.mainStar?.length || 0) * 2 + (careerPalace?.minorStars?.length || 0));
+    const totalTriad = visionScore + capitalScore + executionScore;
+    const visionPct = Math.round((visionScore / totalTriad) * 100);
+    const capitalPct = Math.round((capitalScore / totalTriad) * 100);
+    const executionPct = Math.round((executionScore / totalTriad) * 100);
+
+    // 2. Operating Pace
+    let northCount = 0;
+    let southCount = 0;
+    corePalaces.forEach(p => {
+      p.mainStar?.forEach(s => {
+        const ns = classifyMainStar(s.name);
+        if (ns === "north") northCount++;
+        if (ns === "south") southCount++;
+      });
+    });
+    // Add base 1 to prevent 0% or 100% extremes
+    northCount += 1;
+    southCount += 1;
+    const totalNS = northCount + southCount;
+    // Northern = Speed, Southern = Endurance
+    // Slider: Speed (0%) to Endurance (100%)
+    const endurancePct = Math.round((southCount / totalNS) * 100);
+
+    // 3. Catalyst Engine
+    const activeCatalysts = new Set<string>();
+    corePalaces.forEach(p => {
+      [...(p.mainStar || []), ...(p.minorStars || [])].forEach(s => {
+        s.transformations?.forEach(t => activeCatalysts.add(t));
+      });
+    });
+
+    return { visionPct, capitalPct, executionPct, endurancePct, activeCatalysts };
+  }, [chartData]);
 
   const [selectedMonthIndex, setSelectedMonthIndex] = useState<number>(CURRENT_MONTH_INDEX);
 
@@ -886,7 +997,7 @@ const AlignmentAdvantage: React.FC = () => {
       >
 
         {/* ═══════════════════════════════════════════════════════════════
-            SIDEBAR — mirrors the dashboard sidebar exactly
+            SIDEBAR: mirrors the dashboard sidebar exactly
             ═══════════════════════════════════════════════════════════════ */}
         <aside
           className="shrink-0 flex flex-col overflow-hidden"
@@ -1063,7 +1174,7 @@ const AlignmentAdvantage: React.FC = () => {
         </aside>
 
         {/* ═══════════════════════════════════════════════════════════════
-            MAIN CONTENT — warm peach-coral gradient, rich card sections
+            MAIN CONTENT: warm peach-coral gradient, rich card sections
             ═══════════════════════════════════════════════════════════════ */}
         <main
           className="flex-1 overflow-y-auto"
@@ -1104,7 +1215,7 @@ const AlignmentAdvantage: React.FC = () => {
           <div className="px-8 py-8 max-w-4xl mx-auto space-y-12">
 
           {/* ══════════════════════════════════════
-              SECTION 1 — OVERVIEW / COVER
+              SECTION 1: OVERVIEW / COVER
               ══════════════════════════════════════ */}
           <section id="cover" className="scroll-mt-16 mb-32 pt-16 relative overflow-hidden bg-white rounded-[40px] p-10 md:p-16 shadow-[0_8px_32px_rgba(0,0,0,0.03)] border border-[#e8ddd0]/50">
             <SectionWatermark type="compass" />
@@ -1136,15 +1247,15 @@ const AlignmentAdvantage: React.FC = () => {
                 Your Alignment<br />Advantage
               </h1>
               <p className="text-lg leading-relaxed mt-3 max-w-lg" style={{ color: C.muted }}>
-                A personalised strategic playbook built from your Purple Star Astrology chart —
+                A personalised strategic playbook built from your Purple Star Astrology chart -
                 giving you clarity on how you&apos;re wired, when to move, and how to build wealth on your terms.
               </p>
             </div>
 
 
-            {/* 3-stat summary cards — cream with coral left-border accent */}
+            {/* 3-stat summary cards: cream with coral left-border accent */}
             <div className="grid grid-cols-3 gap-4">
-              {/* Stat 1 — Structure */}
+              {/* Stat 1: Structure */}
               <div
                 className="rounded-2xl p-5 flex flex-col gap-3"
                 style={{
@@ -1164,7 +1275,7 @@ const AlignmentAdvantage: React.FC = () => {
                 </div>
               </div>
 
-              {/* Stat 2 — Timing Phase */}
+              {/* Stat 2: Timing Phase */}
               <div
                 className="rounded-2xl p-5 flex flex-col gap-3"
                 style={{
@@ -1186,7 +1297,7 @@ const AlignmentAdvantage: React.FC = () => {
                 </div>
               </div>
 
-              {/* Stat 3 — Monthly Signal */}
+              {/* Stat 3: Monthly Signal */}
               <div
                 className="rounded-2xl p-5 flex flex-col gap-3"
                 style={{
@@ -1236,7 +1347,7 @@ const AlignmentAdvantage: React.FC = () => {
                 {strategicData.dayun?.coreMessage ?? ""}
               </p>
             </div>
-            {/* 12-Palace Mini Grid — full chart at a glance */}
+            {/* 12-Palace Mini Grid: full chart at a glance */}
             <div className="mt-6">
               <p
                 className="text-[8px] font-bold uppercase tracking-[0.24em] mb-3"
@@ -1249,7 +1360,7 @@ const AlignmentAdvantage: React.FC = () => {
           </section>
 
           {/* ══════════════════════════════════════
-              SECTION 2 — CORE DESIGN
+              SECTION 2: CORE DESIGN
               ══════════════════════════════════════ */}
           <section id="design" className="scroll-mt-16 mb-32 pt-16 relative overflow-hidden bg-[#fdf6ee] rounded-[40px] p-10 md:p-16 shadow-[0_8px_32px_rgba(0,0,0,0.03)] border border-[#e8ddd0]/80">
             <SectionWatermark type="grid" />
@@ -1257,122 +1368,260 @@ const AlignmentAdvantage: React.FC = () => {
               graphicType="design"
               chapter="Chapter 01 · Founder's Blueprint"
               title="Your Player Type & Formation"
-              subtitle="Derived from the star balance in your Life, Wealth, and Career palaces — the 1-5-9 triangle."
+              subtitle="Derived from the star balance in your Life, Wealth, and Career palaces: the 1-5-9 triangle."
             />
 
-            {/* 1-5-9 Palace Triangle — visual context showing the three palaces that
+            {/* 1-5-9 Palace Triangle: visual context showing the three palaces that
                 determine the Speed/Endurance classification */}
-            <div className="mb-8">
+            <div className="mb-16">
+              <div className="flex items-center gap-3 mb-8">
+                <span className="w-8 h-px" style={{ background: C.coral }} />
+                <p className="text-[10px] font-bold uppercase tracking-[0.3em]" style={{ color: C.coral }}>
+                  The Core Triad (1-5-9)
+                </p>
+              </div>
               <TwelvePalaceMiniGrid chartData={chartData} highlightPalaces={["命宫", "财帛", "官禄"]} />
             </div>
 
-            {/* Transition Element */}
-            <div className="flex flex-col items-center justify-center my-16 relative">
-              <div className="w-px h-16 mb-6" style={{ background: `linear-gradient(to bottom, ${C.border}, ${C.coral})` }} />
-              <div className="text-center max-w-2xl px-6">
-                <p className="text-lg md:text-xl italic leading-relaxed" style={{ color: C.navy, fontFamily: "Georgia,'Times New Roman',serif" }}>
-                  By analyzing the energy distribution across your highlighted Life, Wealth, and Career palaces, we uncover your core operating structure—the fundamental way you are wired to build and scale.
-                </p>
-              </div>
-              <div className="w-px h-16 mt-6" style={{ background: `linear-gradient(to bottom, ${C.coral}, transparent)` }} />
-            </div>
+            {/* ── Proprietary Framework Visualizations ── */}
+            {frameworkData && (
+              <div className="mb-24">
+                <div className="flex items-center gap-3 mb-8">
+                  <span className="w-8 h-px" style={{ background: C.coral }} />
+                  <p className="text-[10px] font-bold uppercase tracking-[0.3em]" style={{ color: C.coral }}>
+                    The Operating Engine
+                  </p>
+                </div>
 
-            {/* Player type card — High-impact result reveal */}
-            <div 
-              className="relative rounded-[32px] overflow-hidden mb-20 p-8 md:p-16"
-              style={{ 
-                background: C.navy,
-                boxShadow: "0 20px 40px rgba(21, 24, 51, 0.15)"
-              }}
-            >
-              {/* Dynamic background element based on Speed vs Endurance */}
-              <div className="absolute inset-0 pointer-events-none opacity-20" style={{ color: C.coral }}>
-                {strLabel.label.includes("Speed") ? (
-                  <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none" fill="none" stroke="currentColor">
-                    <path d="M-10 80 L50 20 L110 80" strokeWidth="0.5" />
-                    <path d="M-10 90 L50 30 L110 90" strokeWidth="1" />
-                    <path d="M-10 100 L50 40 L110 100" strokeWidth="2" />
-                    <path d="M0 50 L100 50" strokeWidth="0.2" strokeDasharray="2 4" />
-                  </svg>
-                ) : (
-                  <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none" fill="none" stroke="currentColor">
-                    <circle cx="80" cy="80" r="10" strokeWidth="0.5" />
-                    <circle cx="80" cy="80" r="20" strokeWidth="1" />
-                    <circle cx="80" cy="80" r="30" strokeWidth="2" />
-                    <circle cx="80" cy="80" r="40" strokeWidth="0.5" strokeDasharray="2 4" />
-                    <circle cx="80" cy="80" r="60" strokeWidth="0.2" />
-                  </svg>
-                )}
-              </div>
-
-              <div className="relative z-10 flex flex-col md:flex-row md:items-center gap-8">
-                <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-6">
-                    <span className="flex items-center justify-center w-8 h-8 rounded-full" style={{ background: `${C.coral}30`, color: C.coral }}>
-                      {strLabel.label.includes("Speed") ? <Zap size={16} /> : <Shield size={16} />}
-                    </span>
-                    <p className="text-[10px] font-bold uppercase tracking-[0.3em]" style={{ color: C.coral }}>
-                      Core Operating Structure
-                    </p>
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 mb-16">
+                  
+                  {/* 1. Core Triad Distribution */}
+                  <div className="lg:col-span-5 flex flex-col justify-center">
+                    <p className="text-[9px] font-bold uppercase tracking-[0.2em] mb-8" style={{ color: C.navy }}>Strategic Focus</p>
+                    <div className="space-y-6">
+                      {/* Vision */}
+                      <div>
+                        <div className="flex justify-between text-[10px] font-bold uppercase tracking-wider mb-2">
+                          <span style={{ color: C.navy }}>Vision & Identity</span>
+                          <span style={{ color: C.muted }}>{frameworkData.visionPct}%</span>
+                        </div>
+                        <div className="h-1 w-full overflow-hidden" style={{ background: `${C.border}40` }}>
+                          <div className="h-full transition-all duration-1000" style={{ width: `${frameworkData.visionPct}%`, background: C.navy }} />
+                        </div>
+                      </div>
+                      {/* Capital */}
+                      <div>
+                        <div className="flex justify-between text-[10px] font-bold uppercase tracking-wider mb-2">
+                          <span style={{ color: C.navy }}>Capital & Leverage</span>
+                          <span style={{ color: C.muted }}>{frameworkData.capitalPct}%</span>
+                        </div>
+                        <div className="h-1 w-full overflow-hidden" style={{ background: `${C.border}40` }}>
+                          <div className="h-full transition-all duration-1000 delay-100" style={{ width: `${frameworkData.capitalPct}%`, background: C.gold }} />
+                        </div>
+                      </div>
+                      {/* Execution */}
+                      <div>
+                        <div className="flex justify-between text-[10px] font-bold uppercase tracking-wider mb-2">
+                          <span style={{ color: C.navy }}>Systems & Execution</span>
+                          <span style={{ color: C.muted }}>{frameworkData.executionPct}%</span>
+                        </div>
+                        <div className="h-1 w-full overflow-hidden" style={{ background: `${C.border}40` }}>
+                          <div className="h-full transition-all duration-1000 delay-200" style={{ width: `${frameworkData.executionPct}%`, background: C.coral }} />
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  <h3 className="text-5xl md:text-6xl font-bold mb-8" style={{ color: C.white, fontFamily: "Georgia,'Times New Roman',serif", letterSpacing: "-0.02em" }}>
+
+                  {/* Divider for desktop */}
+                  <div className="hidden lg:block lg:col-span-1 flex justify-center">
+                    <div className="w-px h-full" style={{ background: `linear-gradient(180deg, transparent, ${C.border}60, transparent)` }} />
+                  </div>
+
+                  {/* 2. Operating Pace Spectrum */}
+                  <div className="lg:col-span-6 flex flex-col justify-center">
+                    <p className="text-[9px] font-bold uppercase tracking-[0.2em] mb-12" style={{ color: C.navy }}>Operational Velocity</p>
+                    
+                    <div className="relative w-full pt-4 pb-8">
+                      {/* Track */}
+                      <div className="h-px w-full" style={{ background: `linear-gradient(90deg, ${C.coral}, ${C.border}40, ${C.navy})` }} />
+                      
+                      {/* Marker */}
+                      <div 
+                        className="absolute top-0 w-3 h-3 rounded-full -translate-y-1/2 -translate-x-1/2 transition-all duration-1000"
+                        style={{ 
+                          left: `${frameworkData.endurancePct}%`, 
+                          background: C.white, 
+                          border: `2px solid ${C.navy}`,
+                          boxShadow: "0 2px 8px rgba(0,0,0,0.1)"
+                        }} 
+                      />
+                      
+                      {/* Labels */}
+                      <div className="absolute top-6 left-0 text-[9px] font-bold uppercase tracking-wider" style={{ color: C.coral }}>
+                        Agility & Speed
+                      </div>
+                      <div className="absolute top-6 right-0 text-[9px] font-bold uppercase tracking-wider" style={{ color: C.navy }}>
+                        Structure & Endurance
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 3. Catalyst Engine */}
+                <div>
+                  <p className="text-[9px] font-bold uppercase tracking-[0.2em] mb-6" style={{ color: C.navy }}>Active Growth Catalysts</p>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-px" style={{ background: `${C.border}40` }}>
+                    {/* Hua Lu: Vault Door */}
+                    <div className="p-6 flex flex-col items-center text-center transition-all" style={{ background: frameworkData.activeCatalysts.has("化禄") || frameworkData.activeCatalysts.has("化祿") ? "#f0fdf4" : "transparent", opacity: frameworkData.activeCatalysts.has("化禄") || frameworkData.activeCatalysts.has("化祿") ? 1 : 0.3 }}>
+                      <div className="w-12 h-12 mb-4" style={{ color: frameworkData.activeCatalysts.has("化禄") || frameworkData.activeCatalysts.has("化祿") ? "#16a34a" : C.muted }}>
+                        {/* Vault door: outer ring, inner door, bolt tabs, center wheel with 4 spokes */}
+                        <svg className="w-full h-full" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
+                          <circle cx="50" cy="50" r="42" strokeWidth="3" />
+                          <rect x="46" y="6" width="8" height="8" rx="2" fill="currentColor" fillOpacity="0.3" stroke="none" />
+                          <rect x="46" y="86" width="8" height="8" rx="2" fill="currentColor" fillOpacity="0.3" stroke="none" />
+                          <rect x="6" y="46" width="8" height="8" rx="2" fill="currentColor" fillOpacity="0.3" stroke="none" />
+                          <rect x="86" y="46" width="8" height="8" rx="2" fill="currentColor" fillOpacity="0.3" stroke="none" />
+                          <circle cx="50" cy="50" r="28" strokeWidth="2" />
+                          <circle cx="50" cy="50" r="8" strokeWidth="2" fill="currentColor" fillOpacity="0.15" />
+                          <line x1="50" y1="42" x2="50" y2="24" strokeWidth="2" />
+                          <line x1="50" y1="58" x2="50" y2="76" strokeWidth="2" />
+                          <line x1="42" y1="50" x2="24" y2="50" strokeWidth="2" />
+                          <line x1="58" y1="50" x2="76" y2="50" strokeWidth="2" />
+                        </svg>
+                      </div>
+                      <p className="text-[8px] font-bold uppercase tracking-widest mb-1.5" style={{ color: frameworkData.activeCatalysts.has("化禄") || frameworkData.activeCatalysts.has("化祿") ? "#16a34a" : C.muted }}>Resource Magnet</p>
+                      <p className="text-xs font-bold" style={{ color: frameworkData.activeCatalysts.has("化禄") || frameworkData.activeCatalysts.has("化祿") ? "#14532d" : C.muted, fontFamily: "Georgia,'Times New Roman',serif" }}>Flow & Expansion</p>
+                    </div>
+                    {/* Hua Quan: Crown */}
+                    <div className="p-6 flex flex-col items-center text-center transition-all" style={{ background: frameworkData.activeCatalysts.has("化权") || frameworkData.activeCatalysts.has("化權") ? "#eff6ff" : "transparent", opacity: frameworkData.activeCatalysts.has("化权") || frameworkData.activeCatalysts.has("化權") ? 1 : 0.3 }}>
+                      <div className="w-12 h-12 mb-4" style={{ color: frameworkData.activeCatalysts.has("化权") || frameworkData.activeCatalysts.has("化權") ? "#2563eb" : C.muted }}>
+                        {/* Crown: band at base, 5-point zigzag profile, gems at tips */}
+                        <svg className="w-full h-full" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M 10 72 H 90 V 86 H 10 Z" fill="currentColor" fillOpacity="0.1" strokeWidth="2" />
+                          <path d="M 10 72 L 10 40 L 30 58 L 50 14 L 70 58 L 90 40 L 90 72" strokeWidth="2.5" />
+                          <circle cx="10" cy="38" r="5" fill="currentColor" fillOpacity="0.35" stroke="none" />
+                          <circle cx="50" cy="12" r="6" fill="currentColor" fillOpacity="0.35" stroke="none" />
+                          <circle cx="90" cy="38" r="5" fill="currentColor" fillOpacity="0.35" stroke="none" />
+                          <circle cx="30" cy="57" r="3.5" fill="currentColor" fillOpacity="0.2" stroke="none" />
+                          <circle cx="70" cy="57" r="3.5" fill="currentColor" fillOpacity="0.2" stroke="none" />
+                          <circle cx="35" cy="79" r="2.5" fill="currentColor" fillOpacity="0.5" stroke="none" />
+                          <circle cx="50" cy="79" r="2.5" fill="currentColor" fillOpacity="0.5" stroke="none" />
+                          <circle cx="65" cy="79" r="2.5" fill="currentColor" fillOpacity="0.5" stroke="none" />
+                        </svg>
+                      </div>
+                      <p className="text-[8px] font-bold uppercase tracking-widest mb-1.5" style={{ color: frameworkData.activeCatalysts.has("化权") || frameworkData.activeCatalysts.has("化權") ? "#2563eb" : C.muted }}>Command & Control</p>
+                      <p className="text-xs font-bold" style={{ color: frameworkData.activeCatalysts.has("化权") || frameworkData.activeCatalysts.has("化權") ? "#1e3a8a" : C.muted, fontFamily: "Georgia,'Times New Roman',serif" }}>Authority & Scale</p>
+                    </div>
+                    {/* Hua Ke: Fountain Pen Nib */}
+                    <div className="p-6 flex flex-col items-center text-center transition-all" style={{ background: frameworkData.activeCatalysts.has("化科") ? "#fffbeb" : "transparent", opacity: frameworkData.activeCatalysts.has("化科") ? 1 : 0.3 }}>
+                      <div className="w-12 h-12 mb-4" style={{ color: frameworkData.activeCatalysts.has("化科") ? "#d97706" : C.muted }}>
+                        {/* Pen nib: leaf/kite outline, center slit, breather hole, decorative engraving */}
+                        <svg className="w-full h-full" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M 50 90 Q 18 55, 26 20 Q 50 10, 74 20 Q 82 55, 50 90 Z" strokeWidth="2.5" />
+                          <line x1="50" y1="90" x2="50" y2="36" strokeWidth="1.5" />
+                          <ellipse cx="50" cy="66" rx="5" ry="6.5" fill="currentColor" fillOpacity="0.2" strokeWidth="1.5" />
+                          <path d="M 35 32 Q 50 38, 65 32" strokeWidth="1.5" strokeDasharray="3 3" strokeOpacity="0.6" />
+                        </svg>
+                      </div>
+                      <p className="text-[8px] font-bold uppercase tracking-widest mb-1.5" style={{ color: frameworkData.activeCatalysts.has("化科") ? "#d97706" : C.muted }}>Influence</p>
+                      <p className="text-xs font-bold" style={{ color: frameworkData.activeCatalysts.has("化科") ? "#78350f" : C.muted, fontFamily: "Georgia,'Times New Roman',serif" }}>Reputation & Brand</p>
+                    </div>
+                    {/* Hua Ji: Magnifying Glass */}
+                    <div className="p-6 flex flex-col items-center text-center transition-all" style={{ background: frameworkData.activeCatalysts.has("化忌") ? "#fff1ee" : "transparent", opacity: frameworkData.activeCatalysts.has("化忌") ? 1 : 0.3 }}>
+                      <div className="w-12 h-12 mb-4" style={{ color: frameworkData.activeCatalysts.has("化忌") ? C.coral : C.muted }}>
+                        {/* Magnifying glass: lens ring, inner focal ring, center dot, crosshair, angled handle */}
+                        <svg className="w-full h-full" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
+                          <circle cx="40" cy="40" r="28" strokeWidth="2.5" />
+                          <circle cx="40" cy="40" r="16" strokeWidth="1.5" />
+                          <circle cx="40" cy="40" r="5" fill="currentColor" fillOpacity="0.25" strokeWidth="1.5" />
+                          <line x1="13" y1="40" x2="67" y2="40" strokeWidth="1" strokeDasharray="3 4" strokeOpacity="0.65" />
+                          <line x1="40" y1="13" x2="40" y2="67" strokeWidth="1" strokeDasharray="3 4" strokeOpacity="0.65" />
+                          <line x1="62" y1="62" x2="88" y2="88" strokeWidth="6" />
+                        </svg>
+                      </div>
+                      <p className="text-[8px] font-bold uppercase tracking-widest mb-1.5" style={{ color: frameworkData.activeCatalysts.has("化忌") ? C.coral : C.muted }}>Obsessive Focus</p>
+                      <p className="text-xs font-bold" style={{ color: frameworkData.activeCatalysts.has("化忌") ? C.coralDark : C.muted, fontFamily: "Georgia,'Times New Roman',serif" }}>Friction & Mastery</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Core Operating Structure: Editorial Spread */}
+            <div className="py-16 border-y border-[#e8ddd0]/80 mb-24">
+              <div className="flex flex-col md:flex-row gap-8 md:items-center">
+                <div className="md:w-1/3">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.3em] mb-6" style={{ color: C.coral }}>
+                    Core Operating Structure
+                  </p>
+                  <div className="flex items-center gap-3">
+                    <span className="flex items-center justify-center w-12 h-12 rounded-full border" style={{ borderColor: `${C.coral}40`, color: C.coral }}>
+                      {strLabel.label.includes("Speed") ? <Zap size={20} /> : <Shield size={20} />}
+                    </span>
+                  </div>
+                </div>
+                <div className="md:w-2/3">
+                  <h3 className="text-5xl md:text-6xl font-bold mb-6" style={{ color: C.navy, fontFamily: "Georgia,'Times New Roman',serif", letterSpacing: "-0.02em" }}>
                     {strLabel.label}
                   </h3>
-                  <p className="text-lg md:text-xl leading-relaxed" style={{ color: "rgba(255,255,255,0.8)", maxWidth: "36rem" }}>
+                  <p className="text-lg md:text-xl leading-relaxed" style={{ color: C.muted, fontFamily: "Georgia,'Times New Roman',serif" }}>
                     {strLabel.description}
                   </p>
                 </div>
               </div>
             </div>
 
-            {/* Strategic Formation — Un-carded layout */}
+            {/* Strategic Formation: Refined Editorial Layout */}
             <div className="mb-24">
-              <div className="flex items-center gap-3 mb-10">
+              <div className="flex items-center gap-3 mb-12">
                 <span className="w-8 h-px" style={{ background: C.coral }} />
                 <p className="text-[10px] font-bold uppercase tracking-[0.3em]" style={{ color: C.coral }}>
                   Strategic Formation
                 </p>
               </div>
 
-              <div className="flex flex-col lg:flex-row gap-12 lg:gap-20">
+              <div className="flex flex-col lg:flex-row gap-12 lg:gap-16">
                 <div className="flex-1">
-                  <h3 className="text-4xl md:text-5xl font-bold mb-6" style={{ color: C.navy, fontFamily: "Georgia,'Times New Roman',serif", letterSpacing: "-0.02em" }}>
+                  <h3 className="text-4xl md:text-5xl font-bold mb-4" style={{ color: C.navy, fontFamily: "Georgia,'Times New Roman',serif", letterSpacing: "-0.02em" }}>
                     {formation.englishName}
                   </h3>
                   
-                  <p className="text-xl italic leading-relaxed mb-8" style={{ color: C.muted }}>
+                  <p className="text-xl italic leading-relaxed mb-10" style={{ color: C.muted, fontFamily: "Georgia,'Times New Roman',serif" }}>
                     &ldquo;{formation.tagline}&rdquo;
                   </p>
                   
-                  <p className="text-base leading-relaxed mb-10" style={{ color: C.navy }}>
-                    {formation.suitableFor}
-                  </p>
-
-                  <div>
-                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] mb-6" style={{ color: C.muted }}>Key Traits</p>
-                    <ol className="space-y-5">
-                      {formation.keyTraits.map((t, i) => (
-                        <li key={i} className="flex items-start gap-4">
-                          <span className="text-[10px] font-bold mt-1" style={{ color: C.coral }}>
-                            0{i + 1}
-                          </span>
-                          <span className="text-sm leading-relaxed" style={{ color: C.navy }}>{t}</span>
-                        </li>
-                      ))}
-                    </ol>
+                  {/* Key Traits */}
+                  <div className="flex flex-col gap-6">
+                    {formation.keyTraits.map((t, i) => (
+                      <div key={i} className="flex items-start gap-5">
+                        <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 mt-0.5" style={{ border: `1px solid ${C.coral}50`, color: C.coral }}>
+                          <span className="text-[12px] font-bold">{i + 1}</span>
+                        </div>
+                        <span className="text-base leading-relaxed" style={{ color: C.navy }}>{t}</span>
+                      </div>
+                    ))}
                   </div>
                 </div>
 
-                <div className="flex-1 flex flex-col gap-6 justify-center">
-                  <div className="relative p-8 rounded-2xl" style={{ background: C.white, border: `1px solid ${C.border}60`, boxShadow: "0 12px 32px rgba(0,0,0,0.03)" }}>
-                    <div className="absolute top-0 left-0 w-1.5 h-full rounded-l-2xl" style={{ background: "#16a34a" }} />
-                    <p className="text-[10px] font-bold uppercase tracking-widest mb-3" style={{ color: "#16a34a" }}>Lean Into</p>
-                    <p className="text-base font-medium leading-relaxed" style={{ color: C.navy }}>{formation.strategyAdvice}</p>
+                <div className="flex-1 flex flex-col gap-4 justify-center">
+                  <div className="p-8 rounded-[24px] flex flex-col justify-center h-full" style={{ background: "#f0fdf4" }}>
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-10 h-10 rounded-full flex items-center justify-center bg-white" style={{ color: "#16a34a", boxShadow: "0 4px 12px rgba(22, 163, 74, 0.1)" }}>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12l5 5L20 7"/></svg>
+                      </div>
+                      <p className="text-[12px] font-bold uppercase tracking-widest" style={{ color: "#16a34a" }}>Lean Into</p>
+                    </div>
+                    <p className="text-lg md:text-xl font-medium leading-relaxed" style={{ color: "#14532d", fontFamily: "Georgia,'Times New Roman',serif" }}>{formation.strategyAdvice}</p>
                   </div>
-                  <div className="relative p-8 rounded-2xl" style={{ background: C.white, border: `1px solid ${C.border}60`, boxShadow: "0 12px 32px rgba(0,0,0,0.03)" }}>
-                    <div className="absolute top-0 left-0 w-1.5 h-full rounded-l-2xl" style={{ background: C.coral }} />
-                    <p className="text-[10px] font-bold uppercase tracking-widest mb-3" style={{ color: C.coral }}>Avoid</p>
-                    <p className="text-base font-medium leading-relaxed" style={{ color: C.navy }}>{formation.avoidAdvice}</p>
+                  
+                  <div className="p-8 rounded-[24px] flex flex-col justify-center h-full" style={{ background: "#fff1ee" }}>
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-10 h-10 rounded-full flex items-center justify-center bg-white" style={{ color: C.coral, boxShadow: "0 4px 12px rgba(224, 108, 83, 0.1)" }}>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                      </div>
+                      <p className="text-[12px] font-bold uppercase tracking-widest" style={{ color: C.coral }}>Avoid</p>
+                    </div>
+                    <p className="text-lg md:text-xl font-medium leading-relaxed" style={{ color: C.coralDark, fontFamily: "Georgia,'Times New Roman',serif" }}>{formation.avoidAdvice}</p>
                   </div>
                 </div>
               </div>
@@ -1380,27 +1629,34 @@ const AlignmentAdvantage: React.FC = () => {
 
             {/* Special formations (if any) */}
             {structureResult.specialFormations.length > 0 && (
-              <div
-                className="rounded-2xl p-5 mb-4"
-                style={{ background: `${C.gold}15`, border: `1px solid ${C.gold}40` }}
-              >
-                <p className="text-[9px] font-bold uppercase tracking-[0.2em] mb-4" style={{ color: C.gold }}>
-                  Additional Formations Detected
-                </p>
-                <div className="space-y-3">
+              <div className="mb-24">
+                <div className="flex items-center gap-3 mb-8">
+                  <span className="w-8 h-px" style={{ background: C.gold }} />
+                  <p className="text-[10px] font-bold uppercase tracking-[0.3em]" style={{ color: C.gold }}>
+                    Hidden Edge · Special Formation
+                  </p>
+                </div>
+                <div className="grid grid-cols-1 gap-6">
                   {structureResult.specialFormations.map((k) => {
                     const sp = FORMATION_PROFILES[k];
                     return (
                       <div
                         key={k}
-                        className="rounded-xl p-4"
-                        style={{ background: C.cream, border: `1px solid ${C.border}60`, boxShadow: "0 4px 24px rgba(0,0,0,0.02)" }}
+                        className="rounded-[24px] p-8 md:p-10 relative overflow-hidden flex flex-col md:flex-row md:items-center gap-6"
+                        style={{ background: C.navy }}
                       >
-                        <div className="flex items-center gap-2 flex-wrap mb-1">
-                          <p className="text-sm font-bold" style={{ color: C.navy }}>{sp.englishName}</p>
-                          <span className="text-xs" style={{ color: C.muted }}>{sp.chineseStyle}</span>
+                        <div className="absolute top-0 right-0 w-64 h-64 opacity-10 pointer-events-none" style={{ color: C.gold, transform: "translate(20%, -20%)" }}>
+                          <svg viewBox="0 0 100 100" fill="currentColor">
+                            <polygon points="50,0 100,25 100,75 50,100 0,75 0,25" />
+                          </svg>
                         </div>
-                        <p className="text-xs italic leading-relaxed" style={{ color: C.muted }}>{sp.tagline}</p>
+                        <div className="flex-1 relative z-10">
+                          <div className="flex items-end gap-4 mb-4">
+                            <h4 className="text-3xl md:text-4xl font-bold" style={{ color: C.white, fontFamily: "Georgia,'Times New Roman',serif", letterSpacing: "-0.01em" }}>{sp.englishName}</h4>
+                            <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest" style={{ background: `${C.gold}20`, color: C.gold }}>{sp.chineseStyle}</span>
+                          </div>
+                          <p className="text-lg md:text-xl leading-relaxed" style={{ color: "rgba(255,255,255,0.8)" }}>{sp.tagline}</p>
+                        </div>
                       </div>
                     );
                   })}
@@ -1408,98 +1664,72 @@ const AlignmentAdvantage: React.FC = () => {
               </div>
             )}
 
-            {/* ── Formation Decision Rules — green / red flags ── */}
-            <div
-              className="rounded-3xl overflow-hidden mb-8"
-              style={{ border: `1px solid ${C.border}40`, boxShadow: "0 8px 32px rgba(0,0,0,0.03)" }}
-            >
-              <div
-                className="px-8 py-6 flex items-center justify-between"
-                style={{ background: C.navy }}
-              >
-                <div>
-                  <p className="text-[9px] font-bold uppercase tracking-[0.24em] mb-1.5" style={{ color: "rgba(255,255,255,0.4)" }}>
-                    Formation Rules
-                  </p>
-                  <p className="text-xl font-bold" style={{ color: C.white, fontFamily: "Georgia,'Times New Roman',serif" }}>
-                    When to Move · When to Wait
-                  </p>
-                </div>
-                <span
-                  className="rounded-full px-4 py-1.5 text-[10px] font-bold"
-                  style={{ background: `${C.coral}22`, color: C.coral, border: `1px solid ${C.coral}40` }}
-                >
-                  {formation.englishName}
-                </span>
+            {/* ── Formation Decision Rules: green / red flags ── */}
+            <div className="mb-16">
+              <div className="flex items-center gap-3 mb-10">
+                <span className="w-8 h-px" style={{ background: C.coral }} />
+                <p className="text-[10px] font-bold uppercase tracking-[0.3em]" style={{ color: C.coral }}>
+                  Execution Rules
+                </p>
               </div>
 
-              <div className="grid grid-cols-2 gap-0" style={{ background: C.cream }}>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Green flags */}
-                <div className="p-8" style={{ borderRight: `1px solid ${C.border}40` }}>
-                  <div className="flex items-center gap-3 mb-6">
-                    <span
-                      className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0"
-                      style={{ background: "#dcfce7", color: "#16a34a" }}
-                    >
-                      ✓
-                    </span>
-                    <p className="text-[10px] font-bold uppercase tracking-[0.2em]" style={{ color: "#16a34a" }}>
-                      Green Flags — Proceed
-                    </p>
+                <div className="p-8 rounded-[24px]" style={{ border: `1px solid ${C.border}40`, background: C.white }}>
+                  <div className="flex items-center gap-4 mb-8 pb-6" style={{ borderBottom: `1px solid ${C.border}40` }}>
+                    <div className="w-14 h-14 rounded-full flex items-center justify-center shrink-0" style={{ background: "#f0fdf4", color: "#16a34a" }}>
+                      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12l5 5L20 7"/></svg>
+                    </div>
+                    <div>
+                      <h4 className="text-2xl font-bold" style={{ color: C.navy, fontFamily: "Georgia,'Times New Roman',serif" }}>When to Proceed</h4>
+                      <p className="text-[10px] font-bold uppercase tracking-[0.2em] mt-1" style={{ color: "#16a34a" }}>Green Flags</p>
+                    </div>
                   </div>
-                  <ul className="space-y-4">
+                  <div className="space-y-4">
                     {formation.greenFlags.map((flag, i) => (
-                      <li key={i} className="flex items-start gap-3">
-                        <span
-                          className="w-5 h-5 rounded-full shrink-0 mt-0.5 flex items-center justify-center text-[9px] font-bold"
-                          style={{ background: "#dcfce7", color: "#16a34a" }}
-                        >
-                          {i + 1}
-                        </span>
-                        <span className="text-sm leading-relaxed" style={{ color: C.navy }}>{flag}</span>
-                      </li>
+                      <div key={i} className="flex items-start gap-4 p-4 rounded-[16px]" style={{ background: `${C.cream}30` }}>
+                        <div className="w-6 h-6 rounded-full flex items-center justify-center shrink-0 mt-0.5" style={{ background: "#f0fdf4", color: "#16a34a" }}>
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12l5 5L20 7"/></svg>
+                        </div>
+                        <span className="text-sm font-medium leading-relaxed" style={{ color: C.navy }}>{flag}</span>
+                      </div>
                     ))}
-                  </ul>
+                  </div>
                 </div>
 
                 {/* Red flags */}
-                <div className="p-8">
-                  <div className="flex items-center gap-3 mb-6">
-                    <span
-                      className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0"
-                      style={{ background: `${C.coral}18`, color: C.coral }}
-                    >
-                      !
-                    </span>
-                    <p className="text-[10px] font-bold uppercase tracking-[0.2em]" style={{ color: C.coral }}>
-                      Red Flags — Walk Away
-                    </p>
+                <div className="p-8 rounded-[24px]" style={{ border: `1px solid ${C.border}40`, background: C.white }}>
+                  <div className="flex items-center gap-4 mb-8 pb-6" style={{ borderBottom: `1px solid ${C.border}40` }}>
+                    <div className="w-14 h-14 rounded-full flex items-center justify-center shrink-0" style={{ background: "#fff1ee", color: C.coral }}>
+                      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                    </div>
+                    <div>
+                      <h4 className="text-2xl font-bold" style={{ color: C.navy, fontFamily: "Georgia,'Times New Roman',serif" }}>When to Walk Away</h4>
+                      <p className="text-[10px] font-bold uppercase tracking-[0.2em] mt-1" style={{ color: C.coral }}>Red Flags</p>
+                    </div>
                   </div>
-                  <ul className="space-y-4">
+                  <div className="space-y-4">
                     {formation.redFlags.map((flag, i) => (
-                      <li key={i} className="flex items-start gap-3">
-                        <span
-                          className="w-5 h-5 rounded-full shrink-0 mt-0.5 flex items-center justify-center text-[9px] font-bold"
-                          style={{ background: `${C.coral}18`, color: C.coral }}
-                        >
-                          {i + 1}
-                        </span>
-                        <span className="text-sm leading-relaxed" style={{ color: C.navy }}>{flag}</span>
-                      </li>
+                      <div key={i} className="flex items-start gap-4 p-4 rounded-[16px]" style={{ background: `${C.cream}30` }}>
+                        <div className="w-6 h-6 rounded-full flex items-center justify-center shrink-0 mt-0.5" style={{ background: "#fff1ee", color: C.coral }}>
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                        </div>
+                        <span className="text-sm font-medium leading-relaxed" style={{ color: C.navy }}>{flag}</span>
+                      </div>
                     ))}
-                  </ul>
+                  </div>
                 </div>
               </div>
 
               {/* Formation decision rule */}
-              <div
-                className="px-8 py-6"
-                style={{ background: `${C.navy}06`, borderTop: `1px solid ${C.border}40` }}
-              >
-                <p className="text-[10px] font-bold uppercase tracking-[0.2em] mb-2" style={{ color: C.muted }}>
-                  Your Formation Rule
+              <div className="mt-20 py-12 relative text-center px-4 md:px-12">
+                <div className="absolute top-0 left-1/4 right-1/4 h-px" style={{ background: `linear-gradient(90deg, transparent, ${C.coral}40, transparent)` }} />
+                <div className="absolute bottom-0 left-1/4 right-1/4 h-px" style={{ background: `linear-gradient(90deg, transparent, ${C.coral}40, transparent)` }} />
+                
+                <p className="text-[10px] font-bold uppercase tracking-[0.3em] mb-6" style={{ color: C.coral }}>
+                  The Golden Rule
                 </p>
-                <p className="text-sm leading-relaxed italic" style={{ color: C.navy }}>
+                <p className="text-2xl md:text-4xl leading-relaxed italic" style={{ color: C.navy, fontFamily: "Georgia,'Times New Roman',serif" }}>
                   &ldquo;{formation.decisionRule}&rdquo;
                 </p>
               </div>
@@ -1507,7 +1737,7 @@ const AlignmentAdvantage: React.FC = () => {
           </section>
 
           {/* ══════════════════════════════════════
-              SECTION 3 — HOW YOU OPERATE
+              SECTION 3: HOW YOU OPERATE
               ══════════════════════════════════════ */}
           <section id="operate" className="scroll-mt-16 mb-32 pt-16 relative overflow-hidden bg-white rounded-[40px] p-10 md:p-16 shadow-[0_8px_32px_rgba(0,0,0,0.03)] border border-[#e8ddd0]/50">
             <SectionWatermark type="nodes" />
@@ -1540,7 +1770,7 @@ const AlignmentAdvantage: React.FC = () => {
                     className="rounded-2xl overflow-hidden mb-4"
                     style={{ border: `1px solid ${C.border}60`, boxShadow: "0 4px 24px rgba(0,0,0,0.02)" }}
                   >
-                    {/* Palace header — navy */}
+                    {/* Palace header: navy */}
                     <div
                       className="px-6 py-4 flex items-center justify-between gap-4"
                       style={{
@@ -1604,7 +1834,7 @@ const AlignmentAdvantage: React.FC = () => {
                                     )}
                                   </div>
 
-                                  {/* Pinyin name — large */}
+                                  {/* Pinyin name: large */}
                                   <p
                                     className="text-2xl font-bold leading-none mb-4"
                                     style={{ color: C.navy, fontFamily: "Georgia,'Times New Roman',serif" }}
@@ -1661,7 +1891,7 @@ const AlignmentAdvantage: React.FC = () => {
               return (
                 <>
                   {renderOperatePalace("命宫",  "Life Palace · Your Character Blueprint",      "Core identity, temperament, and the energy you project into the world.", true)}
-                  {renderOperatePalace("福德",  "Inner Power Palace · What Drives You",        "Internal fuel source — what keeps you going when external results are slow.", false)}
+                  {renderOperatePalace("福德",  "Inner Power Palace · What Drives You",        "Internal fuel source: what keeps you going when external results are slow.", false)}
                   {renderOperatePalace("官禄",  "Operational Capacity · How You Execute",      "Your natural operating rhythm and the environments where you build momentum fastest.", false)}
                 </>
               );
@@ -1679,7 +1909,7 @@ const AlignmentAdvantage: React.FC = () => {
                 </p>
                 <p className="text-xs leading-relaxed" style={{ color: "rgba(255,255,255,0.65)" }}>
                   Your character is shaped by the combined energy of your Life, Inner Power, and Health palaces.
-                  Use this section to understand your natural operating style — and to design your work environment
+                  Use this section to understand your natural operating style: and to design your work environment
                   to maximise your peak energy while protecting your known depletion points.
                 </p>
               </div>
@@ -1687,7 +1917,7 @@ const AlignmentAdvantage: React.FC = () => {
           </section>
 
           {/* ══════════════════════════════════════
-              SECTION 4 — TIMING
+              SECTION 4: TIMING
               ══════════════════════════════════════ */}
           <section id="wealth" className="scroll-mt-16 mb-32 pt-16 relative overflow-hidden bg-[#fdf6ee] rounded-[40px] p-10 md:p-16 shadow-[0_8px_32px_rgba(0,0,0,0.03)] border border-[#e8ddd0]/80">
             <SectionWatermark type="waves" />
@@ -1698,7 +1928,7 @@ const AlignmentAdvantage: React.FC = () => {
               subtitle="Your dominant wealth archetype, what to focus on, what to stop, and the timing-wealth intersection for this cycle."
             />
 
-            {/* ── Wealth Type Profile — what category of wealth your chart attracts ── */}
+            {/* ── Wealth Type Profile: what category of wealth your chart attracts ── */}
             {(() => {
               const wealthKey = strategicData.wealthProfile.codes[0]?.key as WealthCodeKey | undefined;
               const wtProfile = wealthKey !== undefined ? WEALTH_TYPE[wealthKey] : undefined;
@@ -1745,7 +1975,7 @@ const AlignmentAdvantage: React.FC = () => {
               );
             })()}
 
-            {/* Wealth-relevant palace snapshot — shows the 財帛 palace (and its stars)
+            {/* Wealth-relevant palace snapshot: shows the 財帛 palace (and its stars)
                 so the reader can see exactly which stars produced their wealth archetype. */}
             <div className="mb-8">
               <TwelvePalaceMiniGrid chartData={chartData} highlightPalaces={["财帛", "田宅", "官禄"]} />
@@ -1985,7 +2215,7 @@ const AlignmentAdvantage: React.FC = () => {
               );
             })()}
 
-            {/* ── Focus On + Stop Doing — wealth-code specific actions ── */}
+            {/* ── Focus On + Stop Doing: wealth-code specific actions ── */}
             {(() => {
               const wealthKey = strategicData.wealthProfile.codes[0]?.key as WealthCodeKey | undefined;
               if (!wealthKey) return null;
@@ -2085,7 +2315,7 @@ const AlignmentAdvantage: React.FC = () => {
               );
             })()}
 
-            {/* ── Alternative Path — risk mitigation ── */}
+            {/* ── Alternative Path: risk mitigation ── */}
             {(() => {
               const seasonKey = strategicData.dayun?.season ?? "expansion";
               const altPath   = ALTERNATIVE_PATH[seasonKey] ?? ALTERNATIVE_PATH.expansion;
@@ -2112,7 +2342,7 @@ const AlignmentAdvantage: React.FC = () => {
           </section>
 
           {/* ══════════════════════════════════════
-              SECTION 6 — PEOPLE INTELLIGENCE
+              SECTION 6: PEOPLE INTELLIGENCE
               ══════════════════════════════════════ */}
           <section id="people" className="scroll-mt-16 mb-32 pt-16 relative overflow-hidden bg-white rounded-[40px] p-10 md:p-16 shadow-[0_8px_32px_rgba(0,0,0,0.03)] border border-[#e8ddd0]/50">
             <SectionWatermark type="network" />
@@ -2177,7 +2407,7 @@ const AlignmentAdvantage: React.FC = () => {
                           </span>
                         </div>
 
-                        {/* No intro strip — section header + star block label below is sufficient */}
+                        {/* No intro strip: section header + star block label below is sufficient */}
 
                         {/* Visual star cards */}
                         <div className="px-5 py-5" style={{ background: C.cream }}>
@@ -2260,7 +2490,7 @@ const AlignmentAdvantage: React.FC = () => {
                             </div>
                           )}
 
-                          {/* Strategic angle — compact callout */}
+                          {/* Strategic angle: compact callout */}
                           <div
                             className="mt-4 flex items-start gap-2 px-4 py-3 rounded-xl"
                             style={{ background: `${C.coral}0c`, border: `1px solid ${C.coral}25` }}
@@ -2296,7 +2526,7 @@ const AlignmentAdvantage: React.FC = () => {
           </section>
 
           {/* ══════════════════════════════════════
-              SECTION 7 — DECISION FRAMEWORK
+              SECTION 7: DECISION FRAMEWORK
               ══════════════════════════════════════ */}
           <section id="timing" className="scroll-mt-16 mb-32 pt-16 relative overflow-hidden bg-[#fdf6ee] rounded-[40px] p-10 md:p-16 shadow-[0_8px_32px_rgba(0,0,0,0.03)] border border-[#e8ddd0]/80">
             <SectionWatermark type="timeline" />
@@ -2307,7 +2537,7 @@ const AlignmentAdvantage: React.FC = () => {
               subtitle={`You are in your ${strategicData.phaseLabel} Phase. Select any month to see its strategic briefing.`}
             />
 
-            {/* DaYun All-Cycles Timeline — shows all 12 DaYun periods with the
+            {/* DaYun All-Cycles Timeline: shows all 12 DaYun periods with the
                 current one highlighted, so the reader can immediately see where
                 they are in their long-term cycle. */}
             {(() => {
@@ -2444,7 +2674,7 @@ const AlignmentAdvantage: React.FC = () => {
               );
             })()}
 
-            {/* Phase banner — flat navy (the 30% element for this section) */}
+            {/* Phase banner: flat navy (the 30% element for this section) */}
             <div
               className="rounded-3xl p-8 mb-8 flex items-center gap-6"
               style={{ background: C.navy, border: `1px solid ${C.navy}`, boxShadow: "0 8px 32px rgba(26,30,63,0.15)" }}
@@ -2482,7 +2712,7 @@ const AlignmentAdvantage: React.FC = () => {
               />
             </div>
 
-            {/* Month detail — inline, Cae Goh design */}
+            {/* Month detail: inline, Cae Goh design */}
             {selectedPalaceNum !== null && selectedPalace !== null ? (() => {
               const mData    = PALACE_MONTH_DATA[selectedPalace.name];
               const gData    = PALACE_GUIDANCE_DATA[selectedPalace.name];
@@ -2505,7 +2735,7 @@ const AlignmentAdvantage: React.FC = () => {
 
               return (
                 <div className="space-y-4">
-                  {/* Navy header — month + palace */}
+                  {/* Navy header: month + palace */}
                   <div
                     className="rounded-2xl p-6 flex items-start justify-between gap-4"
                     style={{ background: C.navy }}
@@ -2682,7 +2912,7 @@ const AlignmentAdvantage: React.FC = () => {
           </section>
 
           {/* ══════════════════════════════════════
-              SECTION 5 — WEALTH BLUEPRINT
+              SECTION 5: WEALTH BLUEPRINT
               ══════════════════════════════════════ */}
           <section id="decision" className="scroll-mt-16 mb-32 pt-16 relative overflow-hidden bg-white rounded-[40px] p-10 md:p-16 shadow-[0_8px_32px_rgba(0,0,0,0.03)] border border-[#e8ddd0]/50">
             <SectionWatermark type="target" />
@@ -2693,7 +2923,7 @@ const AlignmentAdvantage: React.FC = () => {
               subtitle="A repeatable system for evaluating any high-stakes decision through your three-axis Purple Star lens."
             />
 
-            {/* ── Convergence Statement — visual summary card ── */}
+            {/* ── Convergence Statement: visual summary card ── */}
             {(() => {
               const wealthKey = strategicData.wealthProfile.codes[0]?.key as WealthCodeKey | undefined;
               const wealthCat = wealthKey !== undefined ? WEALTH_TYPE[wealthKey]?.category : "Wealth Creation";
@@ -2747,16 +2977,16 @@ const AlignmentAdvantage: React.FC = () => {
                     <div className="w-2 h-2 rounded-full shrink-0" style={{ background: signalHex }} />
                     <p className="text-[10px] font-semibold" style={{ color: signalHex }}>
                       {strategicData.monthName}:{" "}
-                      {strategicData.signal === "green" ? "Green Light — optimal window to act"
-                        : strategicData.signal === "yellow" ? "Yellow Light — proceed with caution"
-                        : "Red Light — avoid major commitments"}
+                      {strategicData.signal === "green" ? "Green Light: optimal window to act"
+                        : strategicData.signal === "yellow" ? "Yellow Light: proceed with caution"
+                        : "Red Light: avoid major commitments"}
                     </p>
                   </div>
                 </div>
               );
             })()}
 
-            {/* ── Lifetime Decision Framework — visual 3-axis diagram ── */}
+            {/* ── Lifetime Decision Framework: visual 3-axis diagram ── */}
             <div
               className="rounded-3xl overflow-hidden mb-8"
               style={{ border: `1px solid ${C.border}40`, boxShadow: "0 8px 32px rgba(0,0,0,0.03)" }}
@@ -2869,7 +3099,7 @@ const AlignmentAdvantage: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
               <AxisCard
                 title="Structural"
-                description="Does this decision align with your Life and Career palace direction — your core design?"
+                description="Does this decision align with your Life and Career palace direction: your core design?"
                 value={strLabel.label}
                 isAutoFilled={false}
                 answer={framework.structural}
