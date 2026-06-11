@@ -164,10 +164,13 @@ module.exports = {
         },
       },
       backgroundImage: {
-        "footer-light": "linear-gradient(to right, #1A1E3F, #D4B896)",
+        "footer-light":
+          "linear-gradient(to right, #080657, #3D0F68, #8B1167, #D91744, #FE8E01)",
         "footer-dark": "linear-gradient(to right, #1A0F2E, #E8A989)",
         /** Named separately from brand.purple — avoids clobbering bg-brand-purple solid fills */
         "gradient-brand-purple": "linear-gradient(to right, #6B5B95, #4A3F6B)",
+        "gradient-accent-light":
+          "linear-gradient(to right, #080657, #3D0F68, #8B1167, #D91744, #FE8E01)",
       },
       fontSize: {
         "3xs": ["0.625rem", { lineHeight: "0.75rem" }],
@@ -175,6 +178,15 @@ module.exports = {
       },
       screens: {
         xs: "480px",
+      },
+      animation: {
+        "zodiac-pill-float": "zodiac-pill-float 3.5s ease-in-out infinite",
+      },
+      keyframes: {
+        "zodiac-pill-float": {
+          "0%, 100%": { transform: "translateY(0) translateX(0)" },
+          "50%": { transform: "translateY(-7px) translateX(2px)" },
+        },
       },
     },
   },

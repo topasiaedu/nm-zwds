@@ -1,5 +1,15 @@
 import React from "react";
-import { brandGradientTextClass } from "../styles/typographyUi";
+import {
+  brandGradientTextClass,
+  secondaryBrandGradientTextClass,
+} from "../styles/typographyUi";
+
+export type BrandGradientVariant = "primary" | "secondary";
+
+export const brandGradientClassByVariant: Record<BrandGradientVariant, string> = {
+  primary: brandGradientTextClass,
+  secondary: secondaryBrandGradientTextClass,
+};
 
 export type BrandGradientTextProps = {
   children: React.ReactNode;
@@ -7,17 +17,23 @@ export type BrandGradientTextProps = {
   className?: string;
   /** HTML element to render. Defaults to span. */
   as?: "span" | "p" | "h1" | "h2" | "h3" | "h4";
+  /**
+   * `primary` — headers, heroes, navbar (navy → magenta → orange).
+   * `secondary` — inline body emphasis (coral → orange).
+   */
+  variant?: BrandGradientVariant;
 };
 
 /**
- * Renders children with the brand gold→coral gradient (clip-text).
+ * Renders children with a brand clip-text gradient.
  */
 export const BrandGradientText: React.FC<BrandGradientTextProps> = ({
   children,
   className = "",
   as: Component = "span",
+  variant = "primary",
 }) => {
-  const mergedClassName = [brandGradientTextClass, className]
+  const mergedClassName = [brandGradientClassByVariant[variant], className]
     .filter(Boolean)
     .join(" ");
 
@@ -29,6 +45,7 @@ export type WrapPhraseInBrandGradientOptions = {
   phrase: string;
   /** Classes on the gradient span. */
   gradientClassName?: string;
+  variant?: BrandGradientVariant;
 };
 
 /**
@@ -39,7 +56,7 @@ export const wrapPhraseInBrandGradient = (
   text: string,
   options: WrapPhraseInBrandGradientOptions
 ): React.ReactNode => {
-  const { phrase, gradientClassName = "" } = options;
+  const { phrase, gradientClassName = "", variant = "primary" } = options;
   const phraseIndex = text.indexOf(phrase);
 
   if (phraseIndex === -1) {
@@ -48,7 +65,10 @@ export const wrapPhraseInBrandGradient = (
 
   const beforePhrase = text.slice(0, phraseIndex);
   const afterPhrase = text.slice(phraseIndex + phrase.length);
-  const spanClassName = [brandGradientTextClass, gradientClassName]
+  const spanClassName = [
+    brandGradientClassByVariant[variant],
+    gradientClassName,
+  ]
     .filter(Boolean)
     .join(" ");
 

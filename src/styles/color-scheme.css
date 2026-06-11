@@ -7,6 +7,18 @@
   /* —— Palette (hex) —— */
   --color-navy: #1a1e3f;
   --color-cream: #f6f0e8;
+  --color-accent-gradient-1: #080657;
+  --color-accent-gradient-2: #3d0f68;
+  --color-accent-gradient-3: #8b1167;
+  --color-accent-gradient-4: #d91744;
+  --color-accent-gradient-5: #fe8e01;
+
+  /* Brand clip-text gradients (see typographyUi.ts) */
+  --color-brand-gradient-primary-from: var(--color-accent-gradient-1);
+  --color-brand-gradient-primary-via: var(--color-accent-gradient-3);
+  --color-brand-gradient-primary-to: var(--color-accent-gradient-5);
+  --color-brand-gradient-secondary-from: var(--color-accent-gradient-5);
+  --color-brand-gradient-secondary-to: var(--color-accent-gradient-4);
 
   --color-surface-cream: #f6f0e8;
   --color-surface-warm: #f5e8d4;
@@ -36,6 +48,11 @@
   --color-surface-cream-rgb: 246 240 232;
   --color-brand-purple-rgb: 107 91 149;
   --color-brand-purple-light-rgb: 155 143 181;
+  --color-accent-gradient-1-rgb: 8 6 87;
+  --color-accent-gradient-2-rgb: 61 15 104;
+  --color-accent-gradient-3-rgb: 139 17 103;
+  --color-accent-gradient-4-rgb: 217 23 68;
+  --color-accent-gradient-5-rgb: 254 142 1;
   --color-accent-gold-rgb: 212 184 150;
   --color-accent-gold-dark-rgb: 212 175 123;
 

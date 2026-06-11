@@ -4,8 +4,11 @@
  */
 
 import React from "react";
-import { Eye, Handshake, Sparkles, Target, TriangleAlert, type LucideIcon } from "lucide-react";
+import { Eye, Handshake, Target, TriangleAlert, type LucideIcon } from "lucide-react";
 import type { ZodiacInsights } from "../../constants/zodiacProfiles";
+import { SubsectionSparkleDivider } from "../analysis_v2/shared/SubsectionSparkleDivider";
+import { BrandGradientText } from "../BrandGradientText";
+import { analysisCardTitleClass } from "../../styles/typographyUi";
 import ZodiacIcons from "../zwds/icons";
 import ZodiacIconWrapper from "../zwds/components/ZodiacIconWrapper";
 
@@ -15,40 +18,153 @@ interface ZodiacInsightsSectionProps {
   forPdfCapture?: boolean;
 }
 
-type GuidanceAccent = {
-  from: string;
-  to: string;
+type OrbitPill = {
+  key: string;
+  label: string;
+  variant: "trait" | "element";
 };
 
-const GUIDANCE_ACCENTS: Record<string, GuidanceAccent> = {
-  blue: { from: "#2563eb", to: "#0891b2" },
-  green: { from: "#16a34a", to: "#059669" },
-  purple: { from: "#9333ea", to: "#db2777" },
-  amber: { from: "#d97706", to: "#ea580c" },
+const ORBIT_RADIUS_PX = 132;
+
+/**
+ * Evenly spaces pills in a ring around the zodiac icon.
+ */
+const getOrbitPositionStyle = (index: number, total: number): React.CSSProperties => {
+  const angle = (index / total) * 2 * Math.PI - Math.PI / 2;
+  const x = Math.cos(angle) * ORBIT_RADIUS_PX;
+  const y = Math.sin(angle) * ORBIT_RADIUS_PX;
+  return {
+    left: "50%",
+    top: "50%",
+    transform: `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`,
+  };
+};
+
+const buildOrbitPills = (traits: string[], element: string): OrbitPill[] => [
+  ...traits.map((trait) => ({ key: trait, label: trait, variant: "trait" as const })),
+  { key: "element", label: `${element} element`, variant: "element" as const },
+];
+
+type ZodiacIdentityClusterProps = {
+  zodiacInsights: ZodiacInsights;
+  ZodiacIcon: React.ElementType | undefined;
+  forPdfCapture?: boolean;
+};
+
+const ORBIT_PILL_BASE_CLASS = [
+  "inline-block cursor-default whitespace-nowrap rounded-full border px-3 py-1",
+  "text-xs font-semibold shadow-sm",
+  "transition-[transform,box-shadow,border-color,background-color] duration-300 ease-out",
+  "motion-safe:hover:scale-110 motion-safe:hover:shadow-md motion-safe:hover:-translate-y-0.5",
+].join(" ");
+
+const getOrbitPillClassName = (
+  variant: OrbitPill["variant"],
+  forPdfCapture?: boolean
+): string => {
+  const floatClass = forPdfCapture
+    ? ""
+    : "motion-safe:animate-zodiac-pill-float motion-safe:hover:animate-none";
+
+  if (variant === "element") {
+    return [
+      ORBIT_PILL_BASE_CLASS,
+      floatClass,
+      "border-accent-gold/50 bg-surface-cream text-brand-purple",
+      "motion-safe:hover:border-accent-gold motion-safe:hover:bg-surface-elevated",
+      "dark:border-accent-gold/40 dark:bg-surface-dark dark:text-accent-gold",
+      "dark:motion-safe:hover:border-accent-gold dark:motion-safe:hover:bg-surface-darkElevated",
+    ].join(" ");
+  }
+
+  return [
+    ORBIT_PILL_BASE_CLASS,
+    floatClass,
+    "border-brand-purple/25 bg-surface-cream/95 text-brand-purple",
+    "motion-safe:hover:border-brand-purple/50 motion-safe:hover:bg-surface-elevated",
+    "dark:border-accent-gold/30 dark:bg-surface-dark/95 dark:text-accent-gold",
+    "dark:motion-safe:hover:border-accent-gold/55 dark:motion-safe:hover:bg-surface-darkElevated",
+  ].join(" ");
 };
 
 /**
- * Subsection divider + title (not a main numbered section hero).
+ * Centered zodiac icon with trait/element pills orbiting; name block below.
+ */
+const ZodiacIdentityCluster: React.FC<ZodiacIdentityClusterProps> = ({
+  zodiacInsights,
+  ZodiacIcon,
+  forPdfCapture,
+}) => {
+  const orbitPills = buildOrbitPills(zodiacInsights.coreTraits, zodiacInsights.element);
+
+  return (
+    <article aria-label="Nobleman zodiac identity">
+      <div className="mx-auto flex w-full max-w-md flex-col items-center">
+        <h3 className="mb-3 flex flex-wrap items-baseline justify-center gap-x-2 text-center text-3xl font-black text-theme-fg sm:text-4xl">
+          <span>The {zodiacInsights.zodiac}</span>
+          <span>{zodiacInsights.zodiacChinese}</span>
+        </h3>
+        <div className="relative mx-auto h-[min(22rem,72vw)] w-[min(22rem,72vw)] max-h-80 max-w-80">
+          {orbitPills.map((pill, index) => {
+            const orbitStyle = getOrbitPositionStyle(index, orbitPills.length);
+            const floatStyle: React.CSSProperties | undefined = forPdfCapture
+              ? undefined
+              : {
+                  animationDelay: `${index * 0.55}s`,
+                  animationDuration: `${3.2 + (index % 3) * 0.35}s`,
+                };
+
+            return (
+              <div
+                key={pill.key}
+                className="absolute left-1/2 top-1/2 z-0 hover:z-20"
+                style={orbitStyle}
+              >
+                <span
+                  className={getOrbitPillClassName(pill.variant, forPdfCapture)}
+                  style={floatStyle}
+                >
+                  {pill.label}
+                </span>
+              </div>
+            );
+          })}
+
+          {ZodiacIcon ? (
+            <div className="absolute left-1/2 top-1/2 z-10 flex h-24 w-24 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 border-accent-gold/60 bg-navy p-4 shadow-sm dark:bg-navy sm:h-28 sm:w-28 sm:p-5">
+              <ZodiacIconWrapper
+                Icon={ZodiacIcon}
+                className="h-full w-full"
+                invertToWhite
+              />
+            </div>
+          ) : null}
+        </div>
+      </div>
+    </article>
+  );
+};
+
+/**
+ * Subsection header — centered eyebrow, gradient title, subtitle, sparkle divider.
  */
 const ZodiacSubsectionHeader: React.FC<{
   title: string;
   subtitle: string;
 }> = ({ title, subtitle }) => (
-  <div className="mb-8 border-t border-gray-200 pt-8 dark:border-gray-700">
-    <div className="flex items-start gap-4">
-      <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 shadow-md">
-        <Sparkles className="h-5 w-5 text-white" aria-hidden="true" />
-      </div>
-      <div>
-        <p className="text-xs font-bold uppercase tracking-widest text-indigo-700 dark:text-indigo-300">
-          Nobleman deep dive
-        </p>
-        <h2 className="mt-1 text-2xl font-bold text-gray-900 dark:text-white sm:text-3xl">
-          {title}
-        </h2>
-        <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">{subtitle}</p>
-      </div>
-    </div>
+  <div className="text-center">
+    <p className="text-xs font-bold uppercase tracking-[0.2em] text-theme-fg-secondary">
+      Nobleman deep dive
+    </p>
+    <BrandGradientText
+      as="h2"
+      variant="primary"
+      className="mx-auto mt-2 inline-block w-fit text-2xl font-bold sm:text-3xl"
+    >
+      {title}
+    </BrandGradientText>
+    <p className="mt-2 text-sm leading-relaxed text-theme-fg-secondary">{subtitle}</p>
+    <SubsectionSparkleDivider className="mx-auto mb-0 mt-5 flex w-full max-w-md items-center gap-3 px-2" />
   </div>
 );
 
@@ -59,7 +175,6 @@ export const ZodiacInsightsSection: React.FC<ZodiacInsightsSectionProps> = ({
 }) => {
   const zodiacKey = noblemanZodiac.toLowerCase() as keyof typeof ZodiacIcons;
   const ZodiacIcon = ZodiacIcons[zodiacKey];
-  const hoverClass = forPdfCapture ? "" : "transition-shadow duration-300 hover:shadow-md";
 
   return (
     <section
@@ -67,85 +182,41 @@ export const ZodiacInsightsSection: React.FC<ZodiacInsightsSectionProps> = ({
       data-pdf-break-anchor="zodiac-insights"
       {...(forPdfCapture ? { "data-pdf-page-break-before": "" } : {})}
     >
-      <ZodiacSubsectionHeader
-        title="Zodiac Insights"
-        subtitle={`Understanding your ${noblemanZodiac} nobleman`}
-      />
+      <div className="space-y-8">
+        <ZodiacSubsectionHeader
+          title="Zodiac Insights"
+          subtitle={`Understanding your ${noblemanZodiac} nobleman`}
+        />
 
-      {/* Zodiac identity — clean card (no full-width purple gradient banner) */}
-      <article
-        className={`mb-8 overflow-hidden rounded-2xl border border-indigo-200/60 bg-white shadow-md dark:border-indigo-900/50 dark:bg-gray-800 ${hoverClass}`}
-      >
-        <div className="flex flex-col items-center gap-6 p-6 sm:flex-row sm:items-center sm:p-8">
-          {ZodiacIcon ? (
-            <div className="flex h-28 w-28 flex-shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 p-5 shadow-md sm:h-32 sm:w-32">
-              <ZodiacIconWrapper
-                Icon={ZodiacIcon}
-                className="h-full w-full"
-                invertToWhite
-              />
-            </div>
-          ) : null}
+        <ZodiacIdentityCluster
+          zodiacInsights={zodiacInsights}
+          ZodiacIcon={ZodiacIcon}
+          forPdfCapture={forPdfCapture}
+        />
 
-          <div className="min-w-0 flex-1 text-center sm:text-left">
-            <p className="text-xs font-bold uppercase tracking-widest text-violet-700 dark:text-violet-300">
-              Nobleman zodiac
-            </p>
-            <h3 className="mt-1 text-3xl font-black text-gray-900 dark:text-white sm:text-4xl">
-              The {zodiacInsights.zodiac}
-            </h3>
-            <p className="mt-1 text-xl text-gray-500 dark:text-gray-400">
-              {zodiacInsights.zodiacChinese}
-            </p>
-
-            <div className="mt-4 flex flex-wrap justify-center gap-2 sm:justify-start">
-              {zodiacInsights.coreTraits.map((trait) => (
-                <span
-                  key={trait}
-                  className="rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-sm font-medium text-indigo-800 dark:border-indigo-800 dark:bg-indigo-950/50 dark:text-indigo-200"
-                >
-                  {trait}
-                </span>
-              ))}
-            </div>
-
-            <div className="mt-4 inline-flex items-center rounded-full bg-violet-100 px-3 py-1 text-xs font-semibold text-violet-800 dark:bg-violet-950/50 dark:text-violet-200">
-              {zodiacInsights.element} element
-            </div>
-          </div>
-        </div>
-      </article>
-
-      {/* Practical guidance — accent tiles (same colors, new layout) */}
-      <div className="mb-2">
-        <p className="mb-4 text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400">
-          How to work with this energy
-        </p>
+        {/* Practical guidance grid */}
         <div
           className={
             forPdfCapture
-              ? "grid grid-cols-2 gap-4"
-              : "grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4"
+              ? "grid grid-cols-2 gap-8"
+              : "grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4"
           }
         >
           <GuidanceCard
             title="How to Recognize"
             icon={Eye}
-            gradientKey="blue"
             items={zodiacInsights.recognitionSigns}
             forPdfCapture={forPdfCapture}
           />
           <GuidanceCard
             title="What Motivates"
             icon={Target}
-            gradientKey="green"
             items={zodiacInsights.motivations}
             forPdfCapture={forPdfCapture}
           />
           <GuidanceCard
             title="Best Approach"
             icon={Handshake}
-            gradientKey="purple"
             items={zodiacInsights.approachStrategies}
             pdfPageBreakBefore={forPdfCapture}
             forPdfCapture={forPdfCapture}
@@ -153,7 +224,6 @@ export const ZodiacInsightsSection: React.FC<ZodiacInsightsSectionProps> = ({
           <GuidanceCard
             title="Watch Out For"
             icon={TriangleAlert}
-            gradientKey="amber"
             items={zodiacInsights.watchOuts}
             forPdfCapture={forPdfCapture}
           />
@@ -166,32 +236,36 @@ export const ZodiacInsightsSection: React.FC<ZodiacInsightsSectionProps> = ({
 const GuidanceCard: React.FC<{
   title: string;
   icon: LucideIcon;
-  gradientKey: string;
   items: string[];
   pdfPageBreakBefore?: boolean;
   forPdfCapture?: boolean;
-}> = ({ title, icon, gradientKey, items, pdfPageBreakBefore, forPdfCapture }) => {
+}> = ({ title, icon, items, pdfPageBreakBefore, forPdfCapture }) => {
   const IconComponent = icon;
-  const accent = GUIDANCE_ACCENTS[gradientKey] ?? { from: "#6b7280", to: "#4b5563" };
-  const hoverClass = forPdfCapture ? "" : "hover:shadow-md";
+  const hoverClass = forPdfCapture
+    ? ""
+    : "transition-[border-color,box-shadow] duration-200 hover:border-brand-purple/40 hover:shadow-md dark:hover:border-accent-gold/40";
 
   return (
     <div
       {...(pdfPageBreakBefore ? { "data-pdf-page-break-before": "" } : {})}
-      className={`overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800 ${hoverClass}`}
-      style={{ borderLeftWidth: "4px", borderLeftColor: accent.from }}
+      className={[
+        "overflow-hidden rounded-xl border border-theme-border-default border-l-4",
+        "border-l-brand-purple/40 bg-transparent shadow-sm",
+        "dark:border-brand-purple/25 dark:border-l-accent-goldDark/50",
+        hoverClass,
+      ].join(" ")}
     >
       <div className="p-4">
         <div className="mb-3 flex items-center gap-3">
-          <div
-            className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg text-white shadow-sm"
-            style={{
-              background: `linear-gradient(135deg, ${accent.from}, ${accent.to})`,
-            }}
-          >
-            <IconComponent className="h-4 w-4" aria-hidden="true" />
+          <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full border-2 border-accent-gold/60 bg-navy shadow-sm dark:bg-navy">
+            <IconComponent
+              className="h-4 w-4 text-accent-goldDark dark:text-accent-gold"
+              aria-hidden="true"
+            />
           </div>
-          <h4 className="text-sm font-bold text-gray-900 dark:text-white">{title}</h4>
+          <BrandGradientText as="h4" className={analysisCardTitleClass}>
+            {title}
+          </BrandGradientText>
         </div>
         <ul className="space-y-2">
           {items.map((item, idx) => (
@@ -200,8 +274,7 @@ const GuidanceCard: React.FC<{
               className="flex items-start gap-2 text-sm leading-relaxed text-gray-700 dark:text-gray-300"
             >
               <span
-                className="mt-2 h-1.5 w-1.5 flex-shrink-0 rounded-full"
-                style={{ backgroundColor: accent.from }}
+                className="mt-2 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-brand-purple dark:bg-accent-gold"
                 aria-hidden="true"
               />
               <span>{item}</span>

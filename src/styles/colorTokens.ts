@@ -37,6 +37,9 @@ export const cssVar = {
 export const palette = {
   navy: "#1A1E3F",
   cream: "#F6F0E8",
+  gradientAccent: ["#080657", "#3D0F68", "#8B1167", "#D91744", "#FE8E01"] as const,
+  /** Body / inline emphasis — gradient-4 → gradient-5 */
+  gradientAccentSecondary: ["#D91744", "#FE8E01"] as const,
   surface: {
     cream: "#F6F0E8",
     warm: "#F5E8D4",

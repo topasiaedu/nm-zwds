@@ -3,8 +3,13 @@
  */
 
 import React from "react";
-import { LayoutGrid } from "lucide-react";
 import type { ZodiacMiniData } from "../../utils/nobleman";
+import { SubsectionSparkleDivider } from "../analysis_v2/shared/SubsectionSparkleDivider";
+import { BrandGradientText } from "../BrandGradientText";
+import {
+  analysisCardTitleClass,
+  analysisEyebrowClass,
+} from "../../styles/typographyUi";
 import ZodiacIcons from "../zwds/icons";
 import ZodiacIconWrapper from "../zwds/components/ZodiacIconWrapper";
 
@@ -12,15 +17,6 @@ interface ZodiacMiniCardsGridProps {
   miniData: ZodiacMiniData[];
   forPdfCapture?: boolean;
 }
-
-const GRADIENT_ACCENT: Record<string, { from: string; to: string }> = {
-  "from-blue-500 to-cyan-500": { from: "#3b82f6", to: "#06b6d4" },
-  "from-amber-800 to-orange-800": { from: "#d97706", to: "#f59e0b" },
-  "from-green-500 to-emerald-500": { from: "#22c55e", to: "#10b981" },
-  "from-purple-500 to-pink-500": { from: "#a855f7", to: "#ec4899" },
-};
-
-const DEFAULT_ACCENT = { from: "#6b7280", to: "#4b5563" };
 
 export const ZodiacMiniCardsGrid: React.FC<ZodiacMiniCardsGridProps> = ({
   miniData,
@@ -32,7 +28,7 @@ export const ZodiacMiniCardsGrid: React.FC<ZodiacMiniCardsGridProps> = ({
 
   const hoverClass = forPdfCapture
     ? ""
-    : "transition-all duration-300 hover:shadow-md hover:-translate-y-0.5";
+    : "transition-[border-color,box-shadow] duration-200 hover:border-brand-purple/40 hover:shadow-md dark:hover:border-accent-gold/40";
 
   return (
     <section
@@ -40,40 +36,40 @@ export const ZodiacMiniCardsGrid: React.FC<ZodiacMiniCardsGridProps> = ({
       data-pdf-break-anchor="zodiac-mini-cards"
       {...(forPdfCapture ? { "data-pdf-page-break-before": "" } : {})}
     >
-      <div className="mb-6 border-t border-gray-200 pt-8 dark:border-gray-700">
-        <div className="flex items-start gap-4">
-          <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 shadow-md">
-            <LayoutGrid className="h-5 w-5 text-white" aria-hidden="true" />
-          </div>
-          <div>
-            <p className="text-xs font-bold uppercase tracking-widest text-violet-700 dark:text-violet-300">
-              Quick reference
-            </p>
-            <h3 className="mt-1 text-xl font-bold text-gray-900 dark:text-white">
-              Other Life Area Nobleman
-            </h3>
-            <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
-              Zodiac personalities supporting different aspects of your life
-            </p>
-          </div>
+      <div className="space-y-8">
+        <div className="text-center">
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-theme-fg-secondary">
+            Quick reference
+          </p>
+          <BrandGradientText
+            as="h2"
+            variant="primary"
+            className="mx-auto mt-2 inline-block w-fit text-2xl font-bold sm:text-3xl"
+          >
+            Other Life Area Nobleman
+          </BrandGradientText>
+          <p className="mt-2 text-sm leading-relaxed text-theme-fg-secondary">
+            Zodiac personalities supporting different aspects of your life
+          </p>
+          <SubsectionSparkleDivider className="mx-auto mb-0 mt-5 flex w-full max-w-md items-center gap-3 px-2" />
         </div>
-      </div>
 
-      <div
-        className={
-          forPdfCapture
-            ? "grid grid-cols-2 gap-4"
-            : "grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
-        }
-      >
-        {miniData.map((mini) => (
-          <ZodiacMiniCard
-            key={mini.area}
-            miniData={mini}
-            hoverClass={hoverClass}
-            forPdfCapture={forPdfCapture}
-          />
-        ))}
+        <div
+          className={
+            forPdfCapture
+              ? "grid grid-cols-2 gap-8"
+              : "grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3"
+          }
+        >
+          {miniData.map((mini) => (
+            <ZodiacMiniCard
+              key={mini.area}
+              miniData={mini}
+              hoverClass={hoverClass}
+              forPdfCapture={forPdfCapture}
+            />
+          ))}
+        </div>
       </div>
     </section>
   );
@@ -86,22 +82,20 @@ const ZodiacMiniCard: React.FC<{
 }> = ({ miniData, hoverClass }) => {
   const zodiacKey = miniData.zodiac.toLowerCase() as keyof typeof ZodiacIcons;
   const ZodiacIcon = ZodiacIcons[zodiacKey];
-  const accent = GRADIENT_ACCENT[miniData.gradient] ?? DEFAULT_ACCENT;
 
   return (
     <article
-      className={`overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800 ${hoverClass}`}
-      style={{ borderLeftWidth: "4px", borderLeftColor: accent.from }}
+      className={[
+        "overflow-hidden rounded-xl border border-theme-border-default border-l-4",
+        "border-l-brand-purple/40 bg-transparent shadow-sm",
+        "dark:border-brand-purple/25 dark:border-l-accent-goldDark/50",
+        hoverClass,
+      ].join(" ")}
     >
       <div className="p-4">
         <div className="flex items-start gap-3">
           {ZodiacIcon ? (
-            <div
-              className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl p-2 shadow-sm"
-              style={{
-                background: `linear-gradient(135deg, ${accent.from}, ${accent.to})`,
-              }}
-            >
+            <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full border-2 border-accent-gold/60 bg-navy p-2 shadow-sm dark:bg-navy">
               <ZodiacIconWrapper
                 Icon={ZodiacIcon}
                 className="h-full w-full"
@@ -110,34 +104,28 @@ const ZodiacMiniCard: React.FC<{
             </div>
           ) : null}
           <div className="min-w-0 flex-1">
-            <p
-              className="text-xs font-bold uppercase tracking-wide"
-              style={{ color: accent.from }}
-            >
+            <p className={`${analysisEyebrowClass} tracking-wide`}>
               {miniData.area}
             </p>
-            <p className="mt-0.5 text-lg font-bold text-gray-900 dark:text-white">
+            <BrandGradientText
+              as="h4"
+              className={`mt-0.5 ${analysisCardTitleClass}`}
+            >
               {miniData.zodiac}{" "}
-              <span className="text-base font-medium text-gray-500 dark:text-gray-400">
+              <span className="text-base font-medium text-theme-fg-secondary">
                 {miniData.zodiacChinese}
               </span>
-            </p>
+            </BrandGradientText>
           </div>
         </div>
 
-        <div className="mt-4 border-t border-gray-100 pt-3 dark:border-gray-700">
-          <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">
-            Core traits
-          </p>
+        <div className="mt-4 border-t border-theme-border-subtle pt-3 dark:border-brand-purple/25">
+          <p className={analysisEyebrowClass}>Core traits</p>
           <div className="mt-2 flex flex-wrap gap-1.5">
             {miniData.coreTraits.map((trait) => (
               <span
                 key={trait}
-                className="rounded-md px-2 py-0.5 text-xs font-medium text-gray-700 dark:text-gray-200"
-                style={{
-                  backgroundColor: `${accent.from}18`,
-                  border: `1px solid ${accent.from}33`,
-                }}
+                className="rounded-md border border-brand-purple/25 bg-brand-purple/10 px-2 py-0.5 text-xs font-medium text-brand-purple dark:border-accent-gold/30 dark:bg-accent-gold/10 dark:text-accent-gold"
               >
                 {trait}
               </span>
@@ -146,10 +134,8 @@ const ZodiacMiniCard: React.FC<{
         </div>
 
         <div className="mt-3">
-          <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">
-            Quick tip
-          </p>
-          <p className="mt-1 text-xs leading-relaxed text-gray-600 dark:text-gray-400">
+          <p className={analysisEyebrowClass}>Quick tip</p>
+          <p className="mt-1 text-xs leading-relaxed text-theme-fg-secondary">
             {miniData.recognitionSummary}
           </p>
         </div>

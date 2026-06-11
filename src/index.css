@@ -43,7 +43,7 @@
   pointer-events: none;
   z-index: 0;
   opacity: 0.55;
-  background: linear-gradient(to right, #1A1E3F, #D4B896);
+  background: linear-gradient(to right, #080657, #3D0F68, #8B1167, #D91744, #FE8E01);
 }
 
 .dark .auth-page-bg {
@@ -160,11 +160,11 @@
   opacity: 0.55;
   background-image:
     radial-gradient(2px 2px at 15% 20%, rgba(107, 91, 149, 0.65), transparent),
-    radial-gradient(2px 2px at 55% 12%, rgba(212, 184, 150, 0.5), transparent),
+    radial-gradient(2px 2px at 55% 12%, rgba(254, 142, 1, 0.5), transparent),
     radial-gradient(2px 2px at 78% 35%, rgba(107, 91, 149, 0.55), transparent),
-    radial-gradient(2px 2px at 35% 65%, rgba(212, 184, 150, 0.45), transparent),
+    radial-gradient(2px 2px at 35% 65%, rgba(217, 23, 68, 0.45), transparent),
     radial-gradient(2px 2px at 62% 78%, rgba(107, 91, 149, 0.5), transparent),
-    radial-gradient(2px 2px at 92% 68%, rgba(212, 184, 150, 0.4), transparent);
+    radial-gradient(2px 2px at 92% 68%, rgba(254, 142, 1, 0.4), transparent);
   background-repeat: no-repeat;
   background-size: 100% 100%;
   animation: chart-star-twinkle 8s ease-in-out infinite alternate;
@@ -399,7 +399,7 @@ html, body, #root {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #D4B896;
+  background: #8B1167;
   border-radius: 6px !important;
 }
 
@@ -419,7 +419,7 @@ html, body, #root {
 /* Custom scrollbar styles for our app */
 .custom-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: #D4B896 transparent;
+  scrollbar-color: #8B1167 transparent;
 }
 
 .custom-scrollbar::-webkit-scrollbar {
@@ -431,7 +431,7 @@ html, body, #root {
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #D4B896;
+  background: #8B1167;
   border-radius: 6px;
 }
 
@@ -458,7 +458,7 @@ html, body, #root {
 
 /* Track */
 * {
-  scrollbar-color: #D4B896 transparent;
+  scrollbar-color: #8B1167 transparent;
 }
 
 /* Handle on hover */
