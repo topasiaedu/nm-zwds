@@ -10,9 +10,16 @@
  *   3 stars → red    (caution / protect & plan)
  */
 
+/**
+ * Timing phase name — maps the four seasonal cycles to the Alignment Advantage
+ * framework display names. Internal DaYun keys (spring/summer/autumn/winter)
+ * remain unchanged; these names are used in display contexts only.
+ */
+export type TimingPhase = "Expansion" | "Visibility" | "Consolidation" | "Foundation";
+
 /** Per-palace metadata used to derive timing signals and display content. */
 export interface PalaceTimingData {
-  season:    "Spring" | "Summer" | "Autumn" | "Winter";
+  season:    TimingPhase;
   stars:     3 | 4 | 5;
   area:      string;
   priority:  string;
@@ -28,7 +35,7 @@ export interface PalaceTimingData {
  */
 export const PALACE_DATA: Record<string, PalaceTimingData> = {
   "官禄": {
-    season:    "Spring",
+    season:    "Expansion",
     stars:     5,
     area:      "Professional",
     priority:  "Launch Initiatives",
@@ -36,7 +43,7 @@ export const PALACE_DATA: Record<string, PalaceTimingData> = {
     watchOut:  ["Waiting for perfect conditions before committing", "Over-allocating time to low-leverage routine work"],
   },
   "迁移": {
-    season:    "Spring",
+    season:    "Expansion",
     stars:     5,
     area:      "Expansion",
     priority:  "Step Beyond Comfort Zone",
@@ -44,7 +51,7 @@ export const PALACE_DATA: Record<string, PalaceTimingData> = {
     watchOut:  ["Staying in familiar territory out of comfort", "Turning down opportunities that require you to stretch"],
   },
   "交友": {
-    season:    "Spring",
+    season:    "Expansion",
     stars:     5,
     area:      "Network",
     priority:  "Launch Initiatives",
@@ -52,7 +59,7 @@ export const PALACE_DATA: Record<string, PalaceTimingData> = {
     watchOut:  ["Staying heads-down without investing in new connections", "Letting strong existing relationships go cold"],
   },
   "财帛": {
-    season:    "Summer",
+    season:    "Visibility",
     stars:     5,
     area:      "Financial",
     priority:  "Monetize Resources",
@@ -60,7 +67,7 @@ export const PALACE_DATA: Record<string, PalaceTimingData> = {
     watchOut:  ["Leaving money on the table by undercharging or under-asking", "Opening new positions instead of harvesting existing ones"],
   },
   "田宅": {
-    season:    "Summer",
+    season:    "Visibility",
     stars:     4,
     area:      "Assets",
     priority:  "Optimize Foundations",
@@ -68,7 +75,7 @@ export const PALACE_DATA: Record<string, PalaceTimingData> = {
     watchOut:  ["Making speculative new purchases before optimising current assets", "Ignoring maintenance that quietly erodes your base"],
   },
   "福德": {
-    season:    "Summer",
+    season:    "Visibility",
     stars:     5,
     area:      "Inner Power",
     priority:  "Align Inner State",
@@ -76,7 +83,7 @@ export const PALACE_DATA: Record<string, PalaceTimingData> = {
     watchOut:  ["Burning out by pouring into output without internal recovery", "Making major decisions while mentally depleted"],
   },
   "夫妻": {
-    season:    "Autumn",
+    season:    "Consolidation",
     stars:     3,
     area:      "Partnership",
     priority:  "Clear Emotional Clutter",
@@ -84,7 +91,7 @@ export const PALACE_DATA: Record<string, PalaceTimingData> = {
     watchOut:  ["Signing new partnership agreements or commitments this month", "Ignoring friction in key relationships and hoping it resolves itself"],
   },
   "兄弟": {
-    season:    "Autumn",
+    season:    "Consolidation",
     stars:     4,
     area:      "Circle",
     priority:  "Purge Connections",
@@ -92,7 +99,7 @@ export const PALACE_DATA: Record<string, PalaceTimingData> = {
     watchOut:  ["Expanding your network at the expense of depth with existing allies", "Tolerating energy-draining relationships out of obligation"],
   },
   "子女": {
-    season:    "Autumn",
+    season:    "Consolidation",
     stars:     3,
     area:      "Legacy",
     priority:  "Structure Your Plans",
@@ -100,7 +107,7 @@ export const PALACE_DATA: Record<string, PalaceTimingData> = {
     watchOut:  ["Launching new creative projects without completing what is already in progress", "Spreading your output thin across too many initiatives"],
   },
   "父母": {
-    season:    "Autumn",
+    season:    "Consolidation",
     stars:     3,
     area:      "Patterns",
     priority:  "Break Old Loops",
@@ -108,7 +115,7 @@ export const PALACE_DATA: Record<string, PalaceTimingData> = {
     watchOut:  ["Repeating the same strategy that has not been working, expecting different results", "Letting old narratives about your limitations drive current decisions"],
   },
   "命宫": {
-    season:    "Winter",
+    season:    "Foundation",
     stars:     4,
     area:      "Self",
     priority:  "Invest in Yourself",
@@ -116,7 +123,7 @@ export const PALACE_DATA: Record<string, PalaceTimingData> = {
     watchOut:  ["Postponing self-development under the weight of responsibilities", "Comparing your progress to others instead of measuring against your own trajectory"],
   },
   "疾厄": {
-    season:    "Winter",
+    season:    "Foundation",
     stars:     3,
     area:      "Body",
     priority:  "Restore Strength",

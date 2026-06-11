@@ -153,6 +153,38 @@ export const IDEAL_COLLABORATOR: Record<WealthCodeKey, CollaboratorProfile> = {
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Focus On — wealth-code specific high-leverage priorities
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * The three highest-leverage focus areas for each wealth archetype.
+ * Displayed as a "FOCUS ON" list in the Wealth Blueprint chapter,
+ * directly before the STOP_DOING list as a positive counterbalance.
+ */
+export const FOCUS_ON: Record<WealthCodeKey, [string, string, string]> = {
+  investmentBrain: [
+    "Building and documenting a clear investment thesis for every capital decision before committing",
+    "Identifying one compounding asset position to deepen rather than adding more positions horizontally",
+    "Creating a quarterly review cadence to objectively score each position against your original thesis",
+  ],
+  brandingMagnet: [
+    "Converting your existing audience or reputation into one premium, high-margin offer this quarter",
+    "Establishing a consistent content or visibility cadence that compounds your authority over time",
+    "Identifying your highest-conversion channel and doubling down on it while reducing scattered efforts",
+  ],
+  strategyPlanner: [
+    "Choosing one major strategic objective for the next 90 days and eliminating all decisions that do not serve it",
+    "Scheduling protected thinking time each week — your best leverage comes from strategy, not execution",
+    "Identifying the single system in your business that, if optimised, would create the largest downstream return",
+  ],
+  collaborator: [
+    "Mapping your three most valuable untapped relationships and initiating a specific, reciprocal collaboration",
+    "Structuring your best joint venture arrangements into formal agreements with clear revenue-sharing terms",
+    "Building a referral pipeline that runs systematically — your wealth flows through people, make that flow deliberate",
+  ],
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Decision Framework Recommendations (shared between home base and PDF)
 // Previously in alignment-advantage/index.tsx — centralised here.
 // ─────────────────────────────────────────────────────────────────────────────
@@ -190,7 +222,8 @@ export const FRAMEWORK_RECOMMENDATIONS: Record<number, FrameworkRecommendation> 
 // Phase Alignment Matrix — shared between PhaseAlignmentCard and the PDF
 // ─────────────────────────────────────────────────────────────────────────────
 
-export type PhaseAlignmentSeasonKey = "spring" | "summer" | "autumn" | "winter";
+/** Timing phase keys aligned with the Alignment Advantage framework. */
+export type PhaseAlignmentSeasonKey = "expansion" | "visibility" | "consolidation" | "foundation";
 export type PhaseAlignmentWealthKey = "investmentBrain" | "brandingMagnet" | "strategyPlanner" | "collaborator";
 
 export interface PhaseAlignmentEntry {
@@ -199,25 +232,25 @@ export interface PhaseAlignmentEntry {
 }
 
 export const PHASE_ALIGNMENT_MATRIX: Record<PhaseAlignmentSeasonKey, Record<PhaseAlignmentWealthKey, PhaseAlignmentEntry>> = {
-  spring: {
+  expansion: {
     investmentBrain:  { copy: "Spring cycles reward bold capital deployment. Your Investment Brain is perfectly suited for this growth window — this is your season to place calculated bets and expand your portfolio.", watchOut: ["Spreading capital across too many positions at once instead of going deep on your best thesis", "Acting on FOMO-driven opportunities rather than pre-researched conviction plays"] },
     brandingMagnet:   { copy: "Spring is launch season, and your Branding Magnet thrives in visibility and expansion. Amplify your presence now — the market is receptive and your signal carries further.", watchOut: ["Launching without a monetisation funnel behind your visibility push", "Over-creating content without converting your existing audience first"] },
     strategyPlanner:  { copy: "Your Strategy Planner archetype aligns well with Spring's growth energy. Use this period to execute plans you've been developing. Momentum builds quickly when you move now.", watchOut: ["Over-planning when the window requires execution — Spring rewards action, not refinement", "Missing the launch window because the plan isn't 'perfect' yet"] },
     collaborator:     { copy: "Spring opens doors and builds bridges. Your Collaborator wealth code finds its strongest expression in forming new partnerships and joint ventures during this expansion window.", watchOut: ["Saying yes to every introduction and spreading your relationship energy too thin", "Entering partnerships without clarity on structure and mutual contribution"] },
   },
-  summer: {
+  visibility: {
     investmentBrain:  { copy: "Summer is harvest season. Your Investment Brain should focus on monetising returns from previous positions and scaling what's already working. Resist the urge to open new positions — harvest first.", watchOut: ["Opening new speculative positions when you should be compounding existing ones", "Underestimating the compounding power of consolidating before expanding"] },
     brandingMagnet:   { copy: "Summer is your highest-leverage season. Branding Magnets collect the rewards of their visibility in Summer. Monetise your audience, launch premium offers, and convert attention into revenue.", watchOut: ["Staying in creation mode instead of shifting into monetisation mode this season", "Discounting your premium offers when the market is most receptive to full-price conversions"] },
     strategyPlanner:  { copy: "Your Strategy Planner is built for Summer. Systematic execution of your plans produces outsized returns now. Consolidate gains, optimise operations, and extract maximum value from existing systems.", watchOut: ["Starting new strategic initiatives before capturing the value from current ones", "Over-optimising systems instead of deploying them and capturing returns"] },
     collaborator:     { copy: "Summer rewards your Collaborator's network of trust. Revenue generated through partnerships and referrals accelerates now. Deepen existing alliances and activate your inner circle.", watchOut: ["Neglecting your highest-value existing relationships while chasing new ones", "Failing to formalise revenue-sharing structures while trust is high"] },
   },
-  autumn: {
+  consolidation: {
     investmentBrain:  { copy: "Autumn demands caution from your Investment Brain. This is a consolidation season — protect capital, de-risk positions, and avoid speculative moves. Patience here prevents costly mistakes.", watchOut: ["Making speculative new investments against the seasonal current", "Letting overconfidence from recent gains lead to overexposure"] },
     brandingMagnet:   { copy: "Autumn calls for pruning, not growing. For your Branding Magnet, this means cutting low-ROI channels and doubling down on what converts. Protect your reputation by saying no more often.", watchOut: ["Launching major campaigns in a season that rewards consolidation over expansion", "Ignoring negative audience feedback signals that surface more clearly in Autumn"] },
     strategyPlanner:  { copy: "Your Strategy Planner's instinct to plan is perfectly timed in Autumn. Use this season to audit, refine, and prepare your next Spring strategy. Avoid committing to major new initiatives.", watchOut: ["Committing resources to new strategic bets when the season calls for review", "Over-auditing and never committing to the revised strategy — analysis paralysis in Autumn"] },
     collaborator:     { copy: "Autumn is a season for reviewing partnerships. Your Collaborator should audit relationships — strengthen the ones that compound, and gracefully exit those that drain. Quality over quantity now.", watchOut: ["Avoiding difficult conversations about underperforming partnerships out of politeness", "Entering new partnership agreements during a season designed for review, not initiation"] },
   },
-  winter: {
+  foundation: {
     investmentBrain:  { copy: "Winter is your Investment Brain's research and due-diligence season. Study markets, identify the plays you'll execute in Spring, and build conviction without pulling the trigger yet.", watchOut: ["Acting on Winter-season conviction before the Spring execution window opens", "Under-investing in research and due diligence and entering Spring underprepared"] },
     brandingMagnet:   { copy: "Winter fuels your Branding Magnet's creative engine. Build content, develop your positioning, and lay the groundwork for a powerful Spring launch. The audience you earn now grows with you.", watchOut: ["Expecting Winter-built content to produce immediate revenue — it compounds into Spring", "Neglecting your existing audience while building new content for future audiences"] },
     strategyPlanner:  { copy: "Winter is the Strategy Planner's season. Systems, frameworks, and long-horizon plans built in Winter become Spring's competitive advantage. This is your most productive planning window.", watchOut: ["Treating Winter as a rest period when it is actually your highest-leverage planning season", "Building strategies without execution dates — plans without commitments are just intentions"] },
@@ -231,8 +264,13 @@ export const PHASE_ALIGNMENT_MATRIX: Record<PhaseAlignmentSeasonKey, Record<Phas
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const ALTERNATIVE_PATH: Record<string, string> = {
+  expansion:     "Consider a smaller-scale version of this move — test the thesis with lower exposure before full commitment.",
+  visibility:    "Redirect the energy toward harvesting an existing position rather than opening a new one.",
+  consolidation: "Protect your current base first. Revisit this decision in your next Expansion phase when the environment is more expansive.",
+  foundation:    "Use this period to refine the strategy, do deeper research, and build conviction — commit when your Expansion phase arrives.",
+  // Legacy keys kept for backward compatibility with any callers using the old names
   spring:  "Consider a smaller-scale version of this move — test the thesis with lower exposure before full commitment.",
   summer:  "Redirect the energy toward harvesting an existing position rather than opening a new one.",
-  autumn:  "Protect your current base first. Revisit this decision in the next Spring cycle when the environment is more expansive.",
-  winter:  "Use this period to refine the strategy, do deeper research, and build conviction — commit when the next cycle turns.",
+  autumn:  "Protect your current base first. Revisit this decision in your next Expansion phase.",
+  winter:  "Use this period to refine the strategy, do deeper research, and build conviction.",
 };

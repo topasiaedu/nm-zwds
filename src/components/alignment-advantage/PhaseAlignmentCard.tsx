@@ -17,18 +17,26 @@ import {
   type PhaseAlignmentWealthKey,
 } from "../../utils/forecast/wealthContentData";
 
-type SeasonKey = PhaseAlignmentSeasonKey;
+type PhaseKey = PhaseAlignmentSeasonKey;
 type WealthKey = PhaseAlignmentWealthKey;
 
+/** Maps the DaYun season (spring/summer/autumn/winter) to the new phase keys. */
+const DAYUN_TO_PHASE: Record<string, PhaseKey> = {
+  spring: "expansion",
+  summer: "visibility",
+  autumn: "consolidation",
+  winter: "foundation",
+};
+
 // ─────────────────────────────────────────────────────────────────────────────
-// Season styles
+// Phase styles
 // ─────────────────────────────────────────────────────────────────────────────
 
-const SEASON_CONFIG: Record<SeasonKey, { gradient: string; icon: string; label: string }> = {
-  spring: { gradient: "from-emerald-500 to-green-600",   icon: "🌱", label: "Spring" },
-  summer: { gradient: "from-amber-500 to-orange-600",    icon: "☀️", label: "Summer" },
-  autumn: { gradient: "from-orange-500 to-red-600",      icon: "🍂", label: "Autumn" },
-  winter: { gradient: "from-blue-500 to-indigo-600",     icon: "❄️", label: "Winter" },
+const PHASE_CONFIG: Record<PhaseKey, { gradient: string; icon: string; label: string }> = {
+  expansion:     { gradient: "from-emerald-500 to-green-600",   icon: "🚀", label: "Expansion" },
+  visibility:    { gradient: "from-amber-500 to-orange-600",    icon: "✨", label: "Visibility" },
+  consolidation: { gradient: "from-orange-500 to-red-600",      icon: "🛡️", label: "Consolidation" },
+  foundation:    { gradient: "from-blue-500 to-indigo-600",     icon: "🏗️", label: "Foundation" },
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -54,13 +62,13 @@ const PhaseAlignmentCard: React.FC<PhaseAlignmentCardProps> = ({
   dayunCycle,
   wealthProfile,
 }) => {
-  const season = dayunCycle.season as SeasonKey;
+  const phaseKey: PhaseKey = DAYUN_TO_PHASE[dayunCycle.season] ?? "expansion";
   const wealthKey = wealthProfile.codes[0]?.key as WealthKey | undefined;
-  const seasonConfig = SEASON_CONFIG[season] ?? SEASON_CONFIG.spring;
+  const phaseConfig = PHASE_CONFIG[phaseKey] ?? PHASE_CONFIG.expansion;
 
   const alignmentEntry =
     wealthKey !== undefined
-      ? (PHASE_ALIGNMENT_MATRIX[season]?.[wealthKey] ?? null)
+      ? (PHASE_ALIGNMENT_MATRIX[phaseKey]?.[wealthKey] ?? null)
       : null;
 
   const alignmentCopy = alignmentEntry?.copy ?? "";
@@ -72,15 +80,15 @@ const PhaseAlignmentCard: React.FC<PhaseAlignmentCardProps> = ({
   return (
     <div className="rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-700 shadow-lg">
       {/* Gradient header */}
-      <div className={`bg-gradient-to-r ${seasonConfig.gradient} px-6 py-5`}>
+      <div className={`bg-gradient-to-r ${phaseConfig.gradient} px-6 py-5`}>
         <div className="flex items-center gap-3">
-          <span className="text-3xl" aria-hidden="true">{seasonConfig.icon}</span>
+          <span className="text-3xl" aria-hidden="true">{phaseConfig.icon}</span>
           <div>
             <p className="text-xs font-bold uppercase tracking-widest text-white/80 mb-0.5">
               Current Phase Alignment
             </p>
             <h3 className="text-xl font-bold text-white">
-              {seasonConfig.label} Season × {wealthProfile.dominantArchetype ?? "Your Wealth Code"}
+              {phaseConfig.label} Phase × {wealthProfile.dominantArchetype ?? "Your Wealth Code"}
             </h3>
           </div>
         </div>
@@ -99,7 +107,7 @@ const PhaseAlignmentCard: React.FC<PhaseAlignmentCardProps> = ({
         {dayunCycle.coreMessage.length > 0 && (
           <div className="rounded-xl bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 px-4 py-3">
             <p className="text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400 mb-1">
-              Season directive
+              Phase directive
             </p>
             <p className="text-sm font-semibold text-gray-900 dark:text-white">
               {dayunCycle.coreMessage}
@@ -111,13 +119,13 @@ const PhaseAlignmentCard: React.FC<PhaseAlignmentCardProps> = ({
         {topActions.length > 0 && (
           <div>
             <p className="text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400 mb-3">
-              Key actions for this season
+              Key actions for this phase
             </p>
             <ul className="space-y-2">
               {topActions.map((action, idx) => (
                 <li key={`${action}-${idx}`} className="flex items-start gap-2.5">
                   <span
-                    className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-gradient-to-br ${seasonConfig.gradient} text-[10px] font-bold text-white shadow-sm`}
+                    className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-gradient-to-br ${phaseConfig.gradient} text-[10px] font-bold text-white shadow-sm`}
                     aria-hidden="true"
                   >
                     {idx + 1}
@@ -135,7 +143,7 @@ const PhaseAlignmentCard: React.FC<PhaseAlignmentCardProps> = ({
             <div className="flex items-center gap-2 mb-3">
               <span className="flex h-2 w-2 rounded-full bg-rose-400" aria-hidden="true" />
               <p className="text-xs font-bold uppercase tracking-widest text-rose-500 dark:text-rose-400">
-                Watch out this season
+                Watch out this phase
               </p>
             </div>
             <ul className="space-y-2.5">

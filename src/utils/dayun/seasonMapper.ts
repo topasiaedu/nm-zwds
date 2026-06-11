@@ -101,23 +101,35 @@ export const SEASON_ICONS: Record<DayunSeason, string> = {
 };
 
 /**
- * Season titles/themes
+ * Season titles/themes — displayed as Timing Phase names.
+ * Internal keys remain spring/summer/autumn/winter; display labels use
+ * the Alignment Advantage framework: Expansion / Visibility / Consolidation / Foundation.
  */
 export const SEASON_TITLES: Record<DayunSeason, string> = {
-  spring: "Expand, Grow, Move",
-  summer: "Activate, Leverage, Monetize",
-  autumn: "Cut, Secure, Protect",
-  winter: "Reskill, Prepare, Rebuild",
+  spring: "Expansion Phase · Grow, Launch, Scale",
+  summer: "Visibility Phase · Build Authority, Expand Reach",
+  autumn: "Consolidation Phase · Strengthen, Optimize, Stabilize",
+  winter: "Foundation Phase · Prepare, Plan, Build",
+};
+
+/**
+ * Short phase name labels (for compact UI display).
+ */
+export const PHASE_LABELS: Record<DayunSeason, string> = {
+  spring: "Expansion",
+  summer: "Visibility",
+  autumn: "Consolidation",
+  winter: "Foundation",
 };
 
 /**
  * Season core messages
  */
 export const SEASON_MESSAGES: Record<DayunSeason, string> = {
-  spring: "This is your green light season. The doors open easier. People say yes faster. Launch, expand, and move forward with confidence.",
-  summer: "This is your harvest season. Stop waiting and start activating what you already have. It's time to cash in, monetize, and collect the fruits of your work.",
-  autumn: "This is your safety net season. Cut emotional noise, patch up holes, and strengthen your foundation. Protect what you've built and prepare for what's next.",
-  winter: "This is your reload season. Quietly sharpen your sword, rebuild your arsenal, and prepare yourself. When the season turns, you'll be ready to strike.",
+  spring: "You are in your Expansion phase. The doors open easier. People say yes faster. Launch, expand, and move forward with confidence — this is your green-light window.",
+  summer: "You are in your Visibility phase. Stop executing in silence and start being seen. Build authority, expand your reach, and position yourself as the expert in your space.",
+  autumn: "You are in your Consolidation phase. Cut emotional noise, patch up holes, and strengthen your foundation. Protect what you have built and prepare for your next expansion.",
+  winter: "You are in your Foundation phase. Quietly sharpen your skills, rebuild your systems, and prepare yourself. When your Expansion phase arrives, you will be ready to strike.",
 };
 
 /**

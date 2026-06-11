@@ -6,8 +6,8 @@
  * be shared with the web UI.
  */
 
-/** Season types aligned with the Dayun season mapper */
-export type LiuMonthSeason = "Spring" | "Summer" | "Autumn" | "Winter";
+/** Timing phase types aligned with the Alignment Advantage framework display names. */
+export type LiuMonthSeason = "Expansion" | "Visibility" | "Consolidation" | "Foundation";
 
 /**
  * Dimension bar score for a single life area.
@@ -54,7 +54,7 @@ export interface PalaceMonthData {
 export const PALACE_MONTH_DATA: Record<string, PalaceMonthData> = {
   /** Career Palace — Spring peak season */
   "官禄": {
-    season: "Spring",
+    season: "Expansion",
     area: "Professional",
     priority: "Launch Initiatives",
     dimensionBars: [
@@ -66,7 +66,7 @@ export const PALACE_MONTH_DATA: Record<string, PalaceMonthData> = {
   },
   /** Travel / Expansion Palace — Spring peak season */
   "迁移": {
-    season: "Spring",
+    season: "Expansion",
     area: "Expansion",
     priority: "Step Beyond Comfort Zone",
     dimensionBars: [
@@ -78,7 +78,7 @@ export const PALACE_MONTH_DATA: Record<string, PalaceMonthData> = {
   },
   /** Friends / Network Palace — Spring peak season */
   "交友": {
-    season: "Spring",
+    season: "Expansion",
     area: "Network",
     priority: "Launch Initiatives",
     dimensionBars: [
@@ -90,7 +90,7 @@ export const PALACE_MONTH_DATA: Record<string, PalaceMonthData> = {
   },
   /** Wealth Palace — Summer harvest season */
   "财帛": {
-    season: "Summer",
+    season: "Visibility",
     area: "Financial",
     priority: "Monetize Resources",
     dimensionBars: [
@@ -102,7 +102,7 @@ export const PALACE_MONTH_DATA: Record<string, PalaceMonthData> = {
   },
   /** Property / Assets Palace — Summer harvest season */
   "田宅": {
-    season: "Summer",
+    season: "Visibility",
     area: "Assets",
     priority: "Optimize Foundations",
     dimensionBars: [
@@ -114,7 +114,7 @@ export const PALACE_MONTH_DATA: Record<string, PalaceMonthData> = {
   },
   /** Wellbeing / Fortune Palace — Summer harvest season */
   "福德": {
-    season: "Summer",
+    season: "Visibility",
     area: "Inner Power",
     priority: "Align Inner State",
     dimensionBars: [
@@ -126,7 +126,7 @@ export const PALACE_MONTH_DATA: Record<string, PalaceMonthData> = {
   },
   /** Spouse / Partnership Palace — Autumn caution season */
   "夫妻": {
-    season: "Autumn",
+    season: "Consolidation",
     area: "Partnership",
     priority: "Clear Emotional Clutter",
     dimensionBars: [
@@ -138,7 +138,7 @@ export const PALACE_MONTH_DATA: Record<string, PalaceMonthData> = {
   },
   /** Siblings / Peer Circle Palace — Autumn caution season */
   "兄弟": {
-    season: "Autumn",
+    season: "Consolidation",
     area: "Circle",
     priority: "Purge Connections",
     dimensionBars: [
@@ -150,7 +150,7 @@ export const PALACE_MONTH_DATA: Record<string, PalaceMonthData> = {
   },
   /** Children / Legacy Palace — Autumn caution season */
   "子女": {
-    season: "Autumn",
+    season: "Consolidation",
     area: "Legacy",
     priority: "Structure Your Plans",
     dimensionBars: [
@@ -162,7 +162,7 @@ export const PALACE_MONTH_DATA: Record<string, PalaceMonthData> = {
   },
   /** Parents / Authority Palace — Autumn caution season */
   "父母": {
-    season: "Autumn",
+    season: "Consolidation",
     area: "Patterns",
     priority: "Break Old Loops",
     dimensionBars: [
@@ -174,7 +174,7 @@ export const PALACE_MONTH_DATA: Record<string, PalaceMonthData> = {
   },
   /** Life / Self Palace — Winter rebuild season */
   "命宫": {
-    season: "Winter",
+    season: "Foundation",
     area: "Self",
     priority: "Invest in Yourself",
     dimensionBars: [
@@ -186,7 +186,7 @@ export const PALACE_MONTH_DATA: Record<string, PalaceMonthData> = {
   },
   /** Health Palace — Winter rebuild season */
   "疾厄": {
-    season: "Winter",
+    season: "Foundation",
     area: "Body",
     priority: "Restore Strength",
     dimensionBars: [
@@ -226,45 +226,45 @@ export interface SeasonStyle {
  * headerGradient matches DayunSeasonHero exactly for visual consistency.
  */
 export const SEASON_STYLES: Record<LiuMonthSeason, SeasonStyle> = {
-  Spring: {
+  Expansion: {
     headerGradient: "linear-gradient(135deg, #f97316 0%, #ef4444 100%)",
     bodyGradient: "linear-gradient(145deg, #fff7ed 0%, #ffedd5 100%)",
     accentColor: "#9a3412",
     borderColor: "#fed7aa",
     cardShadow: "0 4px 32px rgba(249,115,22,0.14)",
-    icon: "🌱",
+    icon: "🚀",
     tagline: "Expand, Grow, Move",
-    coreMessage: "This is your green light season. The doors open easier. People say yes faster. Launch, expand, and move forward with confidence.",
+    coreMessage: "You are in your Expansion phase. The doors open easier. People say yes faster. Launch, expand, and move forward with confidence.",
   },
-  Summer: {
+  Visibility: {
     headerGradient: "linear-gradient(135deg, #f59e0b 0%, #eab308 100%)",
     bodyGradient: "linear-gradient(145deg, #fffbeb 0%, #fef3c7 100%)",
     accentColor: "#78350f",
     borderColor: "#fde68a",
     cardShadow: "0 4px 32px rgba(245,158,11,0.14)",
-    icon: "☀️",
-    tagline: "Activate, Leverage, Monetize",
-    coreMessage: "This is your harvest season. Stop waiting and start activating what you already have. It's time to cash in, monetize, and collect the fruits of your work.",
+    icon: "✨",
+    tagline: "Build Authority, Expand Reach",
+    coreMessage: "You are in your Visibility phase. Stop executing in silence and start being seen. Build authority, expand your reach, and position yourself as the expert in your space.",
   },
-  Autumn: {
+  Consolidation: {
     headerGradient: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
     bodyGradient: "linear-gradient(145deg, #f0fdf4 0%, #dcfce7 100%)",
     accentColor: "#064e3b",
     borderColor: "#86efac",
     cardShadow: "0 4px 32px rgba(16,185,129,0.14)",
-    icon: "🍂",
-    tagline: "Cut, Secure, Protect",
-    coreMessage: "This is your safety net season. Cut emotional noise, patch up holes, and strengthen your foundation. Protect what you've built and prepare for what's next.",
+    icon: "🛡️",
+    tagline: "Strengthen, Optimize, Stabilize",
+    coreMessage: "You are in your Consolidation phase. Cut emotional noise, patch up holes, and strengthen your foundation. Protect what you have built and prepare for your next expansion.",
   },
-  Winter: {
+  Foundation: {
     headerGradient: "linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%)",
     bodyGradient: "linear-gradient(145deg, #eff6ff 0%, #dbeafe 100%)",
     accentColor: "#1e3a8a",
     borderColor: "#93c5fd",
     cardShadow: "0 4px 32px rgba(37,99,235,0.14)",
-    icon: "❄️",
-    tagline: "Reskill, Prepare, Rebuild",
-    coreMessage: "This is your reload season. Quietly sharpen your sword, rebuild your arsenal, and prepare yourself. When the season turns, you'll be ready to strike.",
+    icon: "🏗️",
+    tagline: "Prepare, Plan, Build",
+    coreMessage: "You are in your Foundation phase. Quietly sharpen your skills, rebuild your systems, and prepare yourself. When your Expansion phase arrives, you will be ready to strike.",
   },
 };
 

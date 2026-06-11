@@ -139,10 +139,10 @@ function getCodeScore(profileCodes: ReadonlyArray<{ key: WealthCodeKey; score: n
  * Convert a Dayun season to a founder-friendly timing label.
  */
 function getSeasonCue(season: DayunSeason | null): { title: string; action: string } {
-  if (season === "spring") return { title: "Spring", action: "Launch" };
-  if (season === "summer") return { title: "Summer", action: "Scale" };
-  if (season === "autumn") return { title: "Autumn", action: "Refine" };
-  if (season === "winter") return { title: "Winter", action: "Build" };
+  if (season === "spring") return { title: "Expansion",     action: "Launch" };
+  if (season === "summer") return { title: "Visibility",    action: "Scale" };
+  if (season === "autumn") return { title: "Consolidation", action: "Refine" };
+  if (season === "winter") return { title: "Foundation",    action: "Build" };
   return { title: "Unknown", action: "Align" };
 }
 
@@ -741,7 +741,7 @@ export const IncomeBlueprint: React.FC<IncomeBlueprintProps> = ({ chartData }) =
           <div className="mt-4 flex flex-wrap items-center gap-2 text-xs">
             <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/20 backdrop-blur-sm border border-white/30">
               <span className="font-bold text-white">{"Timing"}</span>
-              <span className="text-white/90">{`${seasonCue.title} · ${seasonCue.action} season`}</span>
+              <span className="text-white/90">{`${seasonCue.title} · ${seasonCue.action} phase`}</span>
             </span>
             {hasWealthCode ? (
               <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/20 backdrop-blur-sm border border-white/30">

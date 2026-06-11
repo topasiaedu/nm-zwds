@@ -40,6 +40,7 @@ import { generateDayunGuidance } from "../../utils/dayun/guidanceGenerator";
 import {
   PALACE_DATA,
   getSignalColor,
+  SIGNAL_LABELS,
 } from "../../utils/forecast/alignmentTimingData";
 import {
   WEALTH_TYPE,
@@ -54,6 +55,11 @@ import {
 } from "../../utils/forecast/wealthContentData";
 import type { WealthCodeKey } from "../../utils/zwds/analysis_constants/wealth_code_mapping";
 import { getPalaceForAspectLiuMonth } from "../../utils/destiny-navigator/palace-resolver";
+import { detectStructure } from "../../utils/zwds/analysis/structureAnalysis";
+import { STRUCTURE_LABELS, FORMATION_PROFILES } from "../../utils/forecast/structureContentData";
+import { PHASE_LABELS } from "../../utils/dayun/seasonMapper";
+import { STAR_BRIEF } from "../../utils/forecast/starBriefDescriptions";
+import { PEOPLE_PALACE_FRAMING, PEOPLE_SYNTHESIS } from "../../utils/forecast/peoplePalaceData";
 import type { Profile } from "../../context/ProfileContext";
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -312,6 +318,7 @@ interface TimingRow {
   signal:     ReturnType<typeof getSignalColor>;
   priority:   string;
   directive:  string;
+  watchOut:   [string, string];
 }
 
 /** Expanded timing table — includes the per-month directive from PALACE_DATA. */
@@ -328,7 +335,7 @@ const CompactTimingTable: React.FC<{ rows: TimingRow[] }> = ({ rows }) => (
     <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 11 }}>
       <thead>
         <tr style={{ background: "#1a1e3f" }}>
-          {["Month", "Signal", "Focus Area", "Priority", "Strategic Directive"].map((h) => (
+          {["Month", "Signal", "Focus Area", "Priority", "Executive Action", "Risk Mitigation"].map((h) => (
             <th
               key={h}
               style={{ padding: "8px 12px", textAlign: "left", color: "#d4b896", fontWeight: 700, fontSize: 9, letterSpacing: "0.1em", textTransform: "uppercase", border: "1px solid rgba(255,255,255,0.1)" }}
@@ -356,6 +363,11 @@ const CompactTimingTable: React.FC<{ rows: TimingRow[] }> = ({ rows }) => (
               <td style={{ padding: "8px 12px", color: "#1a1e3f", border: "1px solid rgba(107,91,149,0.1)" }}>{row.palaceName}</td>
               <td style={{ padding: "8px 12px", color: "#5c5c5c", border: "1px solid rgba(107,91,149,0.1)" }}>{row.priority}</td>
               <td style={{ padding: "8px 12px", color: "#5c5c5c", fontStyle: "italic", border: "1px solid rgba(107,91,149,0.1)", lineHeight: 1.4 }}>{row.directive}</td>
+              <td style={{ padding: "8px 12px", color: "#5c5c5c", border: "1px solid rgba(107,91,149,0.1)", lineHeight: 1.4 }}>
+                <ul style={{ margin: 0, paddingLeft: 16 }}>
+                  {row.watchOut.map((w, i) => <li key={i}>{w}</li>)}
+                </ul>
+              </td>
             </tr>
           );
         })}
@@ -370,6 +382,14 @@ const CompactTimingTable: React.FC<{ rows: TimingRow[] }> = ({ rows }) => (
 // ─────────────────────────────────────────────────────────────────────────────
 // Inner content (requires ChartSettingsProvider wrapper)
 // ─────────────────────────────────────────────────────────────────────────────
+
+const NORTHERN_MAIN_STARS = new Set(["紫微", "天机", "太阳", "武曲", "天同", "廉贞"]);
+const SOUTHERN_MAIN_STARS = new Set(["天府", "太阴", "贪狼", "巨门", "天相", "天梁", "七杀", "破军"]);
+
+/** Returns the palace matching a given Chinese name, or null if not found. */
+function getPalaceByName(palaces: any[], name: string): any | null {
+  return palaces.find((p) => p.name === name) ?? null;
+}
 
 const AlignmentAdvancePrintContent: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -462,6 +482,12 @@ const AlignmentAdvancePrintContent: React.FC = () => {
     return analyzeWealthCode(calculatedChartData);
   }, [calculatedChartData]);
 
+  /** Structure analysis for Player Type and Formation. */
+  const structureResult = useMemo(() => {
+    if (calculatedChartData === null) return null;
+    return detectStructure(calculatedChartData);
+  }, [calculatedChartData]);
+
   /** DaYun cycle guidance for risk mitigation and reflection questions. */
   const dayunGuidance = useMemo(() => {
     if (calculatedChartData === null) return null;
@@ -508,6 +534,7 @@ const AlignmentAdvancePrintContent: React.FC = () => {
         signal,
         priority:  palaceData?.priority ?? "—",
         directive: palaceData?.directive ?? "—",
+        watchOut:  palaceData?.watchOut ?? ["—", "—"],
       };
     });
   }, [calculatedChartData]);
@@ -854,13 +881,6 @@ const AlignmentAdvancePrintContent: React.FC = () => {
             </div>
           </section>
 
-          {/* ── Chapter 01 Opener ── */}
-          <ChapterOpener
-            number="01"
-            title="Strategic Overview"
-            subtitle="Your chart decoded — who you are, where you stand, and what your next 12 months look like."
-          />
-
           {/* ── Page 3: Executive Summary ── */}
           <section className="print-page-break print-avoid-break" aria-label="Executive Summary" style={{ padding: "48px 0 32px" }}>
             <SectionPill>Executive Summary</SectionPill>
@@ -911,105 +931,78 @@ const AlignmentAdvancePrintContent: React.FC = () => {
             </div>
           </section>
 
-          {/* ── Page 3: ZWDS Chart ── */}
-          <section className="print-page-break print-avoid-break" style={{ padding: "48px 0 32px" }}>
-            <SectionPill>Your Chart</SectionPill>
-            <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 6 }}>
-              <IconCircle icon={Compass} />
-              <h2 className="pp-heading" style={{ marginBottom: 0 }}>Zi Wei Dou Shu Natal Chart</h2>
-            </div>
-            <OrnamentalDivider />
-            <div style={{ marginTop: 16, overflow: "hidden" }}>
-              <ZWDSChart
-                chartData={calculatedChartData}
-                isPdfExport={true}
-                disableInteraction
-                selectedDaXianControlled={null}
-                selectedPalaceNameControlled={null}
-                showMonthsControlled={null}
-              />
-            </div>
-          </section>
+          
+          {/* ── Chapter 01 Opener ── */}
+          <ChapterOpener
+            number="01"
+            title="Founder's Blueprint"
+            subtitle="Your operating structure type, primary formation, and special formations — the blueprint for how you are naturally wired to build momentum."
+          />
 
-          {/* ── Page 4: Life Structure Overview ── */}
-          {calculatedChartData !== null && (() => {
-            const PALACE_ENGLISH: Record<string, string> = {
-              "命宫": "Life", "兄弟宫": "Siblings", "夫妻宫": "Marriage",
-              "子女宫": "Children", "财帛宫": "Wealth", "疾厄宫": "Health",
-              "迁移宫": "Travel", "交友宫": "Friends", "官禄宫": "Career",
-              "田宅宫": "Property", "福德宫": "Wellbeing", "父母宫": "Parents",
-              "兄弟": "Siblings", "夫妻": "Marriage", "子女": "Children",
-              "财帛": "Wealth", "疾厄": "Health", "迁移": "Travel",
-              "交友": "Friends", "官禄": "Career", "田宅": "Property",
-              "福德": "Wellbeing", "父母": "Parents",
+          {/* ── Structure Profile Page ── */}
+          {structureResult !== null && (() => {
+            const strLabel     = STRUCTURE_LABELS[structureResult.structureType];
+            const formProfile  = FORMATION_PROFILES[structureResult.formation];
+            const gradColors: Record<string, { start: string; end: string }> = {
+              speed:     { start: "#f97316", end: "#dc2626" },
+              endurance: { start: "#d97706", end: "#b45309" },
             };
-            const palaceColors = [
-              "#6b5b95", "#be3e50", "#16a34a", "#d97706",
-              "#2563eb", "#0891b2", "#7c3aed", "#c2410c",
-              "#15803d", "#b45309", "#1d4ed8", "#9333ea",
-            ];
+            const grad = gradColors[structureResult.structureType] ?? gradColors.speed;
+
             return (
-              <section className="print-page-break print-avoid-break" style={{ padding: "48px 0 32px" }}>
-                <SectionPill>Life Structure Overview</SectionPill>
+              <section className="print-page-break print-avoid-break" aria-label="Structure Profile" style={{ padding: "48px 0 32px" }}>
+                <SectionPill>Structure &amp; Formation Profile</SectionPill>
                 <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 6 }}>
-                  <IconCircle icon={Layers} />
-                  <h2 className="pp-heading" style={{ marginBottom: 0 }}>Your 12 Life Palaces</h2>
+                  <IconCircle icon={GitFork} gradient={`linear-gradient(135deg, ${grad.start}, ${grad.end})`} />
+                  <h2 className="pp-heading" style={{ marginBottom: 0 }}>Your Player Type &amp; Formation</h2>
                 </div>
                 <OrnamentalDivider />
-                <p style={{ fontSize: 13, color: "#5c5c5c", marginBottom: 24, lineHeight: 1.6 }}>
-                  Your Purple Star chart comprises 12 palaces, each governing a distinct life domain.
-                  The stars placed within each palace reveal your natural strengths, challenges,
-                  and the quality of energy available in that area of life.
-                </p>
 
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12 }}>
-                  {calculatedChartData.palaces.slice(0, 12).map((palace, i) => {
-                    const isLife = palace.number === calculatedChartData.lifePalace;
-                    const isBody = palace.number === calculatedChartData.bodyPalace;
-                    const color = palaceColors[i % palaceColors.length];
-                    const engName = PALACE_ENGLISH[palace.name] ?? palace.name;
-                    const mainStarNames = (palace.mainStar ?? []).map((s) => s.name).join(", ");
-                    const minorHighlights = palace.minorStars.slice(0, 2).map((s) => s.name).join(", ");
-                    return (
-                      <div key={palace.number} style={{ background: "#ffffff", border: `1px solid ${isLife || isBody ? color : "rgba(107,91,149,0.14)"}`, borderRadius: 12, padding: "14px 16px", position: "relative", overflow: "hidden" }}>
-                        {(isLife || isBody) && (
-                          <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 3, background: color }} />
-                        )}
-                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 6 }}>
-                          <p style={{ fontSize: 9, fontWeight: 800, letterSpacing: "0.12em", textTransform: "uppercase", color }}>{engName}</p>
-                          {(isLife || isBody) && (
-                            <span style={{ fontSize: 8, fontWeight: 700, background: `${color}18`, color, padding: "2px 6px", borderRadius: 4, letterSpacing: "0.08em" }}>
-                              {isLife ? "LIFE" : "BODY"}
-                            </span>
-                          )}
-                        </div>
-                        <p style={{ fontSize: 11, color: "#1a1e3f", fontWeight: 600, marginBottom: 4, lineHeight: 1.3 }}>
-                          {mainStarNames !== "" ? mainStarNames : "—"}
-                        </p>
-                        {minorHighlights !== "" && (
-                          <p style={{ fontSize: 10, color: "#5c5c5c", lineHeight: 1.3 }}>{minorHighlights}</p>
-                        )}
-                        {palace.majorLimit !== undefined && (
-                          <p style={{ fontSize: 9, color: "#a89bc4", marginTop: 6 }}>Ages {palace.majorLimit.startAge}–{palace.majorLimit.endAge}</p>
-                        )}
-                      </div>
-                    );
-                  })}
+                {/* Player type hero row */}
+                <div style={{
+                  background: `linear-gradient(135deg, ${grad.start}, ${grad.end})`,
+                  borderRadius: 14, padding: "20px 24px", marginBottom: 20,
+                  display: "flex", alignItems: "center", justifyContent: "space-between",
+                }}>
+                  <div>
+                    <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.16em", textTransform: "uppercase", color: "rgba(255,255,255,0.65)", marginBottom: 4 }}>
+                      Operating Structure
+                    </p>
+                    <p style={{ fontSize: 22, fontWeight: 800, color: "#ffffff", margin: 0 }}>{strLabel.label}</p>
+                    <p style={{ fontSize: 12, color: "rgba(255,255,255,0.8)", marginTop: 4, maxWidth: 340 }}>{strLabel.description}</p>
+                  </div>
+                  <div style={{ textAlign: "right", flexShrink: 0, marginLeft: 24 }}>
+                    <p style={{ fontSize: 10, color: "rgba(255,255,255,0.65)" }}>Star balance</p>
+                    <p style={{ fontSize: 16, fontWeight: 700, color: "#ffffff" }}>
+                      N{structureResult.northernCount} · S{structureResult.southernCount}
+                    </p>
+                  </div>
                 </div>
 
-                <div style={{ marginTop: 20, background: "#f9f7fd", border: "1px solid rgba(107,91,149,0.14)", borderRadius: 12, padding: "14px 18px", display: "flex", gap: 24 }}>
-                  <div>
-                    <p style={{ fontSize: 9, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "#6b5b95", marginBottom: 4 }}>Life Palace</p>
-                    <p style={{ fontSize: 12, color: "#1a1e3f" }}>Your core identity &amp; destiny</p>
+                {/* Formation card */}
+                <div style={{ border: "1px solid rgba(26,30,63,0.10)", borderRadius: 12, padding: "20px 22px", marginBottom: 16 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
+                    <p style={{ fontSize: 18, fontWeight: 800, color: "#1a1e3f", margin: 0 }}>{formProfile.englishName}</p>
+                    <span style={{ fontSize: 10, fontWeight: 700, background: "rgba(107,91,149,0.10)", color: "#6b5b95", padding: "3px 10px", borderRadius: 20, letterSpacing: "0.06em" }}>
+                      {formProfile.chineseStyle}
+                    </span>
+                    <span style={{ fontSize: 10, color: "#a89bc4" }}>{formProfile.subtitle}</span>
                   </div>
-                  <div>
-                    <p style={{ fontSize: 9, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "#6b5b95", marginBottom: 4 }}>Body Palace</p>
-                    <p style={{ fontSize: 12, color: "#1a1e3f" }}>Where your life energy concentrates</p>
-                  </div>
-                  <div>
-                    <p style={{ fontSize: 9, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "#6b5b95", marginBottom: 4 }}>Ages shown</p>
-                    <p style={{ fontSize: 12, color: "#1a1e3f" }}>Your 10-year DaYun cycle windows</p>
-                  </div>
+
+                  <p style={{ fontSize: 12, color: "#5c5c5c", fontStyle: "italic", lineHeight: 1.6, borderLeft: "3px solid #c9873a", paddingLeft: 12, marginBottom: 14 }}>
+                    &ldquo;{formProfile.tagline}&rdquo;
+                  </p>
+
+                  {/* Key traits */}
+                  <p className="pp-section-header" style={{ marginBottom: 6 }}>Key Traits</p>
+                  <ol style={{ display: "flex", flexDirection: "column", gap: 0 }}>
+                    {formProfile.keyTraits.map((trait, i) => (
+                      <li key={i} style={{ display: "flex", gap: 10, alignItems: "flex-start", padding: "8px 0", borderBottom: "1px solid rgba(26,30,63,0.06)" }}>
+                        <span className="pp-num" style={{ flexShrink: 0, marginTop: 1 }}>{i + 1}</span>
+                        <span style={{ fontSize: 12, color: "#1a1e3f", lineHeight: 1.55 }}>{trait}</span>
+                      </li>
+                    ))}
+                  </ol>
                 </div>
               </section>
             );
@@ -1018,144 +1011,76 @@ const AlignmentAdvancePrintContent: React.FC = () => {
           {/* ── Chapter 02 Opener ── */}
           <ChapterOpener
             number="02"
-            title="Timing Intelligence"
-            subtitle="Your 10-year cycle, peak windows, risk zones, and the seasonal rhythm of your energy."
+            title="Operating System"
+            subtitle="Three core palaces that reveal how you think, what drives you, and how you execute."
           />
 
-          {/* ── Page 5: 10-Year Life Cycle ── */}
-          {dayunGuidance !== null && (() => {
-            const seasonColors: Record<string, { bg: string; text: string; accent: string }> = {
-              spring: { bg: "#f0fdf4", text: "#166534", accent: "#16a34a" },
-              summer: { bg: "#fffbeb", text: "#92400e", accent: "#d97706" },
-              autumn: { bg: "#fff7ed", text: "#9a3412", accent: "#ea580c" },
-              winter: { bg: "#eff6ff", text: "#1e3a8a", accent: "#2563eb" },
-            };
-            const sc = seasonColors[dayunGuidance.season] ?? seasonColors.spring;
-            const phaseWidth = dayunGuidance.phase === "building" ? "30%" : dayunGuidance.phase === "peak" ? "65%" : "90%";
-            return (
-              <section className="print-page-break print-avoid-break" style={{ padding: "48px 0 32px" }}>
-                <SectionPill>10-Year Life Cycle</SectionPill>
-                <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 6 }}>
-                  <IconCircle icon={Clock} />
-                  <h2 className="pp-heading" style={{ marginBottom: 0 }}>Your Current DaYun Phase</h2>
-                </div>
-                <OrnamentalDivider />
+          {/* ── Page: Executive Capacity ── */}
+          <section className="print-page-break print-avoid-break" aria-label="Executive Capacity" style={{ padding: "48px 0 32px" }}>
+            <SectionPill>Executive Capacity</SectionPill>
+            <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 6 }}>
+              <IconCircle icon={Layers} />
+              <h2 className="pp-heading" style={{ marginBottom: 0 }}>Your Character &amp; Energy Blueprint</h2>
+            </div>
+            <OrnamentalDivider />
+            <p style={{ fontSize: 13, color: "#5c5c5c", marginBottom: 24, lineHeight: 1.6 }}>
+              These three core palaces define your natural operating rhythm. Align your business environment to support these traits.
+            </p>
 
-                {/* Season banner */}
-                <div style={{ background: sc.bg, border: `1px solid ${sc.accent}33`, borderRadius: 14, padding: "20px 24px", marginBottom: 20, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                  <div>
-                    <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: sc.accent, marginBottom: 4 }}>
-                      {dayunGuidance.season.charAt(0).toUpperCase() + dayunGuidance.season.slice(1)} Season · {dayunGuidance.seasonTitle}
-                    </p>
-                    <p style={{ fontSize: 18, fontWeight: 800, color: sc.text }}>{dayunGuidance.coreMessage}</p>
-                  </div>
-                  <div style={{ textAlign: "right", flexShrink: 0, marginLeft: 24 }}>
-                    <p style={{ fontSize: 10, color: "#5c5c5c" }}>Cycle years</p>
-                    <p style={{ fontSize: 16, fontWeight: 700, color: "#1a1e3f" }}>{dayunGuidance.startYear} – {dayunGuidance.endYear}</p>
-                  </div>
-                </div>
+            {(() => {
+              const renderOperatePalace = (palaceName: string, sectionLabel: string, framing: string) => {
+                const palace = getPalaceByName(calculatedChartData?.palaces ?? [], palaceName);
+                const mainStars = palace?.mainStar ?? [];
+                const hasStars = mainStars.length > 0;
 
-                {/* Phase progress — flat bar, no card */}
-                <div style={{ marginBottom: 24 }}>
-                  <p className="pp-section-header">
-                    Phase: {dayunGuidance.phase.charAt(0).toUpperCase() + dayunGuidance.phase.slice(1)}
-                  </p>
-                  <div style={{ height: 7, background: "rgba(107,91,149,0.12)", borderRadius: 999, overflow: "hidden", marginBottom: 6 }}>
-                    <div style={{ width: phaseWidth, height: "100%", background: "linear-gradient(90deg, #6b5b95, #c9873a)", borderRadius: 999 }} />
-                  </div>
-                  <div style={{ display: "flex", justifyContent: "space-between" }}>
-                    {["Building", "Peak", "Integration"].map((p) => (
-                      <span key={p} style={{ fontSize: 10, color: dayunGuidance.phase === p.toLowerCase() ? "#c9873a" : "#a89bc4", fontWeight: dayunGuidance.phase === p.toLowerCase() ? 700 : 400 }}>{p}</span>
-                    ))}
-                  </div>
-                </div>
-
-                {/* 2-col: key actions + success metrics — open columns */}
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 32 }}>
-                  <div>
-                    <p className="pp-section-header">Key Actions This Cycle</p>
-                    <ol style={{ display: "flex", flexDirection: "column", gap: 0 }}>
-                      {dayunGuidance.keyActions.slice(0, 5).map((action, i) => (
-                        <li key={i} style={{ display: "flex", gap: 10, alignItems: "flex-start", padding: "9px 0", borderBottom: "1px solid rgba(26,30,63,0.06)" }}>
-                          <span className="pp-num" style={{ flexShrink: 0, marginTop: 1 }}>{i + 1}</span>
-                          <span style={{ fontSize: 12, color: "#1a1e3f", lineHeight: 1.55 }}>{action}</span>
-                        </li>
-                      ))}
-                    </ol>
-                  </div>
-                  <div>
-                    <p className="pp-section-header">Success Metrics</p>
-                    <ul style={{ display: "flex", flexDirection: "column", gap: 0 }}>
-                      {(dayunGuidance.successMetrics ?? []).slice(0, 5).map((metric, i) => (
-                        <li key={i} style={{ display: "flex", gap: 10, alignItems: "flex-start", padding: "9px 0", borderBottom: "1px solid rgba(26,30,63,0.06)" }}>
-                          <span style={{ width: 7, height: 7, borderRadius: "50%", background: sc.accent, flexShrink: 0, marginTop: 5 }} />
-                          <span style={{ fontSize: 12, color: "#1a1e3f", lineHeight: 1.55 }}>{metric}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-
-                {/* Adjacent cycles — slim two-column callout */}
-                {(dayunGuidance.previousCycle !== undefined || dayunGuidance.nextCycle !== undefined) && (
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginTop: 24, paddingTop: 20, borderTop: "1px solid rgba(201,135,58,0.20)" }}>
-                    {dayunGuidance.previousCycle !== undefined && (
-                      <div>
-                        <p style={{ fontSize: 9, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "#a89bc4", marginBottom: 4 }}>Previous Cycle</p>
-                        <p style={{ fontSize: 13, fontWeight: 600, color: "#6b5b95", marginBottom: 2 }}>{dayunGuidance.previousCycle.years}</p>
-                        <p style={{ fontSize: 11, color: "#5c5c5c", textTransform: "capitalize" }}>{dayunGuidance.previousCycle.season} · {dayunGuidance.previousCycle.palace}</p>
+                return (
+                  <div key={palaceName} style={{ border: "1px solid rgba(26,30,63,0.10)", borderRadius: 12, padding: "20px 22px", marginBottom: 16 }}>
+                    <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "#6b5b95", marginBottom: 6 }}>{sectionLabel}</p>
+                    <p style={{ fontSize: 13, color: "#1a1e3f", marginBottom: 16, lineHeight: 1.5 }}>{framing}</p>
+                    
+                    {hasStars ? (
+                      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                        {mainStars.map((star: any) => {
+                          const brief = STAR_BRIEF[star.name];
+                          if (!brief) return null;
+                          return (
+                            <div key={star.name} style={{ display: "flex", gap: 14, alignItems: "flex-start" }}>
+                              <div style={{ width: 4, height: 40, background: brief.role === "north" ? "#c9873a" : brief.role === "south" ? "#be3e50" : "#6b5b95", borderRadius: 2, flexShrink: 0 }} />
+                              <div>
+                                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+                                  <span style={{ fontSize: 14, fontWeight: 700, color: "#1a1e3f" }}>{brief.pinyin}</span>
+                                  <span style={{ fontSize: 10, color: "#6b5b95", background: "rgba(107,91,149,0.08)", padding: "2px 8px", borderRadius: 12 }}>{brief.title}</span>
+                                </div>
+                                <p style={{ fontSize: 12, color: "#5c5c5c", lineHeight: 1.5 }}>{brief.brief}</p>
+                              </div>
+                            </div>
+                          );
+                        })}
                       </div>
-                    )}
-                    {dayunGuidance.nextCycle !== undefined && (
-                      <div>
-                        <p style={{ fontSize: 9, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "#a89bc4", marginBottom: 4 }}>Next Cycle</p>
-                        <p style={{ fontSize: 13, fontWeight: 600, color: "#6b5b95", marginBottom: 2 }}>{dayunGuidance.nextCycle.years}</p>
-                        <p style={{ fontSize: 11, color: "#5c5c5c", textTransform: "capitalize" }}>{dayunGuidance.nextCycle.season} · {dayunGuidance.nextCycle.palace}</p>
-                      </div>
+                    ) : (
+                      <p style={{ fontSize: 12, color: "#5c5c5c", fontStyle: "italic" }}>No main stars placed — energy is drawn from the opposite palace.</p>
                     )}
                   </div>
-                )}
-              </section>
-            );
-          })()}
+                );
+              };
 
-          {/* ── Page 5: Risk Mitigation ── */}
-          {dayunGuidance !== null && (
-            <section className="print-page-break print-avoid-break" aria-label="Risk Mitigation" style={{ padding: "48px 0 32px" }}>
-              <SectionPill color="#be3e50">Risk Mitigation</SectionPill>
-              <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 6 }}>
-                <IconCircle icon={Shield} gradient="linear-gradient(135deg, #be3e50, #d97706)" />
-                <h2 className="pp-heading" style={{ marginBottom: 0 }}>Key Risks in Your Current Cycle</h2>
-              </div>
-              <OrnamentalDivider />
-              <p style={{ fontSize: 13, color: "#5c5c5c", marginBottom: 20, lineHeight: 1.6 }}>
-                Based on your <strong>{dayunGuidance.season}</strong> season cycle. Address these proactively before they derail your strategy.
-              </p>
-              <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 20 }}>
-                {(dayunGuidance.watchOut ?? []).map((item, i) => (
-                  <div key={i} className="pp-row">
-                    <span className="pp-num" style={{ background: "rgba(190,62,80,0.1)", color: "#be3e50", flexShrink: 0 }}>{i + 1}</span>
-                    <span style={{ fontSize: 13, color: "#1a1e3f", lineHeight: 1.5 }}>{item}</span>
-                  </div>
-                ))}
-              </div>
-              <div style={{ background: "#fff8f0", border: "1px solid rgba(212,184,150,0.4)", borderRadius: 12, padding: "18px 20px" }}>
-                <p style={{ fontSize: 9, fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "#d4af7b", marginBottom: 8 }}>Alternative Path if Misalignment is Detected</p>
-                <p style={{ fontSize: 13, color: "#5c5c5c", fontStyle: "italic", lineHeight: 1.6 }}>
-                  {ALTERNATIVE_PATH[dayunGuidance.season ?? "winter"] ?? ALTERNATIVE_PATH["winter"]}
-                </p>
-              </div>
-            </section>
-          )}
+              return (
+                <>
+                  {renderOperatePalace("命宫", "Life Palace · Your Character Blueprint", "Core identity, temperament, and the energy you project into the world.")}
+                  {renderOperatePalace("福德", "Inner Power Palace · What Drives You", "Internal fuel source — what keeps you going when external results are slow.")}
+                  {renderOperatePalace("官禄", "Operational Capacity · How You Execute", "Your natural operating rhythm and the environments where you build momentum fastest.")}
+                </>
+              );
+            })()}
+          </section>
 
           {/* ── Chapter 03 Opener ── */}
           <ChapterOpener
             number="03"
-            title="Wealth Strategy"
+            title="Wealth Acceleration"
             subtitle="Your wealth archetype, income blueprint, 90-day priorities, and ideal collaborator profile."
           />
-
-          {/* ── Page 6: Wealth Archetype Profile ── */}
+{/* ── Page 6: Wealth Archetype Profile ── */}
           {wealthAnalysis !== null && (() => {
             const wTypeProfile = WEALTH_TYPE[wealthKey];
             /** Chinese character per archetype key — decorative hero card */
@@ -1389,7 +1314,7 @@ const AlignmentAdvancePrintContent: React.FC = () => {
                 <div style={{ marginBottom: 0 }}>
                   <p className="pp-section-header">Season × Archetype Reference</p>
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-                    {(["spring", "summer", "autumn", "winter"] as PhaseAlignmentSeasonKey[]).map((s) => {
+                    {(["expansion", "visibility", "consolidation", "foundation"] as unknown as PhaseAlignmentSeasonKey[]).map((s) => {
                       const e = PHASE_ALIGNMENT_MATRIX[s]?.[wk];
                       const isActive = s === season;
                       const sColors: Record<string, string> = { spring: "#16a34a", summer: "#d97706", autumn: "#ea580c", winter: "#2563eb" };
@@ -1522,12 +1447,234 @@ const AlignmentAdvancePrintContent: React.FC = () => {
             );
           })()}
 
+          
           {/* ── Chapter 04 Opener ── */}
           <ChapterOpener
             number="04"
-            title="12-Month Roadmap"
+            title="Stakeholder Intelligence"
+            subtitle="Three relationship palaces that reveal who you attract, how you collaborate, and what kind of people amplify your results."
+          />
+
+          {/* ── Page: Stakeholder Intelligence ── */}
+          <section className="print-page-break print-avoid-break" aria-label="Stakeholder Intelligence" style={{ padding: "48px 0 32px" }}>
+            <SectionPill>Stakeholder Intelligence</SectionPill>
+            <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 6 }}>
+              <IconCircle icon={Users} />
+              <h2 className="pp-heading" style={{ marginBottom: 0 }}>Your Partnership &amp; Alliance Dynamics</h2>
+            </div>
+            <OrnamentalDivider />
+            <p style={{ fontSize: 13, color: "#5c5c5c", marginBottom: 24, lineHeight: 1.6 }}>
+              These three relationship palaces define your natural leverage with co-founders, investors, and the market.
+            </p>
+
+            {(() => {
+              const peoplePalaces: Array<"夫妻" | "交友" | "父母"> = ["夫妻", "交友", "父母"];
+              
+              const allPeopleStars = peoplePalaces.flatMap((pn) => {
+                const p = getPalaceByName(calculatedChartData?.palaces ?? [], pn);
+                return p?.mainStar ?? [];
+              });
+              const northCount = allPeopleStars.filter((s) => NORTHERN_MAIN_STARS.has(s.name)).length;
+              const southCount = allPeopleStars.filter((s) => SOUTHERN_MAIN_STARS.has(s.name)).length;
+              const auxCount   = allPeopleStars.filter((s) => !NORTHERN_MAIN_STARS.has(s.name) && !SOUTHERN_MAIN_STARS.has(s.name)).length;
+
+              const synthesisKey: "north" | "south" | "aux" | "mixed" = (() => {
+                const total = northCount + southCount + auxCount;
+                if (total === 0) return "mixed";
+                if (northCount / total >= 0.5) return "north";
+                if (southCount / total >= 0.5) return "south";
+                if (auxCount / total >= 0.5) return "aux";
+                return "mixed";
+              })();
+              const synthesisText = PEOPLE_SYNTHESIS[synthesisKey];
+
+              return (
+                <div>
+                  {peoplePalaces.map((palaceName) => {
+                    const palace = getPalaceByName(calculatedChartData?.palaces ?? [], palaceName);
+                    const framing = PEOPLE_PALACE_FRAMING[palaceName];
+                    const mainStars = palace?.mainStar ?? [];
+                    const hasStars  = mainStars.length > 0;
+
+                    return (
+                      <div key={palaceName} style={{ border: "1px solid rgba(26,30,63,0.10)", borderRadius: 12, padding: "20px 22px", marginBottom: 16 }}>
+                        <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "#6b5b95", marginBottom: 6 }}>{framing.sectionTitle}</p>
+                        <p style={{ fontSize: 13, color: "#1a1e3f", marginBottom: 16, lineHeight: 1.5 }}>{framing.intro}</p>
+                        
+                        {hasStars ? (
+                          <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 16 }}>
+                            {mainStars.map((star: any) => {
+                              const brief = STAR_BRIEF[star.name];
+                              if (!brief) return null;
+                              return (
+                                <div key={star.name} style={{ display: "flex", gap: 14, alignItems: "flex-start" }}>
+                                  <div style={{ width: 4, height: 40, background: brief.role === "north" ? "#c9873a" : brief.role === "south" ? "#be3e50" : "#6b5b95", borderRadius: 2, flexShrink: 0 }} />
+                                  <div>
+                                    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+                                      <span style={{ fontSize: 14, fontWeight: 700, color: "#1a1e3f" }}>{brief.pinyin}</span>
+                                      <span style={{ fontSize: 10, color: "#6b5b95", background: "rgba(107,91,149,0.08)", padding: "2px 8px", borderRadius: 12 }}>{brief.title}</span>
+                                    </div>
+                                    <p style={{ fontSize: 12, color: "#5c5c5c", lineHeight: 1.5 }}>{brief.brief}</p>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        ) : (
+                          <p style={{ fontSize: 12, color: "#5c5c5c", fontStyle: "italic", marginBottom: 16 }}>{framing.noStarFallback}</p>
+                        )}
+                        
+                        <div style={{ background: "#f6f0e8", borderRadius: 8, padding: "12px 16px", borderLeft: "3px solid #c9873a" }}>
+                          <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "#c9873a", marginBottom: 4 }}>Strategic Angle</p>
+                          <p style={{ fontSize: 12, color: "#1a1e3f", lineHeight: 1.5 }}>{framing.strategicAngle}</p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                  
+                  <div style={{ background: "linear-gradient(135deg, #1a1e3f 0%, #2d1b4e 100%)", borderRadius: 14, padding: "20px 24px", marginTop: 24, display: "flex", gap: 14, alignItems: "flex-start" }}>
+                    <Sparkle size={14} color="#e8642d" style={{ marginTop: 2 }} />
+                    <div>
+                      <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "#e8642d", marginBottom: 6 }}>Network Synthesis</p>
+                      <p style={{ fontSize: 13, color: "#ffffff", lineHeight: 1.6 }}>{synthesisText}</p>
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
+          </section>
+
+          {/* ── Chapter 05 Opener ── */}
+          <ChapterOpener
+            number="05"
+            title="Execution Playbook"
             subtitle="Your month-by-month strategic intelligence — signals, directives, and best moves for each month."
           />
+{/* ── Page 5: 10-Year Life Cycle ── */}
+          {dayunGuidance !== null && (() => {
+            const seasonColors: Record<string, { bg: string; text: string; accent: string }> = {
+              spring: { bg: "#f0fdf4", text: "#166534", accent: "#16a34a" },
+              summer: { bg: "#fffbeb", text: "#92400e", accent: "#d97706" },
+              autumn: { bg: "#fff7ed", text: "#9a3412", accent: "#ea580c" },
+              winter: { bg: "#eff6ff", text: "#1e3a8a", accent: "#2563eb" },
+            };
+            const sc = seasonColors[dayunGuidance.season] ?? seasonColors.spring;
+            const phaseWidth = dayunGuidance.phase === "building" ? "30%" : dayunGuidance.phase === "peak" ? "65%" : "90%";
+            return (
+              <section className="print-page-break print-avoid-break" style={{ padding: "48px 0 32px" }}>
+                <SectionPill>10-Year Life Cycle</SectionPill>
+                <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 6 }}>
+                  <IconCircle icon={Clock} />
+                  <h2 className="pp-heading" style={{ marginBottom: 0 }}>Your Current DaYun Phase</h2>
+                </div>
+                <OrnamentalDivider />
+
+                {/* Season banner */}
+                <div style={{ background: sc.bg, border: `1px solid ${sc.accent}33`, borderRadius: 14, padding: "20px 24px", marginBottom: 20, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                  <div>
+                    <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: sc.accent, marginBottom: 4 }}>
+                      {dayunGuidance.season.charAt(0).toUpperCase() + dayunGuidance.season.slice(1)} Season · {dayunGuidance.seasonTitle}
+                    </p>
+                    <p style={{ fontSize: 18, fontWeight: 800, color: sc.text }}>{dayunGuidance.coreMessage}</p>
+                  </div>
+                  <div style={{ textAlign: "right", flexShrink: 0, marginLeft: 24 }}>
+                    <p style={{ fontSize: 10, color: "#5c5c5c" }}>Cycle years</p>
+                    <p style={{ fontSize: 16, fontWeight: 700, color: "#1a1e3f" }}>{dayunGuidance.startYear} – {dayunGuidance.endYear}</p>
+                  </div>
+                </div>
+
+                {/* Phase progress — flat bar, no card */}
+                <div style={{ marginBottom: 24 }}>
+                  <p className="pp-section-header">
+                    Phase: {dayunGuidance.phase.charAt(0).toUpperCase() + dayunGuidance.phase.slice(1)}
+                  </p>
+                  <div style={{ height: 7, background: "rgba(107,91,149,0.12)", borderRadius: 999, overflow: "hidden", marginBottom: 6 }}>
+                    <div style={{ width: phaseWidth, height: "100%", background: "linear-gradient(90deg, #6b5b95, #c9873a)", borderRadius: 999 }} />
+                  </div>
+                  <div style={{ display: "flex", justifyContent: "space-between" }}>
+                    {["Building", "Peak", "Integration"].map((p) => (
+                      <span key={p} style={{ fontSize: 10, color: dayunGuidance.phase === p.toLowerCase() ? "#c9873a" : "#a89bc4", fontWeight: dayunGuidance.phase === p.toLowerCase() ? 700 : 400 }}>{p}</span>
+                    ))}
+                  </div>
+                </div>
+
+                {/* 2-col: key actions + success metrics — open columns */}
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 32 }}>
+                  <div>
+                    <p className="pp-section-header">Key Actions This Cycle</p>
+                    <ol style={{ display: "flex", flexDirection: "column", gap: 0 }}>
+                      {dayunGuidance.keyActions.slice(0, 5).map((action, i) => (
+                        <li key={i} style={{ display: "flex", gap: 10, alignItems: "flex-start", padding: "9px 0", borderBottom: "1px solid rgba(26,30,63,0.06)" }}>
+                          <span className="pp-num" style={{ flexShrink: 0, marginTop: 1 }}>{i + 1}</span>
+                          <span style={{ fontSize: 12, color: "#1a1e3f", lineHeight: 1.55 }}>{action}</span>
+                        </li>
+                      ))}
+                    </ol>
+                  </div>
+                  <div>
+                    <p className="pp-section-header">Success Metrics</p>
+                    <ul style={{ display: "flex", flexDirection: "column", gap: 0 }}>
+                      {(dayunGuidance.successMetrics ?? []).slice(0, 5).map((metric, i) => (
+                        <li key={i} style={{ display: "flex", gap: 10, alignItems: "flex-start", padding: "9px 0", borderBottom: "1px solid rgba(26,30,63,0.06)" }}>
+                          <span style={{ width: 7, height: 7, borderRadius: "50%", background: sc.accent, flexShrink: 0, marginTop: 5 }} />
+                          <span style={{ fontSize: 12, color: "#1a1e3f", lineHeight: 1.55 }}>{metric}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+
+                {/* Adjacent cycles — slim two-column callout */}
+                {(dayunGuidance.previousCycle !== undefined || dayunGuidance.nextCycle !== undefined) && (
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginTop: 24, paddingTop: 20, borderTop: "1px solid rgba(201,135,58,0.20)" }}>
+                    {dayunGuidance.previousCycle !== undefined && (
+                      <div>
+                        <p style={{ fontSize: 9, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "#a89bc4", marginBottom: 4 }}>Previous Cycle</p>
+                        <p style={{ fontSize: 13, fontWeight: 600, color: "#6b5b95", marginBottom: 2 }}>{dayunGuidance.previousCycle.years}</p>
+                        <p style={{ fontSize: 11, color: "#5c5c5c", textTransform: "capitalize" }}>{dayunGuidance.previousCycle.season} · {dayunGuidance.previousCycle.palace}</p>
+                      </div>
+                    )}
+                    {dayunGuidance.nextCycle !== undefined && (
+                      <div>
+                        <p style={{ fontSize: 9, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "#a89bc4", marginBottom: 4 }}>Next Cycle</p>
+                        <p style={{ fontSize: 13, fontWeight: 600, color: "#6b5b95", marginBottom: 2 }}>{dayunGuidance.nextCycle.years}</p>
+                        <p style={{ fontSize: 11, color: "#5c5c5c", textTransform: "capitalize" }}>{dayunGuidance.nextCycle.season} · {dayunGuidance.nextCycle.palace}</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </section>
+            );
+          })()}
+
+          {/* ── Page 5: Risk Mitigation ── */}
+          {dayunGuidance !== null && (
+            <section className="print-page-break print-avoid-break" aria-label="Risk Mitigation" style={{ padding: "48px 0 32px" }}>
+              <SectionPill color="#be3e50">Risk Mitigation</SectionPill>
+              <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 6 }}>
+                <IconCircle icon={Shield} gradient="linear-gradient(135deg, #be3e50, #d97706)" />
+                <h2 className="pp-heading" style={{ marginBottom: 0 }}>Key Risks in Your Current Cycle</h2>
+              </div>
+              <OrnamentalDivider />
+              <p style={{ fontSize: 13, color: "#5c5c5c", marginBottom: 20, lineHeight: 1.6 }}>
+                Based on your <strong>{dayunGuidance.season}</strong> season cycle. Address these proactively before they derail your strategy.
+              </p>
+              <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 20 }}>
+                {(dayunGuidance.watchOut ?? []).map((item, i) => (
+                  <div key={i} className="pp-row">
+                    <span className="pp-num" style={{ background: "rgba(190,62,80,0.1)", color: "#be3e50", flexShrink: 0 }}>{i + 1}</span>
+                    <span style={{ fontSize: 13, color: "#1a1e3f", lineHeight: 1.5 }}>{item}</span>
+                  </div>
+                ))}
+              </div>
+              <div style={{ background: "#fff8f0", border: "1px solid rgba(212,184,150,0.4)", borderRadius: 12, padding: "18px 20px" }}>
+                <p style={{ fontSize: 9, fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "#d4af7b", marginBottom: 8 }}>Alternative Path if Misalignment is Detected</p>
+                <p style={{ fontSize: 13, color: "#5c5c5c", fontStyle: "italic", lineHeight: 1.6 }}>
+                  {ALTERNATIVE_PATH[dayunGuidance.season ?? "winter"] ?? ALTERNATIVE_PATH["winter"]}
+                </p>
+              </div>
+            </section>
+          )}
 
           {/* ── Pages 11–22: Monthly Deep Dives (one page per month) ── */}
           {timingRows.length === 12 && timingRows.map((row, idx) => {
@@ -1681,37 +1828,68 @@ const AlignmentAdvancePrintContent: React.FC = () => {
             </section>
           )}
 
+          {/* ── Page 12: Timing Table ── */}
+          {timingRows.length > 0 && (
+            <CompactTimingTable rows={timingRows} />
+          )}
+
+          
+          {/* ── Chapter 06 Opener ── */}
+          <ChapterOpener
+            number="06"
+            title="Decision Framework"
+            subtitle="A repeatable system for evaluating any high-stakes decision through your three-axis Purple Star lens."
+          />
           {/* ── Page 11: Decision Framework ── */}
           <section className="print-page-break print-avoid-break" aria-label="Decision Framework" style={{ padding: "48px 0 32px" }}>
             <SectionPill>Lifetime Tool</SectionPill>
             <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 6 }}>
               <IconCircle icon={GitFork} />
-              <h2 className="pp-heading" style={{ marginBottom: 0 }}>Your Decision Framework</h2>
+              <h2 className="pp-heading" style={{ marginBottom: 0 }}>Your Strategic Decision Filter</h2>
             </div>
             <OrnamentalDivider />
             <p style={{ fontSize: 13, color: "#5c5c5c", marginBottom: 24, lineHeight: 1.6 }}>
-              Use this 3-axis check for every future high-stakes decision. Score each axis 0 or 1. Total out of 3 gives your recommendation.
+              Use this worksheet for every future high-stakes decision. Write your decision below, then test it against your three-axis alignment. If it doesn&apos;t pass all three, rethink the move.
             </p>
+
+            {/* Decision Input Box */}
+            <div style={{ marginBottom: 32 }}>
+              <p style={{ fontSize: 11, fontWeight: 700, color: "#1a1e3f", marginBottom: 8 }}>The Decision on the Table:</p>
+              <div style={{ width: "100%", height: 60, border: "1px solid rgba(26,30,63,0.2)", borderRadius: 8, background: "#faf0e6" }} />
+            </div>
 
             {/* Axis rows — open table */}
             <div style={{ marginBottom: 28 }}>
               {[
-                { axis: "Structural", color: "#6b5b95", q: "Does this decision align with how my chart is designed to win?", val: wealthAnalysis?.dominantArchetype ?? "—" },
-                { axis: "Timing", color: "#10b981", q: "Is my current cycle season supporting this type of move?", val: `${dayunGuidance?.season ?? "—"} season` },
-                { axis: "Wealth", color: "#c9873a", q: "Does this move activate my primary wealth attraction path?", val: WEALTH_TYPE[wealthKey].category },
-              ].map(({ axis, color, q, val }) => (
-                <div key={axis} style={{ display: "grid", gridTemplateColumns: "90px 1fr 130px 52px", gap: 12, alignItems: "center", padding: "12px 0", borderBottom: "1px solid rgba(26,30,63,0.07)" }}>
-                  <span style={{ fontSize: 12, fontWeight: 700, color }}>{axis}</span>
-                  <span style={{ fontSize: 12, color: "#1a1e3f", lineHeight: 1.4 }}>{q}</span>
-                  <span style={{ fontSize: 11, color: "#5c5c5c", fontStyle: "italic" }}>{val}</span>
-                  <div style={{ borderBottom: "1px solid #c9873a", height: 18, marginTop: 10, opacity: 0.35 }} aria-hidden="true" />
+                { 
+                  axis: "Structural Alignment", 
+                  color: "#6b5b95", 
+                  q: `Does this decision rely on my ${wealthAnalysis?.dominantArchetype ?? "natural"} advantage, or does it force me to operate outside my zone of genius?`
+                },
+                { 
+                  axis: "Timing Alignment", 
+                  color: "#10b981", 
+                  q: `My current 10-year cycle is in the ${PHASE_LABELS[dayunGuidance?.season ?? "spring"] ?? "Expansion"} phase. Does this decision respect this season, or am I forcing the wrong energy?`
+                },
+                { 
+                  axis: "Wealth Alignment", 
+                  color: "#c9873a", 
+                  q: `Does this move eliminate one of my known profit drains: ${STOP_DOING[wealthKey]?.[0] ?? "wasting energy"}?`
+                },
+              ].map(({ axis, color, q }) => (
+                <div key={axis} style={{ display: "flex", flexDirection: "column", gap: 8, padding: "16px 0", borderBottom: "1px solid rgba(26,30,63,0.07)" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                    <div style={{ width: 20, height: 20, border: "2px solid rgba(26,30,63,0.2)", borderRadius: 4, flexShrink: 0 }} />
+                    <span style={{ fontSize: 14, fontWeight: 700, color }}>{axis}</span>
+                  </div>
+                  <span style={{ fontSize: 13, color: "#1a1e3f", lineHeight: 1.5, paddingLeft: 32 }}>{q}</span>
                 </div>
               ))}
             </div>
 
             {/* Score key — left-bar tiles */}
             <div style={{ marginTop: 0 }}>
-              <p className="pp-section-header">Score Interpretation</p>
+              <p className="pp-section-header">Evaluation Rules</p>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
                 {([3, 2, 1, 0] as const).map((score) => {
                   const rec = FRAMEWORK_RECOMMENDATIONS[score];
@@ -1731,12 +1909,41 @@ const AlignmentAdvancePrintContent: React.FC = () => {
             </div>
           </section>
 
-          {/* ── Page 12: Timing Table ── */}
-          {timingRows.length > 0 && (
-            <CompactTimingTable rows={timingRows} />
-          )}
+          
+          {/* ── Appendix: ZWDS Chart ── */}
+          <section className="print-page-break print-avoid-break" aria-label="Appendix: ZWDS Chart" style={{ padding: "48px 0 32px" }}>
+            <SectionPill>Appendix</SectionPill>
+            <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 6 }}>
+              <IconCircle icon={Layers} />
+              <h2 className="pp-heading" style={{ marginBottom: 0 }}>Your Full ZWDS Chart</h2>
+            </div>
+            <OrnamentalDivider />
+            <p style={{ fontSize: 13, color: "#5c5c5c", marginBottom: 24, lineHeight: 1.6 }}>
+              The complete mathematical model behind your Alignment Advantage Playbook.
+            </p>
+            
+          <section className="print-page-break print-avoid-break" style={{ padding: "48px 0 32px" }}>
+            <SectionPill>Your Chart</SectionPill>
+            <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 6 }}>
+              <IconCircle icon={Compass} />
+              <h2 className="pp-heading" style={{ marginBottom: 0 }}>Zi Wei Dou Shu Natal Chart</h2>
+            </div>
+            <OrnamentalDivider />
+            <div style={{ marginTop: 16, overflow: "hidden" }}>
+              <ZWDSChart
+                chartData={calculatedChartData}
+                isPdfExport={true}
+                disableInteraction
+                selectedDaXianControlled={null}
+                selectedPalaceNameControlled={null}
+                showMonthsControlled={null}
+              />
+            </div>
+          </section>
 
-          {/* ── Global fixed footer — position: fixed in print puts it on every page ── */}
+          
+          </section>
+  {/* ── Global fixed footer — position: fixed in print puts it on every page ── */}
           <div
             className="pp-global-footer"
             style={{ display: "flex", alignItems: "stretch", height: 28, fontSize: 9, fontWeight: 600, letterSpacing: "0.14em" }}
