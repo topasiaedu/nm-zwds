@@ -1,10 +1,10 @@
 /**
- * Star Brief Descriptions — Alignment Advantage Report
+ * Star Brief Descriptions: Alignment Advantage Report
  *
  * Maps each of the 18 ZWDS star names to:
- *  - `pinyin`  — full Pinyin display name (e.g. "Zi Wei", "Qi Sha")
- *  - `brief`   — 1–2 sentence business-context description
- *  - `role`    — "north" | "south" | "aux" for visual classification
+ *  - `pinyin` : full Pinyin display name (e.g. "Zi Wei", "Qi Sha")
+ *  - `brief`  : 1–2 sentence business-context description
+ *  - `role`   : "north" | "south" | "aux" for visual classification
  *
  * Keys match the star names as stored in `Palace.mainStar[].name` and
  * `Palace.minorStars[].name` by the ZWDS calculator:
@@ -20,7 +20,7 @@ export interface StarBrief {
   pinyin: string;
   /** Short star title used as a visual label, e.g. "Emperor Star". */
   title:  string;
-  /** Three keyword traits for visual display — concise, 1–2 words each. */
+  /** Three keyword traits for visual display: concise, 1–2 words each. */
   keywords: [string, string, string];
   /** One-sentence (≤ 15 words) business-context description for the report. */
   brief:  string;
@@ -36,7 +36,7 @@ export const STAR_BRIEF: Record<string, StarBrief> = {
     pinyin:   "Zi Wei",
     title:    "Emperor Star",
     keywords: ["Authority", "Command", "Leadership"],
-    brief:    "Your presence sets direction — people follow you without being asked.",
+    brief:    "Your presence sets direction: people follow you without being asked.",
     role:     "north",
   },
   "天机": {
@@ -71,7 +71,7 @@ export const STAR_BRIEF: Record<string, StarBrief> = {
     pinyin:   "Lian Zhen",
     title:    "Authority Star",
     keywords: ["Principles", "Structure", "Conviction"],
-    brief:    "Rules and systems are your operating language — you thrive with clear codes.",
+    brief:    "Rules and systems are your operating language: you thrive with clear codes.",
     role:     "north",
   },
 
@@ -116,14 +116,14 @@ export const STAR_BRIEF: Record<string, StarBrief> = {
     pinyin:   "Tian Liang",
     title:    "Elder Star",
     keywords: ["Wisdom", "Protection", "Advisory"],
-    brief:    "You carry an authority others seek for guidance — naturally protective and principled.",
+    brief:    "You carry an authority others seek for guidance: naturally protective and principled.",
     role:     "south",
   },
   "七杀": {
     pinyin:   "Qi Sha",
     title:    "General Star",
     keywords: ["Boldness", "Independence", "Drive"],
-    brief:    "Built for forging new paths — limitations are challenges to break through.",
+    brief:    "Built for forging new paths: limitations are challenges to break through.",
     role:     "south",
   },
   "破军": {
@@ -161,7 +161,7 @@ export const STAR_BRIEF: Record<string, StarBrief> = {
     pinyin:   "Wen Qu",
     title:    "Arts Star",
     keywords: ["Persuasion", "Creativity", "Influence"],
-    brief:    "Enhances persuasion and creative intelligence — powerful for influence-based roles.",
+    brief:    "Enhances persuasion and creative intelligence: powerful for influence-based roles.",
     role:     "aux",
   },
 };

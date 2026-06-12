@@ -1,5 +1,5 @@
 /**
- * People Palace Data — Alignment Advantage Report
+ * People Palace Data: Alignment Advantage Report
  *
  * Provides framing context for the three relationship palaces shown in
  * Chapter 05 · People Intelligence:
@@ -20,7 +20,7 @@ export interface PeoplePalaceFraming {
   sectionTitle: string;
   /**
    * One-sentence framing that sets up the palace for a reader unfamiliar with
-   * ZWDS — explains what this palace reveals in a business context.
+   * ZWDS: explains what this palace reveals in a business context.
    */
   intro: string;
   /**
@@ -33,7 +33,7 @@ export interface PeoplePalaceFraming {
   strategicAngle: string;
   /**
    * Fallback shown when the palace has no main stars.
-   * This is a valid chart configuration — empty palaces borrow energy from
+   * This is a valid chart configuration: empty palaces borrow energy from
    * the opposite palace and their absence is itself meaningful.
    */
   noStarFallback: string;
@@ -53,7 +53,7 @@ export const PEOPLE_PALACE_FRAMING: Record<"夫妻" | "交友" | "父母", Peopl
     strategicAngle:
       "Seek someone who embodies these qualities, not someone who compensates for your weaknesses.",
     noStarFallback:
-      "No main stars placed — partnership energy is shaped by the opposite palace (Career). Alliances work best when grounded in shared professional direction.",
+      "No main stars placed: partnership energy is shaped by the opposite palace (Career). Alliances work best when grounded in shared professional direction.",
   },
 
   "交友": {
@@ -62,9 +62,9 @@ export const PEOPLE_PALACE_FRAMING: Record<"夫妻" | "交友" | "父母", Peopl
       "Reveals what kind of team dynamic you naturally create and who shows up to support you.",
     starBlockLabel: "Your network and team are shaped by",
     strategicAngle:
-      "Build your most important relationships through shared work — this is the energy you radiate to your orbit.",
+      "Build your most important relationships through shared work: this is the energy you radiate to your orbit.",
     noStarFallback:
-      "No main stars placed — network energy is shaped by the opposite palace. Alliances form organically through professional contexts, not social circles.",
+      "No main stars placed: network energy is shaped by the opposite palace. Alliances form organically through professional contexts, not social circles.",
   },
 
   "父母": {
@@ -75,7 +75,7 @@ export const PEOPLE_PALACE_FRAMING: Record<"夫妻" | "交友" | "父母", Peopl
     strategicAngle:
       "Use this to identify the type of advisor or sponsor who will create the greatest impact for you.",
     noStarFallback:
-      "No main stars placed — mentorship energy is nuanced and context-driven. Build a diverse advisor council rather than relying on a single guide.",
+      "No main stars placed: mentorship energy is nuanced and context-driven. Build a diverse advisor council rather than relying on a single guide.",
   },
 };
 
@@ -86,15 +86,15 @@ export const PEOPLE_PALACE_FRAMING: Record<"夫妻" | "交友" | "父母", Peopl
  */
 export const PEOPLE_SYNTHESIS: Record<"north" | "south" | "aux" | "mixed", string> = {
   north:
-    "Your people palaces are predominantly Northern-star influenced — the people drawn to you tend to be " +
-    "visionary, authority-driven, and strategic. Your inner circle operates best when everyone has clear roles and a shared mission.",
+    "Your stakeholder profile is highly structured and authority-driven: the people drawn to you tend to be " +
+    "visionary, decisive, and strategic. Your inner circle operates best when everyone has clear roles and a shared mission.",
   south:
-    "Your people palaces are predominantly Southern-star influenced — the people drawn to you tend to be " +
+    "Your stakeholder profile is dynamic and relationship-driven: the people drawn to you tend to be " +
     "resourceful, emotionally attuned, and action-oriented. Your inner circle operates best in high-trust, high-execution environments.",
   aux:
-    "Your people palaces are shaped largely by auxiliary stars — the people drawn to you tend to be " +
+    "Your stakeholder profile is specialized and context-driven: the people drawn to you tend to be " +
     "supportive, enabling, and collaborative. Your strongest relationships emerge when you give others the space to amplify your vision.",
   mixed:
-    "Your people palaces carry a balance of Northern and Southern energies — your inner circle is naturally diverse, " +
-    "drawing in both strategic thinkers and execution-focused operators. This is a structural advantage for building multi-functional teams.",
+    "Your stakeholder profile is balanced and diverse: your inner circle naturally attracts " +
+    "both strategic thinkers and execution-focused operators. This is a structural advantage for building multi-functional teams.",
 };

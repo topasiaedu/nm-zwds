@@ -355,26 +355,26 @@ export const FORMATION_PROFILES: Record<FormationKey | SpecialFormationKey, Form
     englishName:    "Reversed Sun & Moon",
     subtitle:       "Ri Yue Fan Bei",
     playerType:     "special",
-    tagline:        "Your energy runs on an unconventional clock: cross-timezone, night-shift, and overseas environments are where your natural rhythms align best.",
+    tagline:        "Your productivity runs on an unconventional clock: cross-timezone, night-shift, and overseas environments are where your natural rhythms align best.",
     keyTraits:      [
       "Energy often out of sync with conventional daytime rhythms",
       "Constant rush, easily lacks inner balance without structure",
       "Naturally drawn to or involved in cross-timezone work",
     ],
     suitableFor:    "Night shifts, overseas markets, US or international client work, rotational and remote roles",
-    strategyAdvice: "Lean into international, remote, or non-conventional schedules where your reversed energy rhythm becomes an advantage.",
-    avoidAdvice:    "Avoid forcing yourself into rigid 9-to-5 structures: operating against your natural rhythm depletes energy and reduces output.",
+    strategyAdvice: "Lean into international, remote, or non-conventional schedules where your reversed operating rhythm becomes an advantage.",
+    avoidAdvice:    "Avoid forcing yourself into rigid 9-to-5 structures: operating against your natural rhythm depletes capacity and reduces output.",
     greenFlags: [
       "The opportunity is international, remote, or operates across time zones: unconventional schedules become advantages",
       "The move allows you to set your own operating hours and rhythm rather than conforming to standard structures",
       "Cross-border or cross-cultural markets are involved where your natural affinity for non-local contexts applies",
     ],
     redFlags: [
-      "The role demands strict conventional hours with no flexibility for your natural reversed energy rhythm",
+      "The role demands strict conventional hours with no flexibility for your natural reversed operating rhythm",
       "Local, domestic, and time-zone-locked operations are the core of the business model",
       "Success is measured against conventional daytime-hours benchmarks that your energy rhythm does not match",
     ],
-    decisionRule: "Ask: does this opportunity accommodate non-conventional schedules and cross-timezone operations? If yes, proceed. If it locks you into rigid conventional rhythms that suppress your natural energy, renegotiate the terms or look for a different structure.",
+    decisionRule: "Ask: does this opportunity accommodate non-conventional schedules and cross-timezone operations? If yes, proceed. If it locks you into rigid conventional rhythms that suppress your natural capacity, renegotiate the terms or look for a different structure.",
   },
 
   starlessDestiny: {

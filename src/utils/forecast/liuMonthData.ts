@@ -52,7 +52,7 @@ export interface PalaceMonthData {
  * - Winter palaces (命宫/疾厄): rebuilding / rest energy
  */
 export const PALACE_MONTH_DATA: Record<string, PalaceMonthData> = {
-  /** Career Palace — Spring peak season */
+  /** Career Palace: Spring peak season */
   "官禄": {
     season: "Expansion",
     area: "Professional",
@@ -64,7 +64,7 @@ export const PALACE_MONTH_DATA: Record<string, PalaceMonthData> = {
       { label: "Health",        pct: 55, color: "#7c3aed", gradient: "linear-gradient(90deg, #5b21b6, #8b5cf6)", icon: "💪" },
     ],
   },
-  /** Travel / Expansion Palace — Spring peak season */
+  /** Travel / Expansion Palace: Spring peak season */
   "迁移": {
     season: "Expansion",
     area: "Expansion",
@@ -76,7 +76,7 @@ export const PALACE_MONTH_DATA: Record<string, PalaceMonthData> = {
       { label: "Health",        pct: 70, color: "#7c3aed", gradient: "linear-gradient(90deg, #5b21b6, #8b5cf6)", icon: "💪" },
     ],
   },
-  /** Friends / Network Palace — Spring peak season */
+  /** Friends / Network Palace: Spring peak season */
   "交友": {
     season: "Expansion",
     area: "Network",
@@ -88,7 +88,7 @@ export const PALACE_MONTH_DATA: Record<string, PalaceMonthData> = {
       { label: "Health",        pct: 60, color: "#7c3aed", gradient: "linear-gradient(90deg, #5b21b6, #8b5cf6)", icon: "💪" },
     ],
   },
-  /** Wealth Palace — Summer harvest season */
+  /** Wealth Palace: Summer harvest season */
   "财帛": {
     season: "Visibility",
     area: "Financial",
@@ -100,7 +100,7 @@ export const PALACE_MONTH_DATA: Record<string, PalaceMonthData> = {
       { label: "Health",        pct: 60, color: "#7c3aed", gradient: "linear-gradient(90deg, #5b21b6, #8b5cf6)", icon: "💪" },
     ],
   },
-  /** Property / Assets Palace — Summer harvest season */
+  /** Property / Assets Palace: Summer harvest season */
   "田宅": {
     season: "Visibility",
     area: "Assets",
@@ -112,7 +112,7 @@ export const PALACE_MONTH_DATA: Record<string, PalaceMonthData> = {
       { label: "Health",        pct: 75, color: "#7c3aed", gradient: "linear-gradient(90deg, #5b21b6, #8b5cf6)", icon: "💪" },
     ],
   },
-  /** Wellbeing / Fortune Palace — Summer harvest season */
+  /** Wellbeing / Fortune Palace: Summer harvest season */
   "福德": {
     season: "Visibility",
     area: "Inner Power",
@@ -124,7 +124,7 @@ export const PALACE_MONTH_DATA: Record<string, PalaceMonthData> = {
       { label: "Health",        pct: 90, color: "#7c3aed", gradient: "linear-gradient(90deg, #5b21b6, #8b5cf6)", icon: "💪" },
     ],
   },
-  /** Spouse / Partnership Palace — Autumn caution season */
+  /** Spouse / Partnership Palace: Autumn caution season */
   "夫妻": {
     season: "Consolidation",
     area: "Partnership",
@@ -136,7 +136,7 @@ export const PALACE_MONTH_DATA: Record<string, PalaceMonthData> = {
       { label: "Health",        pct: 50, color: "#7c3aed", gradient: "linear-gradient(90deg, #5b21b6, #8b5cf6)", icon: "💪" },
     ],
   },
-  /** Siblings / Peer Circle Palace — Autumn caution season */
+  /** Siblings / Peer Circle Palace: Autumn caution season */
   "兄弟": {
     season: "Consolidation",
     area: "Circle",
@@ -148,7 +148,7 @@ export const PALACE_MONTH_DATA: Record<string, PalaceMonthData> = {
       { label: "Health",        pct: 55, color: "#7c3aed", gradient: "linear-gradient(90deg, #5b21b6, #8b5cf6)", icon: "💪" },
     ],
   },
-  /** Children / Legacy Palace — Autumn caution season */
+  /** Children / Legacy Palace: Autumn caution season */
   "子女": {
     season: "Consolidation",
     area: "Legacy",
@@ -160,7 +160,7 @@ export const PALACE_MONTH_DATA: Record<string, PalaceMonthData> = {
       { label: "Health",        pct: 45, color: "#7c3aed", gradient: "linear-gradient(90deg, #5b21b6, #8b5cf6)", icon: "💪" },
     ],
   },
-  /** Parents / Authority Palace — Autumn caution season */
+  /** Parents / Authority Palace: Autumn caution season */
   "父母": {
     season: "Consolidation",
     area: "Patterns",
@@ -172,7 +172,7 @@ export const PALACE_MONTH_DATA: Record<string, PalaceMonthData> = {
       { label: "Health",        pct: 55, color: "#7c3aed", gradient: "linear-gradient(90deg, #5b21b6, #8b5cf6)", icon: "💪" },
     ],
   },
-  /** Life / Self Palace — Winter rebuild season */
+  /** Life / Self Palace: Winter rebuild season */
   "命宫": {
     season: "Foundation",
     area: "Self",
@@ -184,7 +184,7 @@ export const PALACE_MONTH_DATA: Record<string, PalaceMonthData> = {
       { label: "Health",        pct: 70, color: "#7c3aed", gradient: "linear-gradient(90deg, #5b21b6, #8b5cf6)", icon: "💪" },
     ],
   },
-  /** Health Palace — Winter rebuild season */
+  /** Health Palace: Winter rebuild season */
   "疾厄": {
     season: "Foundation",
     area: "Body",
@@ -291,7 +291,7 @@ export const PALACE_GUIDANCE_DATA: Record<string, PalaceGuidanceData> = {
       "Upgrade yourself and reposition before the environment forces you to",
       "Build your visibility and actively seek recognition for your work",
       "Launch new initiatives and explore new opportunities within your field",
-      "Fight for achievements and growth — don't play it safe",
+      "Fight for achievements and growth: don't play it safe",
       "Leverage your years of experience as your biggest advantage",
     ],
     watchOut: [
@@ -300,7 +300,7 @@ export const PALACE_GUIDANCE_DATA: Record<string, PalaceGuidanceData> = {
       "Letting younger colleagues overshadow you without stepping up",
       "Adapting to routines that no longer challenge you",
       "Using age as an excuse instead of catching up with trends",
-      "Staying too quiet during this period — you'll waste your season",
+      "Staying too quiet during this period: you'll waste your season",
     ],
     successMetrics: [
       "New role, promotion, or increased responsibilities secured",
@@ -322,7 +322,7 @@ export const PALACE_GUIDANCE_DATA: Record<string, PalaceGuidanceData> = {
       "Move, explore, and expand beyond your current environment",
       "Step out of your comfort zone and into new spaces",
       "Consider shifting markets, departments, or new opportunities",
-      "Grow by changing your environment — new spaces bring new energy",
+      "Grow by changing your environment: new spaces bring new energy",
       "Build new networks and perspectives through movement",
       "Take calculated risks to explore new territories",
     ],
@@ -332,7 +332,7 @@ export const PALACE_GUIDANCE_DATA: Record<string, PalaceGuidanceData> = {
       "Letting comfort make you stagnant",
       "Waiting for 'perfect timing' that never comes",
       "Shrinking in when life is asking you to step outside",
-      "Rocking the boat unnecessarily — not all movement is good",
+      "Rocking the boat unnecessarily: not all movement is good",
     ],
     successMetrics: [
       "Successfully relocated or changed work environment",
@@ -351,7 +351,7 @@ export const PALACE_GUIDANCE_DATA: Record<string, PalaceGuidanceData> = {
   },
   "交友": {
     keyActions: [
-      "Reconnect and actively build your network — don't stay isolated",
+      "Reconnect and actively build your network: don't stay isolated",
       "Leverage your connections strategically for mutual growth",
       "Build influence through collaborations and partnerships",
       "Activate dormant relationships and create new ones",
@@ -383,10 +383,10 @@ export const PALACE_GUIDANCE_DATA: Record<string, PalaceGuidanceData> = {
   },
   "财帛": {
     keyActions: [
-      "Activate your resources — cash in what you've built so far",
+      "Activate your resources: cash in what you've built so far",
       "Review and optimize your investment portfolio strategically",
-      "Monetize your skills — package and sell your expertise",
-      "Stop parking money — restructure and take profits where due",
+      "Monetize your skills: package and sell your expertise",
+      "Stop parking money: restructure and take profits where due",
       "Leverage your networks for financial opportunities",
       "Turn accumulated skills and knowledge into income streams",
     ],
@@ -415,7 +415,7 @@ export const PALACE_GUIDANCE_DATA: Record<string, PalaceGuidanceData> = {
   },
   "田宅": {
     keyActions: [
-      "Optimize and upgrade what you already own — make it work harder",
+      "Optimize and upgrade what you already own: make it work harder",
       "Do proper market research to understand current opportunities",
       "Renovate or improve properties to match market expectations",
       "Leverage your foundations for greater returns",
@@ -447,7 +447,7 @@ export const PALACE_GUIDANCE_DATA: Record<string, PalaceGuidanceData> = {
   },
   "福德": {
     keyActions: [
-      "Activate your inner superpower — align your energy with your goals",
+      "Activate your inner superpower: align your energy with your goals",
       "Sharpen your instincts and decision-making patterns",
       "Say 'yes' to the right opportunities and 'no' to draining distractions",
       "Build confidence to execute without second-guessing yourself",
@@ -482,7 +482,7 @@ export const PALACE_GUIDANCE_DATA: Record<string, PalaceGuidanceData> = {
       "Cut emotional noise and bring issues into the light",
       "Realign strategy with your key partnerships (work and personal)",
       "Address unspoken frustrations instead of letting them pile up",
-      "Operate like a real team — align or make tough calls if needed",
+      "Operate like a real team: align or make tough calls if needed",
       "Trim the fat and clear up mismatched expectations",
       "Focus on facts and strategy, not just feelings",
     ],
@@ -511,10 +511,10 @@ export const PALACE_GUIDANCE_DATA: Record<string, PalaceGuidanceData> = {
   },
   "兄弟": {
     keyActions: [
-      "Clean up your circle — identify who's adding value vs. noise",
+      "Clean up your circle: identify who's adding value vs. noise",
       "Filter your connections and prioritize real alliances",
       "Invest in people who challenge, support, and grow with you",
-      "Cut the noise — stop pretending everyone belongs in your next season",
+      "Cut the noise: stop pretending everyone belongs in your next season",
       "Build clarity around who belongs in your inner circle",
       "Focus on quality connections over quantity",
     ],
@@ -543,8 +543,8 @@ export const PALACE_GUIDANCE_DATA: Record<string, PalaceGuidanceData> = {
   },
   "子女": {
     keyActions: [
-      "Stop letting worry run the show — focus on facts instead of fear",
-      "Structure your legacy clearly — what are you actually building?",
+      "Stop letting worry run the show: focus on facts instead of fear",
+      "Structure your legacy clearly: what are you actually building?",
       "Tighten up what matters and trim what's emotionally outdated",
       "Support wisely based on real needs, not emotional reactions",
       "Face emotional procrastination and create clear plans",
@@ -576,7 +576,7 @@ export const PALACE_GUIDANCE_DATA: Record<string, PalaceGuidanceData> = {
   "父母": {
     keyActions: [
       "Face old patterns from your past instead of letting them control you",
-      "Own your story — stop pointing back at childhood as an excuse",
+      "Own your story: stop pointing back at childhood as an excuse",
       "Cut through fear-based thinking with clarity and responsibility",
       "Step up and take ownership of your direction moving forward",
       "Address how authority figures (bosses, mentors, parents) shape you",
@@ -607,7 +607,7 @@ export const PALACE_GUIDANCE_DATA: Record<string, PalaceGuidanceData> = {
   },
   "命宫": {
     keyActions: [
-      "Invest in yourself — take that course, learn that skill, finally do your thing",
+      "Invest in yourself: take that course, learn that skill, finally do your thing",
       "Rebuild your edge and upgrade your mind for your next chapter",
       "Rewire your habits and reprogram your patterns",
       "Focus on becoming more, not just doing more",
@@ -644,7 +644,7 @@ export const PALACE_GUIDANCE_DATA: Record<string, PalaceGuidanceData> = {
       "Repair, recalibrate, and restore your body intentionally",
       "Protect your health so you have strength when Spring arrives",
       "Build sustainable routines instead of compensating with willpower",
-      "Treat this as your last warning window — use it wisely",
+      "Treat this as your last warning window: use it wisely",
     ],
     watchOut: [
       "Running on empty and telling yourself 'I'll rest later'",

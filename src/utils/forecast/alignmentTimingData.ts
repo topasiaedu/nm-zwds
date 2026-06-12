@@ -11,7 +11,7 @@
  */
 
 /**
- * Timing phase name — maps the four seasonal cycles to the Alignment Advantage
+ * Timing phase name: maps the four seasonal cycles to the Alignment Advantage
  * framework display names. Internal DaYun keys (spring/summer/autumn/winter)
  * remain unchanged; these names are used in display contexts only.
  */
@@ -39,7 +39,7 @@ export const PALACE_DATA: Record<string, PalaceTimingData> = {
     stars:     5,
     area:      "Professional",
     priority:  "Launch Initiatives",
-    directive: "Make the call, sign the deal, and step into the bigger role — the window is open.",
+    directive: "Make the call, sign the deal, and step into the bigger role: the window is open.",
     watchOut:  ["Waiting for perfect conditions before committing", "Over-allocating time to low-leverage routine work"],
   },
   "迁移": {
@@ -47,7 +47,7 @@ export const PALACE_DATA: Record<string, PalaceTimingData> = {
     stars:     5,
     area:      "Expansion",
     priority:  "Step Beyond Comfort Zone",
-    directive: "Move into new markets, geographies, or environments — expansion is cosmically supported now.",
+    directive: "Move into new markets, geographies, or environments: expansion is cosmically supported now.",
     watchOut:  ["Staying in familiar territory out of comfort", "Turning down opportunities that require you to stretch"],
   },
   "交友": {
@@ -55,7 +55,7 @@ export const PALACE_DATA: Record<string, PalaceTimingData> = {
     stars:     5,
     area:      "Network",
     priority:  "Launch Initiatives",
-    directive: "Reach out, reconnect, and build bridges — relationships formed this month carry compounding value.",
+    directive: "Reach out, reconnect, and build bridges: relationships formed this month carry compounding value.",
     watchOut:  ["Staying heads-down without investing in new connections", "Letting strong existing relationships go cold"],
   },
   "财帛": {
@@ -63,7 +63,7 @@ export const PALACE_DATA: Record<string, PalaceTimingData> = {
     stars:     5,
     area:      "Financial",
     priority:  "Monetize Resources",
-    directive: "Convert your assets and attention into revenue — this is your highest-return monetisation window.",
+    directive: "Convert your assets and attention into revenue: this is your highest-return monetisation window.",
     watchOut:  ["Leaving money on the table by undercharging or under-asking", "Opening new positions instead of harvesting existing ones"],
   },
   "田宅": {
@@ -71,7 +71,7 @@ export const PALACE_DATA: Record<string, PalaceTimingData> = {
     stars:     4,
     area:      "Assets",
     priority:  "Optimize Foundations",
-    directive: "Review, renovate, and optimise — improving what you own now compounds your future returns.",
+    directive: "Review, renovate, and optimise: improving what you own now compounds your future returns.",
     watchOut:  ["Making speculative new purchases before optimising current assets", "Ignoring maintenance that quietly erodes your base"],
   },
   "福德": {
@@ -79,7 +79,7 @@ export const PALACE_DATA: Record<string, PalaceTimingData> = {
     stars:     5,
     area:      "Inner Power",
     priority:  "Align Inner State",
-    directive: "Invest in your mindset, energy, and inner alignment — decisions made from clarity compound exponentially.",
+    directive: "Invest in your mindset, capacity, and inner alignment: decisions made from clarity compound exponentially.",
     watchOut:  ["Burning out by pouring into output without internal recovery", "Making major decisions while mentally depleted"],
   },
   "夫妻": {
@@ -87,7 +87,7 @@ export const PALACE_DATA: Record<string, PalaceTimingData> = {
     stars:     3,
     area:      "Partnership",
     priority:  "Clear Emotional Clutter",
-    directive: "Have the honest conversation you have been postponing — unresolved partnership tension drains your strategic energy.",
+    directive: "Have the honest conversation you have been postponing: unresolved partnership tension drains your strategic momentum.",
     watchOut:  ["Signing new partnership agreements or commitments this month", "Ignoring friction in key relationships and hoping it resolves itself"],
   },
   "兄弟": {
@@ -95,15 +95,15 @@ export const PALACE_DATA: Record<string, PalaceTimingData> = {
     stars:     4,
     area:      "Circle",
     priority:  "Purge Connections",
-    directive: "Audit your inner circle — invest deeper in relationships that multiply your energy, release those that drain it.",
-    watchOut:  ["Expanding your network at the expense of depth with existing allies", "Tolerating energy-draining relationships out of obligation"],
+    directive: "Audit your inner circle: invest deeper in relationships that multiply your leverage, release those that drain it.",
+    watchOut:  ["Expanding your network at the expense of depth with existing allies", "Tolerating capacity-draining relationships out of obligation"],
   },
   "子女": {
     season:    "Consolidation",
     stars:     3,
     area:      "Legacy",
     priority:  "Structure Your Plans",
-    directive: "Document, delegate, and structure — convert your ideas and intentions into systems that outlast this moment.",
+    directive: "Document, delegate, and structure: convert your ideas and intentions into systems that outlast this moment.",
     watchOut:  ["Launching new creative projects without completing what is already in progress", "Spreading your output thin across too many initiatives"],
   },
   "父母": {
@@ -111,7 +111,7 @@ export const PALACE_DATA: Record<string, PalaceTimingData> = {
     stars:     3,
     area:      "Patterns",
     priority:  "Break Old Loops",
-    directive: "Identify one pattern from your past that is limiting your next move — then interrupt it deliberately.",
+    directive: "Identify one pattern from your past that is limiting your next move: then interrupt it deliberately.",
     watchOut:  ["Repeating the same strategy that has not been working, expecting different results", "Letting old narratives about your limitations drive current decisions"],
   },
   "命宫": {
@@ -119,7 +119,7 @@ export const PALACE_DATA: Record<string, PalaceTimingData> = {
     stars:     4,
     area:      "Self",
     priority:  "Invest in Yourself",
-    directive: "Upgrade your skill, mindset, or knowledge base — the investment you make in yourself this month pays dividends across every other area.",
+    directive: "Upgrade your skill, mindset, or knowledge base: the investment you make in yourself this month pays dividends across every other area.",
     watchOut:  ["Postponing self-development under the weight of responsibilities", "Comparing your progress to others instead of measuring against your own trajectory"],
   },
   "疾厄": {
@@ -127,8 +127,8 @@ export const PALACE_DATA: Record<string, PalaceTimingData> = {
     stars:     3,
     area:      "Body",
     priority:  "Restore Strength",
-    directive: "Rest, recover, and rebuild your physical and mental reserves — protect your capacity to perform at full strength.",
-    watchOut:  ["Pushing through warning signals from your body or energy levels", "Scheduling this month as densely as a peak-performance month"],
+    directive: "Rest, recover, and rebuild your physical and mental reserves: protect your capacity to perform at full strength.",
+    watchOut:  ["Pushing through warning signals from your body or capacity levels", "Scheduling this month as densely as a peak-performance month"],
   },
 };
 
@@ -149,9 +149,9 @@ export const getSignalColor = (stars: number): SignalColor => {
 
 /** Human-readable label for each signal colour shown in the UI. */
 export const SIGNAL_LABELS: Record<SignalColor, string> = {
-  green:  "Green Light — Execute",
-  yellow: "Yellow Light — Proceed with Caution",
-  red:    "Red Light — Protect & Plan",
+  green:  "Green Light: Execute",
+  yellow: "Yellow Light: Proceed with Caution",
+  red:    "Red Light: Protect & Plan",
 };
 
 /** Tailwind background / text / border class sets for each signal colour. */
