@@ -1136,6 +1136,7 @@ const ResultContent: React.FC = () => {
                       }}>
                       <ZWDSChart
                         chartData={calculatedChartData}
+                        blueprintMode={blueprintMode}
                         targetYear={
                           blueprintMode === "liumonth" ? liuMonthSolarYear : undefined
                         }
