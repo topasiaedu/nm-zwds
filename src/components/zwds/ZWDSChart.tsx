@@ -11,6 +11,7 @@ import TransformationLines from "./components/TransformationLines";
 import { useLanguage } from "../../context/LanguageContext";
 import { useChartSettings } from "../../context/ChartSettingsContext";
 import { PALACE_NAMES } from "../../utils/zwds/constants";
+import { getCurrentDayunPalace } from "../../utils/destiny-navigator/palace-resolver";
 
 // Breakpoint constants - matching TailwindCSS defaults
 const SCREEN_SM = 640;
@@ -178,6 +179,11 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
   const [selectedPalaceName, setSelectedPalaceName] = useState<number | null>(
     null
   );
+  // User-controlled yellow highlights (double-click); seeded with current Da Yun on mount
+  const [highlightedPalaces, setHighlightedPalaces] = useState<Set<number>>(
+    () => new Set()
+  );
+  const hasSeededHighlightsRef = useRef(false);
 
   // Sync showMonths with controlled prop.
   // When showMonthsControlled is null, also clear the internal state so months
@@ -187,6 +193,18 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
       setShowMonths(showMonthsControlled);
     }
   }, [showMonthsControlled]);
+
+  // Seed highlight set with current Da Yun palace once per chart mount
+  useEffect(() => {
+    if (hasSeededHighlightsRef.current || isPdfExport) {
+      return;
+    }
+    const dayunPalace = getCurrentDayunPalace(chartData);
+    if (dayunPalace !== null) {
+      setHighlightedPalaces(new Set([dayunPalace]));
+    }
+    hasSeededHighlightsRef.current = true;
+  }, [chartData, isPdfExport]);
 
   const { language } = useLanguage();
   const { settings } = useChartSettings();
@@ -344,6 +362,24 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
 
     // Redraw counter removed to prevent flashing
   }, [disableInteraction, settings.palaceClickInteraction, selectedPalace, refsReady, setRefsReady]);
+
+  /**
+   * Toggle user yellow highlight on double-click (gated like single palace click).
+   */
+  const handleToggleHighlight = useCallback((palaceNumber: number) => {
+    if (disableInteraction || !settings.palaceClickInteraction) {
+      return;
+    }
+    setHighlightedPalaces((prev) => {
+      const next = new Set(prev);
+      if (next.has(palaceNumber)) {
+        next.delete(palaceNumber);
+      } else {
+        next.add(palaceNumber);
+      }
+      return next;
+    });
+  }, [disableInteraction, settings.palaceClickInteraction]);
 
   // Sync internal selection with controlled prop if provided
   useEffect(() => {
@@ -579,6 +615,10 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
         disableInteraction={disableInteraction}
         chartSettings={settings}
         isLifePalaceLiuMonthHighlight={isLifePalaceLiuMonthHighlight}
+        isUserHighlighted={
+          !isPdfExport && highlightedPalaces.has(palaceNumber)
+        }
+        onToggleHighlight={handleToggleHighlight}
       />
     );
   };
