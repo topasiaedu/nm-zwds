@@ -10,6 +10,7 @@ import CenterInfo from "./components/CenterInfo";
 import TransformationLines from "./components/TransformationLines";
 import { useLanguage } from "../../context/LanguageContext";
 import { useChartSettings } from "../../context/ChartSettingsContext";
+import { useTierAccess } from "../../context/TierContext";
 import { PALACE_NAMES } from "../../utils/zwds/constants";
 import { getCurrentDayunPalace } from "../../utils/destiny-navigator/palace-resolver";
 
@@ -195,6 +196,9 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
   const [selectedPalaceName, setSelectedPalaceName] = useState<number | null>(
     null
   );
+  const { isAdmin } = useTierAccess();
+  const canUsePalaceHighlights = isAdmin;
+
   const blueprintHighlightKey: BlueprintHighlightKey = blueprintMode ?? "default";
   const highlightsByModeRef = useRef<Partial<Record<BlueprintHighlightKey, Set<number>>>>({});
   const prevBlueprintHighlightKeyRef = useRef<BlueprintHighlightKey | null>(null);
@@ -217,7 +221,7 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
 
   // Save highlights for the outgoing mode and restore (or default) for the incoming mode
   useEffect(() => {
-    if (isPdfExport) {
+    if (isPdfExport || !canUsePalaceHighlights) {
       return;
     }
 
@@ -239,7 +243,7 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
     }
 
     prevBlueprintHighlightKeyRef.current = blueprintHighlightKey;
-  }, [blueprintHighlightKey, chartData, isPdfExport]);
+  }, [blueprintHighlightKey, chartData, isPdfExport, canUsePalaceHighlights]);
 
   const { language } = useLanguage();
   const { settings } = useChartSettings();
@@ -402,7 +406,7 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
    * Toggle user yellow highlight on double-click (gated like single palace click).
    */
   const handleToggleHighlight = useCallback((palaceNumber: number) => {
-    if (disableInteraction || !settings.palaceClickInteraction) {
+    if (disableInteraction || !settings.palaceClickInteraction || !canUsePalaceHighlights) {
       return;
     }
     setHighlightedPalaces((prev) => {
@@ -415,7 +419,7 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
       highlightsByModeRef.current[blueprintHighlightKey] = next;
       return next;
     });
-  }, [disableInteraction, settings.palaceClickInteraction, blueprintHighlightKey]);
+  }, [disableInteraction, settings.palaceClickInteraction, blueprintHighlightKey, canUsePalaceHighlights]);
 
   // Sync internal selection with controlled prop if provided
   useEffect(() => {
@@ -651,8 +655,11 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
         disableInteraction={disableInteraction}
         chartSettings={settings}
         isLifePalaceLiuMonthHighlight={isLifePalaceLiuMonthHighlight}
+        canUsePalaceHighlights={canUsePalaceHighlights}
         isUserHighlighted={
-          !isPdfExport && highlightedPalaces.has(palaceNumber)
+          canUsePalaceHighlights &&
+          !isPdfExport &&
+          highlightedPalaces.has(palaceNumber)
         }
         onToggleHighlight={handleToggleHighlight}
       />

@@ -59,6 +59,8 @@ interface PalaceProps {
   chartSettings: ChartSettings; // Chart settings to control feature visibility
   /** Amber Da Yun-style glow for Liu Month / Liu Nian timeframe life palace (bottom label shows Life). */
   isLifePalaceLiuMonthHighlight?: boolean;
+  /** When true, double-click yellow highlights are enabled (admin only). */
+  canUsePalaceHighlights: boolean;
   /** User-applied yellow highlight (double-click toggle). */
   isUserHighlighted: boolean;
   /** Toggle user yellow highlight for this palace. */
@@ -94,6 +96,7 @@ const Palace: React.FC<PalaceProps> = ({
   disableInteraction = false,
   chartSettings,
   isLifePalaceLiuMonthHighlight = false,
+  canUsePalaceHighlights,
   isUserHighlighted,
   onToggleHighlight,
 }) => {
@@ -117,7 +120,7 @@ const Palace: React.FC<PalaceProps> = ({
       // Second click within threshold — toggle yellow highlight
       clearTimeout(clickTimeoutRef.current);
       clickTimeoutRef.current = null;
-      if (chartSettings.palaceClickInteraction) {
+      if (chartSettings.palaceClickInteraction && canUsePalaceHighlights) {
         onToggleHighlight(palaceNumber);
       }
     }
@@ -155,8 +158,12 @@ const Palace: React.FC<PalaceProps> = ({
     palace.majorLimit.startAge <= ageToCheck &&
     palace.majorLimit.endAge >= ageToCheck;
 
-  /** User-applied yellow Da Yun-style glow; hidden while palace is selected (purple). */
-  const hasYellowGlow = isUserHighlighted && !isSelected;
+  /** Admin: user-applied yellow glow. Non-admin: automatic Da Yun / Liu life palace glow. */
+  const hasYellowGlow =
+    !isSelected &&
+    (canUsePalaceHighlights
+      ? isUserHighlighted
+      : isCurrentDaXian || isLifePalaceLiuMonthHighlight);
 
   // Animation variants for palaces
   const palaceVariants = isPdfExport ? undefined : {
