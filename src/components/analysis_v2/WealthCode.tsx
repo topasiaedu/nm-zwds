@@ -5,10 +5,8 @@
 
 import React from "react";
 import {
-  Check,
   Coins,
   Handshake,
-  Minus,
   Sparkles,
   Star,
   Target,
@@ -34,14 +32,8 @@ import {
   AnalysisSectionHeader,
   AnalysisSectionHeaderSimple,
 } from "./shared/AnalysisSectionHeader";
-import { SubsectionSparkleDivider } from "./shared/SubsectionSparkleDivider";
-import {
-  BRAND_EDITORIAL_HIGHLIGHT_THEME,
-  PptHighlightCard,
-  PptHighlightColumn,
-  PptHighlightGroupHeader,
-  ROTATING_HIGHLIGHT_THEMES,
-} from "./shared/PptHighlightCards";
+import { WealthCodeInsightsCards } from "./shared/WealthCodeInsightsCards";
+import { WealthCodeCareerPaths } from "./shared/WealthCodeCareerPaths";
 import { renderInsightTextWithHighlights } from "./shared/personalityTextHighlight";
 
 /**
@@ -314,69 +306,97 @@ const WealthCodeScoreCard: React.FC<WealthCodeScoreCardProps> = ({
   );
 };
 
-type WealthCodeSubsectionHeaderProps = {
-  title: string;
+type WealthCodeDominantHeroProps = {
+  profile: WealthCodeAnalysisResult;
+  forPdfCapture?: boolean;
 };
 
 /**
- * Sub-section title + gradient divider — sits below the main section header, above score cards.
+ * Combined dominant archetype hero — badge, title, insight copy, and primary score.
  */
-const WealthCodeSubsectionHeader: React.FC<WealthCodeSubsectionHeaderProps> = ({ title }) => {
-  return (
-    <div className="text-center">
-      <BrandGradientText
-        as="h3"
-        className="mx-auto inline-block w-fit text-2xl font-bold sm:text-3xl"
-      >
-        {title}
-      </BrandGradientText>
-      <SubsectionSparkleDivider className="mx-auto mb-0 mt-5 flex w-full max-w-md items-center gap-3 px-2" />
-    </div>
-  );
-};
-
-/**
- * Dominant archetype summary — flat editorial block (not a card); follows subsection h3.
- */
-const PremiumHeroCard: React.FC<{ profile: WealthCodeAnalysisResult; forPdfCapture?: boolean }> = ({
+const WealthCodeDominantHero: React.FC<WealthCodeDominantHeroProps> = ({
   profile,
   forPdfCapture,
 }) => {
-  if (!profile.hasRecognizedStars) return null;
+  if (!profile.hasRecognizedStars) {
+    return null;
+  }
 
   const dominantCode = profile.codes.reduce((top, entry) =>
     entry.score > top.score ? entry : top
   );
-  const colorConfig = WEALTH_CODE_COLORS[dominantCode.key];
+
+  const heroBackgroundStyle: React.CSSProperties = forPdfCapture
+    ? {
+        backgroundImage: [
+          "radial-gradient(ellipse at 28% 18%, rgba(107, 91, 149, 0.14) 0%, transparent 52%)",
+          "radial-gradient(ellipse at 88% 78%, rgba(254, 142, 1, 0.08) 0%, transparent 48%)",
+          "linear-gradient(135deg, #EDE8F5 0%, #FAF7FD 42%, #FFFFFF 100%)",
+        ].join(", "),
+      }
+    : {};
 
   return (
-    <section aria-labelledby="wealth-code-primary-insight">
-      <div
-        className="border-l-4 py-1 pl-6 sm:pl-8"
-        style={{ borderColor: colorConfig.primary }}
-      >
-        <h4 id="wealth-code-primary-insight">
-          <BrandGradientText
-            as="span"
-            className="text-sm font-bold uppercase tracking-[0.2em] sm:text-base"
+    <section
+      aria-labelledby="wealth-code-dominant-hero-title"
+      className="relative overflow-hidden rounded-2xl border border-brand-purple/20 bg-gradient-to-br from-[#EDE8F5] via-[#FAF7FD] to-white dark:border-brand-purple/30 dark:from-brand-purple/20 dark:via-surface-darkSecondary/80 dark:to-surface-darkSecondary/60"
+      style={heroBackgroundStyle}
+    >
+      {forPdfCapture ? null : (
+        <>
+          <div
+            className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_28%_18%,rgba(107,91,149,0.14),transparent_55%)]"
+            aria-hidden="true"
+          />
+          <div
+            className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_88%_78%,rgba(254,142,1,0.08),transparent_50%)]"
+            aria-hidden="true"
+          />
+        </>
+      )}
+      <Sparkles
+        className="pointer-events-none absolute right-6 top-5 h-4 w-4 text-brand-purple/25"
+        aria-hidden="true"
+      />
+      <Sparkles
+        className="pointer-events-none absolute bottom-8 left-8 h-3 w-3 text-[var(--color-accent-gradient-5)]/30"
+        aria-hidden="true"
+      />
+
+      <div className="relative flex flex-col gap-8 p-6 sm:p-8 lg:flex-row lg:items-center lg:justify-between lg:gap-10">
+        <div className="min-w-0 flex-1 lg:max-w-[62%]">
+          <span className="inline-flex items-center gap-2 rounded-full bg-brand-purple px-3.5 py-1.5 text-[10px] font-bold uppercase tracking-[0.18em] text-white sm:text-xs">
+            <Sparkles className="h-3 w-3 shrink-0" aria-hidden="true" />
+            Dominant Wealth Code
+          </span>
+
+          <h3
+            id="wealth-code-dominant-hero-title"
+            className="mt-4 font-serif text-3xl font-bold leading-tight text-navy dark:text-cream sm:text-4xl"
           >
-            Primary insight
-          </BrandGradientText>
-        </h4>
-        <p className="mt-3 text-base font-medium leading-relaxed text-theme-fg-secondary sm:text-lg">
-          {renderInsightTextWithHighlights(profile.summaryText)}
-        </p>
-        <div className="mt-5">
-          <p className="text-[10px] font-semibold uppercase tracking-wider text-theme-fg-secondary">
-            Primary score
+            {profile.dominantArchetype}
+          </h3>
+
+          <p className="mt-4 text-sm leading-relaxed text-theme-fg-secondary sm:text-base">
+            {renderInsightTextWithHighlights(profile.summaryText)}
           </p>
-          <p
-            className="mt-1 font-serif text-3xl font-black leading-none tabular-nums"
-            style={{ color: colorConfig.primary }}
-          >
-            {dominantCode.score.toFixed(1)}
-            <span className="ml-1 text-sm font-semibold text-theme-fg-secondary">/ 10</span>
-          </p>
+        </div>
+
+        <div className="mx-auto w-full max-w-[11rem] shrink-0 lg:mx-0">
+          <div className="rounded-2xl border border-[var(--color-accent-gradient-5)]/25 bg-white px-6 py-5 text-center shadow-lg shadow-[var(--color-accent-gradient-5)]/10 dark:bg-surface-elevated/90">
+            <Star
+              className="mx-auto h-4 w-4 fill-current text-[var(--color-accent-gradient-5)]"
+              aria-hidden="true"
+            />
+            <p className="mt-2 font-serif text-4xl font-black leading-none tabular-nums text-brand-purple dark:text-brand-purple-light">
+              {dominantCode.score.toFixed(1)}
+            </p>
+            <div
+              className="mx-auto mt-3 h-px w-10 bg-theme-border-subtle"
+              aria-hidden="true"
+            />
+            <p className="mt-3 text-xs font-medium text-theme-fg-secondary">Primary Score</p>
+          </div>
         </div>
       </div>
     </section>
@@ -426,14 +446,16 @@ const ModernBarChart: React.FC<{
 };
 
 /**
- * Core strengths + watch patterns — PPT editorial columns with flat trait chips.
+ * Core strengths + watch patterns — white list cards.
  */
 const ModernInsights: React.FC<{
   strengths: string[];
   blindSpots: string[];
   forPdfCapture?: boolean;
 }> = ({ strengths, blindSpots, forPdfCapture }) => {
-  if (strengths.length === 0 && blindSpots.length === 0) return null;
+  if (strengths.length === 0 && blindSpots.length === 0) {
+    return null;
+  }
 
   const strengthItems = strengths.map((label, idx) => ({
     id: `wealth-strength-${idx}`,
@@ -446,138 +468,34 @@ const ModernInsights: React.FC<{
 
   return (
     <section aria-label="Wealth profile insights">
-      <div
-        className={
-          forPdfCapture
-            ? "grid grid-cols-2 gap-8"
-            : "grid grid-cols-1 gap-8 md:grid-cols-2"
-        }
-      >
-        {strengthItems.length > 0 ? (
-          <PptHighlightColumn
-            header={{
-              variant: "brand",
-              beforeText: "What powers",
-              emphasisText: "you",
-              afterText: "",
-            }}
-            items={strengthItems}
-            themes={[BRAND_EDITORIAL_HIGHLIGHT_THEME]}
-            icon={Check}
-            plainHighlight
-            emptyMessage=""
-            forPdfCapture={forPdfCapture}
-          />
-        ) : null}
-        {watchItems.length > 0 ? (
-          <div
-            {...(forPdfCapture ? { "data-pdf-page-break-before": "" } : {})}
-          >
-            <PptHighlightColumn
-              header={{
-                variant: "muted",
-                beforeText: "Patterns to",
-                emphasisText: "watch",
-                afterText: "",
-              }}
-              items={watchItems}
-              themes={[BRAND_EDITORIAL_HIGHLIGHT_THEME]}
-              icon={Minus}
-              plainHighlight
-              emptyMessage=""
-              forPdfCapture={forPdfCapture}
-            />
-          </div>
-        ) : null}
-      </div>
+      <WealthCodeInsightsCards
+        strengths={strengthItems}
+        blindSpots={watchItems}
+        forPdfCapture={forPdfCapture}
+      />
     </section>
   );
 };
 
 /**
- * Lowercases the first character for sentence flow after an em dash.
- */
-const formatCareerReasonLead = (reason: string): string => {
-  if (reason.length === 0) {
-    return reason;
-  }
-  return `${reason.charAt(0).toLowerCase()}${reason.slice(1)}`;
-};
-
-/**
- * Career alignment — PPT-style highlight cards in a two-column layout.
+ * Career alignment — white list cards matching wealth insights layout.
  */
 const ModernCareerPaths: React.FC<{
   idealRoles: CareerRecommendation[];
   nonIdealRoles: CareerRecommendation[];
   forPdfCapture?: boolean;
 }> = ({ idealRoles, nonIdealRoles, forPdfCapture }) => {
-  if (idealRoles.length === 0 && nonIdealRoles.length === 0) return null;
-
-  const columnGridClass = forPdfCapture
-    ? "grid grid-cols-2 gap-8"
-    : "grid grid-cols-1 gap-8 lg:grid-cols-2";
+  if (idealRoles.length === 0 && nonIdealRoles.length === 0) {
+    return null;
+  }
 
   return (
-    <section className="relative" aria-label="Career alignment">
-      <Sparkles
-        className="pointer-events-none absolute bottom-8 left-0 h-4 w-4 text-accent-gold/40"
-        aria-hidden="true"
+    <section aria-label="Career alignment">
+      <WealthCodeCareerPaths
+        idealRoles={idealRoles}
+        nonIdealRoles={nonIdealRoles}
+        forPdfCapture={forPdfCapture}
       />
-      <Sparkles
-        className="pointer-events-none absolute right-2 top-16 h-3 w-3 text-accent-gold/35"
-        aria-hidden="true"
-      />
-
-      <div className={columnGridClass}>
-        {idealRoles.length > 0 ? (
-          <div>
-            <PptHighlightGroupHeader
-              variant="brand"
-              beforeText="These careers are"
-              emphasisText="for you"
-            />
-            <div className="flex flex-col gap-4">
-              {idealRoles.map((item, idx) => (
-                <PptHighlightCard
-                  key={`${item.role}-${idx}`}
-                  theme={BRAND_EDITORIAL_HIGHLIGHT_THEME}
-                  icon={Check}
-                  leadIn="Thrive as"
-                  highlight={item.role}
-                  trailing={`— ${formatCareerReasonLead(item.reason)}`}
-                  forPdfCapture={forPdfCapture}
-                  variant="flat"
-                />
-              ))}
-            </div>
-          </div>
-        ) : null}
-
-        {nonIdealRoles.length > 0 ? (
-          <div>
-            <PptHighlightGroupHeader
-              variant="muted"
-              beforeText="Roles to"
-              emphasisText="reconsider"
-            />
-            <div className="flex flex-col gap-4">
-              {nonIdealRoles.map((item, idx) => (
-                <PptHighlightCard
-                  key={`${item.role}-${idx}`}
-                  theme={BRAND_EDITORIAL_HIGHLIGHT_THEME}
-                  icon={Minus}
-                  leadIn="May not suit"
-                  highlight={item.role}
-                  trailing={`— ${formatCareerReasonLead(item.reason)}`}
-                  forPdfCapture={forPdfCapture}
-                  variant="flat"
-                />
-              ))}
-            </div>
-          </div>
-        ) : null}
-      </div>
     </section>
   );
 };
@@ -649,10 +567,8 @@ const WealthCode: React.FC<WealthCodeProps> = ({
             ) : null}
 
             <div className="space-y-24 pt-8">
-              <WealthCodeSubsectionHeader title={wealthProfile.dominantArchetype} />
-
               <div data-pdf-break-anchor="wealth-hero">
-                <PremiumHeroCard profile={wealthProfile} forPdfCapture={forPdfCapture} />
+                <WealthCodeDominantHero profile={wealthProfile} forPdfCapture={forPdfCapture} />
               </div>
 
               <ModernBarChart

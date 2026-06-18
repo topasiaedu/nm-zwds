@@ -53,6 +53,8 @@ export const NoblemanSection: React.FC<NoblemanSectionProps> = ({
           title="Nobleman Analysis"
           subtitle="Key people who will support your life journey — aligned with your chart structure and natural strengths."
           icon={Users}
+          backgroundImage="/images/chart/guiding.png"
+          backgroundPosition="right 40%"
           pdfBreakAnchor="nobleman-header"
           forPdfCapture={forPdfCapture}
         />

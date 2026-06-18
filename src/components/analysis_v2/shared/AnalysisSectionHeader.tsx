@@ -1,5 +1,5 @@
 /**
- * Centered analysis section header — cream-surface editorial style (matches Wealth Code).
+ * Analysis section header — orange gradient banner with background artwork.
  */
 
 import React from "react";
@@ -9,19 +9,26 @@ import {
   analysisHeroTitleClass,
   analysisHeroTitleCenteredClass,
 } from "../../../styles/typographyUi";
-import { pdfCaptureNumericBadgeStyle } from "./pdfCaptureNumericBadgeStyle";
+
+const DEFAULT_HEADER_BG_IMAGE = "/images/chart/HeaderBG.png";
+/** Nudge artwork down so the doorway top stays inside the banner. */
+const DEFAULT_HEADER_BG_POSITION = "center 38%";
 
 export type AnalysisSectionHeaderProps = {
-  /** Eyebrow pill label (e.g. "Section 01", "Wealth profile"). */
+  /** Eyebrow label above the title (e.g. "Core identity", "Wealth profile"). */
   sectionLabel: string;
-  /** Numeric badge beside the title (e.g. "01"). */
+  /** Large numeric badge on the left (e.g. "01"). */
   badgeText: string;
   /** Main section title — rendered as h2. */
   title: string;
   /** Supporting description below the title. */
   subtitle: string;
-  /** Small icon shown in the eyebrow pill. */
+  /** Small icon shown beside the eyebrow label. */
   icon: LucideIcon;
+  /** Optional banner artwork path (defaults to HeaderBG.png). */
+  backgroundImage?: string;
+  /** Optional background-position for the artwork layer. */
+  backgroundPosition?: string;
   /** Optional Tailwind classes for the title (defaults to analysisHeroTitleClass). */
   titleClassName?: string;
   /** Optional PDF break anchor attribute. */
@@ -30,26 +37,8 @@ export type AnalysisSectionHeaderProps = {
   forPdfCapture?: boolean;
 };
 
-const numericBadgeStyle = (forPdfCapture: boolean | undefined): React.CSSProperties =>
-  forPdfCapture
-    ? pdfCaptureNumericBadgeStyle("#4A3F6B")
-    : {
-        background: "rgba(255, 255, 255, 0.95)",
-        color: "#4A3F6B",
-        height: "40px",
-        minWidth: "52px",
-        padding: "0 14px",
-        borderRadius: "12px",
-        fontSize: "20px",
-        fontWeight: "800",
-        lineHeight: 1,
-        display: "inline-flex",
-        alignItems: "center",
-        justifyContent: "center",
-      };
-
 /**
- * Flat centered section header used across analysis report sections.
+ * Premium orange banner section header used across analysis report sections.
  */
 export const AnalysisSectionHeader: React.FC<AnalysisSectionHeaderProps> = ({
   sectionLabel,
@@ -57,10 +46,15 @@ export const AnalysisSectionHeader: React.FC<AnalysisSectionHeaderProps> = ({
   title,
   subtitle,
   icon: Icon,
+  backgroundImage,
+  backgroundPosition,
   titleClassName = analysisHeroTitleClass,
   pdfBreakAnchor,
   forPdfCapture,
 }) => {
+  const headerBgImage = backgroundImage ?? DEFAULT_HEADER_BG_IMAGE;
+  const headerBgPosition = backgroundPosition ?? DEFAULT_HEADER_BG_POSITION;
+
   const anchorProps: Record<string, string> = {};
   if (pdfBreakAnchor) {
     anchorProps["data-pdf-break-anchor"] = pdfBreakAnchor;
@@ -68,29 +62,67 @@ export const AnalysisSectionHeader: React.FC<AnalysisSectionHeaderProps> = ({
 
   return (
     <div className="mb-8" {...anchorProps}>
-      <div className="text-center">
-        <div className="mb-4 flex justify-center">
-          <div className="inline-flex items-center gap-2 rounded-full border border-brand-purple/30 bg-brand-purple/10 px-3 py-1.5 dark:border-accent-gold/40 dark:bg-accent-gold/10">
-            <Icon
-              className="h-3.5 w-3.5 text-brand-purple dark:text-accent-gold"
+      <div
+        className="relative overflow-hidden rounded-2xl shadow-lg shadow-orange-500/20"
+        style={
+          forPdfCapture
+            ? {
+                backgroundImage: `linear-gradient(to right, #f27121, #f9a01b), url(${headerBgImage})`,
+                backgroundSize: "cover",
+                backgroundPosition: headerBgPosition,
+              }
+            : undefined
+        }
+      >
+        {!forPdfCapture ? (
+          <>
+            <div
+              className="absolute inset-0 bg-gradient-to-r from-[#f27121] to-[#f9a01b]"
               aria-hidden="true"
             />
-            <span className="text-xs font-bold uppercase tracking-[0.2em] text-brand-purple dark:text-accent-gold">
-              {sectionLabel}
-            </span>
+            <div
+              className="absolute inset-0 bg-cover"
+              style={{
+                backgroundImage: `url(${headerBgImage})`,
+                backgroundPosition: headerBgPosition,
+              }}
+              aria-hidden="true"
+            />
+          </>
+        ) : null}
+
+        <div className="relative z-10 flex items-center gap-5 p-6 sm:gap-8 sm:p-8">
+          <span
+            className="shrink-0 font-serif text-5xl font-bold tabular-nums leading-none text-white sm:text-6xl md:text-7xl"
+            aria-hidden="true"
+          >
+            {badgeText}
+          </span>
+
+          <div
+            className="h-14 w-px shrink-0 bg-white/35 sm:h-16"
+            aria-hidden="true"
+          />
+
+          <div className="w-[60%] min-w-0 text-left">
+            <div className="mb-2 flex items-center gap-2">
+              <Icon className="h-3.5 w-3.5 text-white/80" aria-hidden="true" />
+              <span className="text-xs font-bold uppercase tracking-[0.2em] text-white/80">
+                {sectionLabel}
+              </span>
+            </div>
+
+            <h2
+              className={`font-serif font-bold uppercase leading-tight text-white ${titleClassName}`}
+            >
+              {title}
+            </h2>
+
+            <p className="mt-2 max-w-full text-sm font-medium leading-relaxed text-white/95 sm:text-base">
+              {subtitle}
+            </p>
           </div>
         </div>
-
-        <div className="flex flex-wrap items-center justify-center gap-3">
-          <span style={numericBadgeStyle(forPdfCapture)}>{badgeText}</span>
-          <BrandGradientText as="h2" className={`${titleClassName} inline-block w-fit`}>
-            {title}
-          </BrandGradientText>
-        </div>
-
-        <p className="mx-auto mt-4 max-w-2xl text-base font-medium leading-relaxed text-theme-fg-secondary sm:text-lg">
-          {subtitle}
-        </p>
       </div>
     </div>
   );

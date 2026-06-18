@@ -31,7 +31,6 @@ import { supabase } from "../utils/supabase-client";
 import {
   renderChartTitleWithNameGradient,
   renderTitleWithZiWeiDouShuGradient,
-  wrapPhraseInBrandGradient,
 } from "../components/BrandGradientText";
 import {
   Overview,
@@ -40,6 +39,7 @@ import {
   WealthCode,
   FourKeyPalace,
 } from "../components/analysis_v2";
+import { DestinyBlueprintPageHeader } from "../components/analysis_v2/shared/DestinyBlueprintPageHeader";
 import { ChartSettingsProvider, useChartSettings } from "../context/ChartSettingsContext";
 import ChartSettingsModal from "../components/ChartSettingsModal";
 import {
@@ -48,8 +48,6 @@ import {
   chartAdminPanelDescClass,
   chartAdminPanelTitleClass,
   chartAnalysisDividerClass,
-  chartAnalysisSubtitleClass,
-  chartAnalysisTitleClass,
   chartBackButtonClass,
   chartBackIconWrapClass,
   chartBadgeOtherClass,
@@ -1546,18 +1544,14 @@ const ResultContent: React.FC = () => {
 
             {/* ── Title block — only for DNA and Liu Nian modes ── */}
             {(blueprintMode === "dna" || blueprintMode === "liunian") && (
-              <div className="flex flex-col justify-center items-center">
-                <h2 className={chartAnalysisTitleClass}>
-                  {wrapPhraseInBrandGradient(
-                    t("analysis.title") || "PERSONALIZED LIFE REPORT",
-                    { phrase: " LIFE REPORT" }
-                  )}
-                </h2>
-                <p className={chartAnalysisSubtitleClass}>
-                  {t("analysis.subtitle") ||
-                    "A custom breakdown of your chart's strengths, patterns, and strategic focus areas."}
-                </p>
-              </div>
+              <DestinyBlueprintPageHeader
+                sectionTitle={t("analysis.title") || "PERSONALIZED LIFE REPORT"}
+                subtitle={
+                  t("analysis.subtitle") ||
+                  "A custom breakdown of your chart's strengths, patterns, and strategic focus areas."
+                }
+                className="mb-8"
+              />
             )}
 
             <div className="space-y-8">

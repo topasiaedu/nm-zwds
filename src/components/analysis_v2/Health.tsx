@@ -24,8 +24,8 @@ import {
 import maleSvgContent from "../../assets/male-svg";
 import { ChartData } from "../../utils/zwds/types";
 import { AnalysisSectionHeader } from "./shared/AnalysisSectionHeader";
+import { HealthGuidanceScrollPanel } from "./shared/HealthGuidanceScrollPanel";
 import { HealthGuidanceTimeline } from "./shared/HealthGuidanceTimeline";
-import { SubsectionSparkleDivider } from "./shared/SubsectionSparkleDivider";
 
 /**
  * Props interface for the HealthAnalysis component
@@ -105,7 +105,11 @@ const HealthBodyMapBlock: React.FC<HealthBodyMapBlockProps> = ({
   forPdfCapture,
 }) => {
   return (
-    <section className="text-center" aria-label="Energetic stress zones" data-pdf-break-anchor="health-body-map">
+    <section
+      className="flex h-full flex-col justify-center text-center"
+      aria-label="Energetic stress zones"
+      data-pdf-break-anchor="health-body-map"
+    >
       <p className="text-xs font-bold uppercase tracking-[0.2em] text-theme-fg-secondary">
         Energetic stress zones
       </p>
@@ -387,26 +391,72 @@ const Health: React.FC<HealthAnalysisProps> = ({
   const healthTips = healthAnalysis?.healthTips ?? [];
   const hasAffected = affectedParts.length > 0;
 
-  const guidanceContent =
+  const guidanceTips = healthTips.map((tip, index) => ({
+    id: `${tip.bodyPart}-${index}`,
+    bodyPart: tip.bodyPart,
+    englishName: tip.englishName,
+    description: tip.description,
+  }));
+
+  const guidanceLayoutVersion = JSON.stringify(expandedTips);
+
+  const guidanceTimeline = forPdfCapture ? (
+    <HealthGuidanceTimeline
+      tips={guidanceTips}
+      getTipIcon={getHealthTipIcon}
+      getPreviewText={getPreviewTipText}
+      tipExceedsPreviewLimit={tipExceedsPreviewLimit}
+      isTipExpanded={tipIsExpanded}
+      onToggleTip={toggleTip}
+      forPdfCapture={forPdfCapture}
+    />
+  ) : (
+    <HealthGuidanceScrollPanel
+      tips={guidanceTips}
+      getTipIcon={getHealthTipIcon}
+      getPreviewText={getPreviewTipText}
+      tipExceedsPreviewLimit={tipExceedsPreviewLimit}
+      isTipExpanded={tipIsExpanded}
+      onToggleTip={toggleTip}
+      layoutVersion={guidanceLayoutVersion}
+    />
+  );
+
+  const healthScanContent =
     hasAffected && healthTips.length > 0 ? (
       <div
+        className={
+          forPdfCapture
+            ? "grid grid-cols-[minmax(0,7fr)_minmax(0,3fr)] items-center gap-8"
+            : "grid grid-cols-1 items-start gap-8 lg:grid-cols-[minmax(0,7fr)_minmax(0,3fr)] lg:items-center"
+        }
         {...(forPdfCapture ? { "data-pdf-page-break-before": "" } : {})}
         data-pdf-break-anchor="health-analysis-tips"
       >
-        <HealthGuidanceTimeline
-          tips={healthTips.map((tip, index) => ({
-            id: `${tip.bodyPart}-${index}`,
-            bodyPart: tip.bodyPart,
-            englishName: tip.englishName,
-            description: tip.description,
-          }))}
-          getTipIcon={getHealthTipIcon}
-          getPreviewText={getPreviewTipText}
-          tipExceedsPreviewLimit={tipExceedsPreviewLimit}
-          isTipExpanded={tipIsExpanded}
-          onToggleTip={toggleTip}
-          forPdfCapture={forPdfCapture}
-        />
+        <div className="min-w-0">
+          {!forPdfCapture ? (
+            <div className="mb-4 border-l-4 border-brand-purple pl-4 dark:border-accent-goldDark/70">
+              <h3 className="font-serif text-xl font-bold text-navy dark:text-cream sm:text-2xl">
+                Body Area Guidance
+              </h3>
+              <p className="mt-1 text-sm text-theme-fg-secondary">
+                {guidanceTips.length > 1
+                  ? `Scroll to explore all ${guidanceTips.length} focus areas`
+                  : "Energetic interpretation for your highlighted zone"}
+              </p>
+            </div>
+          ) : null}
+
+          {guidanceTimeline}
+        </div>
+
+        <div className={forPdfCapture ? "" : "lg:sticky lg:top-20 lg:self-center"}>
+          <HealthBodyMapBlock
+            affectedParts={affectedParts}
+            gender={gender}
+            forPdfCapture={forPdfCapture}
+          />
+        </div>
       </div>
     ) : (
       <div className="py-10 text-center">
@@ -437,23 +487,14 @@ const Health: React.FC<HealthAnalysisProps> = ({
           title="Health Code Scan"
           subtitle="Decode your body's energetic blueprint — where vitality flows and where it breaks down."
           icon={Heart}
+          backgroundImage="/images/chart/men.png"
+          backgroundPosition="right 40%"
           pdfBreakAnchor="health-hero"
           forPdfCapture={forPdfCapture}
         />
-        <SubsectionSparkleDivider />
       </div>
 
-      <div className="space-y-10">
-        <div className="mx-auto w-full max-w-sm">
-          <HealthBodyMapBlock
-            affectedParts={affectedParts}
-            gender={gender}
-            forPdfCapture={forPdfCapture}
-          />
-        </div>
-
-        {guidanceContent}
-      </div>
+      {healthScanContent}
     </div>
   );
 

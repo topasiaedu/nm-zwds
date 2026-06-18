@@ -1,8 +1,5 @@
 import React from "react";
-import { ChevronDown, ChevronUp, type LucideIcon } from "lucide-react";
-import { BrandGradientText } from "../../BrandGradientText";
-import { analysisCardTitleClass } from "../../../styles/typographyUi";
-import { secondaryBrandGradientBgClass } from "../../../styles/typographyUi";
+import { ArrowRight, ChevronUp, Sparkles, type LucideIcon } from "lucide-react";
 
 export type HealthGuidanceTip = {
   id: string;
@@ -19,95 +16,128 @@ type HealthGuidanceTimelineProps = {
   isTipExpanded: (index: number) => boolean;
   onToggleTip: (index: number) => void;
   forPdfCapture?: boolean;
+  /** Registers each card element for scroll-position tracking. */
+  registerCardRef?: (index: number, element: HTMLElement | null) => void;
 };
+
+const HEALTH_ACCENT = "#D91744";
+const HEALTH_CARD_BG = "#FFF8F4";
+const HEALTH_ICON_RING = "#FDE8E4";
 
 type HealthTimelineItemProps = {
   tip: HealthGuidanceTip;
   tipIndex: number;
   isPrimary: boolean;
-  isLast: boolean;
   getTipIcon: (bodyPart: string, englishName?: string) => LucideIcon;
   getPreviewText: (description: string, expanded: boolean) => string;
   tipExceedsPreviewLimit: (description: string) => boolean;
   isTipExpanded: (index: number) => boolean;
   onToggleTip: (index: number) => void;
   forPdfCapture?: boolean;
+  registerCardRef?: (index: number, element: HTMLElement | null) => void;
 };
 
 /**
- * Single timeline row — flat on page surface, optional primary emphasis on first item.
+ * Single health guidance card — cream panel, icon badge, watermark, see-more CTA.
  */
 const HealthTimelineItem: React.FC<HealthTimelineItemProps> = ({
   tip,
   tipIndex,
   isPrimary,
-  isLast,
   getTipIcon,
   getPreviewText,
   tipExceedsPreviewLimit,
   isTipExpanded,
   onToggleTip,
   forPdfCapture,
+  registerCardRef,
 }) => {
   const TipIcon = getTipIcon(tip.bodyPart, tip.englishName);
   const expanded = isTipExpanded(tipIndex);
+  const displayName = tip.englishName || tip.bodyPart;
+  const showToggle = !forPdfCapture && tipExceedsPreviewLimit(tip.description);
+  const hoverClass = forPdfCapture
+    ? ""
+    : "transition-shadow duration-300 hover:shadow-md";
 
   return (
-    <li className={`relative pl-10 ${isLast ? "pb-0" : "pb-10"}`}>
-      <span
-        className={`absolute left-[9px] top-1.5 z-10 h-3.5 w-3.5 rounded-full ring-4 ring-surface-cream dark:ring-surface-dark ${secondaryBrandGradientBgClass}`}
-        aria-hidden="true"
-      />
-
-      <div className="flex items-start gap-3">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 border-accent-gold/60 bg-navy shadow-sm dark:bg-navy">
-          <TipIcon
-            className="h-4 w-4 text-accent-goldDark dark:text-accent-gold"
-            aria-hidden="true"
-          />
+    <li className="list-none">
+      <article
+        ref={(element) => registerCardRef?.(tipIndex, element)}
+        data-health-card-index={tipIndex}
+        className={`relative overflow-hidden rounded-2xl border border-[#F0E4DC] shadow-sm dark:border-theme-border-strong dark:bg-surface-elevated/90 ${hoverClass}`}
+        style={{ backgroundColor: HEALTH_CARD_BG }}
+      >
+        <div
+          className="pointer-events-none absolute -right-2 top-1/2 -translate-y-1/2 opacity-[0.07]"
+          aria-hidden="true"
+        >
+          <TipIcon className="h-36 w-36 sm:h-44 sm:w-44" style={{ color: HEALTH_ACCENT }} />
         </div>
 
-        <div className="min-w-0 flex-1">
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-theme-fg-secondary">
-            {isPrimary ? "Primary focus" : "Body area"}
-          </p>
-          {isPrimary ? (
-            <BrandGradientText
-              as="h4"
-              className={`mt-0.5 ${analysisCardTitleClass}`}
+        <div className="relative flex items-start gap-5 p-5 sm:gap-6 sm:p-6">
+          <div className="relative shrink-0">
+            <Sparkles
+              className="pointer-events-none absolute -left-1.5 -top-1 h-3 w-3 text-[#F5B942]"
+              aria-hidden="true"
+            />
+            <Sparkles
+              className="pointer-events-none absolute -bottom-0.5 -right-1 h-2.5 w-2.5 text-[#F5B942]/80"
+              aria-hidden="true"
+            />
+            <div
+              className="flex h-16 w-16 items-center justify-center rounded-full sm:h-[4.5rem] sm:w-[4.5rem]"
+              style={{ backgroundColor: HEALTH_ICON_RING }}
             >
-              {tip.englishName || tip.bodyPart}
-            </BrandGradientText>
-          ) : (
-            <h4 className={`mt-0.5 ${analysisCardTitleClass} text-theme-fg`}>
-              {tip.englishName || tip.bodyPart}
+              <TipIcon
+                className="h-8 w-8 sm:h-9 sm:w-9"
+                style={{ color: HEALTH_ACCENT }}
+                aria-hidden="true"
+              />
+            </div>
+          </div>
+
+          <div className="min-w-0 flex-1 pr-2 sm:pr-4">
+            {isPrimary ? (
+              <p
+                className="text-[10px] font-bold uppercase tracking-[0.2em]"
+                style={{ color: `${HEALTH_ACCENT}CC` }}
+              >
+                Primary Focus
+              </p>
+            ) : null}
+
+            <h4 className="mt-0.5 font-serif text-xl font-bold uppercase tracking-wide text-navy dark:text-cream sm:text-2xl">
+              {displayName}
             </h4>
-          )}
-          <p className="mt-2 text-sm leading-relaxed text-theme-fg-secondary">
-            {getPreviewText(tip.description, expanded)}
-          </p>
 
-          {!forPdfCapture && tipExceedsPreviewLimit(tip.description) ? (
-            <button
-              type="button"
-              onClick={() => onToggleTip(tipIndex)}
-              className="mt-3 inline-flex items-center gap-1 text-xs font-bold uppercase tracking-wider text-brand-purple transition-colors hover:text-brand-purple-deep dark:text-accent-gold dark:hover:text-accent-goldDark"
-            >
-              {expanded ? (
-                <>
-                  Show less
-                  <ChevronUp className="h-3.5 w-3.5" aria-hidden="true" />
-                </>
-              ) : (
-                <>
-                  Read more
-                  <ChevronDown className="h-3.5 w-3.5" aria-hidden="true" />
-                </>
-              )}
-            </button>
-          ) : null}
+            <p className="mt-3 text-sm leading-relaxed text-theme-fg-secondary sm:text-[15px]">
+              {getPreviewText(tip.description, expanded)}
+            </p>
+
+            {showToggle ? (
+              <button
+                type="button"
+                onClick={() => onToggleTip(tipIndex)}
+                className="mt-4 inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-[0.14em] transition-opacity hover:opacity-80"
+                style={{ color: HEALTH_ACCENT }}
+              >
+                {expanded ? (
+                  <>
+                    Show less
+                    <ChevronUp className="h-3.5 w-3.5" aria-hidden="true" />
+                  </>
+                ) : (
+                  <>
+                    See more
+                    <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+                  </>
+                )}
+              </button>
+            ) : null}
+          </div>
         </div>
-      </div>
+      </article>
     </li>
   );
 };
@@ -121,10 +151,11 @@ type HealthTimelineColumnProps = {
   isTipExpanded: (index: number) => boolean;
   onToggleTip: (index: number) => void;
   forPdfCapture?: boolean;
+  registerCardRef?: (index: number, element: HTMLElement | null) => void;
 };
 
 /**
- * One vertical timeline column with spine.
+ * Vertical stack of health guidance cards.
  */
 const HealthTimelineColumn: React.FC<HealthTimelineColumnProps> = ({
   tips,
@@ -135,17 +166,14 @@ const HealthTimelineColumn: React.FC<HealthTimelineColumnProps> = ({
   isTipExpanded,
   onToggleTip,
   forPdfCapture,
+  registerCardRef,
 }) => {
   if (tips.length === 0) {
     return null;
   }
 
   return (
-    <ol className="relative list-none space-y-0 p-0">
-      <div
-        className="absolute bottom-2 left-[15px] top-2 w-px bg-theme-border-subtle"
-        aria-hidden="true"
-      />
+    <ol className="m-0 flex list-none flex-col gap-5 p-0">
       {tips.map((tip, columnIndex) => {
         const tipIndex = startIndex + columnIndex;
         return (
@@ -154,13 +182,13 @@ const HealthTimelineColumn: React.FC<HealthTimelineColumnProps> = ({
             tip={tip}
             tipIndex={tipIndex}
             isPrimary={tipIndex === 0}
-            isLast={columnIndex === tips.length - 1}
             getTipIcon={getTipIcon}
             getPreviewText={getPreviewText}
             tipExceedsPreviewLimit={tipExceedsPreviewLimit}
             isTipExpanded={isTipExpanded}
             onToggleTip={onToggleTip}
             forPdfCapture={forPdfCapture}
+            registerCardRef={registerCardRef}
           />
         );
       })}
@@ -169,7 +197,7 @@ const HealthTimelineColumn: React.FC<HealthTimelineColumnProps> = ({
 };
 
 /**
- * Health guidance timelines — single column on narrow viewports, two columns on md+.
+ * Vertical stack of health guidance cards — single column for scrollable panels.
  */
 export const HealthGuidanceTimeline: React.FC<HealthGuidanceTimelineProps> = ({
   tips,
@@ -179,42 +207,25 @@ export const HealthGuidanceTimeline: React.FC<HealthGuidanceTimelineProps> = ({
   isTipExpanded,
   onToggleTip,
   forPdfCapture,
+  registerCardRef,
 }) => {
   if (tips.length === 0) {
     return null;
   }
 
-  const splitIndex = Math.ceil(tips.length / 2);
-  const leftTips = tips.slice(0, splitIndex);
-  const rightTips = tips.slice(splitIndex);
-
-  const columnProps = {
-    getTipIcon,
-    getPreviewText,
-    tipExceedsPreviewLimit,
-    isTipExpanded,
-    onToggleTip,
-    forPdfCapture,
-  };
-
-  const useTwoColumns = tips.length > 1;
-
   return (
     <section aria-label="Health guidance by body area">
-      {useTwoColumns ? (
-        <div
-          className={
-            forPdfCapture
-              ? "grid grid-cols-2 gap-8"
-              : "grid grid-cols-1 gap-10 md:grid-cols-2 md:gap-8"
-          }
-        >
-          <HealthTimelineColumn tips={leftTips} startIndex={0} {...columnProps} />
-          <HealthTimelineColumn tips={rightTips} startIndex={splitIndex} {...columnProps} />
-        </div>
-      ) : (
-        <HealthTimelineColumn tips={tips} startIndex={0} {...columnProps} />
-      )}
+      <HealthTimelineColumn
+        tips={tips}
+        startIndex={0}
+        getTipIcon={getTipIcon}
+        getPreviewText={getPreviewText}
+        tipExceedsPreviewLimit={tipExceedsPreviewLimit}
+        isTipExpanded={isTipExpanded}
+        onToggleTip={onToggleTip}
+        forPdfCapture={forPdfCapture}
+        registerCardRef={registerCardRef}
+      />
     </section>
   );
 };

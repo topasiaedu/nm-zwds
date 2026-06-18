@@ -1,8 +1,7 @@
 /**
  * FourKeyPalace — Destiny Alert Map (Section 05)
  *
- * 2×2 grid of natal transformations (祿 / 權 / 科 / 忌) — flat accent panels.
- * Semantic accent colors per type: green, blue, amber, red (left border + pill).
+ * 2×2 grid of natal transformations (祿 / 權 / 科 / 忌) — themed signal cards.
  */
 
 import React from "react";
@@ -10,59 +9,113 @@ import {
   AlertTriangle,
   Compass,
   Crown,
-  Gem,
+  Sparkles,
+  Star,
+  User,
   Wallet,
   type LucideIcon,
 } from "lucide-react";
 import { ChartData } from "../../utils/zwds/types";
 import { analyzeDestinyAlert } from "../../utils/zwds/analysis";
 import type { PalaceAlertData } from "../../utils/zwds/analysis/destinyAlertAnalysis";
-import { BrandGradientText } from "../BrandGradientText";
-import { analysisPanelTitleClass } from "../../styles/typographyUi";
 import { AnalysisSectionHeader } from "./shared/AnalysisSectionHeader";
-import { SubsectionSparkleDivider } from "./shared/SubsectionSparkleDivider";
+
+type MetricBar = {
+  label: string;
+  value: number;
+};
 
 /**
- * Per-transformation accent — left border + pill only (semantic hues unchanged).
+ * Per-transformation visual theme and static energy profile bars.
  */
 type TransformationConfig = {
-  heroQuestion: string;
+  heroQuestionPrefix: string;
+  heroQuestionHighlight: string;
+  heroQuestionSuffix: string;
   icon: LucideIcon;
   accentColor: string;
+  cardBg: string;
+  barTrackColor: string;
+  badgeBg: string;
   transformationChar: string;
+  metrics: MetricBar[];
 };
 
 const TRANSFORMATION_CONFIG: Record<string, TransformationConfig> = {
   "化祿": {
-    heroQuestion: "Where does wealth flow?",
+    heroQuestionPrefix: "WHERE DOES ",
+    heroQuestionHighlight: "WEALTH",
+    heroQuestionSuffix: " FLOW?",
     icon: Wallet,
-    accentColor: "#059669",
+    accentColor: "#2D7A4D",
+    cardBg: "#F3FAF6",
+    barTrackColor: "#D8EDE3",
+    badgeBg: "#E4F4EA",
     transformationChar: "祿",
+    metrics: [
+      { label: "Abundance", value: 85 },
+      { label: "Flow", value: 70 },
+      { label: "Ease", value: 60 },
+    ],
   },
   "化權": {
-    heroQuestion: "Where does power rise?",
+    heroQuestionPrefix: "WHERE DOES ",
+    heroQuestionHighlight: "POWER",
+    heroQuestionSuffix: " RISE?",
     icon: Crown,
-    accentColor: "#2563eb",
+    accentColor: "#1D63B8",
+    cardBg: "#F2F7FD",
+    barTrackColor: "#DCE9F8",
+    badgeBg: "#E3EEF8",
     transformationChar: "權",
+    metrics: [
+      { label: "Authority", value: 90 },
+      { label: "Drive", value: 75 },
+      { label: "Control", value: 65 },
+    ],
   },
   "化科": {
-    heroQuestion: "Where does your fame rise?",
-    icon: Gem,
-    accentColor: "#d97706",
+    heroQuestionPrefix: "WHERE DOES YOUR ",
+    heroQuestionHighlight: "FAME",
+    heroQuestionSuffix: " RISE?",
+    icon: Star,
+    accentColor: "#D97706",
+    cardBg: "#FFF8F0",
+    barTrackColor: "#FCEBD5",
+    badgeBg: "#FEF0DC",
     transformationChar: "科",
+    metrics: [
+      { label: "Reputation", value: 85 },
+      { label: "Visibility", value: 70 },
+      { label: "Recognition", value: 60 },
+    ],
   },
   "化忌": {
-    heroQuestion: "Where is energy blocked?",
+    heroQuestionPrefix: "WHERE IS ",
+    heroQuestionHighlight: "ENERGY",
+    heroQuestionSuffix: " BLOCKED?",
     icon: AlertTriangle,
-    accentColor: "#dc2626",
+    accentColor: "#DC2626",
+    cardBg: "#FEF5F5",
+    barTrackColor: "#FCE0E0",
+    badgeBg: "#FCE8E8",
     transformationChar: "忌",
+    metrics: [
+      { label: "Blockage", value: 80 },
+      { label: "Resistance", value: 65 },
+      { label: "Challenge", value: 55 },
+    ],
   },
 };
 
-const normaliseTransformation = (t: string): string => {
-  if (t === "化禄") return "化祿";
-  if (t === "化权") return "化權";
-  return t;
+const normaliseTransformation = (transformation: string): string => {
+  if (transformation === "化禄") {
+    return "化祿";
+  }
+  if (transformation === "化权") {
+    return "化權";
+  }
+  return transformation;
 };
 
 const STAR_NAME_TO_PINYIN: Record<string, string> = {
@@ -104,6 +157,42 @@ type FourKeyPalaceProps = {
   forPdfCapture?: boolean;
 };
 
+type MetricBarRowProps = {
+  label: string;
+  value: number;
+  accentColor: string;
+  trackColor: string;
+};
+
+/**
+ * Single labeled progress bar with percentage.
+ */
+const MetricBarRow: React.FC<MetricBarRowProps> = ({
+  label,
+  value,
+  accentColor,
+  trackColor,
+}) => (
+  <div className="flex items-center gap-3">
+    <span className="w-[5.5rem] shrink-0 text-xs text-theme-fg-secondary">{label}</span>
+    <div
+      className="h-2 min-w-0 flex-1 overflow-hidden rounded-full"
+      style={{ backgroundColor: trackColor }}
+    >
+      <div
+        className="h-full rounded-full transition-[width] duration-500 ease-out"
+        style={{ width: `${value}%`, backgroundColor: accentColor }}
+      />
+    </div>
+    <span
+      className="w-9 shrink-0 text-right text-xs font-semibold"
+      style={{ color: accentColor }}
+    >
+      {value}%
+    </span>
+  </div>
+);
+
 type DestinyAlertCardProps = {
   alert: PalaceAlertData;
   config: TransformationConfig;
@@ -111,6 +200,9 @@ type DestinyAlertCardProps = {
   pdfPageBreakBefore?: boolean;
 };
 
+/**
+ * Single destiny alert signal card — hero question, metrics, insight copy.
+ */
 const DestinyAlertCard: React.FC<DestinyAlertCardProps> = ({
   alert,
   config,
@@ -122,67 +214,86 @@ const DestinyAlertCard: React.FC<DestinyAlertCardProps> = ({
   return (
     <article
       {...(pdfPageBreakBefore ? { "data-pdf-page-break-before": "" } : {})}
-      className="relative border-l-4 py-4 pl-5 pr-4 sm:pl-6 sm:pr-5"
-      style={{ borderColor: config.accentColor }}
+      className="relative overflow-hidden rounded-2xl border p-5 shadow-sm sm:p-6"
+      style={{
+        borderColor: `${config.accentColor}22`,
+        backgroundColor: config.cardBg,
+      }}
     >
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute bottom-0 right-1 select-none text-[100px] font-black leading-none sm:text-[110px]"
+        className="pointer-events-none absolute bottom-3 right-3 select-none font-serif text-[5rem] font-black leading-none sm:bottom-4 sm:right-4 sm:text-[5.5rem]"
         style={{
           color: config.accentColor,
-          opacity: 0.08,
-          lineHeight: 1,
+          opacity: 0.07,
         }}
       >
         {config.transformationChar}
       </div>
 
       <div className="relative z-10">
-      <div className="flex items-start gap-3">
-        <div
-          className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-2 shadow-sm"
-          style={{
-            backgroundColor: config.accentColor,
-            borderColor: config.accentColor,
-          }}
-        >
-          <HeaderIcon
-            className="h-7 w-7 text-white"
+        <div className="flex items-start gap-3">
+          <div
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full shadow-sm"
+            style={{ backgroundColor: config.accentColor }}
+          >
+            <HeaderIcon className="h-5 w-5 text-white" aria-hidden="true" />
+          </div>
+
+          <p className="min-w-0 flex-1 pt-0.5 text-[11px] font-bold uppercase leading-snug tracking-[0.12em] text-navy dark:text-cream sm:text-xs">
+            {config.heroQuestionPrefix}
+            <span style={{ color: config.accentColor }}>{config.heroQuestionHighlight}</span>
+            {config.heroQuestionSuffix}
+          </p>
+
+          <Sparkles
+            className="mt-0.5 h-4 w-4 shrink-0 text-[var(--color-accent-gradient-5)]/55"
             aria-hidden="true"
           />
         </div>
-        <div className="min-w-0 flex-1">
-          <p className="text-sm font-black uppercase leading-snug tracking-wide text-theme-fg sm:text-base">
-            {config.heroQuestion}
-          </p>
-          <div className="mt-2 flex flex-wrap items-baseline gap-x-3 gap-y-2">
-            <BrandGradientText
-              as="h3"
-              className={analysisPanelTitleClass}
-            >
-              {displayPalace}
-            </BrandGradientText>
-            <span
-              className="rounded-full border px-3 py-1 text-sm font-semibold"
-              style={{
-                borderColor: config.accentColor,
-                color: config.accentColor,
-                backgroundColor: `color-mix(in srgb, ${config.accentColor} 14%, transparent)`,
-              }}
-            >
-              {getStarPinyin(alert.starName)}
-            </span>
-          </div>
-        </div>
-      </div>
 
-      <div className="mt-4 flex flex-col gap-2 text-sm leading-relaxed text-theme-fg-secondary">
-        <p>{alert.line1}</p>
-        <p>{alert.line2}</p>
-        <BrandGradientText as="p" variant="secondary" className="font-semibold italic">
-          {alert.line3}
-        </BrandGradientText>
-      </div>
+        <div className="mt-4 flex items-center justify-between gap-3">
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-theme-fg-secondary/80">
+            Activates
+          </p>
+          <span
+            className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold"
+            style={{
+              color: config.accentColor,
+              backgroundColor: config.badgeBg,
+            }}
+          >
+            <User className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+            {getStarPinyin(alert.starName)}
+          </span>
+        </div>
+
+        <h3
+          className="mt-2 font-serif text-2xl font-bold leading-tight sm:text-[1.65rem]"
+          style={{ color: config.accentColor }}
+        >
+          {displayPalace}
+        </h3>
+
+        <div className="mt-5 space-y-3">
+          {config.metrics.map((metric) => (
+            <MetricBarRow
+              key={metric.label}
+              label={metric.label}
+              value={metric.value}
+              accentColor={config.accentColor}
+              trackColor={config.barTrackColor}
+            />
+          ))}
+        </div>
+
+        <div className="mt-5 space-y-2 text-sm leading-relaxed text-theme-fg-secondary">
+          <p>{alert.line1}</p>
+          <p>{alert.line2}</p>
+          <p className="font-bold italic" style={{ color: config.accentColor }}>
+            {alert.line3}
+          </p>
+        </div>
       </div>
     </article>
   );
@@ -207,7 +318,6 @@ const FourKeyPalace: React.FC<FourKeyPalaceProps> = ({
           pdfBreakAnchor="destiny-alert-hero"
           forPdfCapture={forPdfCapture}
         />
-        <SubsectionSparkleDivider />
       </div>
       {content}
     </div>
@@ -226,8 +336,8 @@ const FourKeyPalace: React.FC<FourKeyPalaceProps> = ({
       data-pdf-break-anchor="four-key-grid"
       className={
         forPdfCapture
-          ? "grid grid-cols-1 gap-8"
-          : "grid grid-cols-1 gap-8 sm:grid-cols-2"
+          ? "grid grid-cols-1 gap-6"
+          : "grid grid-cols-1 gap-6 sm:grid-cols-2"
       }
     >
       {analysisResult.alerts.map((alert, index) => {

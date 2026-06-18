@@ -1,5 +1,5 @@
 /**
- * Nobleman Profile Card — merged primary profile + other life areas (PPT-style split layout).
+ * Nobleman Profile Card — primary profile hero + other life areas grid.
  */
 
 import React, { useState } from "react";
@@ -8,19 +8,16 @@ import { AnimatePresence, motion } from "framer-motion";
 import {
   Briefcase,
   Coins,
+  FileText,
   Heart,
+  Home,
   Lightbulb,
+  Sparkles,
   Star,
   Users,
 } from "lucide-react";
 import type { NoblemanData, NoblemanProfile, NoblemanType, OtherAreaData } from "../../types/nobleman";
 import { renderNoblemanTextWithHighlights } from "../analysis_v2/shared/personalityTextHighlight";
-import { SubsectionSparkleDivider } from "../analysis_v2/shared/SubsectionSparkleDivider";
-import { BrandGradientText } from "../BrandGradientText";
-import {
-  analysisCardTitleClass,
-  analysisPanelTitleClass,
-} from "../../styles/typographyUi";
 import { NOBLEMAN_TYPE_TO_IMAGE } from "../../constants/noblemanProfiles";
 
 interface NoblemanProfileCardProps extends NoblemanData {
@@ -73,41 +70,283 @@ const getProfileImage = (profile: NoblemanProfile): string => {
   return `/assets/nobleman/${filename}`;
 };
 
-const NOBLEMAN_TYPE_SUFFIX = " Nobleman";
+const NOBLEMAN_PROFILE_CARD_CLASS = [
+  "relative overflow-hidden rounded-2xl border border-brand-purple/20",
+  "bg-gradient-to-br from-[#EDE8F5] via-[#FAF7FD] to-white",
+  "dark:border-brand-purple/30 dark:from-brand-purple/20 dark:via-surface-darkSecondary/80 dark:to-surface-darkSecondary/60",
+].join(" ");
 
 /** Context copy shown above profile-specific characteristics. */
 const NOBLEMAN_KEY_PEOPLE_INTRO =
   "Based on your chart structure, these are the people most beneficial to you — " +
   "individuals who align with your strengths and can provide crucial support.";
 
-/**
- * Splits display type into two lines — descriptor, then "Nobleman".
- */
-const splitNoblemanTypeLines = (type: string): { lead: string; suffix: string | null } => {
-  if (type.endsWith(NOBLEMAN_TYPE_SUFFIX)) {
-    return {
-      lead: type.slice(0, -NOBLEMAN_TYPE_SUFFIX.length),
-      suffix: "Nobleman",
-    };
-  }
-  return { lead: type, suffix: null };
+type NoblemanProfileHeroProps = {
+  profile: NoblemanProfile;
+  imageSrc: string;
+  forPdfCapture?: boolean;
 };
 
-const getAreaIcon = (objective: string): React.ReactNode => {
-  const iconClass = "h-5 w-5 text-accent-goldDark dark:text-accent-gold";
+/**
+ * Primary nobleman profile card — editorial left copy + portrait on the right.
+ */
+const NoblemanProfileHero: React.FC<NoblemanProfileHeroProps> = ({
+  profile,
+  imageSrc,
+  forPdfCapture,
+}) => {
+  return (
+    <article className={NOBLEMAN_PROFILE_CARD_CLASS}>
+      <div
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_24%_16%,rgba(107,91,149,0.12),transparent_55%)]"
+        aria-hidden="true"
+      />
+      <Sparkles
+        className="pointer-events-none absolute right-8 top-6 h-4 w-4 text-[var(--color-accent-gradient-5)]/50"
+        aria-hidden="true"
+      />
+      <Sparkles
+        className="pointer-events-none absolute bottom-10 right-1/3 h-3 w-3 text-brand-purple/25"
+        aria-hidden="true"
+      />
+
+      <div
+        className={
+          forPdfCapture
+            ? "relative flex flex-col gap-8 p-6 sm:p-8"
+            : "relative flex flex-col gap-8 p-6 sm:p-8 lg:flex-row lg:items-start lg:gap-10"
+        }
+      >
+        <div className="min-w-0 flex-1 lg:w-[58%]">
+          <div className="border-l-4 border-brand-purple pl-4 dark:border-accent-goldDark/70">
+            <h3 className="font-serif text-xl font-bold text-navy dark:text-cream sm:text-2xl">
+              Your Nobleman Profile
+            </h3>
+          </div>
+
+          <div className="mt-5 inline-flex items-center gap-2 rounded-full border border-brand-purple/15 bg-brand-purple/10 px-3.5 py-1.5 dark:border-accent-gold/25 dark:bg-accent-gold/10">
+            <Star
+              className="h-3.5 w-3.5 fill-brand-purple text-brand-purple dark:fill-accent-gold dark:text-accent-gold"
+              aria-hidden="true"
+            />
+            <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-brand-purple dark:text-accent-gold sm:text-xs">
+              {profile.stars}
+            </span>
+          </div>
+
+          <h4 className="mt-4 font-serif text-2xl font-bold leading-tight text-navy dark:text-cream sm:text-3xl">
+            {profile.type}
+          </h4>
+
+          <div className="mt-6 rounded-xl border border-theme-border-subtle bg-white/90 p-5 shadow-sm dark:border-theme-border-strong dark:bg-surface-elevated/90 sm:p-6">
+            <div className="flex items-center gap-2">
+              <FileText
+                className="h-4 w-4 shrink-0 text-brand-purple dark:text-accent-gold"
+                aria-hidden="true"
+              />
+              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-brand-purple dark:text-accent-gold sm:text-xs">
+                Key Characteristics
+              </p>
+            </div>
+            <p className="mt-4 text-sm leading-relaxed text-theme-fg-secondary">
+              {NOBLEMAN_KEY_PEOPLE_INTRO}
+            </p>
+            <p className="mt-4 text-sm leading-relaxed text-theme-fg-secondary sm:text-base">
+              {renderNoblemanTextWithHighlights(profile.characteristics)}
+            </p>
+          </div>
+        </div>
+
+        <div
+          className={
+            forPdfCapture
+              ? "flex w-full justify-center"
+              : "flex w-full shrink-0 justify-center lg:w-[42%] lg:justify-end"
+          }
+        >
+          <NoblemanPortraitCard
+            imageSrc={imageSrc}
+            alt={`${profile.type} Nobleman`}
+            forPdfCapture={forPdfCapture}
+          />
+        </div>
+      </div>
+    </article>
+  );
+};
+
+const getAreaIcon = (objective: string, className: string): React.ReactNode => {
   if (objective.includes("Career")) {
-    return <Briefcase className={iconClass} aria-hidden="true" />;
+    return <Briefcase className={className} aria-hidden="true" />;
   }
   if (objective.includes("Wealth")) {
-    return <Coins className={iconClass} aria-hidden="true" />;
+    return <Coins className={className} aria-hidden="true" />;
   }
   if (objective.includes("Health")) {
-    return <Heart className={iconClass} aria-hidden="true" />;
+    return <Heart className={className} aria-hidden="true" />;
   }
   if (objective.includes("Friend")) {
-    return <Users className={iconClass} aria-hidden="true" />;
+    return <Users className={className} aria-hidden="true" />;
   }
-  return <Lightbulb className={iconClass} aria-hidden="true" />;
+  return <Lightbulb className={className} aria-hidden="true" />;
+};
+
+type LifeAreaTheme = {
+  headerFrom: string;
+  headerTo: string;
+  accent: string;
+  badgeBg: string;
+  badgeText: string;
+};
+
+const LIFE_AREA_THEMES: Record<string, LifeAreaTheme> = {
+  "from-purple-500 to-pink-500": {
+    headerFrom: "#8B6FC8",
+    headerTo: "#A67ED9",
+    accent: "#7B5FC4",
+    badgeBg: "#EDE8F5",
+    badgeText: "#5C4A8A",
+  },
+  "from-blue-500 to-cyan-500": {
+    headerFrom: "#4F8FD4",
+    headerTo: "#6BAADC",
+    accent: "#3F7BB8",
+    badgeBg: "#E3EEF8",
+    badgeText: "#2E5F8F",
+  },
+  "from-green-500 to-emerald-500": {
+    headerFrom: "#4F9F72",
+    headerTo: "#6BB892",
+    accent: "#3F8F62",
+    badgeBg: "#E0F0E8",
+    badgeText: "#2D6B4A",
+  },
+};
+
+const DEFAULT_LIFE_AREA_THEME: LifeAreaTheme = {
+  headerFrom: "#6B5B95",
+  headerTo: "#8B7BA8",
+  accent: "#6B5B95",
+  badgeBg: "#EDE8F5",
+  badgeText: "#6B5B95",
+};
+
+const getLifeAreaTheme = (gradient: string): LifeAreaTheme =>
+  LIFE_AREA_THEMES[gradient] ?? DEFAULT_LIFE_AREA_THEME;
+
+type NoblemanLifeAreaCardProps = {
+  area: OtherAreaData;
+  forPdfCapture?: boolean;
+};
+
+/**
+ * Single life-area card — gradient header, nobleman type body, palace badge.
+ */
+const NoblemanLifeAreaCard: React.FC<NoblemanLifeAreaCardProps> = ({
+  area,
+  forPdfCapture,
+}) => {
+  const theme = getLifeAreaTheme(area.gradient);
+  const hoverClass = forPdfCapture
+    ? ""
+    : "transition-shadow duration-300 hover:shadow-md";
+
+  return (
+    <article
+      className={`flex h-full flex-col overflow-hidden rounded-2xl border border-theme-border-subtle bg-white shadow-sm dark:border-theme-border-strong dark:bg-surface-elevated/90 ${hoverClass}`}
+    >
+      <div
+        className="flex items-center justify-between gap-3 px-5 py-4"
+        style={{
+          background: `linear-gradient(135deg, ${theme.headerFrom}, ${theme.headerTo})`,
+        }}
+      >
+        <div className="min-w-0">
+          <p className="font-serif text-base font-bold leading-tight text-white sm:text-lg">
+            {area.objective}
+          </p>
+          <p className="mt-0.5 text-sm text-white/90">{area.palaceChinese}</p>
+        </div>
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-white/15">
+          {getAreaIcon(area.objective, "h-5 w-5 text-white")}
+        </div>
+      </div>
+
+      <div className="flex flex-1 flex-col p-5">
+        <div className="flex items-center gap-2">
+          <span
+            className="h-2 w-2 shrink-0 rounded-full"
+            style={{ backgroundColor: theme.accent }}
+            aria-hidden="true"
+          />
+          <p
+            className="text-[10px] font-bold uppercase tracking-[0.2em]"
+            style={{ color: theme.accent }}
+          >
+            Nobleman Type
+          </p>
+        </div>
+        <p className="mt-3 font-sans text-base font-bold leading-snug text-navy dark:text-cream sm:text-lg">
+          {area.noblemanType}
+        </p>
+
+        <div className="mt-auto pt-5">
+          <span
+            className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold"
+            style={{ backgroundColor: theme.badgeBg, color: theme.badgeText }}
+          >
+            <Home className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+            {area.palaceName}
+          </span>
+        </div>
+      </div>
+    </article>
+  );
+};
+
+type NoblemanOtherLifeAreasProps = {
+  areas: OtherAreaData[];
+  forPdfCapture?: boolean;
+};
+
+/**
+ * Other life areas section — editorial header + responsive card grid.
+ */
+const NoblemanOtherLifeAreas: React.FC<NoblemanOtherLifeAreasProps> = ({
+  areas,
+  forPdfCapture,
+}) => {
+  if (areas.length === 0) {
+    return null;
+  }
+
+  const gridClass = forPdfCapture
+    ? "grid grid-cols-1 gap-5 sm:grid-cols-3"
+    : "grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3";
+
+  return (
+    <div
+      className="mx-auto w-full max-w-5xl"
+      data-pdf-break-anchor="nobleman-other-areas"
+    >
+      <div className="border-l-4 border-brand-purple pl-4 dark:border-accent-goldDark/70">
+        <h3 className="font-serif text-xl font-bold text-navy dark:text-cream sm:text-2xl">
+          Other Life Areas
+        </h3>
+        <p className="mt-2 text-sm text-theme-fg-secondary sm:text-base">
+          Key nobleman types supporting different aspects of your life
+        </p>
+      </div>
+
+      <ul className={`mt-8 list-none p-0 ${gridClass}`}>
+        {areas.map((area) => (
+          <li key={`${area.objective}-${area.palaceName}`} className="min-w-0">
+            <NoblemanLifeAreaCard area={area} forPdfCapture={forPdfCapture} />
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
 };
 
 type NoblemanPortraitCardProps = {
@@ -146,36 +385,6 @@ const NoblemanPortraitCard: React.FC<NoblemanPortraitCardProps> = ({
   );
 };
 
-type NoblemanLifeAreaRowProps = {
-  area: OtherAreaData;
-};
-
-/**
- * Single life-area row — circular navy icon + label + nobleman type.
- */
-const NoblemanLifeAreaRow: React.FC<NoblemanLifeAreaRowProps> = ({ area }) => {
-  return (
-    <li className="flex w-full max-w-md flex-col items-center gap-3 py-4 text-center sm:flex-row sm:items-start sm:gap-4 sm:text-left">
-      <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full border-2 border-accent-gold/60 bg-navy shadow-sm dark:bg-navy">
-        {getAreaIcon(area.objective)}
-      </div>
-      <div className="min-w-0 flex-1">
-        <BrandGradientText as="h4" className={analysisCardTitleClass}>
-          {area.objective}
-          <span className="font-normal text-theme-fg-secondary">
-            {" "}
-            · {area.palaceChinese}
-          </span>
-        </BrandGradientText>
-        <p className="mt-1 text-sm leading-relaxed text-theme-fg-secondary">
-          {area.noblemanType}
-        </p>
-        <p className="mt-1 text-xs text-theme-fg-secondary/80">{area.palaceName}</p>
-      </div>
-    </li>
-  );
-};
-
 const NoblemanProfileCard: React.FC<NoblemanProfileCardProps> = ({
   matchedProfiles,
   areas,
@@ -189,7 +398,6 @@ const NoblemanProfileCard: React.FC<NoblemanProfileCardProps> = ({
   }
 
   const currentImage = getProfileImage(currentProfile);
-  const typeLines = splitNoblemanTypeLines(currentProfile.type);
 
   return (
     <section
@@ -231,92 +439,17 @@ const NoblemanProfileCard: React.FC<NoblemanProfileCardProps> = ({
           animate={{ opacity: 1, y: 0 }}
           exit={forPdfCapture ? { opacity: 1 } : { opacity: 0, y: -8 }}
           transition={forPdfCapture ? { duration: 0 } : { duration: 0.35 }}
-          className="space-y-8"
+          className="space-y-10"
         >
-          {/* Row 1 — centered sub-header; body copy left-aligned */}
-          <div className="flex w-full flex-col pb-2">
-            <div className="w-full text-center">
-              <div className="inline-flex items-center gap-2 rounded-full border border-brand-purple/20 bg-surface-cream px-3 py-1 dark:border-accent-gold/30 dark:bg-surface-dark">
-                <Star className="h-3.5 w-3.5 fill-accent-gold text-accent-gold" aria-hidden="true" />
-                <span className="text-xs font-bold uppercase tracking-wider text-brand-purple dark:text-accent-gold">
-                  {currentProfile.stars}
-                </span>
-              </div>
-              <BrandGradientText
-                as="h4"
-                variant="primary"
-                className={`mt-4 mx-auto block w-fit ${analysisPanelTitleClass}`}
-              >
-                {typeLines.lead}
-                {typeLines.suffix ? (
-                  <>
-                    <br />
-                    {typeLines.suffix}
-                  </>
-                ) : null}
-              </BrandGradientText>
-            </div>
-            <SubsectionSparkleDivider />
-            <p className="text-center text-sm font-medium uppercase tracking-wider text-theme-fg-secondary">
-              Key characteristics
-            </p>
-            <div
-              className="mt-2 w-full text-left"
-              role="note"
-              aria-label="Your key people"
-            >
-              <p className="text-sm leading-relaxed text-theme-fg-secondary">
-                {NOBLEMAN_KEY_PEOPLE_INTRO}
-              </p>
-              <p className="mt-4 text-base leading-relaxed text-theme-fg-secondary">
-                {renderNoblemanTextWithHighlights(currentProfile.characteristics)}
-              </p>
-            </div>
-          </div>
+          <NoblemanProfileHero
+            profile={currentProfile}
+            imageSrc={currentImage}
+            forPdfCapture={forPdfCapture}
+          />
 
-          {/* Row 2 — life areas (left) + portrait (right) */}
-          <div
-            className={
-              forPdfCapture
-                ? "mx-auto flex max-w-5xl flex-col items-center gap-6"
-                : "mx-auto flex max-w-5xl flex-col items-center gap-6 lg:flex-row lg:items-center lg:justify-center lg:gap-8"
-            }
-          >
-            {areas.length > 0 ? (
-              <div
-                className="flex w-full min-w-0 flex-1 flex-col items-center"
-                data-pdf-break-anchor="nobleman-other-areas"
-              >
-                <p className="mb-4 text-center text-xs font-bold uppercase tracking-[0.2em] text-theme-fg-secondary">
-                  Other life areas
-                </p>
-                <ul className="flex w-full list-none flex-col items-center p-0">
-                  {areas.map((area) => (
-                    <NoblemanLifeAreaRow
-                      key={`${area.objective}-${area.palaceName}`}
-                      area={area}
-                    />
-                  ))}
-                </ul>
-              </div>
-            ) : (
-              <div className="flex-1" />
-            )}
-
-            <div
-              className={
-                forPdfCapture
-                  ? "flex w-full justify-center"
-                  : "flex w-full shrink-0 justify-center lg:w-auto lg:max-w-xs"
-              }
-            >
-              <NoblemanPortraitCard
-                imageSrc={currentImage}
-                alt={`${currentProfile.type} Nobleman`}
-                forPdfCapture={forPdfCapture}
-              />
-            </div>
-          </div>
+          {areas.length > 0 ? (
+            <NoblemanOtherLifeAreas areas={areas} forPdfCapture={forPdfCapture} />
+          ) : null}
         </motion.div>
       </AnimatePresence>
     </section>

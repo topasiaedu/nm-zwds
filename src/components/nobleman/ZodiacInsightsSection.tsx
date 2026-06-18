@@ -4,11 +4,8 @@
  */
 
 import React from "react";
-import { Eye, Handshake, Target, TriangleAlert, type LucideIcon } from "lucide-react";
+import { Eye, Handshake, Sparkles, Target, TriangleAlert, type LucideIcon } from "lucide-react";
 import type { ZodiacInsights } from "../../constants/zodiacProfiles";
-import { SubsectionSparkleDivider } from "../analysis_v2/shared/SubsectionSparkleDivider";
-import { BrandGradientText } from "../BrandGradientText";
-import { analysisCardTitleClass } from "../../styles/typographyUi";
 import ZodiacIcons from "../zwds/icons";
 import ZodiacIconWrapper from "../zwds/components/ZodiacIconWrapper";
 
@@ -100,7 +97,7 @@ const ZodiacIdentityCluster: React.FC<ZodiacIdentityClusterProps> = ({
   return (
     <article aria-label="Nobleman zodiac identity">
       <div className="mx-auto flex w-full max-w-md flex-col items-center">
-        <h3 className="mb-3 flex flex-wrap items-baseline justify-center gap-x-2 text-center text-3xl font-black text-theme-fg sm:text-4xl">
+        <h3 className="mb-3 flex flex-wrap items-baseline justify-center gap-x-2 text-center font-serif text-3xl font-bold text-navy dark:text-cream sm:text-4xl">
           <span>The {zodiacInsights.zodiac}</span>
           <span>{zodiacInsights.zodiacChinese}</span>
         </h3>
@@ -131,7 +128,7 @@ const ZodiacIdentityCluster: React.FC<ZodiacIdentityClusterProps> = ({
           })}
 
           {ZodiacIcon ? (
-            <div className="absolute left-1/2 top-1/2 z-10 flex h-24 w-24 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 border-accent-gold/60 bg-navy p-4 shadow-sm dark:bg-navy sm:h-28 sm:w-28 sm:p-5">
+            <div className="absolute left-1/2 top-1/2 z-10 flex h-24 w-24 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 border-brand-purple/30 bg-gradient-to-br from-brand-purple to-[#8B6FC8] p-4 shadow-md dark:border-accent-gold/40 dark:from-brand-purple/90 dark:to-brand-purple/70 sm:h-28 sm:w-28 sm:p-5">
               <ZodiacIconWrapper
                 Icon={ZodiacIcon}
                 className="h-full w-full"
@@ -146,27 +143,50 @@ const ZodiacIdentityCluster: React.FC<ZodiacIdentityClusterProps> = ({
 };
 
 /**
- * Subsection header — centered eyebrow, gradient title, subtitle, sparkle divider.
+ * Subsection header — editorial left accent, serif title, subtitle.
  */
 const ZodiacSubsectionHeader: React.FC<{
   title: string;
   subtitle: string;
 }> = ({ title, subtitle }) => (
-  <div className="text-center">
+  <div className="border-l-4 border-brand-purple pl-4 dark:border-accent-goldDark/70">
     <p className="text-xs font-bold uppercase tracking-[0.2em] text-theme-fg-secondary">
       Nobleman deep dive
     </p>
-    <BrandGradientText
-      as="h2"
-      variant="primary"
-      className="mx-auto mt-2 inline-block w-fit text-2xl font-bold sm:text-3xl"
-    >
+    <h2 className="mt-1 font-serif text-2xl font-bold text-navy dark:text-cream sm:text-3xl">
       {title}
-    </BrandGradientText>
-    <p className="mt-2 text-sm leading-relaxed text-theme-fg-secondary">{subtitle}</p>
-    <SubsectionSparkleDivider className="mx-auto mb-0 mt-5 flex w-full max-w-md items-center gap-3 px-2" />
+    </h2>
+    <p className="mt-2 text-sm leading-relaxed text-theme-fg-secondary sm:text-base">
+      {subtitle}
+    </p>
   </div>
 );
+
+type GuidanceCardVariant = "recognize" | "motivate" | "approach" | "watch";
+
+type GuidanceTheme = {
+  badgeBg: string;
+  bulletBg: string;
+};
+
+const GUIDANCE_THEMES: Record<GuidanceCardVariant, GuidanceTheme> = {
+  recognize: {
+    badgeBg: "#7B5FC4",
+    bulletBg: "#7B5FC4",
+  },
+  motivate: {
+    badgeBg: "#3F7BB8",
+    bulletBg: "#3F7BB8",
+  },
+  approach: {
+    badgeBg: "#3F8F62",
+    bulletBg: "#3F8F62",
+  },
+  watch: {
+    badgeBg: "var(--color-accent-gradient-5)",
+    bulletBg: "var(--color-accent-gradient-5)",
+  },
+};
 
 export const ZodiacInsightsSection: React.FC<ZodiacInsightsSectionProps> = ({
   zodiacInsights,
@@ -198,26 +218,29 @@ export const ZodiacInsightsSection: React.FC<ZodiacInsightsSectionProps> = ({
         <div
           className={
             forPdfCapture
-              ? "grid grid-cols-2 gap-8"
-              : "grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4"
+              ? "grid grid-cols-2 gap-5"
+              : "grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4"
           }
         >
           <GuidanceCard
             title="How to Recognize"
             icon={Eye}
             items={zodiacInsights.recognitionSigns}
+            variant="recognize"
             forPdfCapture={forPdfCapture}
           />
           <GuidanceCard
             title="What Motivates"
             icon={Target}
             items={zodiacInsights.motivations}
+            variant="motivate"
             forPdfCapture={forPdfCapture}
           />
           <GuidanceCard
             title="Best Approach"
             icon={Handshake}
             items={zodiacInsights.approachStrategies}
+            variant="approach"
             pdfPageBreakBefore={forPdfCapture}
             forPdfCapture={forPdfCapture}
           />
@@ -225,6 +248,7 @@ export const ZodiacInsightsSection: React.FC<ZodiacInsightsSectionProps> = ({
             title="Watch Out For"
             icon={TriangleAlert}
             items={zodiacInsights.watchOuts}
+            variant="watch"
             forPdfCapture={forPdfCapture}
           />
         </div>
@@ -237,52 +261,52 @@ const GuidanceCard: React.FC<{
   title: string;
   icon: LucideIcon;
   items: string[];
+  variant: GuidanceCardVariant;
   pdfPageBreakBefore?: boolean;
   forPdfCapture?: boolean;
-}> = ({ title, icon, items, pdfPageBreakBefore, forPdfCapture }) => {
+}> = ({ title, icon, items, variant, pdfPageBreakBefore, forPdfCapture }) => {
   const IconComponent = icon;
+  const theme = GUIDANCE_THEMES[variant];
   const hoverClass = forPdfCapture
     ? ""
-    : "transition-[border-color,box-shadow] duration-200 hover:border-brand-purple/40 hover:shadow-md dark:hover:border-accent-gold/40";
+    : "transition-shadow duration-300 hover:shadow-md";
 
   return (
-    <div
+    <article
       {...(pdfPageBreakBefore ? { "data-pdf-page-break-before": "" } : {})}
-      className={[
-        "overflow-hidden rounded-xl border border-theme-border-default border-l-4",
-        "border-l-brand-purple/40 bg-transparent shadow-sm",
-        "dark:border-brand-purple/25 dark:border-l-accent-goldDark/50",
-        hoverClass,
-      ].join(" ")}
+      className={`flex h-full flex-col rounded-2xl border border-theme-border-subtle bg-white p-5 shadow-sm dark:border-theme-border-strong dark:bg-surface-elevated/90 sm:p-6 ${hoverClass}`}
     >
-      <div className="p-4">
-        <div className="mb-3 flex items-center gap-3">
-          <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full border-2 border-accent-gold/60 bg-navy shadow-sm dark:bg-navy">
-            <IconComponent
-              className="h-4 w-4 text-accent-goldDark dark:text-accent-gold"
+      <div className="mb-5 flex items-center gap-3">
+        <div
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-white shadow-sm"
+          style={{ backgroundColor: theme.badgeBg }}
+        >
+          <IconComponent className="h-5 w-5" aria-hidden="true" />
+        </div>
+        <h4 className="min-w-0 flex-1 font-serif text-lg font-bold leading-snug text-navy dark:text-cream sm:text-xl">
+          {title}
+        </h4>
+        <div className="hidden shrink-0 items-center gap-2 sm:flex" aria-hidden="true">
+          <div className="h-px w-8 bg-gradient-to-r from-transparent via-[var(--color-accent-gradient-5)]/40 to-transparent" />
+          <Sparkles className="h-3 w-3 text-[var(--color-accent-gradient-5)]/60" />
+        </div>
+      </div>
+
+      <ul className="space-y-3">
+        {items.map((item, idx) => (
+          <li key={idx} className="flex items-start gap-3">
+            <span
+              className="mt-2 h-2 w-2 shrink-0 rounded-full"
+              style={{ backgroundColor: theme.bulletBg }}
               aria-hidden="true"
             />
-          </div>
-          <BrandGradientText as="h4" className={analysisCardTitleClass}>
-            {title}
-          </BrandGradientText>
-        </div>
-        <ul className="space-y-2">
-          {items.map((item, idx) => (
-            <li
-              key={idx}
-              className="flex items-start gap-2 text-sm leading-relaxed text-gray-700 dark:text-gray-300"
-            >
-              <span
-                className="mt-2 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-brand-purple dark:bg-accent-gold"
-                aria-hidden="true"
-              />
-              <span>{item}</span>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </div>
+            <span className="text-sm font-medium leading-relaxed text-theme-fg-secondary sm:text-[15px]">
+              {item}
+            </span>
+          </li>
+        ))}
+      </ul>
+    </article>
   );
 };
 

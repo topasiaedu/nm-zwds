@@ -1,6 +1,14 @@
 import { ChartData, Palace } from "../types";
-import { OVERVIEW_DESCRIPTION_CONSTANTS } from "../analysis_constants/overview_description";
 import { DATASET_1 } from "../analysis_constants";
+import {
+  buildPersonalityProfiles,
+  cleanStarName,
+  normalizeOverviewStarKey,
+  type OverviewDescriptionKey,
+  type PersonalityProfile,
+} from "./overviewStarUtils";
+
+export type { PersonalityProfile } from "./overviewStarUtils";
 
 /**
  * Type definitions for overview analysis results
@@ -10,6 +18,16 @@ export type OverviewAnalysisResult = {
   strengths: string[];
   weaknesses: string[];
   quotes: string[];
+  /** Structured profiles keyed to each life-palace main star personality. */
+  personalityProfiles: PersonalityProfile[];
+  /** Supporting personality copy from other life-palace stars (auxiliary / minor). */
+  supplementaryProfiles: PersonalityProfile[];
+  /** @deprecated Use personalityProfiles[0] — kept for legacy callers. */
+  primaryStarKey: OverviewDescriptionKey | null;
+  /** @deprecated Use personalityProfiles[0]?.archetypeTitle */
+  archetypeTitle: string | null;
+  /** @deprecated Use personalityProfiles[0]?.archetypeTraits */
+  archetypeTraits: string[];
 };
 
 /**
@@ -18,130 +36,151 @@ export type OverviewAnalysisResult = {
 const extractStarNamesFromPalace = (palace: Palace): string[] => {
   const starNames: string[] = [];
 
-  // Extract from main stars
   if (palace.mainStar) {
-    starNames.push(...palace.mainStar.map(star => star.name));
+    starNames.push(...palace.mainStar.map((star) => cleanStarName(star.name)));
   }
 
-  // Extract from body star
   if (palace.bodyStar) {
-    starNames.push(palace.bodyStar.name);
+    starNames.push(cleanStarName(palace.bodyStar.name));
   }
 
-  // Extract from life star
   if (palace.lifeStar) {
-    starNames.push(palace.lifeStar.name);
+    starNames.push(cleanStarName(palace.lifeStar.name));
   }
 
-  // Extract from minor stars
   if (palace.minorStars) {
-    starNames.push(...palace.minorStars.map(star => star.name));
+    starNames.push(...palace.minorStars.map((star) => cleanStarName(star.name)));
   }
 
-  // Extract from auxiliary stars
   if (palace.auxiliaryStars) {
-    starNames.push(...palace.auxiliaryStars.map(star => star.name));
+    starNames.push(...palace.auxiliaryStars.map((star) => cleanStarName(star.name)));
   }
 
-  // Extract from time-based stars
   if (palace.yearStars) {
-    starNames.push(...palace.yearStars.map(star => star.name));
+    starNames.push(...palace.yearStars.map((star) => cleanStarName(star.name)));
   }
 
   if (palace.monthStars) {
-    starNames.push(...palace.monthStars.map(star => star.name));
+    starNames.push(...palace.monthStars.map((star) => cleanStarName(star.name)));
   }
 
   if (palace.dayStars) {
-    starNames.push(...palace.dayStars.map(star => star.name));
+    starNames.push(...palace.dayStars.map((star) => cleanStarName(star.name)));
   }
 
   if (palace.hourStars) {
-    starNames.push(...palace.hourStars.map(star => star.name));
+    starNames.push(...palace.hourStars.map((star) => cleanStarName(star.name)));
   }
 
   return starNames;
 };
 
 /**
+ * Main stars only — core identity is driven by the life-palace primary star(s).
+ */
+const extractMainStarNamesFromPalace = (palace: Palace): string[] => {
+  if (!palace.mainStar || palace.mainStar.length === 0) {
+    return [];
+  }
+
+  return palace.mainStar.map((star) => cleanStarName(star.name));
+};
+
+/**
  * Find a palace by name in the chart data
  */
 const findPalaceByName = (chartData: ChartData, palaceName: string): Palace | null => {
-  return chartData.palaces.find(palace => palace.name === palaceName) || null;
+  return chartData.palaces.find((palace) => palace.name === palaceName) || null;
+};
+
+/**
+ * Resolve the palace used for overview personality analysis.
+ */
+const getRelevantPalace = (
+  chartData: ChartData,
+  palaceNumberOverride?: number
+): Palace | null => {
+  if (palaceNumberOverride !== undefined) {
+    const overridePalace = chartData.palaces.find((palace) => palace.number === palaceNumberOverride);
+    if (overridePalace) {
+      return overridePalace;
+    }
+    return findPalaceByName(chartData, "迁移");
+  }
+
+  const lifePalace = findPalaceByName(chartData, "命宫");
+  if (lifePalace) {
+    return lifePalace;
+  }
+
+  return findPalaceByName(chartData, "迁移");
 };
 
 /**
  * Get star names from life palace, or travel palace as fallback.
- * @param chartData - Chart data
- * @param palaceNumberOverride - Optional palace number (1–12) to use instead of 命宫
  */
 const getRelevantStars = (chartData: ChartData, palaceNumberOverride?: number): string[] => {
-  if (palaceNumberOverride !== undefined) {
-    // Use the override palace directly
-    const overridePalace = chartData.palaces.find(p => p.number === palaceNumberOverride);
-    if (overridePalace) {
-      const stars = extractStarNamesFromPalace(overridePalace);
-      if (stars.length > 0) return stars;
-    }
-    // Fallback to travel palace if override palace is empty
-    const travelPalace = findPalaceByName(chartData, "迁移");
-    if (travelPalace) return extractStarNamesFromPalace(travelPalace);
+  const palace = getRelevantPalace(chartData, palaceNumberOverride);
+  if (!palace) {
     return [];
   }
 
-  // Natal logic (unchanged)
-  const lifePalace = findPalaceByName(chartData, "命宫");
-  if (lifePalace) {
-    const lifeStars = extractStarNamesFromPalace(lifePalace);
-    if (lifeStars.length > 0) return lifeStars;
-  }
-  const travelPalace = findPalaceByName(chartData, "迁移");
-  if (travelPalace) return extractStarNamesFromPalace(travelPalace);
-  return [];
+  const stars = extractStarNamesFromPalace(palace);
+  return stars.length > 0 ? stars : [];
 };
 
 /**
- * Get descriptions from OVERVIEW_DESCRIPTION_CONSTANTS for given star names
+ * Star names that define the core personality narrative and archetype card.
  */
-const getDescriptions = (starNames: string[]): string[] => {
-  const descriptions: string[] = [];
+const getPersonalityStarNames = (
+  chartData: ChartData,
+  palaceNumberOverride?: number
+): string[] => {
+  const palace = getRelevantPalace(chartData, palaceNumberOverride);
+  if (!palace) {
+    return [];
+  }
 
-  starNames.forEach(starName => {
-    const starData = OVERVIEW_DESCRIPTION_CONSTANTS[starName as keyof typeof OVERVIEW_DESCRIPTION_CONSTANTS];
-    if (starData && starData.description) {
-      descriptions.push(starData.description);
-    }
-  });
+  const mainStars = extractMainStarNamesFromPalace(palace);
+  if (mainStars.length > 0) {
+    return mainStars;
+  }
 
-  return descriptions;
+  return extractStarNamesFromPalace(palace);
 };
 
 /**
  * Get strengths and weaknesses from DATASET_1 for given star names
  */
-const getStrengthsAndWeaknesses = (starNames: string[]): { strengths: string[]; weaknesses: string[] } => {
+const getStrengthsAndWeaknesses = (
+  starNames: string[]
+): { strengths: string[]; weaknesses: string[] } => {
   const strengths: string[] = [];
   const weaknesses: string[] = [];
 
-  starNames.forEach(starName => {
-    const starData = DATASET_1[starName as keyof typeof DATASET_1];
+  starNames.forEach((rawName) => {
+    const starKey = normalizeOverviewStarKey(rawName);
+    if (starKey === null) {
+      return;
+    }
+
+    const datasetKey = starKey as keyof typeof DATASET_1;
+    const starData = DATASET_1[datasetKey];
     if (starData && starData.命宫) {
-      // Extract strengths
-      if (starData.命宫.strengths) {
-        if (typeof starData.命宫.strengths === "string") {
-          // Split by common delimiters like "、" or "," or "/"
-          const strengthList = starData.命宫.strengths.split(/[、，,/]/).map(s => s.trim()).filter(s => s.length > 0);
-          strengths.push(...strengthList);
-        }
+      if (starData.命宫.strengths && typeof starData.命宫.strengths === "string") {
+        const strengthList = starData.命宫.strengths
+          .split(/[、，,/]/)
+          .map((value) => value.trim())
+          .filter((value) => value.length > 0);
+        strengths.push(...strengthList);
       }
 
-      // Extract cautions (weakness)
-      if (starData.命宫.cautions) {
-        if (typeof starData.命宫.cautions === "string") {
-          // Split by common delimiters
-          const cautionList = starData.命宫.cautions.split(/[、，,/]/).map(s => s.trim()).filter(s => s.length > 0);
-          weaknesses.push(...cautionList);
-        }
+      if (starData.命宫.cautions && typeof starData.命宫.cautions === "string") {
+        const cautionList = starData.命宫.cautions
+          .split(/[、，,/]/)
+          .map((value) => value.trim())
+          .filter((value) => value.length > 0);
+        weaknesses.push(...cautionList);
       }
     }
   });
@@ -149,20 +188,29 @@ const getStrengthsAndWeaknesses = (starNames: string[]): { strengths: string[]; 
   return { strengths, weaknesses };
 };
 
+const getArchetypeTraitsForStar = (starKey: OverviewDescriptionKey): string[] =>
+  getStrengthsAndWeaknesses([starKey]).strengths;
+
 /**
  * Get quotes from life, wealth, and career palaces
  */
 const getQuotes = (chartData: ChartData): string[] => {
   const quotes: string[] = [];
-  const palaceTypes = ["命宫", "财帛", "官禄"]; // life, wealth, career
+  const palaceTypes = ["命宫", "财帛", "官禄"];
 
-  palaceTypes.forEach(palaceType => {
+  palaceTypes.forEach((palaceType) => {
     const palace = findPalaceByName(chartData, palaceType);
     if (palace) {
       const starNames = extractStarNamesFromPalace(palace);
 
-      starNames.forEach(starName => {
-        const starData = DATASET_1[starName as keyof typeof DATASET_1];
+      starNames.forEach((rawName) => {
+        const starKey = normalizeOverviewStarKey(rawName);
+        if (starKey === null) {
+          return;
+        }
+
+        const datasetKey = starKey as keyof typeof DATASET_1;
+        const starData = DATASET_1[datasetKey];
         if (starData) {
           let quote = "";
 
@@ -187,21 +235,36 @@ const getQuotes = (chartData: ChartData): string[] => {
 
 /**
  * Main function to analyze chart data for overview component
- * @param chartData - Calculated ZWDS chart data
- * @param palaceNumberOverride - Optional physical palace number (1–12) to analyse
- *   instead of the natal Life Palace (命宫). Used for timeframe-based analysis.
  */
-export const analyzeOverview = (chartData: ChartData, palaceNumberOverride?: number): OverviewAnalysisResult => {
-  // Get relevant stars from life palace or travel palace as fallback
+export const analyzeOverview = (
+  chartData: ChartData,
+  palaceNumberOverride?: number
+): OverviewAnalysisResult => {
   const relevantStars = getRelevantStars(chartData, palaceNumberOverride);
+  const personalityStarNames = getPersonalityStarNames(chartData, palaceNumberOverride);
 
-  // Get descriptions
-  const descriptions = getDescriptions(relevantStars);
+  const personalityProfiles = buildPersonalityProfiles(
+    personalityStarNames,
+    getArchetypeTraitsForStar
+  );
 
-  // Get strengths and weaknesses
+  const mainStarKeys = new Set(personalityProfiles.map((profile) => profile.starKey));
+  const supplementaryStarNames = relevantStars.filter((rawName) => {
+    const starKey = normalizeOverviewStarKey(rawName);
+    return starKey !== null && !mainStarKeys.has(starKey);
+  });
+  const supplementaryProfiles = buildPersonalityProfiles(
+    supplementaryStarNames,
+    () => []
+  );
+
+  const descriptions = [
+    ...personalityProfiles.map((profile) => profile.description),
+    ...supplementaryProfiles.map((profile) => profile.description),
+  ];
+  const primaryProfile = personalityProfiles[0] ?? null;
+
   const { strengths, weaknesses } = getStrengthsAndWeaknesses(relevantStars);
-
-  // Get quotes from life, wealth, and career palaces
   const quotes = getQuotes(chartData);
 
   return {
@@ -209,13 +272,20 @@ export const analyzeOverview = (chartData: ChartData, palaceNumberOverride?: num
     strengths,
     weaknesses,
     quotes,
+    personalityProfiles,
+    supplementaryProfiles,
+    primaryStarKey: primaryProfile?.starKey ?? null,
+    archetypeTitle: primaryProfile?.archetypeTitle ?? null,
+    archetypeTraits: primaryProfile?.archetypeTraits ?? [],
   };
 };
 
 /**
  * Helper function to get debugging information about what stars were found
  */
-export const getDebugInfo = (chartData: ChartData): { lifePalaceStars: string[]; travelPalaceStars: string[]; usedStars: string[] } => {
+export const getDebugInfo = (
+  chartData: ChartData
+): { lifePalaceStars: string[]; travelPalaceStars: string[]; usedStars: string[] } => {
   const lifePalace = findPalaceByName(chartData, "命宫");
   const travelPalace = findPalaceByName(chartData, "迁移");
 
@@ -228,4 +298,4 @@ export const getDebugInfo = (chartData: ChartData): { lifePalaceStars: string[];
     travelPalaceStars,
     usedStars,
   };
-}; 
+};

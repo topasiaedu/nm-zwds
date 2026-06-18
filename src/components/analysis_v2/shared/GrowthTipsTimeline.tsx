@@ -1,7 +1,6 @@
 import React from "react";
-import { Sparkles } from "lucide-react";
+import { Lightbulb, Sparkles } from "lucide-react";
 import { renderGrowthTipTextWithHighlights } from "./personalityTextHighlight";
-import { PptHighlightGroupHeader } from "./PptHighlightCards";
 
 export type GrowthTipItem = {
   id: string;
@@ -13,59 +12,105 @@ type GrowthTipsTimelineProps = {
   forPdfCapture?: boolean;
 };
 
-type TimelineStepPillProps = {
+type GrowthStepTheme = {
+  accent: string;
+  cardBg: string;
+};
+
+const GROWTH_STEP_THEMES: GrowthStepTheme[] = [
+  { accent: "#6B5B95", cardBg: "#F3EFF8" },
+  { accent: "#D97706", cardBg: "#FFF8F0" },
+  { accent: "#7B5FC4", cardBg: "#EDE8F5" },
+  { accent: "#2D7A4D", cardBg: "#F3FAF6" },
+];
+
+const getGrowthStepTheme = (index: number): GrowthStepTheme =>
+  GROWTH_STEP_THEMES[index % GROWTH_STEP_THEMES.length];
+
+type TimelineStepBadgeProps = {
   stepNumber: string;
+  accent: string;
 };
-
-/** Navy circle pill with gold border and step number — matches NoblemanLifeAreaRow. */
-const navyGoldCircleClass =
-  "border-2 border-accent-gold/60 bg-navy shadow-sm dark:bg-navy";
 
 /**
- * Step marker pill — navy background, gold border, gold number text.
+ * Circular step marker shown beside each timeline card.
  */
-const TimelineStepPill: React.FC<TimelineStepPillProps> = ({ stepNumber }) => {
-  return (
-    <span
-      className={`inline-flex items-center rounded-full px-4 py-1.5 text-sm font-bold tracking-wide text-accent-goldDark dark:text-accent-gold ${navyGoldCircleClass}`}
-    >
-      {stepNumber}
-    </span>
-  );
-};
+const TimelineStepBadge: React.FC<TimelineStepBadgeProps> = ({ stepNumber, accent }) => (
+  <span
+    className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-sm font-bold text-white shadow-sm"
+    style={{ backgroundColor: accent }}
+    aria-hidden="true"
+  >
+    {stepNumber}
+  </span>
+);
 
-type TimelineTipContentProps = {
+type TimelineTipCardProps = {
   label: string;
+  stepNumber: string;
+  theme: GrowthStepTheme;
   align?: "left" | "right";
-  className?: string;
 };
 
 /**
- * Flat tip copy on the page surface — no card background.
+ * Themed insight card for a single growth tip.
  */
-const TimelineTipContent: React.FC<TimelineTipContentProps> = ({
+const TimelineTipCard: React.FC<TimelineTipCardProps> = ({
   label,
+  stepNumber,
+  theme,
   align,
-  className = "",
 }) => {
   const alignmentClass =
-    align === "right"
-      ? "md:text-right md:pr-2"
-      : align === "left"
-        ? "md:text-left md:pl-2"
-        : "";
+    align === "right" ? "md:ml-auto md:text-right" : align === "left" ? "md:mr-auto" : "";
 
   return (
-    <p
-      className={`max-w-md font-serif text-sm leading-relaxed text-theme-fg sm:text-base ${alignmentClass} ${className}`.trim()}
+    <article
+      className={`max-w-md rounded-2xl border p-4 shadow-sm sm:p-5 ${alignmentClass}`}
+      style={{
+        borderColor: `${theme.accent}22`,
+        backgroundColor: theme.cardBg,
+      }}
     >
-      {renderGrowthTipTextWithHighlights(label)}
-    </p>
+      <div
+        className={`flex items-center gap-2 ${align === "right" ? "md:justify-end" : ""}`}
+      >
+        <Lightbulb
+          className="h-4 w-4 shrink-0"
+          style={{ color: theme.accent }}
+          aria-hidden="true"
+        />
+        <p
+          className="text-[10px] font-bold uppercase tracking-[0.2em]"
+          style={{ color: theme.accent }}
+        >
+          Growth insight {stepNumber}
+        </p>
+      </div>
+
+      <p className="mt-3 font-serif text-sm leading-relaxed text-theme-fg-secondary sm:text-[15px]">
+        {renderGrowthTipTextWithHighlights(label)}
+      </p>
+    </article>
   );
 };
 
 /**
- * Alternating vertical timeline for growth tips — flat on page background.
+ * Editorial section header for the growth path timeline.
+ */
+const GrowthPathHeader: React.FC = () => (
+  <div className="mb-8 border-l-4 border-brand-purple pl-4 dark:border-accent-goldDark/70">
+    <h3 className="font-serif text-xl font-bold text-navy dark:text-cream sm:text-2xl">
+      Your Growth Path
+    </h3>
+    <p className="mt-2 text-sm text-theme-fg-secondary sm:text-base">
+      Chart-guided steps to lean into your strengths and navigate your edges with intention.
+    </p>
+  </div>
+);
+
+/**
+ * Alternating vertical timeline for growth tips — themed cards on a center spine.
  */
 export const GrowthTipsTimeline: React.FC<GrowthTipsTimelineProps> = ({
   tips,
@@ -79,21 +124,15 @@ export const GrowthTipsTimeline: React.FC<GrowthTipsTimelineProps> = ({
     );
   }
 
-  const timelineLayoutClass = forPdfCapture
-    ? "space-y-8"
-    : "space-y-0";
+  const timelineLayoutClass = forPdfCapture ? "space-y-8" : "space-y-0";
 
   return (
     <section aria-label="Growth tips timeline">
-      <PptHighlightGroupHeader
-        variant="brand"
-        beforeText="Your"
-        emphasisText="growth path"
-      />
+      <GrowthPathHeader />
 
       <div className="relative mx-auto max-w-4xl">
         <div
-          className="absolute bottom-0 left-4 top-0 w-px bg-theme-border-subtle md:left-1/2 md:-translate-x-1/2"
+          className="absolute bottom-0 left-4 top-0 w-px bg-gradient-to-b from-brand-purple/35 via-brand-purple/15 to-transparent md:left-1/2 md:-translate-x-1/2"
           aria-hidden="true"
         />
 
@@ -102,6 +141,7 @@ export const GrowthTipsTimeline: React.FC<GrowthTipsTimelineProps> = ({
             const isContentLeft = index % 2 === 0;
             const stepNumber = String(index + 1).padStart(2, "0");
             const isLast = index === tips.length - 1;
+            const theme = getGrowthStepTheme(index);
 
             return (
               <li
@@ -111,49 +151,55 @@ export const GrowthTipsTimeline: React.FC<GrowthTipsTimelineProps> = ({
                 {/* Mobile — single column with left spine */}
                 <div className="flex gap-4 pl-10 md:hidden">
                   <span
-                    className={`absolute left-[11px] top-2 h-3.5 w-3.5 rounded-full ring-4 ring-surface-cream dark:ring-surface-dark ${navyGoldCircleClass}`}
+                    className="absolute left-[11px] top-5 h-3.5 w-3.5 rounded-full ring-4 ring-surface-cream dark:ring-surface-dark"
+                    style={{ backgroundColor: theme.accent }}
                     aria-hidden="true"
                   />
                   <div className="min-w-0 flex-1">
-                    <TimelineStepPill stepNumber={stepNumber} />
-                    <TimelineTipContent label={tip.label} className="mt-3" />
+                    <div className="mb-3 flex items-center gap-3">
+                      <TimelineStepBadge stepNumber={stepNumber} accent={theme.accent} />
+                    </div>
+                    <TimelineTipCard
+                      label={tip.label}
+                      stepNumber={stepNumber}
+                      theme={theme}
+                    />
                   </div>
                 </div>
 
                 {/* Desktop — alternating two-column layout around center spine */}
                 <div className="hidden md:grid md:grid-cols-[minmax(0,1fr)_2rem_minmax(0,1fr)] md:items-center md:gap-8">
-                  <div
-                    className={
-                      isContentLeft
-                        ? "col-start-1 flex justify-end"
-                        : "col-start-1 flex justify-end"
-                    }
-                  >
+                  <div className="col-start-1 flex justify-end">
                     {isContentLeft ? (
-                      <TimelineTipContent label={tip.label} align="right" />
+                      <TimelineTipCard
+                        label={tip.label}
+                        stepNumber={stepNumber}
+                        theme={theme}
+                        align="right"
+                      />
                     ) : (
-                      <TimelineStepPill stepNumber={stepNumber} />
+                      <TimelineStepBadge stepNumber={stepNumber} accent={theme.accent} />
                     )}
                   </div>
 
                   <div className="col-start-2 flex justify-center">
                     <span
-                      className={`z-10 h-4 w-4 shrink-0 rounded-full ring-4 ring-surface-cream dark:ring-surface-dark ${navyGoldCircleClass}`}
+                      className="z-10 h-4 w-4 shrink-0 rounded-full ring-4 ring-surface-cream dark:ring-surface-dark"
+                      style={{ backgroundColor: theme.accent }}
                       aria-hidden="true"
                     />
                   </div>
 
-                  <div
-                    className={
-                      isContentLeft
-                        ? "col-start-3 flex justify-start"
-                        : "col-start-3 flex justify-start"
-                    }
-                  >
+                  <div className="col-start-3 flex justify-start">
                     {isContentLeft ? (
-                      <TimelineStepPill stepNumber={stepNumber} />
+                      <TimelineStepBadge stepNumber={stepNumber} accent={theme.accent} />
                     ) : (
-                      <TimelineTipContent label={tip.label} align="left" />
+                      <TimelineTipCard
+                        label={tip.label}
+                        stepNumber={stepNumber}
+                        theme={theme}
+                        align="left"
+                      />
                     )}
                   </div>
                 </div>
@@ -163,7 +209,7 @@ export const GrowthTipsTimeline: React.FC<GrowthTipsTimelineProps> = ({
         </ol>
 
         <Sparkles
-          className="pointer-events-none absolute bottom-4 right-0 h-4 w-4 text-accent-gold/40"
+          className="pointer-events-none absolute bottom-4 right-0 h-4 w-4 text-[var(--color-accent-gradient-5)]/50"
           aria-hidden="true"
         />
       </div>
