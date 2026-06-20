@@ -114,6 +114,85 @@ const calculateCenteredBorderPoint = (
   return { x: adjustedX, y: adjustedY };
 };
 
+interface LineSegment {
+  x1: number;
+  y1: number;
+  x2: number;
+  y2: number;
+}
+
+const STAR_ENDPOINT_TRIM_PX = 14;
+
+/** Move the endpoint slightly back from the star so the arrowhead sits on the label. */
+const trimPointToward = (
+  fromX: number,
+  fromY: number,
+  toX: number,
+  toY: number,
+  trimPx: number
+): { x: number; y: number } => {
+  const dx = toX - fromX;
+  const dy = toY - fromY;
+  const length = Math.hypot(dx, dy);
+  if (length <= trimPx) {
+    return { x: toX, y: toY };
+  }
+  const ratio = (length - trimPx) / length;
+  return { x: fromX + dx * ratio, y: fromY + dy * ratio };
+};
+
+/**
+ * Build a single straight segment from the palace border to just before the star.
+ * The arrow SVG renders above all layers (z-[100]) so no center-panel routing needed.
+ */
+const buildRegularTransformationSegments = (
+  fromRect: DOMRect,
+  fromPalace: number,
+  fromCenterX: number,
+  fromCenterY: number,
+  toStarX: number,
+  toStarY: number
+): LineSegment[] => {
+  const borderStart = calculateCenteredBorderPoint(
+    fromRect,
+    fromCenterX,
+    fromCenterY,
+    toStarX,
+    toStarY,
+    fromPalace
+  );
+
+  const trimmedEnd = trimPointToward(
+    borderStart.x,
+    borderStart.y,
+    toStarX,
+    toStarY,
+    STAR_ENDPOINT_TRIM_PX
+  );
+
+  return [{ x1: borderStart.x, y1: borderStart.y, x2: trimmedEnd.x, y2: trimmedEnd.y }];
+};
+
+const getArrowheadPoints = (
+  tipX: number,
+  tipY: number,
+  fromX: number,
+  fromY: number,
+  arrowLength: number,
+  arrowWidth: number
+): string => {
+  const angle = Math.atan2(tipY - fromY, tipX - fromX);
+  const x1 =
+    tipX - arrowLength * Math.cos(angle) - arrowWidth * Math.cos(angle - Math.PI / 2);
+  const y1 =
+    tipY - arrowLength * Math.sin(angle) - arrowWidth * Math.sin(angle - Math.PI / 2);
+  const x2 =
+    tipX - arrowLength * Math.cos(angle) - arrowWidth * Math.cos(angle + Math.PI / 2);
+  const y2 =
+    tipY - arrowLength * Math.sin(angle) - arrowWidth * Math.sin(angle + Math.PI / 2);
+  return `${tipX},${tipY} ${x1},${y1} ${x2},${y2}`;
+};
+
 /**
  * Component to render transformation lines between palaces in the ZWDS chart
  */
@@ -144,7 +223,7 @@ const TransformationLines: React.FC<TransformationLinesProps> = ({
   }
   
   const chartRect = chartRef.current.getBoundingClientRect();
-  
+
   // Separate transformations into regular and opposite palace influences
   const regularTransformations = transformations.filter(t => !t.isOppositeInfluence);
   const oppositeInfluences = transformations.filter(t => t.isOppositeInfluence);
@@ -218,10 +297,18 @@ const TransformationLines: React.FC<TransformationLinesProps> = ({
       const isSelfTransformation = transformation.fromPalace === transformation.toPalace;
       
       if (isSelfTransformation) {
-        // For self-transformations, draw a curved arc or loop
-        // Get position relative to the star
-        const starX = toStarX - fromX;
-        const starY = toStarY - fromY;
+        const borderStart = calculateCenteredBorderPoint(
+          fromRect,
+          fromX,
+          fromY,
+          toStarX,
+          toStarY,
+          transformation.fromPalace
+        );
+
+        // For self-transformations, draw a curved arc from the palace border toward the star
+        const starX = toStarX - borderStart.x;
+        const starY = toStarY - borderStart.y;
         
         // Determine the direction to bend the arc based on star position
         let angle;
@@ -234,11 +321,11 @@ const TransformationLines: React.FC<TransformationLinesProps> = ({
         }
         
         // Create control points for a bezier curve
-        const radius = Math.min(fromRect.width, fromRect.height) * 0.5;
+        const radius = Math.min(fromRect.width, fromRect.height) * 0.35;
         
         // Calculate control point coordinates for a quadratic bezier curve
-        const controlX = fromX + radius * Math.cos(angle);
-        const controlY = fromY + radius * Math.sin(angle);
+        const controlX = borderStart.x + radius * Math.cos(angle);
+        const controlY = borderStart.y + radius * Math.sin(angle);
         
         // Create animated dashes for the arc
         const arcLength = Math.PI * radius; // Approximate arc length
@@ -251,7 +338,7 @@ const TransformationLines: React.FC<TransformationLinesProps> = ({
         return (
           <g key={lineKey} style={lineStyle}>
             <motion.path
-              d={`M ${fromX} ${fromY} Q ${controlX} ${controlY} ${toStarX} ${toStarY}`}
+              d={`M ${borderStart.x} ${borderStart.y} Q ${controlX} ${controlY} ${toStarX} ${toStarY}`}
               fill="none"
               stroke={lineColor}
               strokeWidth={strokeWidth}
@@ -284,55 +371,94 @@ const TransformationLines: React.FC<TransformationLinesProps> = ({
           </g>
         );
       } else {
-        // Draw a line between palace and star
-        const lineLength = Math.sqrt(Math.pow(toStarX - fromX, 2) + Math.pow(toStarY - fromY, 2));
-        
-        // Calculate the angle of the line
-        const angle = Math.atan2(toStarY - fromY, toStarX - fromX);
-        
-        // Calculate arrowhead points - make arrowhead larger
+        const segments = buildRegularTransformationSegments(
+          fromRect,
+          transformation.fromPalace,
+          fromX,
+          fromY,
+          toStarX,
+          toStarY
+        );
+
+        if (segments.length === 0) {
+          return null;
+        }
+
         const arrowLength = 12;
         const arrowWidth = 8;
-        
-        const x1 = toStarX - arrowLength * Math.cos(angle) - arrowWidth * Math.cos(angle - Math.PI/2);
-        const y1 = toStarY - arrowLength * Math.sin(angle) - arrowWidth * Math.sin(angle - Math.PI/2);
-        const x2 = toStarX - arrowLength * Math.cos(angle) - arrowWidth * Math.cos(angle + Math.PI/2);
-        const y2 = toStarY - arrowLength * Math.sin(angle) - arrowWidth * Math.sin(angle + Math.PI/2);
-        
-        // Create animated dashes for the lines
-        const dashLength = lineLength / 10;
-        const dashArray = `${dashLength},${dashLength/2}`;
-        
+        const lastSegment = segments[segments.length - 1];
+        const totalLength = segments.reduce(
+          (sum, segment) =>
+            sum + Math.hypot(segment.x2 - segment.x1, segment.y2 - segment.y1),
+          0
+        );
+        const dashLength = totalLength / 10;
+        const dashArray = `${dashLength},${dashLength / 2}`;
+
         return (
           <g key={lineKey} style={lineStyle}>
-            <motion.line
-              x1={fromX}
-              y1={fromY}
-              x2={toStarX}
-              y2={toStarY}
-              stroke={lineColor}
-              strokeWidth={strokeWidth}
-              strokeDasharray={dashArray}
-              initial={disableAnimations ? false : { strokeDashoffset: lineLength }}
-              animate={disableAnimations ? false : { 
-                strokeDashoffset: [lineLength, 0],
-                pathLength: [0, 1]
-              }}
-              transition={disableAnimations ? { duration: 0 } : { 
-                duration: 0.8, // Reduced from 1.5s to 0.8s
-                ease: "easeOut" 
-              }}
-            />
-            <motion.polygon
-              points={`${toStarX},${toStarY} ${x1},${y1} ${x2},${y2}`}
-              fill={lineColor}
-              initial={disableAnimations ? false : { opacity: 0, scale: 0 }}
-              animate={disableAnimations ? false : { opacity: 1, scale: 1 }}
-              transition={disableAnimations ? { duration: 0 } : { 
-                delay: 0.4, // Reduced from 0.8s to 0.4s
-                duration: 0.2 // Reduced from 0.3s to 0.2s
-              }}
-            />
+            {segments.map((segment, segmentIndex) => {
+              const segmentLength = Math.hypot(
+                segment.x2 - segment.x1,
+                segment.y2 - segment.y1
+              );
+              const isLastSegment = segmentIndex === segments.length - 1;
+              const segmentKey = `${lineKey}-segment-${segmentIndex}`;
+
+              return (
+                <React.Fragment key={segmentKey}>
+                  <motion.line
+                    x1={segment.x1}
+                    y1={segment.y1}
+                    x2={segment.x2}
+                    y2={segment.y2}
+                    stroke={lineColor}
+                    strokeWidth={strokeWidth}
+                    strokeDasharray={dashArray}
+                    initial={disableAnimations ? false : { strokeDashoffset: segmentLength }}
+                    animate={
+                      disableAnimations
+                        ? false
+                        : {
+                            strokeDashoffset: [segmentLength, 0],
+                            pathLength: [0, 1],
+                          }
+                    }
+                    transition={
+                      disableAnimations
+                        ? { duration: 0 }
+                        : {
+                            duration: 0.8,
+                            ease: "easeOut",
+                          }
+                    }
+                  />
+                  {isLastSegment && (
+                    <motion.polygon
+                      points={getArrowheadPoints(
+                        lastSegment.x2,
+                        lastSegment.y2,
+                        lastSegment.x1,
+                        lastSegment.y1,
+                        arrowLength,
+                        arrowWidth
+                      )}
+                      fill={lineColor}
+                      initial={disableAnimations ? false : { opacity: 0, scale: 0 }}
+                      animate={disableAnimations ? false : { opacity: 1, scale: 1 }}
+                      transition={
+                        disableAnimations
+                          ? { duration: 0 }
+                          : {
+                              delay: 0.4,
+                              duration: 0.2,
+                            }
+                      }
+                    />
+                  )}
+                </React.Fragment>
+              );
+            })}
           </g>
         );
       }
@@ -445,7 +571,7 @@ const TransformationLines: React.FC<TransformationLinesProps> = ({
       {/* Render regular transformations with smooth transitions */}
       <motion.svg 
         key={regularSvgKey}
-        className="absolute top-0 left-0 w-full h-full pointer-events-none z-50"
+        className="absolute top-0 left-0 h-full w-full"
         style={{ overflow: "visible" }}
         initial={disableAnimations ? false : { opacity: 0 }}
         animate={disableAnimations ? false : { opacity: regularLines.length > 0 ? 1 : 0 }}
@@ -457,7 +583,7 @@ const TransformationLines: React.FC<TransformationLinesProps> = ({
       {/* Render opposite palace influences with static rendering */}
       <svg 
         key={oppositeSvgKey}
-        className="absolute top-0 left-0 w-full h-full pointer-events-none z-50"
+        className="absolute top-0 left-0 h-full w-full"
         style={{ overflow: "visible" }}
       >
         {oppositeLines}

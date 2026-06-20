@@ -48,6 +48,7 @@ import {
   chartPalaceTitleClass,
   chartPalaceTitleRowClass,
   chartPalaceSecondaryNameClass,
+  chartPalaceTransformationTagClass,
   chartPalaceWatermarkClass,
   chartPalaceZodiacBadgeClass,
 } from "../../../styles/chartUi";
@@ -375,19 +376,27 @@ const Palace: React.FC<PalaceProps> = ({
     transition: "all 0.3s ease",
   };
 
-  const getTransformationColor = (transformation: Transformation) => {
+  const getTransformationModifierClass = (transformation: Transformation): string => {
     switch (transformation) {
-      case "化科":
-        return "text-yellow-500";
-      case "化權":
-        return "text-blue-500";
       case "化祿":
-        return "text-green-500";
+        return "zwds-trans-lu";
+      case "化權":
+        return "zwds-trans-quan";
+      case "化科":
+        return "zwds-trans-ke";
       case "化忌":
-        return "text-red-500";
+        return "zwds-trans-ji";
       default:
         return "";
     }
+  };
+
+  const getTransformationTagClassName = (transformation: Transformation): string => {
+    return `${chartPalaceTransformationTagClass} ${getTransformationModifierClass(transformation)}`.trim();
+  };
+
+  const getTransformationIconClassName = (transformation: Transformation): string => {
+    return `zwds-palace-transformation-icon ${getTransformationModifierClass(transformation)} text-3xs xs:text-2xs sm:text-xs`;
   };
 
   const getTransformationLabel = (transformation: Transformation): string => {
@@ -396,38 +405,6 @@ const Palace: React.FC<PalaceProps> = ({
     }
 
     return transformation;
-  };
-
-  const getTransformationTagClassName = (transformation: Transformation): string => {
-    const base = "text-3xs xs:text-2xs sm:text-xs mt-0.5";
-
-    if (isSelected) {
-      switch (transformation) {
-        case "化祿":
-          return `${base} text-green-300 font-bold bg-green-500/10 rounded-md px-0.5 py-0.5 sm:px-1 sm:py-0.5`;
-        case "化權":
-          return `${base} text-blue-300 font-bold bg-blue-500/10 rounded-md px-0.5 py-0.5 sm:px-1 sm:py-0.5`;
-        case "化科":
-          return `${base} text-yellow-300 font-bold bg-yellow-500/10 rounded-md px-0.5 py-0.5 sm:px-1 sm:py-0.5`;
-        case "化忌":
-          return `${base} text-red-300 font-bold bg-red-500/10 rounded-md px-0.5 py-0.5 sm:px-1 sm:py-0.5`;
-        default:
-          return `${base} text-rose-300 font-bold`;
-      }
-    }
-
-    switch (transformation) {
-      case "化祿":
-        return `${base} text-green-500 bg-green-500/10 rounded-md px-0.5 py-0.5 sm:px-1 sm:py-0.5`;
-      case "化權":
-        return `${base} text-blue-500 bg-blue-500/10 rounded-md px-0.5 py-0.5 sm:px-1 sm:py-0.5`;
-      case "化科":
-        return `${base} text-yellow-500 bg-yellow-500/10 rounded-md px-0.5 py-0.5 sm:px-1 sm:py-0.5`;
-      case "化忌":
-        return `${base} text-red-500 bg-red-500/10 rounded-md px-0.5 py-0.5 sm:px-1 sm:py-0.5`;
-      default:
-        return `${base} text-rose-500 bg-rose-500/10 rounded-md px-0.5 py-0.5 sm:px-1 sm:py-0.5`;
-    }
   };
 
   type StarRenderEntry = {
@@ -492,11 +469,7 @@ const Palace: React.FC<PalaceProps> = ({
 
     return (
       <span className={`flex items-center justify-end ${visibilityClass}`}>
-        <FaSyncAlt
-          className={`${getTransformationColor(
-            star.selfInfluence[0]
-          )} text-3xs xs:text-2xs sm:text-xs`}
-        />
+        <FaSyncAlt className={getTransformationIconClassName(star.selfInfluence[0])} />
       </span>
     );
   };

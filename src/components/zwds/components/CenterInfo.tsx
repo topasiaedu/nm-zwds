@@ -1,7 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import type { LucideIcon } from "lucide-react";
-import { Droplets, Flame, Gem, Leaf, Moon, Mountain, Sparkles, Sun } from "lucide-react";
+import { Droplets, CalendarDays, Flame, Gem, Leaf, Moon, Mountain, Sparkles, Sun, User } from "lucide-react";
 import { ChartData } from "../../../utils/zwds/types";
 import { useLanguage } from "../../../context/LanguageContext";
 import ZodiacIcons from "../icons";
@@ -21,7 +21,6 @@ import {
   chartCenterDateRowClass,
   chartCenterDateValueClass,
   chartCenterDatesPanelClass,
-  chartCenterDemographicsClass,
   chartCenterDividerClass,
   chartCenterElementClass,
   chartCenterEmblemRingClass,
@@ -176,6 +175,10 @@ const CenterInfo: React.FC<CenterInfoProps> = ({ chartData, isPdfExport = false 
   const blueprintTitle =
     language === "en" ? "Destiny Blueprint" : t("zwds.chart.命主") || "命盤";
 
+  const ageLabel = language === "en" ? "Age" : "年齡";
+  const ageValue =
+    language === "en" ? String(age) : `${age}${t("zwds.chart.歲") || "歲"}`;
+
   return (
     <motion.div
       className={chartCenterPanelClass}
@@ -222,7 +225,7 @@ const CenterInfo: React.FC<CenterInfoProps> = ({ chartData, isPdfExport = false 
             {input.name || t("result.chart")}
           </motion.h2>
 
-          <div className="mt-1 sm:mt-2 flex w-full max-w-[92%] items-center justify-center gap-1.5 sm:gap-2">
+          <div className="mt-0.5 sm:mt-1 flex w-full items-center justify-center gap-1 sm:gap-1.5">
             <span className="h-px max-w-[2.5rem] flex-1 bg-[#C5A059]/50" aria-hidden="true" />
             <span className={`${chartCenterBlueprintClass} shrink-0 px-1`}>
               {blueprintTitle}
@@ -243,13 +246,41 @@ const CenterInfo: React.FC<CenterInfoProps> = ({ chartData, isPdfExport = false 
 
           <div className={chartCenterDividerClass} aria-hidden="true" />
 
-          <p className={chartCenterDemographicsClass}>
-            <span>{genderLabel}</span>
-            <span className="mx-1.5 text-[#C5A059]">•</span>
-            <span>
-              {language === "en" ? `Age ${age}` : `${age}${t("zwds.chart.歲") || "歲"}`}
-            </span>
-          </p>
+          <div className={chartCenterZodiacGridClass}>
+            <div className={chartCenterZodiacCardClass}>
+              <div className="flex h-5 w-5 shrink-0 items-center justify-center xs:h-6 xs:w-6 sm:h-7 sm:w-7">
+                <div className={`${chartCenterDateIconWrapClass} h-5 w-5 xs:h-6 xs:w-6 sm:h-7 sm:w-7`}>
+                  <User
+                    className={chartCenterDateIconClass}
+                    strokeWidth={1.75}
+                    aria-hidden="true"
+                  />
+                </div>
+              </div>
+              <div className="min-w-0 flex-1 max-sm:w-full max-sm:flex-none">
+                <div className={chartCenterZodiacCardLabelClass}>
+                  {t("chartInfo.gender") || t("myChart.fields.gender") || "Gender"}
+                </div>
+                <div className={chartCenterZodiacCardValueClass}>{genderLabel}</div>
+              </div>
+            </div>
+
+            <div className={chartCenterZodiacCardClass}>
+              <div className="flex h-5 w-5 shrink-0 items-center justify-center xs:h-6 xs:w-6 sm:h-7 sm:w-7">
+                <div className={`${chartCenterDateIconWrapClass} h-5 w-5 xs:h-6 xs:w-6 sm:h-7 sm:w-7`}>
+                  <CalendarDays
+                    className={chartCenterDateIconClass}
+                    strokeWidth={1.75}
+                    aria-hidden="true"
+                  />
+                </div>
+              </div>
+              <div className="min-w-0 flex-1 max-sm:w-full max-sm:flex-none">
+                <div className={chartCenterZodiacCardLabelClass}>{ageLabel}</div>
+                <div className={chartCenterZodiacCardValueClass}>{ageValue}</div>
+              </div>
+            </div>
+          </div>
 
           <div
             className={`${chartCenterDatesPanelClass} ${
@@ -275,7 +306,7 @@ const CenterInfo: React.FC<CenterInfoProps> = ({ chartData, isPdfExport = false 
             </div>
 
             <div
-              className={`${chartCenterDateRowClass} border-t border-[#E5DDD0]/80 pt-2 dark:border-gray-600/80`}
+              className={`${chartCenterDateRowClass} border-t border-[#E5DDD0]/80 pt-1.5 dark:border-gray-600/80`}
             >
               <div className={chartCenterDateIconWrapClass}>
                 <Moon
@@ -294,56 +325,55 @@ const CenterInfo: React.FC<CenterInfoProps> = ({ chartData, isPdfExport = false 
               </div>
             </div>
           </div>
-          </div>
-        </div>
 
-        {/* Zodiac highlight cards */}
-        <div className={chartCenterZodiacGridClass}>
-          <div className={chartCenterZodiacCardClass}>
-            <div className="flex h-6 w-6 shrink-0 items-center justify-center sm:h-10 sm:w-10">
-              <ZodiacIconWrapper
-                Icon={ChineseZodiacIcon}
-                invertToGold
-                className="h-full w-full"
-              />
-            </div>
-            <div className="min-w-0 flex-1 max-sm:w-full max-sm:flex-none">
-              <div className={chartCenterZodiacCardLabelClass}>
-                <span className="sm:hidden">
-                  {language === "en"
-                    ? "Chinese"
-                    : t("zwds.chart.生肖") || "生肖"}
-                </span>
-                <span className="hidden sm:inline">
-                  {t("chartInfo.shengXiao") || t("zwds.chart.生肖")}
-                </span>
+          <div className={chartCenterZodiacGridClass}>
+            <div className={chartCenterZodiacCardClass}>
+              <div className="flex h-5 w-5 shrink-0 items-center justify-center xs:h-6 xs:w-6 sm:h-7 sm:w-7">
+                <ZodiacIconWrapper
+                  Icon={ChineseZodiacIcon}
+                  invertToGold
+                  className="h-full w-full"
+                />
               </div>
-              <div className={chartCenterZodiacCardValueClass}>{chineseZodiacLabel}</div>
+              <div className="min-w-0 flex-1 max-sm:w-full max-sm:flex-none">
+                <div className={chartCenterZodiacCardLabelClass}>
+                  <span className="sm:hidden">
+                    {language === "en"
+                      ? "Chinese"
+                      : t("zwds.chart.生肖") || "生肖"}
+                  </span>
+                  <span className="hidden sm:inline">
+                    {t("chartInfo.shengXiao") || t("zwds.chart.生肖")}
+                  </span>
+                </div>
+                <div className={chartCenterZodiacCardValueClass}>{chineseZodiacLabel}</div>
+              </div>
+            </div>
+
+            <div className={chartCenterZodiacCardClass}>
+              <div className="flex h-5 w-5 shrink-0 items-center justify-center xs:h-6 xs:w-6 sm:h-7 sm:w-7">
+                <ZodiacIconWrapper
+                  Icon={WesternZodiacIcon}
+                  invertToGoldSoft
+                  className="h-full w-full"
+                />
+              </div>
+              <div className="min-w-0 flex-1 max-sm:w-full max-sm:flex-none">
+                <div className={chartCenterZodiacCardLabelClass}>
+                  <span className="sm:hidden">
+                    {language === "en"
+                      ? "Western"
+                      : t("zwds.chart.westernZodiacShort") || "星座"}
+                  </span>
+                  <span className="hidden sm:inline">
+                    {t("zwds.chart.westernZodiac") ||
+                      (language === "en" ? "Western Zodiac" : "星座")}
+                  </span>
+                </div>
+                <div className={chartCenterZodiacCardValueClass}>{westernZodiacLabel}</div>
+              </div>
             </div>
           </div>
-
-          <div className={chartCenterZodiacCardClass}>
-            <div className="flex h-6 w-6 shrink-0 items-center justify-center sm:h-10 sm:w-10">
-              <ZodiacIconWrapper
-                Icon={WesternZodiacIcon}
-                invertToGoldSoft
-                className="h-full w-full"
-              />
-            </div>
-            <div className="min-w-0 flex-1 max-sm:w-full max-sm:flex-none">
-              <div className={chartCenterZodiacCardLabelClass}>
-                <span className="sm:hidden">
-                  {language === "en"
-                    ? "Western"
-                    : t("zwds.chart.westernZodiacShort") || "星座"}
-                </span>
-                <span className="hidden sm:inline">
-                  {t("zwds.chart.westernZodiac") ||
-                    (language === "en" ? "Western Zodiac" : "星座")}
-                </span>
-              </div>
-              <div className={chartCenterZodiacCardValueClass}>{westernZodiacLabel}</div>
-            </div>
           </div>
         </div>
       </div>

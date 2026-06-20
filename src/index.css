@@ -248,12 +248,12 @@
  * ZWDS chart grid — explicit contrast (avoids theme inheritance / missing utilities).
  */
 .zwds-chart-grid .zwds-palace-star-text,
-.zwds-chart-grid .zwds-palace-star-text span {
+.zwds-chart-grid .zwds-palace-star-text span:not(.zwds-palace-transformation-tag) {
   color: #1a1e3f;
 }
 
 .dark .zwds-chart-grid .zwds-palace-star-text,
-.dark .zwds-chart-grid .zwds-palace-star-text span {
+.dark .zwds-chart-grid .zwds-palace-star-text span:not(.zwds-palace-transformation-tag) {
   color: #ffffff;
 }
 
@@ -288,7 +288,7 @@
 }
 
 .zwds-chart-grid .zwds-palace-selected .zwds-palace-star-text,
-.zwds-chart-grid .zwds-palace-selected .zwds-palace-star-text span,
+.zwds-chart-grid .zwds-palace-selected .zwds-palace-star-text span:not(.zwds-palace-transformation-tag),
 .zwds-chart-grid .zwds-palace-selected .zwds-palace-bottom-text,
 .zwds-chart-grid .zwds-palace-selected .zwds-palace-title,
 .zwds-chart-grid .zwds-palace-selected .zwds-palace-subtitle,
@@ -297,7 +297,7 @@
 }
 
 .dark .zwds-chart-grid .zwds-palace-selected .zwds-palace-star-text,
-.dark .zwds-chart-grid .zwds-palace-selected .zwds-palace-star-text span,
+.dark .zwds-chart-grid .zwds-palace-selected .zwds-palace-star-text span:not(.zwds-palace-transformation-tag),
 .dark .zwds-chart-grid .zwds-palace-selected .zwds-palace-bottom-text,
 .dark .zwds-chart-grid .zwds-palace-selected .zwds-palace-title,
 .dark .zwds-chart-grid .zwds-palace-selected .zwds-palace-subtitle,
@@ -315,6 +315,137 @@
 
 .zwds-chart-grid .zwds-palace-selected .zwds-palace-badge-icon {
   color: #ffffff;
+}
+
+/* 四化 pills — sharp green / blue / yellow / red (override star-text inheritance) */
+.zwds-chart-grid .zwds-palace-transformation-tag.zwds-trans-lu {
+  color: #15803d;
+  background-color: #dcfce7;
+  border-color: #22c55e;
+}
+
+.zwds-chart-grid .zwds-palace-transformation-tag.zwds-trans-quan {
+  color: #1d4ed8;
+  background-color: #dbeafe;
+  border-color: #3b82f6;
+}
+
+.zwds-chart-grid .zwds-palace-transformation-tag.zwds-trans-ke {
+  color: #a16207;
+  background-color: #fef9c3;
+  border-color: #eab308;
+}
+
+.zwds-chart-grid .zwds-palace-transformation-tag.zwds-trans-ji {
+  color: #b91c1c;
+  background-color: #fee2e2;
+  border-color: #ef4444;
+}
+
+.dark .zwds-chart-grid .zwds-palace-transformation-tag.zwds-trans-lu {
+  color: #bbf7d0;
+  background-color: rgba(22, 163, 74, 0.38);
+  border-color: #4ade80;
+}
+
+.dark .zwds-chart-grid .zwds-palace-transformation-tag.zwds-trans-quan {
+  color: #93c5fd;
+  background-color: rgba(37, 99, 235, 0.38);
+  border-color: #60a5fa;
+}
+
+.dark .zwds-chart-grid .zwds-palace-transformation-tag.zwds-trans-ke {
+  color: #fde047;
+  background-color: rgba(202, 138, 4, 0.38);
+  border-color: #facc15;
+}
+
+.dark .zwds-chart-grid .zwds-palace-transformation-tag.zwds-trans-ji {
+  color: #fca5a5;
+  background-color: rgba(220, 38, 38, 0.38);
+  border-color: #f87171;
+}
+
+/* Selected palace — vivid pills on purple gradient */
+.zwds-chart-grid .zwds-palace-selected .zwds-palace-transformation-tag.zwds-trans-lu {
+  color: #14532d;
+  background-color: #86efac;
+  border-color: #16a34a;
+}
+
+.zwds-chart-grid .zwds-palace-selected .zwds-palace-transformation-tag.zwds-trans-quan {
+  color: #1e3a8a;
+  background-color: #93c5fd;
+  border-color: #2563eb;
+}
+
+.zwds-chart-grid .zwds-palace-selected .zwds-palace-transformation-tag.zwds-trans-ke {
+  color: #713f12;
+  background-color: #fde047;
+  border-color: #ca8a04;
+}
+
+.zwds-chart-grid .zwds-palace-selected .zwds-palace-transformation-tag.zwds-trans-ji {
+  color: #7f1d1d;
+  background-color: #fca5a5;
+  border-color: #dc2626;
+}
+
+.dark .zwds-chart-grid .zwds-palace-selected .zwds-palace-transformation-tag.zwds-trans-lu {
+  color: #14532d;
+  background-color: #86efac;
+  border-color: #16a34a;
+}
+
+.dark .zwds-chart-grid .zwds-palace-selected .zwds-palace-transformation-tag.zwds-trans-quan {
+  color: #1e3a8a;
+  background-color: #93c5fd;
+  border-color: #2563eb;
+}
+
+.dark .zwds-chart-grid .zwds-palace-selected .zwds-palace-transformation-tag.zwds-trans-ke {
+  color: #713f12;
+  background-color: #fde047;
+  border-color: #ca8a04;
+}
+
+.dark .zwds-chart-grid .zwds-palace-selected .zwds-palace-transformation-tag.zwds-trans-ji {
+  color: #7f1d1d;
+  background-color: #fca5a5;
+  border-color: #dc2626;
+}
+
+/* 四化 refresh icons — match pill hues */
+.zwds-chart-grid .zwds-palace-transformation-icon.zwds-trans-lu {
+  color: #16a34a;
+}
+
+.zwds-chart-grid .zwds-palace-transformation-icon.zwds-trans-quan {
+  color: #2563eb;
+}
+
+.zwds-chart-grid .zwds-palace-transformation-icon.zwds-trans-ke {
+  color: #ca8a04;
+}
+
+.zwds-chart-grid .zwds-palace-transformation-icon.zwds-trans-ji {
+  color: #dc2626;
+}
+
+.zwds-chart-grid .zwds-palace-selected .zwds-palace-transformation-icon.zwds-trans-lu {
+  color: #86efac;
+}
+
+.zwds-chart-grid .zwds-palace-selected .zwds-palace-transformation-icon.zwds-trans-quan {
+  color: #93c5fd;
+}
+
+.zwds-chart-grid .zwds-palace-selected .zwds-palace-transformation-icon.zwds-trans-ke {
+  color: #fde047;
+}
+
+.zwds-chart-grid .zwds-palace-selected .zwds-palace-transformation-icon.zwds-trans-ji {
+  color: #fca5a5;
 }
 
 /* Da Ming tag — stronger contrast; overrides selected-palace color inheritance */
@@ -375,10 +506,21 @@
   height: 100%;
 }
 
+/* Enlarge center 2×2 relative to corner/side palaces */
+.zwds-chart-grid {
+  grid-template-columns: 0.88fr 1.12fr 1.12fr 0.88fr;
+  grid-template-rows: 0.88fr 1.12fr 1.12fr 0.88fr;
+}
+
 @media (max-width: 639px) {
   .zwds-chart-grid {
     touch-action: manipulation;
-    grid-template-rows: repeat(4, minmax(9.5rem, 1fr));
+    grid-template-columns: 0.88fr 1.12fr 1.12fr 0.88fr;
+    grid-template-rows:
+      minmax(9.5rem, 0.88fr)
+      minmax(10.5rem, 1.12fr)
+      minmax(10.5rem, 1.12fr)
+      minmax(9.5rem, 0.88fr);
   }
 
   [data-zwds-chart-container="true"] {
@@ -387,7 +529,12 @@
 
   .zwds-center-info {
     font-size: 0.875rem;
+    z-index: 0;
   }
+}
+
+.zwds-center-info {
+  z-index: 0;
 }
 
 .zwds-center-info .zwds-center-label {

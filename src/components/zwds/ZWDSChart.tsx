@@ -10,7 +10,9 @@ import CenterInfo from "./components/CenterInfo";
 import TransformationLines from "./components/TransformationLines";
 import {
   chartCanvasOuterClass,
+  chartCenterSlotClass,
   chartGridClass,
+  chartTransformationOverlayClass,
 } from "../../styles/chartUi";
 import { useLanguage } from "../../context/LanguageContext";
 import { useChartSettings } from "../../context/ChartSettingsContext";
@@ -196,6 +198,7 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
 
   // Reference to the chart container
   const chartRef = useRef<HTMLDivElement>(null);
+  const centerRef = useRef<HTMLDivElement>(null);
 
   // State to track window size changes
   const [windowSize, setWindowSize] = useState({
@@ -621,7 +624,7 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
         {/* Second row */}
         {renderPalace(12)}
         {/* Center info spans 2x2 */}
-        <div className="col-span-2 row-span-2">
+        <div ref={centerRef} className={chartCenterSlotClass}>
           <CenterInfo chartData={chartData} isPdfExport={isPdfExport} />
         </div>
         {renderPalace(5)}
@@ -638,17 +641,19 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
         {renderPalace(7)}
       </motion.div>
 
-      {/* Render transformation lines as overlay */}
-      <TransformationLines
-        transformations={getAllTransformations}
-        chartRef={chartRef}
-        palaceRefs={palaceRefs}
-        starRefs={starRefs}
-        refsReady={refsReady}
-        selectedPalace={selectedPalace}
-        windowSize={windowSize}
-        disableAnimations={isPdfExport}
-      />
+      {/* Render transformation lines above grid + center content */}
+      <div className={chartTransformationOverlayClass}>
+        <TransformationLines
+          transformations={getAllTransformations}
+          chartRef={chartRef}
+          palaceRefs={palaceRefs}
+          starRefs={starRefs}
+          refsReady={refsReady}
+          selectedPalace={selectedPalace}
+          windowSize={windowSize}
+          disableAnimations={isPdfExport}
+        />
+      </div>
     </motion.div>
   );
 };
