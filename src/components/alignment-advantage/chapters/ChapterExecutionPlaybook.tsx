@@ -97,7 +97,7 @@ export const ChapterExecutionPlaybook: React.FC<ChapterExecutionPlaybookProps> =
       <SectionWatermark type="timeline" />
       <SectionHeader
         graphicType="timing"
-        chapter="Chapter 05 · Execution Playbook"
+        chapter="Chapter 04 · Execution Playbook"
         title="Your 12-Month Roadmap"
         subtitle={`You are in your ${strategicData.phaseLabel} Phase. Select any month to see its strategic briefing.`}
       />

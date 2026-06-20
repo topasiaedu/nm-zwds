@@ -4,7 +4,7 @@ import { SectionWatermark } from "../shared/SectionWatermark";
 import { SectionHeader } from "../shared/SectionHeader";
 import { AxisCard, type AxisAnswer } from "../shared/AxisCard";
 import { Sparkle } from "../shared/Sparkle";
-import { FRAMEWORK_RECOMMENDATIONS, STOP_DOING, WEALTH_TYPE } from "../../../utils/forecast/wealthContentData";
+import { FRAMEWORK_RECOMMENDATIONS, WEALTH_TYPE } from "../../../utils/forecast/wealthContentData";
 import type { WealthCodeKey } from "../../../utils/zwds/analysis_constants/wealth_code_mapping";
 
 export interface DecisionFrameworkState {
@@ -53,7 +53,7 @@ export const ChapterDecisionFramework: React.FC<ChapterDecisionFrameworkProps> =
       <SectionWatermark type="target" />
       <SectionHeader
         graphicType="decision"
-        chapter="Chapter 06 · Decision Framework"
+        chapter="Strategic Filter"
         title="Your Strategic Filter"
         subtitle="A repeatable system for evaluating any high-stakes decision through your three-axis Purple Star lens."
       />
@@ -146,14 +146,32 @@ export const ChapterDecisionFramework: React.FC<ChapterDecisionFrameworkProps> =
 
       {/* ── The Playbook: Deal-Flow Checklist ── */}
       <div className="mb-10">
-        <p className="text-[10px] font-bold uppercase tracking-[0.2em] mb-6 text-slate-400">
+        <p className="text-[10px] font-bold uppercase tracking-[0.2em] mb-4 text-slate-400">
           Deal-Flow Checklist
         </p>
+        {framework.structural !== null && (
+          <div className="flex items-center gap-3 mb-6">
+            {[0, 1, 2].map((i) => (
+              <div
+                key={i}
+                className="h-2 flex-1 rounded-full transition-all"
+                style={{
+                  background: i < frameworkScore
+                    ? (frameworkScore === 3 ? "#16a34a" : frameworkScore === 2 ? C.gold : C.coral)
+                    : `${C.border}40`,
+                }}
+              />
+            ))}
+            <span className="text-sm font-semibold shrink-0" style={{ color: C.muted }}>
+              {frameworkScore} / 3
+            </span>
+          </div>
+        )}
         <div className="flex flex-col border-t border-[#e8ddd0]/60">
           <AxisCard
             variant="checklist"
             title="01. Structural"
-            description="Does this decision align with your core design, or does it force you to operate outside your zone of genius?"
+            description="Does this align with your core design?"
             value={strLabel.label}
             isAutoFilled={false}
             answer={framework.structural}
@@ -177,7 +195,7 @@ export const ChapterDecisionFramework: React.FC<ChapterDecisionFrameworkProps> =
           <AxisCard
             variant="checklist"
             title="03. Wealth"
-            description={`Does this move eliminate one of your known profit drains: ${STOP_DOING[strategicData.wealthProfile.codes[0]?.key as WealthCodeKey]?.[0] ?? "wasting resources"}?`}
+            description={`Does this move avoid your top profit drain?`}
             value={strategicData.wealthArchetype}
             isAutoFilled={true}
             answer={wealthAnswer}
@@ -201,25 +219,9 @@ export const ChapterDecisionFramework: React.FC<ChapterDecisionFrameworkProps> =
           >
             {recommendation.heading}
           </p>
-          <p className="text-base leading-relaxed mb-6" style={{ color: C.muted }}>
+          <p className="text-base leading-relaxed mb-4" style={{ color: C.muted }}>
             {recommendation.copy}
           </p>
-          <div className="flex items-center gap-3">
-            {[0, 1, 2].map((i) => (
-              <div
-                key={i}
-                className="h-2 flex-1 rounded-full transition-all"
-                style={{
-                  background: i < frameworkScore
-                    ? (frameworkScore === 3 ? "#16a34a" : frameworkScore === 2 ? C.gold : C.coral)
-                    : `${C.border}40`,
-                }}
-              />
-            ))}
-            <span className="text-sm font-semibold ml-2" style={{ color: C.muted }}>
-              {frameworkScore} / 3
-            </span>
-          </div>
         </div>
       )}
 

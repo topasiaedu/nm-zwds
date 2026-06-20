@@ -9,74 +9,41 @@
  *
  * Chapters:
  *  Cover  : Client name, at-a-glance summary chips, PDF download
+ *  Filter : Strategic decision filter (right after overview)
  *  Ch 01  : Structure: Speed/Endurance Player + Formation Profile
- *  Ch 02  : Timing: DaYun phase summary + 12-month roadmap grid
- *  Ch 03  : Wealth: Archetype profile + Phase × Wealth intersection
- *  Ch 04  : Decision Framework: 3-axis alignment checker
+ *  Ch 02  : Wealth: Archetype profile + Phase × Wealth intersection
+ *  Ch 03  : Stakeholder Intelligence
+ *  Ch 04  : Timing: DaYun phase summary + 12-month roadmap grid
  *
  * Access is gated behind the `hasAlignmentAdvantage` feature flag.
  * Always uses the account-owner's (`is_self`) profile: one per account.
  */
 
-import React, { useMemo, useState, useEffect, useCallback } from "react";
-import { Compass, Users } from "lucide-react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import PageTransition from "../../components/PageTransition";
 import { useProfileContext } from "../../context/ProfileContext";
 import { useTierAccess } from "../../context/TierContext";
 import { useAlertContext } from "../../context/AlertContext";
-import { ZWDSCalculator } from "../../utils/zwds/calculator";
-import type { ChartData, ChartInput, Palace } from "../../utils/zwds/types";
-import { analyzeWealthCode } from "../../utils/zwds/analysis/wealthCodeAnalysis";
-import type { WealthCodeAnalysisResult } from "../../utils/zwds/analysis/wealthCodeAnalysis";
-import { calculateCurrentDayunCycle } from "../../utils/dayun/calculator";
-import { generateDayunGuidance } from "../../utils/dayun/guidanceGenerator";
-import type { DayunCycleExtended } from "../../types/dayun";
-import {
-  getPalaceForAspectLiuMonth,
-  getLiuMonthAnchorFromLocalDate,
-} from "../../utils/destiny-navigator/palace-resolver";
-import {
-  PALACE_DATA,
-  getSignalColor,
-  SIGNAL_LABELS,
-  type SignalColor,
-} from "../../utils/forecast/alignmentTimingData";
-import { detectStructure } from "../../utils/zwds/analysis/structureAnalysis";
-import type { StructureAnalysisResult } from "../../utils/zwds/analysis/structureAnalysis";
 import {
   STRUCTURE_LABELS,
   FORMATION_PROFILES,
 } from "../../utils/forecast/structureContentData";
-import { PHASE_LABELS } from "../../utils/dayun/seasonMapper";
 import { supabase } from "../../utils/supabase-client";
 import {
   exportPdfViaServer,
   resolvePrintPageOrigin,
 } from "../../utils/pdfExportServer";
-import {
-  type PhaseAlignmentSeasonKey,
-} from "../../utils/forecast/wealthContentData";
-import { STAR_BRIEF } from "../../utils/forecast/starBriefDescriptions";
-import {
-  PEOPLE_PALACE_FRAMING,
-  PEOPLE_SYNTHESIS,
-} from "../../utils/forecast/peoplePalaceData";
-import {
-  PALACE_MONTH_DATA,
-  PALACE_GUIDANCE_DATA,
-  SEASON_STYLES,
-} from "../../utils/forecast/liuMonthData";
-import MonthGrid from "../../components/alignment-advantage/MonthGrid";
-import type { MonthPillData } from "../../components/alignment-advantage/MonthGrid";
+import { useAlignmentAdvantageData } from "../../components/alignment-advantage/data/useAlignmentAdvantageData";
 
-import { C, PALACE_ENGLISH, NORTHERN_MAIN_STARS, SOUTHERN_MAIN_STARS } from "../../components/alignment-advantage/shared/constants";
+import { C } from "../../components/alignment-advantage/shared/constants";
 import { Sparkle } from "../../components/alignment-advantage/shared/Sparkle";
+import { PageContextStrip } from "../../components/alignment-advantage/shared/PageContextStrip";
 import { SectionWatermark } from "../../components/alignment-advantage/shared/SectionWatermark";
+import { firstSentences } from "../../components/alignment-advantage/shared/textHelpers";
 import { TwelvePalaceMiniGrid } from "../../components/alignment-advantage/shared/TwelvePalaceMiniGrid";
 import { ChapterCoreDesign } from "../../components/alignment-advantage/chapters/ChapterCoreDesign";
 import { ChapterExecutionPlaybook } from "../../components/alignment-advantage/chapters/ChapterExecutionPlaybook";
-import { ChapterOperatingSystem } from "../../components/alignment-advantage/chapters/ChapterOperatingSystem";
 import { ChapterWealthAcceleration } from "../../components/alignment-advantage/chapters/ChapterWealthAcceleration";
 import { ChapterDecisionFramework } from "../../components/alignment-advantage/chapters/ChapterDecisionFramework";
 import { ChapterStakeholderIntelligence } from "../../components/alignment-advantage/chapters/ChapterStakeholderIntelligence";
@@ -85,7 +52,7 @@ import { ChapterStakeholderIntelligence } from "../../components/alignment-advan
 // Types
 // ─────────────────────────────────────────────────────────────────────────────
 
-type ChapterId = "cover" | "design" | "operate" | "timing" | "wealth" | "people" | "decision";
+type ChapterId = "cover" | "design" | "decision" | "wealth" | "people" | "timing";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Constants
@@ -95,13 +62,12 @@ type ChapterId = "cover" | "design" | "operate" | "timing" | "wealth" | "people"
 // ─── Mini-chart helpers ───────────────────────────────────────────────────────
 
 const CHAPTERS: Array<{ id: ChapterId; label: string; sub: string }> = [
-  { id: "cover",    label: "Overview",     sub: "Your profile at a glance" },
+  { id: "cover",    label: "Overview",            sub: "Your profile at a glance" },
+  { id: "decision", label: "Strategic Filter",    sub: "Decision framework" },
   { id: "design",   label: "Founder's Blueprint", sub: "Ch 01 · Core Design" },
-  { id: "operate",  label: "Operating System", sub: "Ch 02 · Executive Capacity" },
-  { id: "wealth",   label: "Wealth Acceleration", sub: "Ch 03 · Wealth Blueprint" },
-  { id: "people",   label: "Stakeholder Intel", sub: "Ch 04 · People Intelligence" },
-  { id: "timing",   label: "Execution Playbook", sub: "Ch 05 · 12-Month Roadmap" },
-  { id: "decision", label: "Decision Filter", sub: "Ch 06 · Decision Framework" },
+  { id: "wealth",   label: "Wealth Acceleration", sub: "Ch 02 · Wealth Blueprint" },
+  { id: "people",   label: "People Intel",        sub: "Ch 03 · Five Relationship Palaces" },
+  { id: "timing",   label: "Execution Playbook",  sub: "Ch 04 · 12-Month Roadmap" },
 ];
 
 const PHASE_DISPLAY: Record<string, { label: string; bgColor: string; textColor: string }> = {
@@ -110,32 +76,6 @@ const PHASE_DISPLAY: Record<string, { label: string; bgColor: string; textColor:
   autumn: { label: "Consolidation", bgColor: `linear-gradient(135deg, #d97706, #b45309)`,            textColor: "#d97706" },
   winter: { label: "Foundation",    bgColor: `linear-gradient(135deg, #2563eb, #1d4ed8)`,            textColor: "#2563eb" },
 };
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Helpers
-// ─────────────────────────────────────────────────────────────────────────────
-
-function parseBirthHour(birthTime: string): number {
-  const match = String(birthTime).match(/(\d+):?(\d+)?\s*(AM|PM)?/i);
-  if (!match) return 12;
-  let hour = parseInt(match[1], 10);
-  if (match[3]?.toUpperCase() === "PM" && hour < 12) hour += 12;
-  if (match[3]?.toUpperCase() === "AM" && hour === 12) hour = 0;
-  return hour;
-}
-
-/** Returns the palace matching a given Chinese name, or null if not found. */
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Sub-components
-// ─────────────────────────────────────────────────────────────────────────────
-
-
-/** Skeleton loading shimmer */
-const Shimmer: React.FC<{ className: string }> = ({ className }) => (
-  <div className={["animate-pulse rounded-xl", className].join(" ")}
-    style={{ background: "rgba(255,255,255,0.12)" }} />
-);
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Access denied
@@ -193,57 +133,12 @@ const AlignmentAdvantage: React.FC = () => {
   const { hasAlignmentAdvantage } = useTierAccess();
   const { showAlert }             = useAlertContext();
 
-  const profile = useMemo(() => profiles.find((p) => p.is_self) ?? null, [profiles]);
+  const profile = profiles.find((p) => p.is_self) ?? null;
+  const aaData = useAlignmentAdvantageData(profile);
 
-  const chartData = useMemo((): ChartData | null => {
-    if (!profile) return null;
-    try {
-      const d = new Date(`${profile.birthday}T12:00:00`);
-      const input: ChartInput = {
-        year:   d.getFullYear(),
-        month:  d.getMonth() + 1,
-        day:    d.getDate(),
-        hour:   parseBirthHour(String(profile.birth_time)),
-        gender: profile.gender === "male" ? "male" : "female",
-        name:   profile.name,
-      };
-      return new ZWDSCalculator(input).calculate();
-    } catch { return null; }
-  }, [profile]);
-
-  const strategicData = useMemo(() => {
-    if (!chartData) return null;
-
-    const wealthProfile: WealthCodeAnalysisResult = analyzeWealthCode(chartData);
-    const rawDayun      = calculateCurrentDayunCycle(chartData);
-    const dayun: DayunCycleExtended | null = rawDayun ? generateDayunGuidance(rawDayun) : null;
-
-    const { solarYear, lunarMonth } = getLiuMonthAnchorFromLocalDate();
-    const palaceNum   = getPalaceForAspectLiuMonth("life", chartData, lunarMonth, solarYear);
-    const palace      = palaceNum !== null ? chartData.palaces[palaceNum - 1] : null;
-    const palaceData  = palace ? PALACE_DATA[palace.name] : null;
-    const signal: SignalColor = palaceData ? getSignalColor(palaceData.stars) : "yellow";
-
-    return {
-      wealthProfile,
-      dayun,
-      wealthArchetype: wealthProfile.dominantArchetype ?? "Your Wealth Code",
-      season:          dayun?.season ?? null,
-      phaseLabel:      PHASE_LABELS[dayun?.season ?? "spring"] ?? "Expansion",
-      signal,
-      signalLabel:     SIGNAL_LABELS[signal],
-      monthName:       new Date().toLocaleString("en-US", { month: "long" }),
-      palaceArea:      palaceData?.area ?? "",
-      palacePriority:  palaceData?.priority ?? "",
-      timingAligned:   signal === "green",
-      wealthAligned:   (wealthProfile.codes[0]?.score ?? 0) >= 5,
-    };
-  }, [chartData]);
-
-  const structureResult = useMemo((): StructureAnalysisResult | null => {
-    if (!chartData) return null;
-    return detectStructure(chartData, "natal");
-  }, [chartData]);
+  const chartData = aaData?.chartData ?? null;
+  const strategicData = aaData?.strategicData ?? null;
+  const structureResult = aaData?.structureResult ?? null;
 
   const [pdfLoading, setPdfLoading] = useState<boolean>(false);
   const [activeChapter, setActiveChapter] = useState<ChapterId>("cover");
@@ -251,7 +146,7 @@ const AlignmentAdvantage: React.FC = () => {
   // Active chapter detection
   useEffect(() => {
     if (!chartData || !strategicData || !structureResult) return;
-    const ids: ChapterId[] = ["cover", "design", "operate", "timing", "wealth", "people", "decision"];
+    const ids: ChapterId[] = ["cover", "decision", "design", "wealth", "people", "timing"];
     const observer = new IntersectionObserver(
       (entries) => {
         const hit = entries.filter((e) => e.isIntersecting);
@@ -569,6 +464,7 @@ const AlignmentAdvantage: React.FC = () => {
               ══════════════════════════════════════ */}
           <section id="cover" className="scroll-mt-16 mb-32 pt-16 relative overflow-hidden bg-white rounded-[40px] p-10 md:p-16 shadow-[0_8px_32px_rgba(0,0,0,0.03)] border border-[#e8ddd0]/50">
             <SectionWatermark type="compass" />
+            <PageContextStrip label="Overview · Your Profile at a Glance" />
             
             {/* Hero */}
             <div className="mb-16 relative z-10">
@@ -597,8 +493,10 @@ const AlignmentAdvantage: React.FC = () => {
                 Your Alignment<br />Advantage
               </h1>
               <p className="text-lg leading-relaxed mt-3 max-w-lg" style={{ color: C.muted }}>
-                A personalised strategic playbook built from your Purple Star Astrology chart -
-                giving you clarity on how you&apos;re wired, when to move, and how to build wealth on your terms.
+                {firstSentences(
+                  "A personalised strategic playbook built from your Purple Star Astrology chart - giving you clarity on how you are wired, when to move, and how to build wealth on your terms.",
+                  2
+                )}
               </p>
             </div>
 
@@ -700,43 +598,15 @@ const AlignmentAdvantage: React.FC = () => {
             {/* 12-Palace Mini Grid: full chart at a glance */}
             <div className="mt-6">
               <p
-                className="text-[8px] font-bold uppercase tracking-[0.24em] mb-3"
+                className="text-[8px] font-bold uppercase tracking-[0.24em] mb-3 text-center"
                 style={{ color: C.muted }}
               >
-                Your Full 12-Palace Chart
+                Your Full 12-Palace Chart · Each chapter below unpacks one zone
               </p>
               <TwelvePalaceMiniGrid chartData={chartData} />
             </div>
           </section>
 
-          <ChapterCoreDesign chartData={chartData} structureResult={structureResult} strLabel={strLabel} formation={formation} />
-
-          <ChapterOperatingSystem chartData={chartData} strLabel={strLabel} />
-
-          {/* ══════════════════════════════════════
-              SECTION 4: TIMING
-              ══════════════════════════════════════ */}
-          <ChapterWealthAcceleration chartData={chartData} strategicData={strategicData} />
-
-          {/* ══════════════════════════════════════
-              SECTION 6: PEOPLE INTELLIGENCE
-              ══════════════════════════════════════ */}
-          <ChapterStakeholderIntelligence chartData={chartData} />
-
-          {/* ══════════════════════════════════════
-              SECTION 7: DECISION FRAMEWORK
-              ══════════════════════════════════════ */}
-          {chartData && (
-            <ChapterExecutionPlaybook
-              strategicData={strategicData}
-              chartData={chartData}
-              profile={profile}
-            />
-          )}
-
-          {/* ══════════════════════════════════════
-              SECTION 5: WEALTH BLUEPRINT
-              ══════════════════════════════════════ */}
           <ChapterDecisionFramework
             strategicData={strategicData}
             strLabel={strLabel}
@@ -744,6 +614,20 @@ const AlignmentAdvantage: React.FC = () => {
             phaseConfig={phaseConfig}
             signalHex={signalHex}
           />
+
+          <ChapterCoreDesign chartData={chartData} structureResult={structureResult} strLabel={strLabel} formation={formation} />
+
+          <ChapterWealthAcceleration chartData={chartData} strategicData={strategicData} />
+
+          <ChapterStakeholderIntelligence chartData={chartData} strategicData={strategicData} />
+
+          {chartData && (
+            <ChapterExecutionPlaybook
+              strategicData={strategicData}
+              chartData={chartData}
+              profile={profile}
+            />
+          )}
 
           </div>{/* end scrollable content */}
         </main>

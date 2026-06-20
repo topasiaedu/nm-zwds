@@ -15,12 +15,27 @@ export const BRANCH_TO_AREA: Record<string, string> = {
 };
 
 export const PALACE_ENGLISH: Record<string, string> = {
-  "命宫": "Life Palace",      "兄弟": "Siblings Palace",
-  "夫妻": "Co-Founder & Joint Venture Dynamics",    "子女": "Children Palace",
-  "财帛": "Wealth Palace",    "疾厄": "Health Palace",
-  "迁移": "Travel Palace",    "交友": "Market & Audience Capture",
-  "官禄": "Operational Capacity",    "田宅": "Property Palace",
-  "福德": "Inner Power Palace","父母": "Investor & Mentor Leverage",
+  "命宫": "Life Palace",
+  "兄弟": "Siblings Palace",
+  "夫妻": "Spouse Palace",
+  "子女": "Children Palace",
+  "财帛": "Wealth Palace",
+  "疾厄": "Health Palace",
+  "迁移": "Travel Palace",
+  "交友": "Friends Palace",
+  "官禄": "Career Palace",
+  "田宅": "Property Palace",
+  "福德": "Happiness Palace",
+  "父母": "Parents Palace",
+};
+
+/** Plain-English labels for who each relationship palace covers (Ch 03 stats). */
+export const PEOPLE_PALACE_COVERS: Record<string, string> = {
+  "兄弟": "Peers & siblings",
+  "夫妻": "Spouse & partner",
+  "交友": "Friends & allies",
+  "父母": "Parents, mentors & bosses",
+  "子女": "Children & people you develop",
 };
 
 export const TRANSFORMATION_ENGLISH: Record<string, string> = {
