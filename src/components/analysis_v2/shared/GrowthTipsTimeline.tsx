@@ -1,6 +1,7 @@
 import React from "react";
 import { Lightbulb, Sparkles } from "lucide-react";
 import { renderGrowthTipTextWithHighlights } from "./personalityTextHighlight";
+import { lightPanelClass } from "../../../styles/chartUi";
 
 export type GrowthTipItem = {
   id: string;
@@ -24,71 +25,65 @@ const GROWTH_STEP_THEMES: GrowthStepTheme[] = [
   { accent: "#2D7A4D", cardBg: "#F3FAF6" },
 ];
 
+/** Fixed chart height — all bars share this baseline. */
+const CHART_BAR_AREA_HEIGHT_PX = 128;
+
+const COLUMN_CLASS =
+  "min-w-[8.75rem] max-w-[12.5rem] flex-1 snap-center sm:min-w-[9.5rem]";
+
 const getGrowthStepTheme = (index: number): GrowthStepTheme =>
   GROWTH_STEP_THEMES[index % GROWTH_STEP_THEMES.length];
 
-type TimelineStepBadgeProps = {
-  stepNumber: string;
-  accent: string;
+const getBarHeightPx = (index: number, total: number): number => {
+  if (total <= 1) {
+    return CHART_BAR_AREA_HEIGHT_PX;
+  }
+  const minRatio = 0.38;
+  const maxRatio = 1;
+  const progress = index / (total - 1);
+  const ratio = minRatio + progress * (maxRatio - minRatio);
+  return Math.round(CHART_BAR_AREA_HEIGHT_PX * ratio);
 };
 
-/**
- * Circular step marker shown beside each timeline card.
- */
-const TimelineStepBadge: React.FC<TimelineStepBadgeProps> = ({ stepNumber, accent }) => (
-  <span
-    className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-sm font-bold text-white shadow-sm"
-    style={{ backgroundColor: accent }}
-    aria-hidden="true"
-  >
-    {stepNumber}
-  </span>
-);
-
-type TimelineTipCardProps = {
+type GrowthInsightCardProps = {
   label: string;
   stepNumber: string;
   theme: GrowthStepTheme;
-  align?: "left" | "right";
 };
 
 /**
- * Themed insight card for a single growth tip.
+ * Insight copy shown above the bar chart.
  */
-const TimelineTipCard: React.FC<TimelineTipCardProps> = ({
+const GrowthInsightCard: React.FC<GrowthInsightCardProps> = ({
   label,
   stepNumber,
   theme,
-  align,
 }) => {
-  const alignmentClass =
-    align === "right" ? "md:ml-auto md:text-right" : align === "left" ? "md:mr-auto" : "";
+  const cardStyle = {
+    "--growth-accent": theme.accent,
+    "--growth-card-bg": theme.cardBg,
+    "--growth-card-border": `${theme.accent}22`,
+  } as React.CSSProperties;
 
   return (
     <article
-      className={`max-w-md rounded-2xl border p-4 shadow-sm sm:p-5 ${alignmentClass}`}
-      style={{
-        borderColor: `${theme.accent}22`,
-        backgroundColor: theme.cardBg,
-      }}
+      className={[
+        "h-full w-full rounded-xl border p-3 shadow-sm sm:p-4",
+        lightPanelClass,
+        "[background-color:var(--growth-card-bg)] [border-color:var(--growth-card-border)]",
+      ].join(" ")}
+      style={cardStyle}
     >
-      <div
-        className={`flex items-center gap-2 ${align === "right" ? "md:justify-end" : ""}`}
-      >
+      <div className="flex items-center gap-1.5">
         <Lightbulb
-          className="h-4 w-4 shrink-0"
-          style={{ color: theme.accent }}
+          className="h-3.5 w-3.5 shrink-0 [color:var(--growth-accent)]"
           aria-hidden="true"
         />
-        <p
-          className="text-[10px] font-bold uppercase tracking-[0.2em]"
-          style={{ color: theme.accent }}
-        >
+        <p className="text-[9px] font-bold uppercase tracking-[0.18em] [color:var(--growth-accent)] sm:text-[10px]">
           Growth insight {stepNumber}
         </p>
       </div>
-
-      <p className="mt-3 font-serif text-sm leading-relaxed text-theme-fg-secondary sm:text-[15px]">
+      <p className="mt-2 font-serif text-xs leading-relaxed text-theme-fg-secondary sm:text-sm">
         {renderGrowthTipTextWithHighlights(label)}
       </p>
     </article>
@@ -99,8 +94,8 @@ const TimelineTipCard: React.FC<TimelineTipCardProps> = ({
  * Editorial section header for the growth path timeline.
  */
 const GrowthPathHeader: React.FC = () => (
-  <div className="mb-8 border-l-4 border-brand-purple pl-4 dark:border-accent-goldDark/70">
-    <h3 className="font-serif text-xl font-bold text-navy dark:text-cream sm:text-2xl">
+  <div className="mb-8 border-l-4 border-brand-purple pl-4">
+    <h3 className="font-serif text-xl font-bold text-navy sm:text-2xl">
       Your Growth Path
     </h3>
     <p className="mt-2 text-sm text-theme-fg-secondary sm:text-base">
@@ -109,8 +104,126 @@ const GrowthPathHeader: React.FC = () => (
   </div>
 );
 
+type GrowthBarChartProps = {
+  tips: readonly GrowthTipItem[];
+  forPdfCapture?: boolean;
+};
+
 /**
- * Alternating vertical timeline for growth tips — themed cards on a center spine.
+ * Bar chart with a single shared baseline — cards sit in a row above the bars.
+ */
+const GrowthBarChart: React.FC<GrowthBarChartProps> = ({ tips, forPdfCapture }) => {
+  if (forPdfCapture) {
+    return (
+      <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3">
+        {tips.map((tip, index) => {
+          const stepNumber = String(index + 1).padStart(2, "0");
+          const theme = getGrowthStepTheme(index);
+          const barHeightPx = getBarHeightPx(index, tips.length);
+
+          return (
+            <div key={tip.id} className="flex flex-col">
+              <GrowthInsightCard label={tip.label} stepNumber={stepNumber} theme={theme} />
+              <div
+                className="mt-4 flex items-end border-b border-theme-border-subtle"
+                style={{ height: `${CHART_BAR_AREA_HEIGHT_PX}px` }}
+              >
+                <div
+                  className="mx-auto w-full max-w-[3.25rem] rounded-t-lg shadow-sm"
+                  style={{
+                    height: `${barHeightPx}px`,
+                    background: `linear-gradient(to top, ${theme.accent}, ${theme.accent}CC)`,
+                  }}
+                  aria-hidden="true"
+                />
+              </div>
+              <p className="mt-2 text-center text-[10px] font-bold uppercase tracking-[0.16em] text-theme-fg-secondary">
+                Step {stepNumber}
+              </p>
+            </div>
+          );
+        })}
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className={[
+        "overflow-x-auto pb-1 [-webkit-overflow-scrolling:touch] [scrollbar-width:thin]",
+        "snap-x snap-mandatory",
+      ].join(" ")}
+    >
+      <div className="inline-flex min-w-full flex-col gap-4 sm:min-w-0">
+        {/* Insight cards — variable height, does not affect bar baseline */}
+        <div className="flex items-stretch gap-3 sm:justify-center sm:gap-4 md:gap-5">
+          {tips.map((tip, index) => {
+            const stepNumber = String(index + 1).padStart(2, "0");
+            const theme = getGrowthStepTheme(index);
+
+            return (
+              <div key={`card-${tip.id}`} className={COLUMN_CLASS}>
+                <GrowthInsightCard
+                  label={tip.label}
+                  stepNumber={stepNumber}
+                  theme={theme}
+                />
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Bars — one shared row, all anchored to the bottom edge */}
+        <div
+          className="flex items-end gap-3 border-b-2 border-theme-border-subtle sm:justify-center sm:gap-4 md:gap-5"
+          style={{ height: `${CHART_BAR_AREA_HEIGHT_PX}px` }}
+          role="img"
+          aria-label="Growth path bar chart"
+        >
+          {tips.map((tip, index) => {
+            const theme = getGrowthStepTheme(index);
+            const barHeightPx = getBarHeightPx(index, tips.length);
+
+            return (
+              <div
+                key={`bar-${tip.id}`}
+                className={`${COLUMN_CLASS} flex justify-center`}
+              >
+                <div
+                  className="w-full max-w-[3.25rem] rounded-t-lg shadow-sm sm:max-w-[3.75rem]"
+                  style={{
+                    height: `${barHeightPx}px`,
+                    background: `linear-gradient(to top, ${theme.accent}, ${theme.accent}CC)`,
+                  }}
+                  aria-hidden="true"
+                />
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Step labels — aligned under each bar */}
+        <div className="flex gap-3 sm:justify-center sm:gap-4 md:gap-5">
+          {tips.map((tip, index) => {
+            const stepNumber = String(index + 1).padStart(2, "0");
+
+            return (
+              <p
+                key={`label-${tip.id}`}
+                className={`${COLUMN_CLASS} text-center text-[10px] font-bold uppercase tracking-[0.16em] text-theme-fg-secondary sm:text-xs`}
+              >
+                Step {stepNumber}
+              </p>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/**
+ * Ascending bar chart — insight cards above, bars sharing one baseline.
  */
 export const GrowthTipsTimeline: React.FC<GrowthTipsTimelineProps> = ({
   tips,
@@ -124,94 +237,25 @@ export const GrowthTipsTimeline: React.FC<GrowthTipsTimelineProps> = ({
     );
   }
 
-  const timelineLayoutClass = forPdfCapture ? "space-y-8" : "space-y-0";
-
   return (
     <section aria-label="Growth tips timeline">
       <GrowthPathHeader />
 
-      <div className="relative mx-auto max-w-4xl">
-        <div
-          className="absolute bottom-0 left-4 top-0 w-px bg-gradient-to-b from-brand-purple/35 via-brand-purple/15 to-transparent md:left-1/2 md:-translate-x-1/2"
-          aria-hidden="true"
-        />
-
-        <ol className={`relative ${timelineLayoutClass}`}>
-          {tips.map((tip, index) => {
-            const isContentLeft = index % 2 === 0;
-            const stepNumber = String(index + 1).padStart(2, "0");
-            const isLast = index === tips.length - 1;
-            const theme = getGrowthStepTheme(index);
-
-            return (
-              <li
-                key={tip.id}
-                className={`relative ${isLast ? "pb-0" : "pb-12"}`}
-              >
-                {/* Mobile — single column with left spine */}
-                <div className="flex gap-4 pl-10 md:hidden">
-                  <span
-                    className="absolute left-[11px] top-5 h-3.5 w-3.5 rounded-full ring-4 ring-surface-cream dark:ring-surface-dark"
-                    style={{ backgroundColor: theme.accent }}
-                    aria-hidden="true"
-                  />
-                  <div className="min-w-0 flex-1">
-                    <div className="mb-3 flex items-center gap-3">
-                      <TimelineStepBadge stepNumber={stepNumber} accent={theme.accent} />
-                    </div>
-                    <TimelineTipCard
-                      label={tip.label}
-                      stepNumber={stepNumber}
-                      theme={theme}
-                    />
-                  </div>
-                </div>
-
-                {/* Desktop — alternating two-column layout around center spine */}
-                <div className="hidden md:grid md:grid-cols-[minmax(0,1fr)_2rem_minmax(0,1fr)] md:items-center md:gap-8">
-                  <div className="col-start-1 flex justify-end">
-                    {isContentLeft ? (
-                      <TimelineTipCard
-                        label={tip.label}
-                        stepNumber={stepNumber}
-                        theme={theme}
-                        align="right"
-                      />
-                    ) : (
-                      <TimelineStepBadge stepNumber={stepNumber} accent={theme.accent} />
-                    )}
-                  </div>
-
-                  <div className="col-start-2 flex justify-center">
-                    <span
-                      className="z-10 h-4 w-4 shrink-0 rounded-full ring-4 ring-surface-cream dark:ring-surface-dark"
-                      style={{ backgroundColor: theme.accent }}
-                      aria-hidden="true"
-                    />
-                  </div>
-
-                  <div className="col-start-3 flex justify-start">
-                    {isContentLeft ? (
-                      <TimelineStepBadge stepNumber={stepNumber} accent={theme.accent} />
-                    ) : (
-                      <TimelineTipCard
-                        label={tip.label}
-                        stepNumber={stepNumber}
-                        theme={theme}
-                        align="left"
-                      />
-                    )}
-                  </div>
-                </div>
-              </li>
-            );
-          })}
-        </ol>
-
+      <div className="relative mx-auto max-w-6xl">
         <Sparkles
-          className="pointer-events-none absolute bottom-4 right-0 h-4 w-4 text-[var(--color-accent-gradient-5)]/50"
+          className="pointer-events-none absolute right-2 top-2 h-4 w-4 text-[var(--color-accent-gradient-5)]/45"
           aria-hidden="true"
         />
+
+        <div
+          className={[
+            "rounded-2xl border border-theme-border-subtle bg-white/60 px-3 pb-5 pt-4",
+            lightPanelClass,
+            "sm:px-6 sm:pb-6 sm:pt-5",
+          ].join(" ")}
+        >
+          <GrowthBarChart tips={tips} forPdfCapture={forPdfCapture} />
+        </div>
       </div>
     </section>
   );

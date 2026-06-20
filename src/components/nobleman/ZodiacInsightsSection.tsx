@@ -8,6 +8,7 @@ import { Eye, Handshake, Sparkles, Target, TriangleAlert, type LucideIcon } from
 import type { ZodiacInsights } from "../../constants/zodiacProfiles";
 import ZodiacIcons from "../zwds/icons";
 import ZodiacIconWrapper from "../zwds/components/ZodiacIconWrapper";
+import { lightPanelClass } from "../../styles/chartUi";
 
 interface ZodiacInsightsSectionProps {
   zodiacInsights: ZodiacInsights;
@@ -26,10 +27,14 @@ const ORBIT_RADIUS_PX = 132;
 /**
  * Evenly spaces pills in a ring around the zodiac icon.
  */
-const getOrbitPositionStyle = (index: number, total: number): React.CSSProperties => {
+const getOrbitPositionStyle = (
+  index: number,
+  total: number,
+  radiusPx: number
+): React.CSSProperties => {
   const angle = (index / total) * 2 * Math.PI - Math.PI / 2;
-  const x = Math.cos(angle) * ORBIT_RADIUS_PX;
-  const y = Math.sin(angle) * ORBIT_RADIUS_PX;
+  const x = Math.cos(angle) * radiusPx;
+  const y = Math.sin(angle) * radiusPx;
   return {
     left: "50%",
     top: "50%",
@@ -49,39 +54,61 @@ type ZodiacIdentityClusterProps = {
 };
 
 const ORBIT_PILL_BASE_CLASS = [
-  "inline-block cursor-default whitespace-nowrap rounded-full border px-3 py-1",
-  "text-xs font-semibold shadow-sm",
+  "inline-block cursor-default rounded-full border shadow-sm",
+  "text-[10px] font-semibold xs:text-xs",
+  "px-2.5 py-1 xs:px-3",
   "transition-[transform,box-shadow,border-color,background-color] duration-300 ease-out",
   "motion-safe:hover:scale-110 motion-safe:hover:shadow-md motion-safe:hover:-translate-y-0.5",
 ].join(" ");
 
+const ORBIT_PILL_ORBIT_CLASS = "whitespace-nowrap";
+
+const ORBIT_PILL_STACK_CLASS = "whitespace-normal text-center leading-snug max-w-[9.5rem] xs:max-w-none xs:whitespace-nowrap";
+
 const getOrbitPillClassName = (
   variant: OrbitPill["variant"],
-  forPdfCapture?: boolean
+  forPdfCapture?: boolean,
+  layout: "orbit" | "stack" = "orbit"
 ): string => {
   const floatClass = forPdfCapture
     ? ""
     : "motion-safe:animate-zodiac-pill-float motion-safe:hover:animate-none";
+  const layoutClass = layout === "stack" ? ORBIT_PILL_STACK_CLASS : ORBIT_PILL_ORBIT_CLASS;
 
   if (variant === "element") {
     return [
       ORBIT_PILL_BASE_CLASS,
-      floatClass,
+      layoutClass,
+      layout === "orbit" ? floatClass : "",
       "border-accent-gold/50 bg-surface-cream text-brand-purple",
       "motion-safe:hover:border-accent-gold motion-safe:hover:bg-surface-elevated",
-      "dark:border-accent-gold/40 dark:bg-surface-dark dark:text-accent-gold",
-      "dark:motion-safe:hover:border-accent-gold dark:motion-safe:hover:bg-surface-darkElevated",
     ].join(" ");
   }
 
   return [
     ORBIT_PILL_BASE_CLASS,
-    floatClass,
+    layoutClass,
+    layout === "orbit" ? floatClass : "",
     "border-brand-purple/25 bg-surface-cream/95 text-brand-purple",
     "motion-safe:hover:border-brand-purple/50 motion-safe:hover:bg-surface-elevated",
-    "dark:border-accent-gold/30 dark:bg-surface-dark/95 dark:text-accent-gold",
-    "dark:motion-safe:hover:border-accent-gold/55 dark:motion-safe:hover:bg-surface-darkElevated",
   ].join(" ");
+};
+
+const ZodiacEmblem: React.FC<{
+  ZodiacIcon: React.ElementType | undefined;
+  sizeClass: string;
+}> = ({ ZodiacIcon, sizeClass }) => {
+  if (!ZodiacIcon) {
+    return null;
+  }
+
+  return (
+    <div
+      className={`flex items-center justify-center rounded-full border-2 border-brand-purple/30 bg-gradient-to-br from-brand-purple to-[#8B6FC8] shadow-md dark:border-accent-gold/40 dark:from-brand-purple/90 dark:to-brand-purple/70 ${sizeClass}`}
+    >
+      <ZodiacIconWrapper Icon={ZodiacIcon} className="h-full w-full" invertToWhite />
+    </div>
+  );
 };
 
 /**
@@ -96,46 +123,68 @@ const ZodiacIdentityCluster: React.FC<ZodiacIdentityClusterProps> = ({
 
   return (
     <article aria-label="Nobleman zodiac identity">
-      <div className="mx-auto flex w-full max-w-md flex-col items-center">
-        <h3 className="mb-3 flex flex-wrap items-baseline justify-center gap-x-2 text-center font-serif text-3xl font-bold text-navy dark:text-cream sm:text-4xl">
-          <span>The {zodiacInsights.zodiac}</span>
-          <span>{zodiacInsights.zodiacChinese}</span>
-        </h3>
-        <div className="relative mx-auto h-[min(22rem,72vw)] w-[min(22rem,72vw)] max-h-80 max-w-80">
-          {orbitPills.map((pill, index) => {
-            const orbitStyle = getOrbitPositionStyle(index, orbitPills.length);
-            const floatStyle: React.CSSProperties | undefined = forPdfCapture
-              ? undefined
-              : {
-                  animationDelay: `${index * 0.55}s`,
-                  animationDuration: `${3.2 + (index % 3) * 0.35}s`,
-                };
+      <div
+        className={[
+          "mx-auto w-full max-w-md rounded-2xl border sm:rounded-3xl",
+          "border-brand-purple/20 bg-[#FAF7FD] px-3 py-5 shadow-sm xs:px-4 sm:px-6 sm:py-8",
+          lightPanelClass,
+        ].join(" ")}
+      >
+        <div className="flex w-full flex-col items-center">
+          <h3 className="mb-4 flex flex-wrap items-baseline justify-center gap-x-1.5 gap-y-0.5 text-center font-serif text-2xl font-bold text-navy xs:text-3xl sm:mb-3 sm:gap-x-2 sm:text-4xl">
+            <span>The {zodiacInsights.zodiac}</span>
+            <span>{zodiacInsights.zodiacChinese}</span>
+          </h3>
 
-            return (
-              <div
-                key={pill.key}
-                className="absolute left-1/2 top-1/2 z-0 hover:z-20"
-                style={orbitStyle}
-              >
-                <span
-                  className={getOrbitPillClassName(pill.variant, forPdfCapture)}
-                  style={floatStyle}
+          {/* Mobile — emblem + wrapped trait pills */}
+          <div className="flex w-full flex-col items-center gap-4 sm:hidden">
+            <ZodiacEmblem ZodiacIcon={ZodiacIcon} sizeClass="h-20 w-20 p-3.5" />
+            <ul className="flex w-full flex-wrap justify-center gap-2 px-0.5">
+              {orbitPills.map((pill) => (
+                <li key={`mobile-${pill.key}`}>
+                  <span className={getOrbitPillClassName(pill.variant, forPdfCapture, "stack")}>
+                    {pill.label}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Tablet+ — orbiting pills around emblem */}
+          <div className="relative mx-auto hidden h-[min(20rem,78vw)] w-[min(20rem,78vw)] max-h-80 max-w-80 sm:block">
+            {orbitPills.map((pill, index) => {
+              const orbitStyle = getOrbitPositionStyle(
+                index,
+                orbitPills.length,
+                ORBIT_RADIUS_PX
+              );
+              const floatStyle: React.CSSProperties | undefined = forPdfCapture
+                ? undefined
+                : {
+                    animationDelay: `${index * 0.55}s`,
+                    animationDuration: `${3.2 + (index % 3) * 0.35}s`,
+                  };
+
+              return (
+                <div
+                  key={pill.key}
+                  className="absolute left-1/2 top-1/2 z-0 hover:z-20"
+                  style={orbitStyle}
                 >
-                  {pill.label}
-                </span>
-              </div>
-            );
-          })}
+                  <span
+                    className={getOrbitPillClassName(pill.variant, forPdfCapture, "orbit")}
+                    style={floatStyle}
+                  >
+                    {pill.label}
+                  </span>
+                </div>
+              );
+            })}
 
-          {ZodiacIcon ? (
-            <div className="absolute left-1/2 top-1/2 z-10 flex h-24 w-24 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 border-brand-purple/30 bg-gradient-to-br from-brand-purple to-[#8B6FC8] p-4 shadow-md dark:border-accent-gold/40 dark:from-brand-purple/90 dark:to-brand-purple/70 sm:h-28 sm:w-28 sm:p-5">
-              <ZodiacIconWrapper
-                Icon={ZodiacIcon}
-                className="h-full w-full"
-                invertToWhite
-              />
+            <div className="absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2">
+              <ZodiacEmblem ZodiacIcon={ZodiacIcon} sizeClass="h-24 w-24 p-4 sm:h-28 sm:w-28 sm:p-5" />
             </div>
-          ) : null}
+          </div>
         </div>
       </div>
     </article>
@@ -274,7 +323,7 @@ const GuidanceCard: React.FC<{
   return (
     <article
       {...(pdfPageBreakBefore ? { "data-pdf-page-break-before": "" } : {})}
-      className={`flex h-full flex-col rounded-2xl border border-theme-border-subtle bg-white p-5 shadow-sm dark:border-theme-border-strong dark:bg-surface-elevated/90 sm:p-6 ${hoverClass}`}
+      className={`flex h-full flex-col rounded-2xl border border-theme-border-subtle bg-white p-5 shadow-sm sm:p-6 ${lightPanelClass} ${hoverClass}`}
     >
       <div className="mb-5 flex items-center gap-3">
         <div
@@ -283,7 +332,7 @@ const GuidanceCard: React.FC<{
         >
           <IconComponent className="h-5 w-5" aria-hidden="true" />
         </div>
-        <h4 className="min-w-0 flex-1 font-serif text-lg font-bold leading-snug text-navy dark:text-cream sm:text-xl">
+        <h4 className="min-w-0 flex-1 font-serif text-lg font-bold leading-snug text-navy sm:text-xl">
           {title}
         </h4>
         <div className="hidden shrink-0 items-center gap-2 sm:flex" aria-hidden="true">

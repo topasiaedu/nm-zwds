@@ -5,6 +5,8 @@ import PageTransition from "../components/PageTransition";
 import { useProfileContext } from "../context/ProfileContext";
 import ProfileForm from "../components/ProfileForm";
 import ZWDSChart from "../components/ZWDSChart";
+import ChartBlueprintSwitcher from "../components/zwds/components/ChartBlueprintSwitcher";
+import ChartProfileSidebar from "../components/zwds/components/ChartProfileSidebar";
 import { ZWDSCalculator } from "../utils/zwds/calculator";
 import { ChartInput } from "../utils/zwds/types";
 import { useTierAccess } from "../context/TierContext";
@@ -43,19 +45,9 @@ import { DestinyBlueprintPageHeader } from "../components/analysis_v2/shared/Des
 import { ChartSettingsProvider, useChartSettings } from "../context/ChartSettingsContext";
 import ChartSettingsModal from "../components/ChartSettingsModal";
 import {
-  chartAdminButtonClass,
-  chartAdminPanelClass,
-  chartAdminPanelDescClass,
-  chartAdminPanelTitleClass,
   chartAnalysisDividerClass,
   chartBackButtonClass,
   chartBackIconWrapClass,
-  chartBadgeOtherClass,
-  chartBadgeSelfClass,
-  chartBlueprintActiveClass,
-  chartBlueprintInactiveClass,
-  chartBranchAdjustedClass,
-  chartBranchOriginalClass,
   chartCardAccentBarClass,
   chartCardBlueprintToolbarClass,
   chartCardBodyClass,
@@ -63,14 +55,13 @@ import {
   chartCardTitleClass,
   chartCardToolbarClass,
   chartChartLoadingOverlayClass,
+  chartScrollWrapperClass,
   chartContainerClass,
+  chartSectionContainerClass,
   chartErrorPanelClass,
   chartErrorRetryClass,
   chartErrorTextClass,
   chartErrorTitleClass,
-  chartExportButtonClass,
-  chartFieldLabelClass,
-  chartFieldValueClass,
   chartGlowClass,
   chartHeroClass,
   chartHeroLabelClass,
@@ -79,9 +70,6 @@ import {
   chartHeroTitleIconClass,
   chartLoadingTextClass,
   chartPageClass,
-  chartPrimaryButtonClass,
-  chartSidebarCardClass,
-  chartSidebarTitleClass,
   chartSpinnerClass,
   chartSpinnerSmallClass,
 } from "../styles/chartUi";
@@ -1003,7 +991,7 @@ const ResultContent: React.FC = () => {
       <div className={chartGlowClass} aria-hidden="true" />
       <PageTransition>
         <div className={chartPageClass}>
-          <div className={chartContainerClass}>
+          <div className={`${chartContainerClass} pb-0`}>
             <header className={chartHeroClass}>
               <Link to="/dashboard" className={chartBackButtonClass}>
                 <span className={chartBackIconWrapClass} aria-hidden="true">
@@ -1069,17 +1057,21 @@ const ResultContent: React.FC = () => {
                 </p>
               )}
             </header>
+          </div>
 
         {loading ? (
-          <div className="flex items-center justify-center min-h-[400px]">
-            <div className="text-center">
-              <div className={`${chartSpinnerClass} mb-4`} />
-              <p className={chartLoadingTextClass}>
-                {t("general.loadingText") || "Loading chart data..."}
-              </p>
+          <div className={chartContainerClass}>
+            <div className="flex items-center justify-center min-h-[400px]">
+              <div className="text-center">
+                <div className={`${chartSpinnerClass} mb-4`} />
+                <p className={chartLoadingTextClass}>
+                  {t("general.loadingText") || "Loading chart data..."}
+                </p>
+              </div>
             </div>
           </div>
         ) : error ? (
+          <div className={chartContainerClass}>
           <div className={chartErrorPanelClass}>
             <svg
               className="mx-auto h-12 w-12 text-theme-danger mb-4"
@@ -1107,8 +1099,10 @@ const ResultContent: React.FC = () => {
               {t("general.retry") || "Retry"}
             </button>
           </div>
+          </div>
         ) : (
           chartData && (
+            <div className={chartSectionContainerClass}>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 sm:gap-3 md:gap-6">
               {/* Chart visualization */}
               <div className="lg:col-span-2">
@@ -1120,46 +1114,17 @@ const ResultContent: React.FC = () => {
                     </h2>
                   </div>
 
-                  {/* Blueprint Mode Switcher — branded toolbar */}
+                  {/* Blueprint Mode Switcher — branded tab strip */}
                   <div className={chartCardBlueprintToolbarClass}>
-                    <div className="flex gap-2 flex-wrap">
-                      {[
-                        { key: "dna", label: "DNA Chart" },
-                        { key: "dayun", label: "Da Yun (10 Year)" },
-                        { key: "liunian", label: "Liu Nian (Yearly)" },
-                        { key: "liumonth", label: "Liu Month (Monthly)" },
-                      ].map((blueprint) => {
-                        const active = blueprintMode === blueprint.key;
-                        return (
-                          <button
-                            key={blueprint.key}
-                            type="button"
-                            onClick={() =>
-                              handleBlueprintChange(
-                                blueprint.key as "dna" | "dayun" | "liunian" | "liumonth"
-                              )
-                            }
-                            className={
-                              active ? chartBlueprintActiveClass : chartBlueprintInactiveClass
-                            }
-                          >
-                            {blueprint.label}
-                          </button>
-                        );
-                      })}
-                    </div>
+                    <ChartBlueprintSwitcher
+                      value={blueprintMode}
+                      onChange={handleBlueprintChange}
+                    />
                   </div>
 
                   <div className={chartCardBodyClass}>
                   {calculatedChartData ? (
-                    <div
-                      className="flex-grow overflow-auto p-0"
-                      style={{
-                        minHeight:
-                          window.innerWidth < 640
-                            ? "calc(100vh - 150px)"
-                            : undefined,
-                      }}>
+                    <div className={chartScrollWrapperClass}>
                       <ZWDSChart
                         chartData={calculatedChartData}
                         targetYear={
@@ -1237,307 +1202,27 @@ const ResultContent: React.FC = () => {
 
               {/* Profile information */}
               <div className="lg:col-span-1">
-                <div className={chartSidebarCardClass}>
-                  <h2 className={chartSidebarTitleClass}>
-                    {t("result.profileDetails") || "Profile Details"}
-                  </h2>
-
-                  <div className="space-y-3">
-                    <div className="grid grid-cols-3 gap-4">
-                      <div className={chartFieldLabelClass}>
-                        {t("myChart.fields.name") || "Name"}:
-                      </div>
-                      <div className={chartFieldValueClass}>
-                        {chartData.name}
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-3 gap-4">
-                      <div className={chartFieldLabelClass}>
-                        {t("myChart.fields.type") || "Type"}:
-                      </div>
-                      <div className={chartFieldValueClass}>
-                        {isSelfProfile ? (
-                          <span className={chartBadgeSelfClass}>
-                            {t("myChart.fields.self") || "Self"}
-                          </span>
-                        ) : (
-                          <span className={chartBadgeOtherClass}>
-                            {t("myChart.fields.other") || "Other"}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-3 gap-4">
-                      <div className={chartFieldLabelClass}>
-                        {t("myChart.fields.birthDate") || "Birth Date"}:
-                      </div>
-                      <div className={chartFieldValueClass}>
-                        {formatDate(chartData.birthDate)}
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-3 gap-4">
-                      <div className={chartFieldLabelClass}>
-                        {t("myChart.fields.birthTime") || "Birth Time"}:
-                      </div>
-                      <div className={chartFieldValueClass}>
-                        {chartData.birthTime}
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-3 gap-4">
-                      <div className={chartFieldLabelClass}>
-                        {t("myChart.fields.gender") || "Gender"}:
-                      </div>
-                      <div className={chartFieldValueClass}>
-                        {chartData.gender === "male" ? (
-                          <span className="flex items-center">
-                            <span className="w-3 h-3 rounded-full bg-theme-link-primary mr-2" />
-                            {t("myChart.fields.male") || "Male"}
-                          </span>
-                        ) : (
-                          <span className="flex items-center">
-                            <span className="w-3 h-3 rounded-full bg-accent-coral mr-2" />
-                            {t("myChart.fields.female") || "Female"}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-3 gap-4">
-                      <div className={chartFieldLabelClass}>
-                        {t("result.fields.generated") || "Generated"}:
-                      </div>
-                      <div className={chartFieldValueClass}>
-                        {formatDate(chartData.createdAt)}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Hour Adjustment Controls - Admin Only */}
-                  {isAdmin && (() => {
-                    const currentBranchInfo = getCurrentBranchInfo();
-                    return (
-                      <div className={chartAdminPanelClass}>
-                        <h3 className={chartAdminPanelTitleClass}>
-                          <svg
-                            className="w-4 h-4 mr-2 text-theme-link-primary"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                            />
-                          </svg>
-                          {t("result.hourAdjustment.title") || "Adjust Birth Hour"}
-                        </h3>
-                        <p className={chartAdminPanelDescClass}>
-                          {t("result.hourAdjustment.description") || "Cycle through the 12 time branches (地支) to explore chart variations"}
-                        </p>
-
-                        <div className="flex items-center justify-between gap-3">
-                          <button
-                            type="button"
-                            onClick={() => setBranchOffset(prev => prev - 1)}
-                            className={chartAdminButtonClass}
-                          >
-                            <svg
-                              className="w-4 h-4"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                              xmlns="http://www.w3.org/2000/svg">
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M15 19l-7-7 7-7"
-                              />
-                            </svg>
-                            <span>{t("result.hourAdjustment.previous") || "Prev"}</span>
-                          </button>
-
-                          {/* Current Branch Display */}
-                          <div className="flex-[2] text-center">
-                            <div
-                              className={
-                                branchOffset === 0
-                                  ? chartBranchOriginalClass
-                                  : chartBranchAdjustedClass
-                              }
-                            >
-                              {currentBranchInfo ? (
-                                <div className="flex flex-col">
-                                  <span className="text-lg">{currentBranchInfo.branch}</span>
-                                  <span className="text-xs font-normal opacity-80">
-                                    {currentBranchInfo.timeRange}
-                                  </span>
-                                </div>
-                              ) : (
-                                <span>{t("result.hourAdjustment.original") || "Original"}</span>
-                              )}
-                            </div>
-                          </div>
-
-                          {/* Next Branch Button */}
-                          <button
-                            type="button"
-                            onClick={() => setBranchOffset(prev => prev + 1)}
-                            className={chartAdminButtonClass}
-                          >
-                            <span>{t("result.hourAdjustment.next") || "Next"}</span>
-                            <svg
-                              className="w-4 h-4"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                              xmlns="http://www.w3.org/2000/svg">
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M9 5l7 7-7 7"
-                              />
-                            </svg>
-                          </button>
-                        </div>
-
-                        {/* Reset Button */}
-                        {branchOffset !== 0 && (
-                          <button
-                            type="button"
-                            onClick={() => setBranchOffset(0)}
-                            className={`w-full mt-3 ${chartPrimaryButtonClass}`}
-                          >
-                            <svg
-                              className="w-4 h-4"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                              xmlns="http://www.w3.org/2000/svg">
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                              />
-                            </svg>
-                            {t("result.hourAdjustment.reset") || "Reset to Original"}
-                          </button>
-                        )}
-                      </div>
-                    );
-                  })()}
-
-                  {/* Chart Settings Button */}
-                  {/* <div className="mt-6">
-                    <button
-                      onClick={toggleModal}
-                      className={`${chartPrimaryButtonClass} mb-3`}
-                    >
-                      <svg
-                        className="w-5 h-5 mr-2"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-                        />
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                        />
-                      </svg>
-                      Chart Settings
-                    </button>
-                  </div> */}
-
-                  {ENABLE_PDF_EXPORT ? (
-                    <div className="mt-3">
-                      <button
-                        type="button"
-                        onClick={handlePdfExport}
-                        disabled={!chartData || !calculatedChartData}
-                        className={chartExportButtonClass}
-                      >
-                        <svg
-                          className="w-5 h-5 mr-2"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                          xmlns="http://www.w3.org/2000/svg">
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                          />
-                        </svg>
-                        {t("result.exportPdf") || "Export PDF"}
-                      </button>
-                    </div>
-                  ) : null}
-
-
-
-                  {/* Timing Chart Button - Hidden */}
-                  <div className="mt-6">
-                    <Link
-                      to={`/timing-chart/${chartData.id}`}
-                      className={chartPrimaryButtonClass}
-                    >
-                      {"View Timing Analysis"}
-                    </Link>
-                  </div>
-
-                  {/* Destiny Navigator Button - Admin Only */}
-                  {isAdmin && (
-                    <div className="mt-3">
-                      <Link
-                        to={`/destiny-navigator/${chartData.id}`}
-                        className={chartPrimaryButtonClass}
-                      >
-                        <svg
-                          className="w-5 h-5 mr-2"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M13 10V3L4 14h7v7l9-11h-7z"
-                          />
-                        </svg>
-                        Destiny Navigator
-                      </Link>
-                    </div>
-                  )}
-
-                  {isSelfProfile && (
-                    <div className="mt-6">
-                      <Link to="/calculate" className={chartPrimaryButtonClass}>
-                        {t("myChart.createOtherProfile") ||
-                          "Create Profile for Someone Else"}
-                      </Link>
-                    </div>
-                  )}
-                </div>
+                <ChartProfileSidebar
+                  chartData={chartData}
+                  calculatedChartData={calculatedChartData}
+                  isSelfProfile={isSelfProfile}
+                  isAdmin={isAdmin}
+                  branchOffset={branchOffset}
+                  enablePdfExport={ENABLE_PDF_EXPORT}
+                  onBranchOffsetChange={setBranchOffset}
+                  onBranchReset={() => setBranchOffset(0)}
+                  onPdfExport={handlePdfExport}
+                  getCurrentBranchInfo={getCurrentBranchInfo}
+                  formatDate={formatDate}
+                  t={t}
+                />
               </div>
+            </div>
             </div>
           )
         )}
 
-
-
+        <div className={`${chartContainerClass} pt-0`}>
         {/* Analysis Section - Always show Overview, but other components require Tier 2+ */}
         {calculatedChartData && !loading && !error && hasFullAnalysis && (
           <div className={chartAnalysisDividerClass}>
@@ -1634,7 +1319,7 @@ const ResultContent: React.FC = () => {
 
         {/* Chart Settings Modal */}
         <ChartSettingsModal pageType="result" />
-          </div>
+        </div>
         </div>
       </PageTransition>
     </>

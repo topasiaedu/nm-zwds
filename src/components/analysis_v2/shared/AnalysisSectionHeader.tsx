@@ -91,34 +91,44 @@ export const AnalysisSectionHeader: React.FC<AnalysisSectionHeaderProps> = ({
           </>
         ) : null}
 
-        <div className="relative z-10 flex items-center gap-5 p-6 sm:gap-8 sm:p-8">
-          <span
-            className="shrink-0 font-serif text-5xl font-bold tabular-nums leading-none text-white sm:text-6xl md:text-7xl"
-            aria-hidden="true"
-          >
-            {badgeText}
-          </span>
+        <div className="relative z-10 flex flex-col gap-4 p-4 xs:p-5 sm:flex-row sm:items-center sm:gap-5 sm:p-6 md:gap-8 md:p-8">
+          <div className="flex items-center gap-3 sm:contents">
+            <span
+              className="shrink-0 font-serif text-4xl font-bold tabular-nums leading-none text-white xs:text-5xl sm:text-6xl md:text-7xl"
+              aria-hidden="true"
+            >
+              {badgeText}
+            </span>
 
-          <div
-            className="h-14 w-px shrink-0 bg-white/35 sm:h-16"
-            aria-hidden="true"
-          />
+            <div
+              className="h-px flex-1 bg-white/35 sm:hidden"
+              aria-hidden="true"
+            />
 
-          <div className="w-[60%] min-w-0 text-left">
-            <div className="mb-2 flex items-center gap-2">
-              <Icon className="h-3.5 w-3.5 text-white/80" aria-hidden="true" />
-              <span className="text-xs font-bold uppercase tracking-[0.2em] text-white/80">
+            <div
+              className="hidden h-14 w-px shrink-0 bg-white/35 sm:block sm:h-16"
+              aria-hidden="true"
+            />
+          </div>
+
+          <div className="w-full min-w-0 text-left sm:flex-1">
+            <div className="mb-1.5 flex items-center gap-1.5 sm:mb-2 sm:gap-2">
+              <Icon
+                className="h-3 w-3 shrink-0 text-white/80 sm:h-3.5 sm:w-3.5"
+                aria-hidden="true"
+              />
+              <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-white/80 xs:text-xs sm:tracking-[0.2em]">
                 {sectionLabel}
               </span>
             </div>
 
             <h2
-              className={`font-serif font-bold uppercase leading-tight text-white ${titleClassName}`}
+              className={`font-serif font-bold uppercase leading-tight tracking-tight text-white ${titleClassName}`}
             >
               {title}
             </h2>
 
-            <p className="mt-2 max-w-full text-sm font-medium leading-relaxed text-white/95 sm:text-base">
+            <p className="mt-1.5 max-w-full text-xs font-medium leading-relaxed text-white/95 sm:mt-2 sm:text-sm md:text-base">
               {subtitle}
             </p>
           </div>

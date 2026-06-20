@@ -13,7 +13,7 @@ import {
   TrendingUp,
   type LucideIcon,
 } from "lucide-react";
-import { BrandGradientText } from "../BrandGradientText";
+import { lightPanelClass } from "../../styles/chartUi";
 import {
   analysisHeroTitleClass,
   analysisPanelTitleClass,
@@ -188,10 +188,8 @@ const WealthCodeScoreCard: React.FC<WealthCodeScoreCardProps> = ({
     return "Developing";
   };
 
-  return (
-    <article
-      className={`relative overflow-hidden rounded-3xl border border-gray-100 bg-white shadow-lg dark:border-gray-700/60 dark:bg-gray-800/95 ${hoverClass}`}
-    >
+  const cardBody = (
+    <>
       <div
         className="absolute left-0 top-0 z-20 flex h-12 min-w-[3.25rem] items-center justify-center rounded-br-2xl px-3 shadow-md"
         style={{
@@ -204,7 +202,7 @@ const WealthCodeScoreCard: React.FC<WealthCodeScoreCardProps> = ({
       </div>
 
       <div
-        className="pointer-events-none absolute inset-0 dark:hidden"
+        className="pointer-events-none absolute inset-0"
         style={{
           background: `linear-gradient(145deg, ${colorConfig.light} 0%, rgba(255,255,255,0.98) 48%)`,
         }}
@@ -220,7 +218,7 @@ const WealthCodeScoreCard: React.FC<WealthCodeScoreCardProps> = ({
               aria-hidden="true"
             />
             <div
-              className="absolute inset-[0.35rem] rounded-full border-2 bg-white/80 shadow-inner dark:bg-gray-900/40"
+              className="absolute inset-[0.35rem] rounded-full border-2 bg-white/80 shadow-inner"
               style={{ borderColor: `${colorConfig.primary}33` }}
               aria-hidden="true"
             />
@@ -271,19 +269,19 @@ const WealthCodeScoreCard: React.FC<WealthCodeScoreCardProps> = ({
                 >
                   {code.score.toFixed(1)}
                 </span>
-                <span className="text-xs font-medium text-gray-500 dark:text-gray-400">
+                <span className="text-xs font-medium text-gray-500">
                   / {maxScore}
                 </span>
               </div>
             </div>
           </div>
 
-          <p className="mt-3 text-sm leading-relaxed text-gray-600 dark:text-gray-300">
+          <p className="mt-3 text-sm leading-relaxed text-gray-600">
             {WEALTH_CODE_CARD_TAGLINES[code.key]}
           </p>
 
           <div className="mt-5">
-            <div className="mb-1.5 flex justify-between text-[10px] font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
+            <div className="mb-1.5 flex justify-between text-[10px] font-semibold uppercase tracking-wide text-gray-500">
               <span>Energy level</span>
               <span>{Math.round(widthPercent)}%</span>
             </div>
@@ -302,6 +300,57 @@ const WealthCodeScoreCard: React.FC<WealthCodeScoreCardProps> = ({
           </div>
         </div>
       </div>
+    </>
+  );
+
+  if (isTopRank) {
+    const useAnimatedBorder = !forPdfCapture;
+
+    return (
+      <div className="relative overflow-visible rounded-3xl">
+        {useAnimatedBorder ? (
+          <>
+            <span
+              className="zwds-wealth-top-border-ripple absolute inset-0 rounded-3xl border-2"
+              style={{ borderColor: colorConfig.primary }}
+              aria-hidden="true"
+            />
+            <span
+              className="zwds-wealth-top-border-ripple zwds-wealth-top-border-ripple-delay absolute inset-0 rounded-3xl border-2"
+              style={{ borderColor: colorConfig.primary }}
+              aria-hidden="true"
+            />
+          </>
+        ) : null}
+
+        <article
+          className={[
+            "relative z-10 overflow-hidden rounded-3xl border-2 bg-white shadow-xl",
+            lightPanelClass,
+            hoverClass,
+          ].join(" ")}
+          style={{
+            borderColor: colorConfig.primary,
+            boxShadow: `0 16px 40px ${colorConfig.primary}28`,
+          }}
+          aria-label={`${code.label}, top wealth code score`}
+        >
+          {cardBody}
+        </article>
+      </div>
+    );
+  }
+
+  return (
+    <article
+      className={[
+        "relative overflow-hidden rounded-3xl border border-gray-100 bg-white shadow-lg",
+        lightPanelClass,
+        hoverClass,
+      ].join(" ")}
+      aria-label={code.label}
+    >
+      {cardBody}
     </article>
   );
 };
@@ -345,27 +394,27 @@ const WealthCodeDominantHero: React.FC<WealthCodeDominantHeroProps> = ({
       {forPdfCapture ? null : (
         <>
           <div
-            className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_28%_18%,rgba(107,91,149,0.14),transparent_55%)]"
+            className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_28%_18%,rgba(107,91,149,0.14),transparent_55%)] dark:hidden"
             aria-hidden="true"
           />
           <div
-            className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_88%_78%,rgba(254,142,1,0.08),transparent_50%)]"
+            className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_88%_78%,rgba(254,142,1,0.08),transparent_50%)] dark:hidden"
             aria-hidden="true"
           />
         </>
       )}
       <Sparkles
-        className="pointer-events-none absolute right-6 top-5 h-4 w-4 text-brand-purple/25"
+        className="pointer-events-none absolute right-6 top-5 h-4 w-4 text-brand-purple/25 dark:text-accent-goldDark/45"
         aria-hidden="true"
       />
       <Sparkles
-        className="pointer-events-none absolute bottom-8 left-8 h-3 w-3 text-[var(--color-accent-gradient-5)]/30"
+        className="pointer-events-none absolute bottom-8 left-8 h-3 w-3 text-[var(--color-accent-gradient-5)]/30 dark:text-accent-goldDark/40"
         aria-hidden="true"
       />
 
       <div className="relative flex flex-col gap-8 p-6 sm:p-8 lg:flex-row lg:items-center lg:justify-between lg:gap-10">
         <div className="min-w-0 flex-1 lg:max-w-[62%]">
-          <span className="inline-flex items-center gap-2 rounded-full bg-brand-purple px-3.5 py-1.5 text-[10px] font-bold uppercase tracking-[0.18em] text-white sm:text-xs">
+          <span className="inline-flex items-center gap-2 rounded-full bg-brand-purple px-3.5 py-1.5 text-[10px] font-bold uppercase tracking-[0.18em] text-white dark:bg-accent-goldDark sm:text-xs">
             <Sparkles className="h-3 w-3 shrink-0" aria-hidden="true" />
             Dominant Wealth Code
           </span>
@@ -377,25 +426,27 @@ const WealthCodeDominantHero: React.FC<WealthCodeDominantHeroProps> = ({
             {profile.dominantArchetype}
           </h3>
 
-          <p className="mt-4 text-sm leading-relaxed text-theme-fg-secondary sm:text-base">
+          <p className="mt-4 text-sm leading-relaxed text-theme-fg-secondary dark:text-cream/85 sm:text-base">
             {renderInsightTextWithHighlights(profile.summaryText)}
           </p>
         </div>
 
         <div className="mx-auto w-full max-w-[11rem] shrink-0 lg:mx-0">
-          <div className="rounded-2xl border border-[var(--color-accent-gradient-5)]/25 bg-white px-6 py-5 text-center shadow-lg shadow-[var(--color-accent-gradient-5)]/10 dark:bg-surface-elevated/90">
+          <div className="rounded-2xl border border-[var(--color-accent-gradient-5)]/25 bg-white px-6 py-5 text-center shadow-lg shadow-[var(--color-accent-gradient-5)]/10 dark:border-accent-gold/25 dark:bg-surface-darkElevated dark:shadow-black/30">
             <Star
-              className="mx-auto h-4 w-4 fill-current text-[var(--color-accent-gradient-5)]"
+              className="mx-auto h-4 w-4 fill-current text-[var(--color-accent-gradient-5)] dark:text-accent-gold"
               aria-hidden="true"
             />
-            <p className="mt-2 font-serif text-4xl font-black leading-none tabular-nums text-brand-purple dark:text-brand-purple-light">
+            <p className="mt-2 font-serif text-4xl font-black leading-none tabular-nums text-brand-purple dark:text-accent-gold">
               {dominantCode.score.toFixed(1)}
             </p>
             <div
-              className="mx-auto mt-3 h-px w-10 bg-theme-border-subtle"
+              className="mx-auto mt-3 h-px w-10 bg-theme-border-subtle dark:bg-theme-border-strong"
               aria-hidden="true"
             />
-            <p className="mt-3 text-xs font-medium text-theme-fg-secondary">Primary Score</p>
+            <p className="mt-3 text-xs font-medium text-theme-fg-secondary dark:text-cream/75">
+              Primary Score
+            </p>
           </div>
         </div>
       </div>

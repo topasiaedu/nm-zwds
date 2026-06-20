@@ -2,20 +2,14 @@
 
 This directory contains SVG icons for the 12 Chinese zodiac signs used in Zi Wei Dou Shu (ZWDS) charts.
 
-## Available Icons
+## Active icon set
 
-- `rat.svg` - Rat zodiac sign
-- `ox.svg` - Ox zodiac sign
-- `tiger.svg` - Tiger zodiac sign
-- `rabbit.svg` - Rabbit zodiac sign
-- `dragon.svg` - Dragon zodiac sign
-- `snake.svg` - Snake zodiac sign
-- `horse.svg` - Horse zodiac sign
-- `goat.svg` - Goat zodiac sign
-- `monkey.svg` - Monkey zodiac sign
-- `rooster.svg` - Rooster zodiac sign
-- `dog.svg` - Dog zodiac sign
-- `pig.svg` - Pig zodiac sign
+Palace cards and nobleman sections import from `new-icon/` via `index.ts`:
+
+- `rat.svg`, `cow.svg` (ox), `tiger.svg`, `rabbit.svg`, `dragon.svg`, `snake.svg`
+- `horse.svg`, `goat.svg`, `monkey.svg`, `chicken.svg` (rooster), `dog.svg`, `pig.svg`
+
+Legacy icons remain in this folder for reference; `index.ts` maps `ox` → `cow.svg` and `rooster` → `chicken.svg`.
 
 ## Usage
 

@@ -92,6 +92,7 @@ const tipExceedsPreviewLimit = (description: string): boolean =>
 
 type HealthBodyMapBlockProps = {
   affectedParts: string[];
+  getPartLabel: (part: string) => string;
   gender: "male" | "female";
   forPdfCapture?: boolean;
 };
@@ -101,6 +102,7 @@ type HealthBodyMapBlockProps = {
  */
 const HealthBodyMapBlock: React.FC<HealthBodyMapBlockProps> = ({
   affectedParts,
+  getPartLabel,
   gender,
   forPdfCapture,
 }) => {
@@ -130,7 +132,7 @@ const HealthBodyMapBlock: React.FC<HealthBodyMapBlockProps> = ({
               key={part}
               className="rounded-full border border-brand-purple/25 bg-surface-cream/95 px-3 py-1 text-xs font-semibold text-brand-purple dark:border-accent-gold/30 dark:bg-surface-dark/95 dark:text-accent-gold"
             >
-              {part}
+              {getPartLabel(part)}
             </span>
           ))}
         </div>
@@ -398,6 +400,11 @@ const Health: React.FC<HealthAnalysisProps> = ({
     description: tip.description,
   }));
 
+  const resolveBodyPartLabel = (part: string): string => {
+    const matchingTip = healthTips.find((tip) => tip.bodyPart === part);
+    return matchingTip?.englishName ?? part;
+  };
+
   const guidanceLayoutVersion = JSON.stringify(expandedTips);
 
   const guidanceTimeline = forPdfCapture ? (
@@ -453,6 +460,7 @@ const Health: React.FC<HealthAnalysisProps> = ({
         <div className={forPdfCapture ? "" : "lg:sticky lg:top-20 lg:self-center"}>
           <HealthBodyMapBlock
             affectedParts={affectedParts}
+            getPartLabel={resolveBodyPartLabel}
             gender={gender}
             forPdfCapture={forPdfCapture}
           />

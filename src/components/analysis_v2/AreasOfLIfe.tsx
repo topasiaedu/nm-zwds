@@ -39,6 +39,7 @@ import {
 } from "../../utils/zwds/analysis";
 import { AnalysisSectionHeader } from "./shared/AnalysisSectionHeader";
 import { SubsectionSparkleDivider } from "./shared/SubsectionSparkleDivider";
+import { lightPanelClass } from "../../styles/chartUi";
 
 const AREA_PREVIEW_CHAR_LIMIT = 300;
 
@@ -56,7 +57,9 @@ const AREA_ACCENTS: Record<
   {
     accent: string;
     cardBg: string;
+    darkCardBg: string;
     barTrack: string;
+    darkBarTrack: string;
     headerFrom: string;
     headerTo: string;
     watermark: string;
@@ -65,7 +68,9 @@ const AREA_ACCENTS: Record<
   "财帛": {
     accent: "#D97706",
     cardBg: "#FFF8F0",
+    darkCardBg: "#302820",
     barTrack: "#FCEBD5",
+    darkBarTrack: "#3d3528",
     headerFrom: "#D97706",
     headerTo: "#F59E0B",
     watermark: "财",
@@ -73,7 +78,9 @@ const AREA_ACCENTS: Record<
   "官禄": {
     accent: "#3F7BB8",
     cardBg: "#F2F7FD",
+    darkCardBg: "#252d38",
     barTrack: "#DCE9F8",
+    darkBarTrack: "#2e3d4f",
     headerFrom: "#4F8FD4",
     headerTo: "#6BAADC",
     watermark: "禄",
@@ -81,7 +88,9 @@ const AREA_ACCENTS: Record<
   "疾厄": {
     accent: "#D91744",
     cardBg: "#FFF8F4",
+    darkCardBg: "#322828",
     barTrack: "#FCE0E0",
+    darkBarTrack: "#3d2e2e",
     headerFrom: "#D91744",
     headerTo: "#E84A6F",
     watermark: "厄",
@@ -89,7 +98,9 @@ const AREA_ACCENTS: Record<
   "夫妻": {
     accent: "#C45A8A",
     cardBg: "#FDF2F7",
+    darkCardBg: "#352830",
     barTrack: "#F8DCE8",
+    darkBarTrack: "#3d2e35",
     headerFrom: "#C45A8A",
     headerTo: "#D97AAC",
     watermark: "缘",
@@ -97,7 +108,9 @@ const AREA_ACCENTS: Record<
   "交友": {
     accent: "#7B5FC4",
     cardBg: "#F3EFF8",
+    darkCardBg: "#2c2838",
     barTrack: "#EDE8F5",
+    darkBarTrack: "#322f3a",
     headerFrom: "#8B6FC8",
     headerTo: "#A67ED9",
     watermark: "友",
@@ -107,11 +120,30 @@ const AREA_ACCENTS: Record<
 const DEFAULT_AREA_ACCENT = {
   accent: "#6B5B95",
   cardBg: "#F3EFF8",
+  darkCardBg: "#2c2838",
   barTrack: "#EDE8F5",
+  darkBarTrack: "#322f3a",
   headerFrom: "#6B5B95",
   headerTo: "#8B7BA8",
   watermark: "★",
 };
+
+/**
+ * CSS custom properties for themed pillar surfaces (light + dark).
+ */
+const getAreaThemeVars = (
+  theme: (typeof AREA_ACCENTS)[string] | typeof DEFAULT_AREA_ACCENT,
+  options?: { activeBorder?: boolean }
+): React.CSSProperties =>
+  ({
+    "--area-accent": theme.accent,
+    "--area-card-bg": theme.cardBg,
+    "--area-card-bg-dark": theme.darkCardBg,
+    "--area-border": options?.activeBorder ? `${theme.accent}55` : `${theme.accent}22`,
+    "--area-border-dark": `${theme.accent}44`,
+    "--area-bar-track": theme.barTrack,
+    "--area-bar-track-dark": theme.darkBarTrack,
+  }) as React.CSSProperties;
 
 const normalizeStarName = (name: string): string => {
   const charMap: Record<string, string> = {
@@ -175,25 +207,24 @@ const ScorePillarPill: React.FC<ScorePillarPillProps> = ({
       aria-selected={isActive}
       aria-label={`${area.displayName}, ${area.score}% — ${isActive ? "currently viewing" : "tap to view reading"}`}
       className={[
-        "relative min-w-0 w-full rounded-2xl border-2 p-3 text-left shadow-sm sm:p-4",
+        "relative w-full max-w-[44vw] shrink-0 snap-center rounded-2xl border-2 p-2.5 text-left shadow-sm xs:max-w-none xs:w-[11.5rem] sm:min-w-0 sm:w-full sm:shrink sm:p-4",
+        lightPanelClass,
         hoverClass,
         isActive
-          ? "border-solid shadow-md"
-          : "border-theme-border-subtle bg-white hover:border-brand-purple/40 hover:bg-[#FAF7FD] dark:border-theme-border-strong dark:bg-surface-elevated/90 dark:hover:bg-surface-elevated",
+          ? [
+              "border-solid shadow-md",
+              "[background-color:var(--area-card-bg)] [border-color:var(--area-border)]",
+            ].join(" ")
+          : "border-theme-border-subtle bg-white hover:border-brand-purple/40 hover:bg-[#FAF7FD]",
       ].join(" ")}
-      style={
-        isActive
-          ? {
-              borderColor: `${theme.accent}55`,
-              backgroundColor: theme.cardBg,
-              boxShadow: `0 8px 24px ${theme.accent}18`,
-            }
-          : undefined
-      }
+      style={{
+        ...getAreaThemeVars(theme, { activeBorder: isActive }),
+        ...(isActive ? { boxShadow: `0 8px 24px ${theme.accent}18` } : undefined),
+      }}
     >
       <div className="flex items-start justify-between gap-2">
         <div
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full sm:h-9 sm:w-9"
           style={{
             backgroundColor: isActive ? theme.accent : `${theme.accent}18`,
           }}
@@ -213,7 +244,7 @@ const ScorePillarPill: React.FC<ScorePillarPillProps> = ({
 
         {isTopPillar ? (
           <span
-            className="rounded-full px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.14em] text-white"
+            className="rounded-full px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-[0.12em] text-white xs:px-2 xs:text-[9px] xs:tracking-[0.14em]"
             style={{ backgroundColor: theme.accent }}
           >
             Top
@@ -221,22 +252,19 @@ const ScorePillarPill: React.FC<ScorePillarPillProps> = ({
         ) : null}
       </div>
 
-      <p className="mt-3 text-[9px] font-bold uppercase leading-snug tracking-[0.14em] text-theme-fg-secondary sm:text-[10px] sm:tracking-[0.18em]">
+      <p className="mt-2 line-clamp-3 text-[8px] font-bold uppercase leading-snug tracking-[0.12em] text-theme-fg-secondary xs:mt-3 xs:text-[9px] xs:tracking-[0.14em] sm:text-[10px] sm:tracking-[0.18em]">
         {area.displayName}
       </p>
 
       <p
-        className="mt-1 font-serif text-2xl font-bold tabular-nums leading-none sm:text-3xl"
+        className="mt-1 font-serif text-xl font-bold tabular-nums leading-none xs:text-2xl sm:text-3xl"
         style={{ color: theme.accent }}
       >
         {area.score}
-        <span className="ml-0.5 text-base font-semibold text-theme-fg-secondary">%</span>
+        <span className="ml-0.5 text-sm font-semibold text-theme-fg-secondary sm:text-base">%</span>
       </p>
 
-      <div
-        className="mt-3 h-1.5 overflow-hidden rounded-full"
-        style={{ backgroundColor: theme.barTrack }}
-      >
+      <div className="mt-2 h-1.5 overflow-hidden rounded-full [background-color:var(--area-bar-track)] sm:mt-3">
         <div
           className="h-full rounded-full transition-[width] duration-500 ease-out"
           style={{ width: `${area.score}%`, backgroundColor: theme.accent }}
@@ -245,18 +273,20 @@ const ScorePillarPill: React.FC<ScorePillarPillProps> = ({
 
       {!forPdfCapture ? (
         <div
-          className="mt-3 inline-flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-[0.14em] sm:text-[10px]"
-          style={{ color: isActive ? theme.accent : undefined }}
+          className="mt-2 inline-flex items-center gap-1 text-[8px] font-bold uppercase tracking-[0.12em] xs:mt-3 xs:gap-1.5 xs:text-[9px] xs:tracking-[0.14em] sm:text-[10px]"
+          style={{ color: isActive ? theme.accent : theme.accent }}
         >
           {isActive ? (
             <>
-              <Check className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-              <span>Now viewing</span>
+              <Check className="h-3 w-3 shrink-0 xs:h-3.5 xs:w-3.5" aria-hidden="true" />
+              <span className="sm:hidden">Active</span>
+              <span className="hidden sm:inline">Now viewing</span>
             </>
           ) : (
             <>
-              <Hand className="h-3.5 w-3.5 shrink-0 text-brand-purple dark:text-accent-gold" aria-hidden="true" />
-              <span className="text-brand-purple dark:text-accent-gold">Tap to view</span>
+              <Hand className="h-3 w-3 shrink-0 xs:h-3.5 xs:w-3.5" aria-hidden="true" />
+              <span className="sm:hidden">View</span>
+              <span className="hidden sm:inline">Tap to view</span>
             </>
           )}
         </div>
@@ -269,17 +299,17 @@ const ScorePillarPill: React.FC<ScorePillarPillProps> = ({
  * Prominent callout explaining that pillar cards are interactive selectors.
  */
 const PillarSelectionCallout: React.FC = () => (
-  <div className="mb-4 rounded-2xl border border-brand-purple/25 bg-gradient-to-r from-[#EDE8F5] via-[#FAF7FD] to-white p-4 shadow-sm dark:border-accent-gold/25 dark:from-brand-purple/20 dark:via-surface-darkSecondary/80 dark:to-surface-darkSecondary/60 sm:p-5">
-    <div className="flex items-start gap-3 sm:gap-4">
-      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-brand-purple text-white shadow-sm dark:bg-accent-goldDark">
-        <MousePointerClick className="h-5 w-5" aria-hidden="true" />
+  <div className="mb-4 rounded-2xl border border-brand-purple/25 bg-gradient-to-r from-[#EDE8F5] via-[#FAF7FD] to-white p-3 shadow-sm light-panel sm:p-5">
+    <div className="flex items-start gap-2.5 sm:gap-4">
+      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand-purple text-white shadow-sm sm:h-11 sm:w-11">
+        <MousePointerClick className="h-4 w-4 sm:h-5 sm:w-5" aria-hidden="true" />
       </div>
       <div className="min-w-0">
-        <h3 className="font-serif text-xl font-bold text-navy dark:text-cream sm:text-2xl">
+        <h3 className="font-serif text-lg font-bold text-navy sm:text-2xl">
           Explore Your Pillars
         </h3>
-        <p className="mt-2 text-sm leading-relaxed text-theme-fg-secondary sm:text-base">
-          <span className="font-bold text-brand-purple dark:text-accent-gold">
+        <p className="mt-1.5 text-xs leading-relaxed text-theme-fg-secondary sm:mt-2 sm:text-base">
+          <span className="font-bold text-brand-purple">
             Tap any pillar card below
           </span>{" "}
           to switch the reading. Each card reveals a different area of your destiny scoreboard.
@@ -322,11 +352,13 @@ const LifeAreaPanel: React.FC<LifeAreaPanelProps> = ({
     <article
       data-pdf-break-anchor={`area-card-${area.area}`}
       {...(pdfPageBreakBefore ? { "data-pdf-page-break-before": "" } : {})}
-      className="relative overflow-hidden rounded-2xl border shadow-sm"
-      style={{
-        borderColor: `${theme.accent}22`,
-        backgroundColor: theme.cardBg,
-      }}
+      className={[
+        "relative overflow-hidden rounded-2xl border shadow-sm",
+        lightPanelClass,
+        "[background-color:var(--area-card-bg)] [border-color:var(--area-border)]",
+        "dark:shadow-black/20",
+      ].join(" ")}
+      style={getAreaThemeVars(theme)}
     >
       <div
         aria-hidden="true"
@@ -385,15 +417,12 @@ const LifeAreaPanel: React.FC<LifeAreaPanelProps> = ({
             {starLabel}
           </p>
           <Sparkles
-            className="ml-auto h-3.5 w-3.5 shrink-0 text-[var(--color-accent-gradient-5)]/55"
+            className="ml-auto h-3.5 w-3.5 shrink-0 text-[var(--color-accent-gradient-5)]/55 dark:text-accent-goldDark/50"
             aria-hidden="true"
           />
         </div>
 
-        <div
-          className="mt-3 h-2 overflow-hidden rounded-full"
-          style={{ backgroundColor: theme.barTrack }}
-        >
+        <div className="mt-3 h-2 overflow-hidden rounded-full [background-color:var(--area-bar-track)]">
           <div
             className="h-full rounded-full transition-[width] duration-500 ease-out"
             style={{ width: `${area.score}%`, backgroundColor: theme.accent }}
@@ -401,7 +430,7 @@ const LifeAreaPanel: React.FC<LifeAreaPanelProps> = ({
         </div>
 
         {description ? (
-          <div className="mt-5 rounded-xl border border-theme-border-subtle bg-white/90 p-5 shadow-sm dark:border-theme-border-strong dark:bg-surface-elevated/90 sm:p-6">
+          <div className="mt-5 rounded-xl border border-theme-border-subtle bg-white/90 p-5 shadow-sm sm:p-6">
             <div className="flex items-center gap-2">
               <FileText
                 className="h-4 w-4 shrink-0"
@@ -566,7 +595,13 @@ const AreasOfLife: React.FC<{
           className={
             forPdfCapture
               ? "grid w-full grid-cols-2 gap-3"
-              : "grid w-full grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5"
+              : [
+                  "flex w-full gap-2.5 overflow-x-auto pb-1",
+                  "snap-x snap-mandatory [-webkit-overflow-scrolling:touch]",
+                  "[scrollbar-width:thin]",
+                  "sm:grid sm:grid-cols-3 sm:gap-3 sm:overflow-visible sm:pb-0",
+                  "lg:grid-cols-5",
+                ].join(" ")
           }
           role="tablist"
           aria-label="Destiny pillars — tap a card to change the reading below"

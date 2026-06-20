@@ -19,6 +19,7 @@ import {
 import type { NoblemanData, NoblemanProfile, NoblemanType, OtherAreaData } from "../../types/nobleman";
 import { renderNoblemanTextWithHighlights } from "../analysis_v2/shared/personalityTextHighlight";
 import { NOBLEMAN_TYPE_TO_IMAGE } from "../../constants/noblemanProfiles";
+import { lightPanelClass } from "../../styles/chartUi";
 
 interface NoblemanProfileCardProps extends NoblemanData {
   /** Other life areas to list beneath the primary profile sub-header. */
@@ -73,7 +74,7 @@ const getProfileImage = (profile: NoblemanProfile): string => {
 const NOBLEMAN_PROFILE_CARD_CLASS = [
   "relative overflow-hidden rounded-2xl border border-brand-purple/20",
   "bg-gradient-to-br from-[#EDE8F5] via-[#FAF7FD] to-white",
-  "dark:border-brand-purple/30 dark:from-brand-purple/20 dark:via-surface-darkSecondary/80 dark:to-surface-darkSecondary/60",
+  lightPanelClass,
 ].join(" ");
 
 /** Context copy shown above profile-specific characteristics. */
@@ -118,33 +119,33 @@ const NoblemanProfileHero: React.FC<NoblemanProfileHeroProps> = ({
         }
       >
         <div className="min-w-0 flex-1 lg:w-[58%]">
-          <div className="border-l-4 border-brand-purple pl-4 dark:border-accent-goldDark/70">
-            <h3 className="font-serif text-xl font-bold text-navy dark:text-cream sm:text-2xl">
+          <div className="border-l-4 border-brand-purple pl-4">
+            <h3 className="font-serif text-xl font-bold text-navy sm:text-2xl">
               Your Nobleman Profile
             </h3>
           </div>
 
-          <div className="mt-5 inline-flex items-center gap-2 rounded-full border border-brand-purple/15 bg-brand-purple/10 px-3.5 py-1.5 dark:border-accent-gold/25 dark:bg-accent-gold/10">
+          <div className="mt-5 inline-flex items-center gap-2 rounded-full border border-brand-purple/15 bg-brand-purple/10 px-3.5 py-1.5">
             <Star
-              className="h-3.5 w-3.5 fill-brand-purple text-brand-purple dark:fill-accent-gold dark:text-accent-gold"
+              className="h-3.5 w-3.5 fill-brand-purple text-brand-purple"
               aria-hidden="true"
             />
-            <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-brand-purple dark:text-accent-gold sm:text-xs">
+            <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-brand-purple sm:text-xs">
               {profile.stars}
             </span>
           </div>
 
-          <h4 className="mt-4 font-serif text-2xl font-bold leading-tight text-navy dark:text-cream sm:text-3xl">
-            {profile.type}
-          </h4>
+          <div className={`mt-6 rounded-xl border border-theme-border-subtle bg-white p-5 shadow-sm sm:p-6 ${lightPanelClass}`}>
+            <h4 className="font-serif text-2xl font-bold leading-tight text-navy sm:text-3xl">
+              {profile.type}
+            </h4>
 
-          <div className="mt-6 rounded-xl border border-theme-border-subtle bg-white/90 p-5 shadow-sm dark:border-theme-border-strong dark:bg-surface-elevated/90 sm:p-6">
-            <div className="flex items-center gap-2">
+            <div className="mt-5 flex items-center gap-2">
               <FileText
-                className="h-4 w-4 shrink-0 text-brand-purple dark:text-accent-gold"
+                className="h-4 w-4 shrink-0 text-brand-purple"
                 aria-hidden="true"
               />
-              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-brand-purple dark:text-accent-gold sm:text-xs">
+              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-brand-purple sm:text-xs">
                 Key Characteristics
               </p>
             </div>
@@ -251,9 +252,16 @@ const NoblemanLifeAreaCard: React.FC<NoblemanLifeAreaCardProps> = ({
     ? ""
     : "transition-shadow duration-300 hover:shadow-md";
 
+  const badgeStyle = {
+    "--area-accent": theme.accent,
+    "--area-badge-bg": theme.badgeBg,
+    "--area-badge-text": theme.badgeText,
+  } as React.CSSProperties;
+
   return (
     <article
-      className={`flex h-full flex-col overflow-hidden rounded-2xl border border-theme-border-subtle bg-white shadow-sm dark:border-theme-border-strong dark:bg-surface-elevated/90 ${hoverClass}`}
+      className={`flex h-full flex-col overflow-hidden rounded-2xl border border-theme-border-subtle bg-white shadow-sm ${lightPanelClass} ${hoverClass}`}
+      style={badgeStyle}
     >
       <div
         className="flex items-center justify-between gap-3 px-5 py-4"
@@ -280,20 +288,21 @@ const NoblemanLifeAreaCard: React.FC<NoblemanLifeAreaCardProps> = ({
             aria-hidden="true"
           />
           <p
-            className="text-[10px] font-bold uppercase tracking-[0.2em]"
-            style={{ color: theme.accent }}
+            className="text-[10px] font-bold uppercase tracking-[0.2em] [color:var(--area-accent)]"
           >
             Nobleman Type
           </p>
         </div>
-        <p className="mt-3 font-sans text-base font-bold leading-snug text-navy dark:text-cream sm:text-lg">
+        <p className="mt-3 font-sans text-base font-bold leading-snug text-navy sm:text-lg">
           {area.noblemanType}
         </p>
 
         <div className="mt-auto pt-5">
           <span
-            className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold"
-            style={{ backgroundColor: theme.badgeBg, color: theme.badgeText }}
+            className={[
+              "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold",
+              "[background-color:var(--area-badge-bg)] [color:var(--area-badge-text)]",
+            ].join(" ")}
           >
             <Home className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
             {area.palaceName}

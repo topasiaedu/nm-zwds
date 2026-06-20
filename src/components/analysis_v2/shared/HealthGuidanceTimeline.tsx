@@ -1,5 +1,6 @@
 import React from "react";
 import { ArrowRight, ChevronUp, Sparkles, type LucideIcon } from "lucide-react";
+import { lightPanelClass } from "../../../styles/chartUi";
 
 export type HealthGuidanceTip = {
   id: string;
@@ -21,7 +22,6 @@ type HealthGuidanceTimelineProps = {
 };
 
 const HEALTH_ACCENT = "#D91744";
-const HEALTH_CARD_BG = "#FFF8F4";
 const HEALTH_ICON_RING = "#FDE8E4";
 
 type HealthTimelineItemProps = {
@@ -65,8 +65,7 @@ const HealthTimelineItem: React.FC<HealthTimelineItemProps> = ({
       <article
         ref={(element) => registerCardRef?.(tipIndex, element)}
         data-health-card-index={tipIndex}
-        className={`relative overflow-hidden rounded-2xl border border-[#F0E4DC] shadow-sm dark:border-theme-border-strong dark:bg-surface-elevated/90 ${hoverClass}`}
-        style={{ backgroundColor: HEALTH_CARD_BG }}
+        className={`relative overflow-hidden rounded-2xl border border-[#F0E4DC] bg-[#FFF8F4] shadow-sm ${lightPanelClass} ${hoverClass}`}
       >
         <div
           className="pointer-events-none absolute -right-2 top-1/2 -translate-y-1/2 opacity-[0.07]"
@@ -107,7 +106,7 @@ const HealthTimelineItem: React.FC<HealthTimelineItemProps> = ({
               </p>
             ) : null}
 
-            <h4 className="mt-0.5 font-serif text-xl font-bold uppercase tracking-wide text-navy dark:text-cream sm:text-2xl">
+            <h4 className="mt-0.5 font-serif text-xl font-bold uppercase tracking-wide text-navy sm:text-2xl">
               {displayName}
             </h4>
 

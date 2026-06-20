@@ -201,3 +201,19 @@
   --color-icon-neutral-bg: rgb(255 255 255 / 0.06);
   --color-spinner: var(--color-accent-gold-dark);
 }
+
+/**
+ * Intentional light surfaces inside dark mode — restore light-theme text and border tokens
+ * so `text-theme-fg` / `text-theme-fg-secondary` stay readable on cream/white panels.
+ */
+.dark .light-panel {
+  --color-text-primary: var(--color-navy);
+  --color-text-secondary: var(--color-muted);
+  --color-text-subtle: var(--color-muted-subtle-light);
+  --color-text-accent-muted: rgb(var(--color-brand-purple-rgb) / 0.85);
+  --color-text-accent-muted-subtle: rgb(var(--color-brand-purple-rgb) / 0.72);
+  --color-text-accent-label: rgb(var(--color-brand-purple-rgb) / 0.78);
+  --color-border-default: rgb(var(--color-brand-purple-rgb) / 0.32);
+  --color-border-subtle: rgb(var(--color-brand-purple-rgb) / 0.14);
+  --color-border-strong: var(--color-brand-purple);
+}

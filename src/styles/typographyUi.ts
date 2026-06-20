@@ -8,6 +8,11 @@ export const brandGradientTextClass = [
   "bg-gradient-to-r from-[#080657] via-[#8B1167] to-[#FE8E01] dark:from-accent-goldDark dark:via-accent-coralDark dark:to-accent-coral bg-clip-text text-transparent",
 ].join(" ");
 
+/** Filled background using the primary brand gradient (active tabs, CTAs). */
+export const brandGradientPrimaryBgClass = [
+  "bg-gradient-to-r from-[var(--color-brand-gradient-primary-from)] via-[var(--color-brand-gradient-primary-via)] to-[var(--color-brand-gradient-primary-to)]",
+].join(" ");
+
 /**
  * Secondary clip-text gradient — inline body copy emphasis (coral → orange).
  * Stops: --color-accent-gradient-4 → --color-accent-gradient-5 in color-scheme.css.
@@ -33,7 +38,7 @@ export const analysisHeroTitleCenteredClass = [
 ].join(" ");
 
 export const analysisHeroTitleLargeClass = [
-  "text-3xl font-black uppercase tracking-tight sm:text-4xl",
+  "text-2xl font-black uppercase tracking-tight sm:text-3xl md:text-4xl",
 ].join(" ");
 
 /** Card / list-row title (h4) — guidance cards, life-area rows, mini-card zodiac name. */

@@ -19,6 +19,7 @@ import { ChartData } from "../../utils/zwds/types";
 import { analyzeDestinyAlert } from "../../utils/zwds/analysis";
 import type { PalaceAlertData } from "../../utils/zwds/analysis/destinyAlertAnalysis";
 import { AnalysisSectionHeader } from "./shared/AnalysisSectionHeader";
+import { lightPanelClass } from "../../styles/chartUi";
 
 type MetricBar = {
   label: string;
@@ -161,7 +162,6 @@ type MetricBarRowProps = {
   label: string;
   value: number;
   accentColor: string;
-  trackColor: string;
 };
 
 /**
@@ -171,14 +171,12 @@ const MetricBarRow: React.FC<MetricBarRowProps> = ({
   label,
   value,
   accentColor,
-  trackColor,
 }) => (
   <div className="flex items-center gap-3">
-    <span className="w-[5.5rem] shrink-0 text-xs text-theme-fg-secondary">{label}</span>
-    <div
-      className="h-2 min-w-0 flex-1 overflow-hidden rounded-full"
-      style={{ backgroundColor: trackColor }}
-    >
+    <span className="w-[5.5rem] shrink-0 text-xs text-theme-fg-secondary">
+      {label}
+    </span>
+    <div className="h-2 min-w-0 flex-1 overflow-hidden rounded-full [background-color:var(--alert-track)]">
       <div
         className="h-full rounded-full transition-[width] duration-500 ease-out"
         style={{ width: `${value}%`, backgroundColor: accentColor }}
@@ -211,14 +209,23 @@ const DestinyAlertCard: React.FC<DestinyAlertCardProps> = ({
 }) => {
   const HeaderIcon = config.icon;
 
+  const cardStyle = {
+    "--alert-accent": config.accentColor,
+    "--alert-card-bg": config.cardBg,
+    "--alert-border": `${config.accentColor}22`,
+    "--alert-badge-bg": config.badgeBg,
+    "--alert-track": config.barTrackColor,
+  } as React.CSSProperties;
+
   return (
     <article
       {...(pdfPageBreakBefore ? { "data-pdf-page-break-before": "" } : {})}
-      className="relative overflow-hidden rounded-2xl border p-5 shadow-sm sm:p-6"
-      style={{
-        borderColor: `${config.accentColor}22`,
-        backgroundColor: config.cardBg,
-      }}
+      className={[
+        "relative overflow-hidden rounded-2xl border p-5 shadow-sm sm:p-6",
+        lightPanelClass,
+        "[background-color:var(--alert-card-bg)] [border-color:var(--alert-border)]",
+      ].join(" ")}
+      style={cardStyle}
     >
       <div
         aria-hidden="true"
@@ -240,7 +247,7 @@ const DestinyAlertCard: React.FC<DestinyAlertCardProps> = ({
             <HeaderIcon className="h-5 w-5 text-white" aria-hidden="true" />
           </div>
 
-          <p className="min-w-0 flex-1 pt-0.5 text-[11px] font-bold uppercase leading-snug tracking-[0.12em] text-navy dark:text-cream sm:text-xs">
+          <p className="min-w-0 flex-1 pt-0.5 text-[11px] font-bold uppercase leading-snug tracking-[0.12em] text-navy sm:text-xs">
             {config.heroQuestionPrefix}
             <span style={{ color: config.accentColor }}>{config.heroQuestionHighlight}</span>
             {config.heroQuestionSuffix}
@@ -257,11 +264,10 @@ const DestinyAlertCard: React.FC<DestinyAlertCardProps> = ({
             Activates
           </p>
           <span
-            className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold"
-            style={{
-              color: config.accentColor,
-              backgroundColor: config.badgeBg,
-            }}
+            className={[
+              "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold",
+              "[background-color:var(--alert-badge-bg)] [color:var(--alert-accent)]",
+            ].join(" ")}
           >
             <User className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
             {getStarPinyin(alert.starName)}
@@ -282,7 +288,6 @@ const DestinyAlertCard: React.FC<DestinyAlertCardProps> = ({
               label={metric.label}
               value={metric.value}
               accentColor={config.accentColor}
-              trackColor={config.barTrackColor}
             />
           ))}
         </div>

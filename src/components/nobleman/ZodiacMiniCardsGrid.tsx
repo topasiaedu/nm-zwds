@@ -7,6 +7,7 @@ import { Lightbulb } from "lucide-react";
 import type { ZodiacMiniData } from "../../utils/nobleman";
 import ZodiacIcons from "../zwds/icons";
 import ZodiacIconWrapper from "../zwds/components/ZodiacIconWrapper";
+import { lightPanelClass } from "../../styles/chartUi";
 
 interface ZodiacMiniCardsGridProps {
   miniData: ZodiacMiniData[];
@@ -91,7 +92,7 @@ const ZodiacMiniCard: React.FC<ZodiacMiniCardProps> = ({ miniData, forPdfCapture
 
   return (
     <article
-      className={`flex h-full flex-col overflow-hidden rounded-2xl border border-theme-border-subtle bg-white shadow-sm dark:border-theme-border-strong dark:bg-surface-elevated/90 ${hoverClass}`}
+      className={`flex h-full flex-col overflow-hidden rounded-2xl border border-theme-border-subtle bg-white shadow-sm ${lightPanelClass} ${hoverClass}`}
     >
       <div
         className="flex items-center justify-between gap-3 px-5 py-4"
@@ -114,7 +115,7 @@ const ZodiacMiniCard: React.FC<ZodiacMiniCardProps> = ({ miniData, forPdfCapture
       </div>
 
       <div className="flex flex-1 flex-col p-5">
-        <h3 className="font-serif text-xl font-bold text-navy dark:text-cream sm:text-2xl">
+        <h3 className="font-serif text-xl font-bold text-navy sm:text-2xl">
           {miniData.zodiac}{" "}
           <span className="text-lg font-semibold text-theme-fg-secondary sm:text-xl">
             {miniData.zodiacChinese}

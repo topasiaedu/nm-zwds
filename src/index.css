@@ -254,38 +254,154 @@
 
 .dark .zwds-chart-grid .zwds-palace-star-text,
 .dark .zwds-chart-grid .zwds-palace-star-text span {
-  color: #e4e4e7;
-}
-
-.zwds-chart-grid .zwds-palace-selected .zwds-palace-star-text,
-.zwds-chart-grid .zwds-palace-selected .zwds-palace-star-text span {
   color: #ffffff;
 }
 
 .zwds-chart-grid .zwds-palace-bottom-text {
-  color: #1a1e3f;
+  color: #6b7280;
 }
 
 .dark .zwds-chart-grid .zwds-palace-bottom-text {
-  color: #e4e4e7;
-}
-
-.zwds-chart-grid .zwds-palace-selected .zwds-palace-bottom-text {
   color: #ffffff;
 }
 
-.zwds-center-info .zwds-center-label {
+.dark .zwds-chart-grid .zwds-palace-title,
+.dark .zwds-chart-grid .zwds-palace-subtitle:not(.zwds-palace-daxian-highlight),
+.dark .zwds-chart-grid .zwds-palace-meta:not(.zwds-palace-year-highlight),
+.dark .zwds-chart-grid .zwds-palace-badge-icon {
+  color: #ffffff;
+}
+
+/* Selected palace — light text on brand-purple gradient (light + dark themes) */
+.zwds-chart-grid .zwds-palace-selected {
+  background-image: linear-gradient(135deg, #6b5b95, #4a3f6b);
+  color: #ffffff;
+}
+
+.dark .zwds-chart-grid .zwds-palace-selected {
+  background-image: linear-gradient(
+    135deg,
+    rgba(107, 91, 149, 0.95),
+    rgba(74, 63, 107, 0.95)
+  );
+  color: #ffffff;
+}
+
+.zwds-chart-grid .zwds-palace-selected .zwds-palace-star-text,
+.zwds-chart-grid .zwds-palace-selected .zwds-palace-star-text span,
+.zwds-chart-grid .zwds-palace-selected .zwds-palace-bottom-text,
+.zwds-chart-grid .zwds-palace-selected .zwds-palace-title,
+.zwds-chart-grid .zwds-palace-selected .zwds-palace-subtitle,
+.zwds-chart-grid .zwds-palace-selected .zwds-palace-meta:not(.zwds-palace-year-highlight) {
+  color: #ffffff;
+}
+
+.dark .zwds-chart-grid .zwds-palace-selected .zwds-palace-star-text,
+.dark .zwds-chart-grid .zwds-palace-selected .zwds-palace-star-text span,
+.dark .zwds-chart-grid .zwds-palace-selected .zwds-palace-bottom-text,
+.dark .zwds-chart-grid .zwds-palace-selected .zwds-palace-title,
+.dark .zwds-chart-grid .zwds-palace-selected .zwds-palace-subtitle,
+.dark .zwds-chart-grid .zwds-palace-selected .zwds-palace-meta:not(.zwds-palace-year-highlight) {
+  color: #ffffff;
+}
+
+.zwds-chart-grid .zwds-palace-selected .zwds-palace-year-highlight {
+  color: #fca5a5;
+}
+
+.dark .zwds-chart-grid .zwds-palace-selected .zwds-palace-year-highlight {
+  color: #fca5a5;
+}
+
+.zwds-chart-grid .zwds-palace-selected .zwds-palace-badge-icon {
+  color: #ffffff;
+}
+
+/* Da Ming tag — stronger contrast; overrides selected-palace color inheritance */
+.zwds-chart-grid .zwds-palace-daming-tag {
+  background-color: rgba(107, 91, 149, 0.25);
   color: #4a3f6b;
+  border-color: rgba(107, 91, 149, 0.45);
+}
+
+.dark .zwds-chart-grid .zwds-palace-daming-tag {
+  background-color: rgba(255, 255, 255, 0.22);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+.zwds-chart-grid .zwds-palace-selected .zwds-palace-daming-tag {
+  background-color: #faf9f6;
+  color: #4a3f6b;
+  border-color: rgba(255, 255, 255, 0.75);
+}
+
+.dark .zwds-chart-grid .zwds-palace-selected .zwds-palace-daming-tag {
+  background-color: #ffffff;
+  color: #4a3f6b;
+  border-color: rgba(255, 255, 255, 0.85);
+}
+
+.zwds-chart-grid .zwds-palace-selected .zwds-palace-secondary-name {
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.dark .zwds-chart-grid .zwds-palace-selected .zwds-palace-secondary-name {
+  color: rgba(255, 255, 255, 0.92);
+}
+
+/* Palace footer — equal thirds on sm+; flex space-between on mobile */
+.zwds-chart-grid .zwds-palace-footer {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+@media (max-width: 639px) {
+  .zwds-chart-grid .zwds-palace-footer {
+    display: flex;
+    justify-content: space-between;
+    grid-template-columns: unset;
+  }
+}
+
+.zwds-chart-grid .zwds-palace-footer > * {
+  min-width: 0;
+  max-width: 100%;
+}
+
+/* Palace zodiac watermark — ensure SVG fills the anchor box */
+.zwds-palace-watermark svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+@media (max-width: 639px) {
+  .zwds-chart-grid {
+    touch-action: manipulation;
+    grid-template-rows: repeat(4, minmax(9.5rem, 1fr));
+  }
+
+  [data-zwds-chart-container="true"] {
+    height: auto;
+  }
+
+  .zwds-center-info {
+    font-size: 0.875rem;
+  }
+}
+
+.zwds-center-info .zwds-center-label {
+  color: #6b7280;
   font-weight: 600;
 }
 
 .zwds-center-info .zwds-center-value,
 .zwds-center-info .zwds-center-value span {
-  color: #1a1e3f;
+  color: #1a2b48;
 }
 
 .dark .zwds-center-info .zwds-center-label {
-  color: #d4af7b;
+  color: #9ca3af;
 }
 
 .dark .zwds-center-info .zwds-center-value,
@@ -550,5 +666,34 @@ html, body, #root {
   .print-root {
     max-width: none;
     margin: 0;
+  }
+}
+
+/* Wealth code — top-ranked card border zoom + fade ripple */
+@keyframes zwds-wealth-top-border-zoom-fade {
+  0% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1.055);
+    opacity: 0;
+  }
+}
+
+.zwds-wealth-top-border-ripple {
+  pointer-events: none;
+  animation: zwds-wealth-top-border-zoom-fade 2.4s ease-out infinite;
+  transform-origin: center center;
+}
+
+.zwds-wealth-top-border-ripple-delay {
+  animation-delay: 1.2s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .zwds-wealth-top-border-ripple {
+    animation: none;
+    opacity: 0;
   }
 }

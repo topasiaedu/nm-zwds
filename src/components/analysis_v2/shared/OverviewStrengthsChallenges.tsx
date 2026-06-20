@@ -13,6 +13,7 @@ import {
   Sparkles,
   Zap,
 } from "lucide-react";
+import { lightPanelClass } from "../../../styles/chartUi";
 
 export type OverviewTraitItem = {
   id: string;
@@ -38,26 +39,26 @@ type TraitCardTheme = {
 };
 
 const STRENGTHS_THEME: TraitCardTheme = {
-  cardBorderClass: "border-emerald-200/80 dark:border-emerald-700/40",
-  cardBgClass: "bg-emerald-50/70 dark:bg-emerald-950/20",
-  iconWrapClass: "bg-emerald-100 dark:bg-emerald-900/50",
-  iconClass: "text-emerald-600 dark:text-emerald-400",
-  dividerClass: "via-emerald-300/70 dark:via-emerald-600/50",
-  pillBorderClass: "border-emerald-200/90 dark:border-emerald-700/50",
-  pillBgClass: "bg-white/70 dark:bg-emerald-950/30",
-  pillIconClass: "text-emerald-600 dark:text-emerald-400",
+  cardBorderClass: "border-emerald-200/80",
+  cardBgClass: "bg-emerald-50/70",
+  iconWrapClass: "bg-emerald-100",
+  iconClass: "text-emerald-600",
+  dividerClass: "via-emerald-300/70",
+  pillBorderClass: "border-emerald-200/90",
+  pillBgClass: "bg-white/70",
+  pillIconClass: "text-emerald-600",
   watermarkIcon: Leaf,
 };
 
 const CHALLENGES_THEME: TraitCardTheme = {
-  cardBorderClass: "border-red-200/80 dark:border-red-800/40",
-  cardBgClass: "bg-red-50/60 dark:bg-red-950/20",
-  iconWrapClass: "bg-red-100 dark:bg-red-900/40",
-  iconClass: "text-red-500 dark:text-red-400",
-  dividerClass: "via-red-300/70 dark:via-red-600/50",
-  pillBorderClass: "border-red-200/90 dark:border-red-800/50",
-  pillBgClass: "bg-white/70 dark:bg-red-950/30",
-  pillIconClass: "text-red-500 dark:text-red-400",
+  cardBorderClass: "border-red-200/80",
+  cardBgClass: "bg-red-50/60",
+  iconWrapClass: "bg-red-100",
+  iconClass: "text-red-500",
+  dividerClass: "via-red-300/70",
+  pillBorderClass: "border-red-200/90",
+  pillBgClass: "bg-white/70",
+  pillIconClass: "text-red-500",
   watermarkIcon: Mountain,
 };
 
@@ -78,7 +79,7 @@ const TraitCardHeader: React.FC<TraitCardHeaderProps> = ({ title, icon: Icon, th
       <Icon className={`h-6 w-6 ${theme.iconClass}`} aria-hidden="true" />
     </div>
 
-    <h3 className="min-w-0 flex-1 font-serif text-lg font-bold uppercase tracking-wide text-navy dark:text-cream sm:text-xl">
+    <h3 className="min-w-0 flex-1 font-serif text-lg font-bold uppercase tracking-wide text-navy sm:text-xl">
       {title}
     </h3>
 
@@ -131,7 +132,7 @@ const TraitPanelCard: React.FC<TraitPanelCardProps> = ({
 
   return (
     <article
-      className={`relative overflow-hidden rounded-2xl border p-6 sm:rounded-3xl sm:p-8 ${theme.cardBorderClass} ${theme.cardBgClass}`}
+      className={`relative overflow-hidden rounded-2xl border p-6 sm:rounded-3xl sm:p-8 ${theme.cardBorderClass} ${theme.cardBgClass} ${lightPanelClass}`}
     >
       <WatermarkIcon
         className={`pointer-events-none absolute -bottom-4 -right-2 h-28 w-28 opacity-[0.08] ${theme.iconClass}`}

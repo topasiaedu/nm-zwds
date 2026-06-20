@@ -8,12 +8,15 @@ import useTransformations from "./hooks/useTransformations";
 import Palace from "./components/Palace";
 import CenterInfo from "./components/CenterInfo";
 import TransformationLines from "./components/TransformationLines";
+import {
+  chartCanvasOuterClass,
+  chartGridClass,
+} from "../../styles/chartUi";
 import { useLanguage } from "../../context/LanguageContext";
 import { useChartSettings } from "../../context/ChartSettingsContext";
 import { PALACE_NAMES } from "../../utils/zwds/constants";
 
 // Breakpoint constants - matching TailwindCSS defaults
-const SCREEN_SM = 640;
 
 // Da Ming tag labels. Spread direction (clockwise vs anticlockwise) depends on gender + Yin/Yang.
 const PALACE_TAGS = [
@@ -373,6 +376,16 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
     }
   }, [selectedPalaceNameControlled]);
 
+  // Re-measure star refs after resize/orientation when a palace is selected
+  useEffect(() => {
+    if (!selectedPalace) {
+      return;
+    }
+    setRefsReady(false);
+    const timer = setTimeout(() => setRefsReady(true), 50);
+    return () => clearTimeout(timer);
+  }, [windowSize, selectedPalace, setRefsReady]);
+
   /**
    * Handle Da Xian click
    * Memoized to prevent unnecessary re-renders.
@@ -585,21 +598,15 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
 
   return (
     <motion.div
-      className="w-full mx-auto aspect-square md:aspect-square relative"
+      className={chartCanvasOuterClass}
       initial={isPdfExport ? false : "hidden"}
       animate={isPdfExport ? false : "visible"}
       variants={containerVariants}
       ref={chartRef}
       data-zwds-chart-container="true"
-      style={{
-        minHeight:
-          windowSize.width < SCREEN_SM ? "calc(100vh - 50px)" : undefined,
-        height:
-          windowSize.width < SCREEN_SM ? "calc(100vh - 260px)" : undefined,
-        maxHeight: "900px",
-      }}>
+    >
       <motion.div
-        className={`zwds-chart-grid grid grid-cols-4 grid-rows-4 gap-1.5 xs:gap-2 sm:gap-1.5 md:gap-1 p-1 xs:p-1.5 sm:p-1 md:p-1 h-full rounded-xl ${
+        className={`${chartGridClass} ${
           isPdfExport ? "bg-white" : "bg-surface-warm/50 dark:bg-surface-darkSecondary/80"
         }`}
         initial={isPdfExport ? false : { opacity: 0 }}

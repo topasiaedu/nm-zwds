@@ -29,6 +29,17 @@ const MAX_ARCHETYPE_TRAITS = 4;
 
 const TRAIT_ICONS: LucideIcon[] = [Leaf, Eye, ArrowUpRight, Star];
 
+/**
+ * Right-panel artwork — light PNG only; hidden in dark mode (PNG has baked-in cream bg).
+ */
+const PersonalitySectionBackground: React.FC = () => (
+  <div
+    className="pointer-events-none absolute inset-0 bg-contain bg-right bg-no-repeat opacity-90 dark:hidden"
+    style={{ backgroundImage: `url(${PERSONALITY_BG_IMAGE})` }}
+    aria-hidden="true"
+  />
+);
+
 export type CorePersonalitySectionProps = {
   personalityProfiles: PersonalityProfile[];
   supplementaryProfiles: PersonalityProfile[];
@@ -199,11 +210,7 @@ export const CorePersonalitySection: React.FC<CorePersonalitySectionProps> = ({
         </div>
 
         <div className="relative flex min-h-[22rem] w-full items-center justify-center px-6 pb-8 pt-4 lg:w-[40%] lg:px-8 lg:py-10">
-          <div
-            className="pointer-events-none absolute inset-0 bg-contain bg-right bg-no-repeat opacity-90"
-            style={{ backgroundImage: `url(${PERSONALITY_BG_IMAGE})` }}
-            aria-hidden="true"
-          />
+          <PersonalitySectionBackground />
 
           {personalityProfiles.length > 0 ? (
             <div className="relative z-10 flex w-full max-w-[17rem] flex-col gap-5">
