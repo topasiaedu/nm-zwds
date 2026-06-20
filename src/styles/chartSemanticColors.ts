@@ -73,13 +73,6 @@ export const chartTransformationSemantic: Record<
   },
 };
 
-const transformationFallback = {
-  lineColor: "rgba(107, 114, 128, 0.7)",
-  shadowColor: "rgba(107, 114, 128, 0.3)",
-  borderRgba: "rgba(107, 114, 128, 0.7)",
-  ringClass: "",
-};
-
 /**
  * Line colors for transformation connector SVG paths.
  */

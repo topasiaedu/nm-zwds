@@ -15,7 +15,6 @@ import {
 } from "lucide-react";
 import { lightPanelClass } from "../../styles/chartUi";
 import {
-  analysisHeroTitleClass,
   analysisPanelTitleClass,
 } from "../../styles/typographyUi";
 import { ChartData } from "../../utils/zwds/types";
