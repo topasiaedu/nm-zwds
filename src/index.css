@@ -506,21 +506,17 @@
   height: 100%;
 }
 
-/* Enlarge center 2×2 relative to corner/side palaces */
+/* Equal 4×4 grid — every palace cell and the 2×2 center are the same unit size */
 .zwds-chart-grid {
-  grid-template-columns: 0.88fr 1.12fr 1.12fr 0.88fr;
-  grid-template-rows: 0.88fr 1.12fr 1.12fr 0.88fr;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(4, 1fr);
 }
 
 @media (max-width: 639px) {
   .zwds-chart-grid {
     touch-action: manipulation;
-    grid-template-columns: 0.88fr 1.12fr 1.12fr 0.88fr;
-    grid-template-rows:
-      minmax(9.5rem, 0.88fr)
-      minmax(10.5rem, 1.12fr)
-      minmax(10.5rem, 1.12fr)
-      minmax(9.5rem, 0.88fr);
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(4, minmax(9.5rem, 1fr));
   }
 
   [data-zwds-chart-container="true"] {

@@ -17,6 +17,7 @@ interface TransformationLinesProps {
     isOppositeInfluence?: boolean;
   }>;
   chartRef: React.RefObject<HTMLDivElement>;
+  centerRef?: React.RefObject<HTMLDivElement>;
   palaceRefs: React.MutableRefObject<(HTMLDivElement | null)[]>;
   starRefs: React.MutableRefObject<Map<string, HTMLDivElement>>;
   refsReady: boolean;
@@ -141,36 +142,102 @@ const trimPointToward = (
   return { x: fromX + dx * ratio, y: fromY + dy * ratio };
 };
 
+type SimpleRect = { left: number; top: number; right: number; bottom: number };
+
+const isInsideRect = (x: number, y: number, r: SimpleRect): boolean =>
+  x >= r.left && x <= r.right && y >= r.top && y <= r.bottom;
+
 /**
- * Build a single straight segment from the palace border to just before the star.
- * The arrow SVG renders above all layers (z-[100]) so no center-panel routing needed.
+ * Clip a line segment so it stops at the first edge of the center rect it crosses.
+ * Works whether the endpoint lands inside (trim to entry point) or the line passes
+ * through (trim to entry point). Returns the original endpoint if no crossing occurs.
+ */
+const clipLineToCenterBorder = (
+  x1: number,
+  y1: number,
+  x2: number,
+  y2: number,
+  centerRect: SimpleRect | null
+): { x: number; y: number } => {
+  if (!centerRect) return { x: x2, y: y2 };
+
+  // Start must be outside the rect for clipping to make sense
+  if (isInsideRect(x1, y1, centerRect)) return { x: x2, y: y2 };
+  // If endpoint is already outside, no clipping needed
+  if (!isInsideRect(x2, y2, centerRect)) return { x: x2, y: y2 };
+
+  const dx = x2 - x1;
+  const dy = y2 - y1;
+  const eps = 1e-8;
+
+  // Entry parameter — smallest positive t where the ray hits a rect edge
+  let tEntry = Infinity;
+
+  // Left edge: x = left, top ≤ y ≤ bottom
+  if (Math.abs(dx) > eps) {
+    const t = (centerRect.left - x1) / dx;
+    if (t > eps) {
+      const iy = y1 + t * dy;
+      if (iy >= centerRect.top && iy <= centerRect.bottom && t < tEntry) tEntry = t;
+    }
+  }
+  // Right edge: x = right
+  if (Math.abs(dx) > eps) {
+    const t = (centerRect.right - x1) / dx;
+    if (t > eps) {
+      const iy = y1 + t * dy;
+      if (iy >= centerRect.top && iy <= centerRect.bottom && t < tEntry) tEntry = t;
+    }
+  }
+  // Top edge: y = top, left ≤ x ≤ right
+  if (Math.abs(dy) > eps) {
+    const t = (centerRect.top - y1) / dy;
+    if (t > eps) {
+      const ix = x1 + t * dx;
+      if (ix >= centerRect.left && ix <= centerRect.right && t < tEntry) tEntry = t;
+    }
+  }
+  // Bottom edge: y = bottom
+  if (Math.abs(dy) > eps) {
+    const t = (centerRect.bottom - y1) / dy;
+    if (t > eps) {
+      const ix = x1 + t * dx;
+      if (ix >= centerRect.left && ix <= centerRect.right && t < tEntry) tEntry = t;
+    }
+  }
+
+  if (tEntry === Infinity) return { x: x2, y: y2 };
+  return { x: x1 + tEntry * dx, y: y1 + tEntry * dy };
+};
+
+/**
+ * Build a single straight segment from the palace center to just before the star,
+ * clipped to the center panel border when the star is inside that panel.
  */
 const buildRegularTransformationSegments = (
-  fromRect: DOMRect,
-  fromPalace: number,
   fromCenterX: number,
   fromCenterY: number,
   toStarX: number,
-  toStarY: number
+  toStarY: number,
+  centerRect: { left: number; top: number; right: number; bottom: number } | null
 ): LineSegment[] => {
-  const borderStart = calculateCenteredBorderPoint(
-    fromRect,
+  const trimmedEnd = trimPointToward(
     fromCenterX,
     fromCenterY,
-    toStarX,
-    toStarY,
-    fromPalace
-  );
-
-  const trimmedEnd = trimPointToward(
-    borderStart.x,
-    borderStart.y,
     toStarX,
     toStarY,
     STAR_ENDPOINT_TRIM_PX
   );
 
-  return [{ x1: borderStart.x, y1: borderStart.y, x2: trimmedEnd.x, y2: trimmedEnd.y }];
+  const clippedEnd = clipLineToCenterBorder(
+    fromCenterX,
+    fromCenterY,
+    trimmedEnd.x,
+    trimmedEnd.y,
+    centerRect
+  );
+
+  return [{ x1: fromCenterX, y1: fromCenterY, x2: clippedEnd.x, y2: clippedEnd.y }];
 };
 
 const getArrowheadPoints = (
@@ -199,6 +266,7 @@ const getArrowheadPoints = (
 const TransformationLines: React.FC<TransformationLinesProps> = ({
   transformations,
   chartRef,
+  centerRef,
   palaceRefs,
   starRefs,
   refsReady,
@@ -223,6 +291,17 @@ const TransformationLines: React.FC<TransformationLinesProps> = ({
   }
   
   const chartRect = chartRef.current.getBoundingClientRect();
+
+  // Center panel exclusion rect — clip arrows that would end inside it
+  const centerBounds = centerRef?.current?.getBoundingClientRect() ?? null;
+  const centerRect = centerBounds
+    ? {
+        left: centerBounds.left - chartRect.left,
+        top: centerBounds.top - chartRect.top,
+        right: centerBounds.right - chartRect.left,
+        bottom: centerBounds.bottom - chartRect.top,
+      }
+    : null;
 
   // Separate transformations into regular and opposite palace influences
   const regularTransformations = transformations.filter(t => !t.isOppositeInfluence);
@@ -297,48 +376,36 @@ const TransformationLines: React.FC<TransformationLinesProps> = ({
       const isSelfTransformation = transformation.fromPalace === transformation.toPalace;
       
       if (isSelfTransformation) {
-        const borderStart = calculateCenteredBorderPoint(
-          fromRect,
-          fromX,
-          fromY,
-          toStarX,
-          toStarY,
-          transformation.fromPalace
-        );
-
-        // For self-transformations, draw a curved arc from the palace border toward the star
-        const starX = toStarX - borderStart.x;
-        const starY = toStarY - borderStart.y;
+        // For self-transformations, draw a curved arc from the palace center toward the star
+        const starX = toStarX - fromX;
+        const starY = toStarY - fromY;
         
-        // Determine the direction to bend the arc based on star position
+        // Determine the direction to bend the arc based on star position relative to center
         let angle;
         if (Math.abs(starX) > Math.abs(starY)) {
-          // Star is more horizontal from palace center
           angle = starX > 0 ? Math.PI * 3/4 : Math.PI * 1/4;
         } else {
-          // Star is more vertical from palace center
           angle = starY > 0 ? Math.PI * 5/4 : Math.PI * 7/4;
         }
         
-        // Create control points for a bezier curve
+        // Control point radius — based on palace size for a natural curve
         const radius = Math.min(fromRect.width, fromRect.height) * 0.35;
         
-        // Calculate control point coordinates for a quadratic bezier curve
-        const controlX = borderStart.x + radius * Math.cos(angle);
-        const controlY = borderStart.y + radius * Math.sin(angle);
+        const controlX = fromX + radius * Math.cos(angle);
+        const controlY = fromY + radius * Math.sin(angle);
         
         // Create animated dashes for the arc
-        const arcLength = Math.PI * radius; // Approximate arc length
+        const arcLength = Math.PI * radius;
         const dashLength = arcLength / 10;
         const dashArray = `${dashLength},${dashLength/2}`;
         
-        // Calculate arrowhead angle
+        // Calculate arrowhead angle from last control point to tip
         const arrowAngle = Math.atan2(toStarY - controlY, toStarX - controlX);
         
         return (
           <g key={lineKey} style={lineStyle}>
             <motion.path
-              d={`M ${borderStart.x} ${borderStart.y} Q ${controlX} ${controlY} ${toStarX} ${toStarY}`}
+              d={`M ${fromX} ${fromY} Q ${controlX} ${controlY} ${toStarX} ${toStarY}`}
               fill="none"
               stroke={lineColor}
               strokeWidth={strokeWidth}
@@ -372,12 +439,11 @@ const TransformationLines: React.FC<TransformationLinesProps> = ({
         );
       } else {
         const segments = buildRegularTransformationSegments(
-          fromRect,
-          transformation.fromPalace,
           fromX,
           fromY,
           toStarX,
-          toStarY
+          toStarY,
+          centerRect
         );
 
         if (segments.length === 0) {

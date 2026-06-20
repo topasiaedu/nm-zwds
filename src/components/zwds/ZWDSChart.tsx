@@ -646,6 +646,7 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
         <TransformationLines
           transformations={getAllTransformations}
           chartRef={chartRef}
+          centerRef={centerRef}
           palaceRefs={palaceRefs}
           starRefs={starRefs}
           refsReady={refsReady}

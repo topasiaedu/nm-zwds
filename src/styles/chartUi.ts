@@ -236,7 +236,7 @@ export const chartCanvasOuterClass = [
   "lg:min-h-[34rem]",
 ].join(" ");
 
-/** Inner 4×4 palace grid — center 2×2 uses larger fractional tracks (see index.css). */
+/** Inner 4×4 palace grid — equal 1fr tracks so every cell and the 2×2 center are the same unit size. */
 export const chartGridClass = [
   "zwds-chart-grid relative z-0 grid h-full w-full min-h-0",
   "grid-cols-4 grid-rows-4",
@@ -516,7 +516,8 @@ export const chartCenterHeroWrapClass = [
 ].join(" ");
 
 export const chartCenterHeroClass = [
-  "flex w-full max-h-full min-h-0 flex-col items-center justify-center text-center",
+  "flex max-h-full min-h-0 w-[90%] xs:w-[72%] sm:w-[68%] md:w-[80%] mx-auto",
+  "flex-col items-center justify-center text-center",
   "overflow-hidden",
   "px-1 pt-0 pb-1",
   "xs:px-1.5",
@@ -524,27 +525,27 @@ export const chartCenterHeroClass = [
 ].join(" ");
 
 export const chartCenterEmblemRingClass = [
-  "relative mx-auto flex h-10 w-10 xs:h-12 xs:w-12",
-  "sm:h-20 sm:w-20 md:h-[5.5rem] md:w-[5.5rem]",
+  "relative mx-auto flex h-9 w-9 xs:h-10 xs:w-10",
+  "sm:h-14 sm:w-14 md:h-16 md:w-16",
   "items-center justify-center overflow-hidden rounded-full",
   "border-2 border-[#C5A059]/45 bg-[#FAF9F6] dark:bg-gray-800",
   "p-0.5 shadow-sm",
 ].join(" ");
 
 export const chartCenterNameClass = [
-  "mt-0.5 sm:mt-1 font-serif text-xs font-bold xs:text-sm sm:text-base md:text-lg",
+  "mt-0.5 font-serif text-[10px] font-bold xs:text-xs sm:text-sm md:text-base",
   "text-[#1A2B48] dark:text-white",
   "break-words whitespace-normal max-w-full px-1",
 ].join(" ");
 
 export const chartCenterBlueprintClass = [
-  "text-[9px] font-semibold uppercase tracking-[0.18em] sm:text-xs sm:tracking-[0.22em]",
+  "text-[7px] font-semibold uppercase tracking-[0.16em] sm:text-[8px] sm:tracking-[0.18em]",
   "text-[#C5A059]",
 ].join(" ");
 
 export const chartCenterElementClass = [
-  "mt-0.5 sm:mt-1 flex items-center gap-1",
-  "text-[10px] text-[#4A5568] dark:text-gray-300 sm:text-xs",
+  "mt-0.5 flex items-center gap-0.5",
+  "text-[9px] text-[#4A5568] dark:text-gray-300 sm:text-[10px]",
 ].join(" ");
 
 export const chartCenterDemographicsClass = [
@@ -568,13 +569,13 @@ export const chartCenterDateRowClass =
   "flex min-w-0 items-start gap-2 text-left";
 
 export const chartCenterDateIconWrapClass = [
-  "flex h-6 w-6 shrink-0 items-center justify-center rounded-full",
+  "flex h-5 w-5 shrink-0 items-center justify-center rounded-full",
   "bg-[#F5EFE6] dark:bg-gray-700/80",
-  "sm:h-7 sm:w-7",
+  "sm:h-6 sm:w-6",
 ].join(" ");
 
 export const chartCenterDateIconClass =
-  "h-3 w-3 text-[#C5A059] sm:h-3.5 sm:w-3.5";
+  "h-2.5 w-2.5 text-[#C5A059] sm:h-3 sm:w-3";
 
 export const chartCenterDateLabelClass = [
   "text-[8px] font-semibold uppercase tracking-wide text-[#6B7280] dark:text-gray-400",
@@ -604,27 +605,27 @@ export const chartCenterDetailValueClass = [
 ].join(" ");
 
 export const chartCenterZodiacGridClass = [
-  "grid w-full max-w-[92%] grid-cols-2 gap-1 mt-1.5",
+  "grid w-full max-w-[92%] grid-cols-1 gap-1 mt-1",
   "min-h-0",
-  "xs:gap-1.5",
-  "sm:gap-1.5",
+  "xs:gap-1",
+  "sm:grid-cols-2 sm:gap-1.5",
 ].join(" ");
 
 export const chartCenterZodiacCardClass = [
-  "flex min-w-0 items-center gap-1.5 rounded-lg p-1.5",
-  "max-sm:flex-col max-sm:items-center max-sm:gap-1 max-sm:p-1.5 max-sm:text-center",
+  "flex min-w-0 items-center gap-1 rounded-md p-1",
+  "max-sm:flex-row max-sm:gap-1.5 max-sm:p-1",
   "border border-[#E5DDD0] bg-white/75 shadow-sm",
   "dark:border-gray-600 dark:bg-gray-800/55",
-  "sm:p-2",
+  "sm:gap-1.5 sm:p-1.5",
 ].join(" ");
 
 export const chartCenterZodiacCardLabelClass = [
-  "text-[8px] font-semibold uppercase tracking-wide text-[#6B7280] dark:text-gray-400",
-  "max-sm:leading-tight sm:text-[10px]",
+  "text-[7px] font-semibold uppercase tracking-wide text-[#6B7280] dark:text-gray-400",
+  "max-sm:leading-tight sm:text-[8px]",
 ].join(" ");
 
 export const chartCenterZodiacCardValueClass = [
-  "font-serif text-xs font-bold leading-tight text-[#1A2B48] dark:text-cream",
+  "font-serif text-[10px] font-bold leading-tight text-[#1A2B48] dark:text-cream",
   "break-words whitespace-normal",
-  "sm:text-sm sm:truncate",
+  "sm:text-xs sm:truncate",
 ].join(" ");
