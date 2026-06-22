@@ -1127,6 +1127,7 @@ const ResultContent: React.FC = () => {
                     <div className={chartScrollWrapperClass}>
                       <ZWDSChart
                         chartData={calculatedChartData}
+                        blueprintMode={blueprintMode}
                         targetYear={
                           blueprintMode === "liumonth" ? liuMonthSolarYear : undefined
                         }

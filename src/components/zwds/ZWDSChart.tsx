@@ -16,7 +16,9 @@ import {
 } from "../../styles/chartUi";
 import { useLanguage } from "../../context/LanguageContext";
 import { useChartSettings } from "../../context/ChartSettingsContext";
+import { useTierAccess } from "../../context/TierContext";
 import { PALACE_NAMES } from "../../utils/zwds/constants";
+import { getCurrentDayunPalace } from "../../utils/destiny-navigator/palace-resolver";
 
 // Breakpoint constants - matching TailwindCSS defaults
 
@@ -149,7 +151,22 @@ interface ZWDSChartProps {
    * Only called for user-driven interactions, not controlled prop syncs.
    */
   onDaXianChange?: (palace: number | null) => void;
+  /**
+   * Blueprint/timeframe key for per-mode yellow highlight persistence.
+   * When omitted, a single shared "default" slot is used (e.g. free-result).
+   */
+  blueprintMode?: "dna" | "dayun" | "liunian" | "liumonth";
 }
+
+type BlueprintHighlightKey = "dna" | "dayun" | "liunian" | "liumonth" | "default";
+
+/**
+ * Default yellow highlight set: current Da Yun palace only.
+ */
+const getDefaultHighlightSet = (chartData: ChartData): Set<number> => {
+  const dayunPalace = getCurrentDayunPalace(chartData);
+  return dayunPalace !== null ? new Set([dayunPalace]) : new Set();
+};
 
 /**
  * Component to display the Zi Wei Dou Shu chart in a 4x4 grid layout
@@ -170,6 +187,7 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
   uniformAnnualYearForMonths = false,
   highlightLifePalaceLikeDayun = false,
   liuMonthLifeHighlightPalaceNumber = null,
+  blueprintMode,
 }) => {
   // State to track the selected palace for transformations
   const [selectedPalace, setSelectedPalace] = useState<number | null>(null);
@@ -183,6 +201,19 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
   const [selectedPalaceName, setSelectedPalaceName] = useState<number | null>(
     null
   );
+  const { isAdmin } = useTierAccess();
+  const canUsePalaceHighlights = isAdmin;
+
+  const blueprintHighlightKey: BlueprintHighlightKey = blueprintMode ?? "default";
+  const highlightsByModeRef = useRef<Partial<Record<BlueprintHighlightKey, Set<number>>>>({});
+  const prevBlueprintHighlightKeyRef = useRef<BlueprintHighlightKey | null>(null);
+  const highlightedPalacesRef = useRef<Set<number>>(new Set());
+
+  // User-controlled yellow highlights for the active blueprint/timeframe
+  const [highlightedPalaces, setHighlightedPalaces] = useState<Set<number>>(() =>
+    isPdfExport ? new Set() : getDefaultHighlightSet(chartData)
+  );
+  highlightedPalacesRef.current = highlightedPalaces;
 
   // Sync showMonths with controlled prop.
   // When showMonthsControlled is null, also clear the internal state so months
@@ -192,6 +223,32 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
       setShowMonths(showMonthsControlled);
     }
   }, [showMonthsControlled]);
+
+  // Save highlights for the outgoing mode and restore (or default) for the incoming mode
+  useEffect(() => {
+    if (isPdfExport || !canUsePalaceHighlights) {
+      return;
+    }
+
+    const prevKey = prevBlueprintHighlightKeyRef.current;
+
+    if (prevKey !== null && prevKey !== blueprintHighlightKey) {
+      highlightsByModeRef.current[prevKey] = new Set(highlightedPalacesRef.current);
+    }
+
+    if (prevKey === null || prevKey !== blueprintHighlightKey) {
+      const saved = highlightsByModeRef.current[blueprintHighlightKey];
+      if (saved !== undefined) {
+        setHighlightedPalaces(new Set(saved));
+      } else {
+        const defaultSet = getDefaultHighlightSet(chartData);
+        highlightsByModeRef.current[blueprintHighlightKey] = new Set(defaultSet);
+        setHighlightedPalaces(new Set(defaultSet));
+      }
+    }
+
+    prevBlueprintHighlightKeyRef.current = blueprintHighlightKey;
+  }, [blueprintHighlightKey, chartData, isPdfExport, canUsePalaceHighlights]);
 
   const { language } = useLanguage();
   const { settings } = useChartSettings();
@@ -350,6 +407,25 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
 
     // Redraw counter removed to prevent flashing
   }, [disableInteraction, settings.palaceClickInteraction, selectedPalace, refsReady, setRefsReady]);
+
+  /**
+   * Toggle user yellow highlight on double-click (gated like single palace click).
+   */
+  const handleToggleHighlight = useCallback((palaceNumber: number) => {
+    if (disableInteraction || !settings.palaceClickInteraction || !canUsePalaceHighlights) {
+      return;
+    }
+    setHighlightedPalaces((prev) => {
+      const next = new Set(prev);
+      if (next.has(palaceNumber)) {
+        next.delete(palaceNumber);
+      } else {
+        next.add(palaceNumber);
+      }
+      highlightsByModeRef.current[blueprintHighlightKey] = next;
+      return next;
+    });
+  }, [disableInteraction, settings.palaceClickInteraction, blueprintHighlightKey, canUsePalaceHighlights]);
 
   // Sync internal selection with controlled prop if provided
   useEffect(() => {
@@ -595,6 +671,13 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
         disableInteraction={disableInteraction}
         chartSettings={settings}
         isLifePalaceLiuMonthHighlight={isLifePalaceLiuMonthHighlight}
+        canUsePalaceHighlights={canUsePalaceHighlights}
+        isUserHighlighted={
+          canUsePalaceHighlights &&
+          !isPdfExport &&
+          highlightedPalaces.has(palaceNumber)
+        }
+        onToggleHighlight={handleToggleHighlight}
       />
     );
   };

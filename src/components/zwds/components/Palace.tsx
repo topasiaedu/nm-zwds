@@ -122,6 +122,12 @@ interface PalaceProps {
   chartSettings: ChartSettings; // Chart settings to control feature visibility
   /** Amber Da Yun-style glow for Liu Month / Liu Nian timeframe life palace (bottom label shows Life). */
   isLifePalaceLiuMonthHighlight?: boolean;
+  /** When true, double-click yellow highlights are enabled (admin only). */
+  canUsePalaceHighlights: boolean;
+  /** User-applied yellow highlight (double-click toggle). */
+  isUserHighlighted: boolean;
+  /** Toggle user yellow highlight for this palace. */
+  onToggleHighlight: (palaceNumber: number) => void;
 }
 
 /**
@@ -153,11 +159,13 @@ const Palace: React.FC<PalaceProps> = ({
   disableInteraction = false,
   chartSettings,
   isLifePalaceLiuMonthHighlight = false,
+  canUsePalaceHighlights,
+  isUserHighlighted,
+  onToggleHighlight,
 }) => {
   const { t, language } = useLanguage();
   const isDesktopChart = useIsDesktopChart();
   const clickTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
-  const [isHighlighted, setIsHighlighted] = React.useState(false);
 
   // Handle click with timing to support both single and double clicks
   const handleClick = () => {
@@ -173,12 +181,12 @@ const Palace: React.FC<PalaceProps> = ({
         clickTimeoutRef.current = null;
       }, 250); // 250ms threshold for double click
     } else {
-      // Second click within threshold
-      console.log("Double click detected on palace", palaceNumber);
+      // Second click within threshold — toggle yellow highlight
       clearTimeout(clickTimeoutRef.current);
       clickTimeoutRef.current = null;
-      // Double click - toggle highlight
-      setIsHighlighted(prev => !prev);
+      if (chartSettings.palaceClickInteraction && canUsePalaceHighlights) {
+        onToggleHighlight(palaceNumber);
+      }
     }
   };
 
@@ -216,8 +224,12 @@ const Palace: React.FC<PalaceProps> = ({
     palace.majorLimit.startAge <= ageToCheck &&
     palace.majorLimit.endAge >= ageToCheck;
 
-  /** Amber gradient / ring / pulse; includes Liu Month Life Palace when requested. */
-  const hasDayunStyleGlow = isCurrentDaXian || isLifePalaceLiuMonthHighlight;
+  /** Admin: user-applied yellow glow. Non-admin: automatic Da Yun / Liu life palace glow. */
+  const hasYellowGlow =
+    !isSelected &&
+    (canUsePalaceHighlights
+      ? isUserHighlighted
+      : isCurrentDaXian || isLifePalaceLiuMonthHighlight);
 
   // Animation variants for palaces
   const palaceVariants = isPdfExport ? undefined : {
@@ -344,9 +356,9 @@ const Palace: React.FC<PalaceProps> = ({
     };
   }
 
-  // Fixed style for current da xian (or Life Palace in Liu Month) with glow effect
+  // Fixed style for user-highlighted palace with glow effect
   const daXianStyle =
-    hasDayunStyleGlow && !isSelected
+    hasYellowGlow
       ? {
           backgroundImage:
             "linear-gradient(135deg, rgba(252, 211, 77, 0.7), rgba(251, 191, 36, 0.65))",
@@ -362,7 +374,7 @@ const Palace: React.FC<PalaceProps> = ({
       ? { boxShadow: chartBrandChrome.selectionGlow }
       : isTargetPalace
       ? targetHighlightStyle
-      : hasDayunStyleGlow
+      : hasYellowGlow
       ? {
           /* boxShadow already set in daXianStyle */
         }
@@ -865,10 +877,10 @@ const Palace: React.FC<PalaceProps> = ({
   return (
     <motion.div
       key={`palace-${palaceNumber}-${selectedPalace}`}
-      className={`${chartPalaceShellClass} ${hasDayunStyleGlow ? "pulse-button" : ""} ${
+      className={`relative border ${hasYellowGlow ? "pulse-button" : ""} border-gray-100 dark:border-gray-700 p-0.5 xs:p-1 sm:p-2 md:p-3 h-full overflow-hidden min-h-[140px] xs:min-h-[180px] sm:min-h-[130px] md:min-h-[150px] ${
         isSelected
-          ? "zwds-palace-selected bg-gradient-brand-purple"
-          : hasDayunStyleGlow && !isSelected
+          ? "bg-indigo-50/80 dark:bg-indigo-900/30 text-white"
+          : hasYellowGlow
           ? "bg-gradient-to-br from-yellow-100 to-amber-300 dark:from-yellow-400/70 dark:to-amber-400/60"
           : chartPalaceCardClass
       } ${
@@ -876,10 +888,8 @@ const Palace: React.FC<PalaceProps> = ({
           ? `ring-1 sm:ring-2 ${chartBrandChrome.selectionRingClass}`
           : isTargetPalace
           ? `ring-1 sm:ring-1 ${transformationBorderColor}`
-          : hasDayunStyleGlow && !isSelected
+          : hasYellowGlow
           ? "ring-2 ring-amber-400/80 dark:ring-amber-400/80"
-          : isHighlighted
-          ? "ring-2 ring-red-500 dark:ring-red-500"
           : ""
       }`}
       variants={palaceVariants}
