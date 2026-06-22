@@ -1,132 +1,125 @@
+/**
+ * FourKeyPalace — Destiny Alert Map (Section 05)
+ *
+ * 2×2 grid of natal transformations (祿 / 權 / 科 / 忌) — themed signal cards.
+ */
+
 import React from "react";
+import {
+  AlertTriangle,
+  Compass,
+  Crown,
+  Sparkles,
+  Star,
+  User,
+  Wallet,
+  type LucideIcon,
+} from "lucide-react";
 import { ChartData } from "../../utils/zwds/types";
 import { analyzeDestinyAlert } from "../../utils/zwds/analysis";
-import GradientSectionHeader from "./shared/GradientSectionHeader";
+import type { PalaceAlertData } from "../../utils/zwds/analysis/destinyAlertAnalysis";
+import { AnalysisSectionHeader } from "./shared/AnalysisSectionHeader";
+import { lightPanelClass } from "../../styles/chartUi";
+
+type MetricBar = {
+  label: string;
+  value: number;
+};
 
 /**
- * Color and content configuration per transformation type.
- * All colors are defined as CSS strings (not Tailwind classes) to prevent
- * Tailwind JIT from purging dynamically-referenced utility names.
+ * Per-transformation visual theme and static energy profile bars.
  */
 type TransformationConfig = {
-  /** Hero question displayed at the top of the card */
-  heroQuestion: string;
-  /** Emoji icon for the hero question */
-  icon: string;
-  /** 3 energy bars — label + fixed percentage (static per transformation type) */
-  bars: Array<{ label: string; pct: number }>;
-  /** CSS gradient string for the colored header strip */
-  headerGradient: string;
-  /** CSS gradient string for the card body background */
-  bodyGradient: string;
-  /** CSS box-shadow / border color for the card */
-  borderColor: string;
-  /** CSS color for the bar fill */
-  barFill: string;
-  /** CSS gradient for the bar fill (richer than flat color) */
-  barGradient: string;
-  /** CSS color for the palace name headline text */
-  palaceColor: string;
-  /** CSS color for the watermark character */
-  watermarkColor: string;
-  /** The single Chinese character shown as a watermark (祿/權/科/忌) */
-  watermarkChar: string;
-  /** CSS box shadow for the card */
-  cardShadow: string;
+  heroQuestionPrefix: string;
+  heroQuestionHighlight: string;
+  heroQuestionSuffix: string;
+  icon: LucideIcon;
+  accentColor: string;
+  cardBg: string;
+  barTrackColor: string;
+  badgeBg: string;
+  transformationChar: string;
+  metrics: MetricBar[];
 };
 
-/**
- * Static transformation metadata — one entry per transformation type.
- * Bar percentages reflect the classical ZWDS energy profile of each transformation.
- */
 const TRANSFORMATION_CONFIG: Record<string, TransformationConfig> = {
   "化祿": {
-    heroQuestion: "WHERE DOES WEALTH FLOW?",
-    icon: "💰",
-    bars: [
-      { label: "Abundance", pct: 85 },
-      { label: "Flow", pct: 70 },
-      { label: "Ease", pct: 60 },
+    heroQuestionPrefix: "WHERE DOES ",
+    heroQuestionHighlight: "WEALTH",
+    heroQuestionSuffix: " FLOW?",
+    icon: Wallet,
+    accentColor: "#2D7A4D",
+    cardBg: "#F3FAF6",
+    barTrackColor: "#D8EDE3",
+    badgeBg: "#E4F4EA",
+    transformationChar: "祿",
+    metrics: [
+      { label: "Abundance", value: 85 },
+      { label: "Flow", value: 70 },
+      { label: "Ease", value: 60 },
     ],
-    headerGradient: "linear-gradient(135deg, #047857 0%, #059669 50%, #10b981 100%)",
-    bodyGradient: "linear-gradient(145deg, #f0fdf4 0%, #dcfce7 100%)",
-    borderColor: "#86efac",
-    barFill: "#059669",
-    barGradient: "linear-gradient(90deg, #047857, #10b981)",
-    palaceColor: "#065f46",
-    watermarkColor: "#059669",
-    watermarkChar: "祿",
-    cardShadow: "0 4px 24px rgba(5,150,105,0.12)",
   },
   "化權": {
-    heroQuestion: "WHERE DOES POWER RISE?",
-    icon: "👑",
-    bars: [
-      { label: "Authority", pct: 90 },
-      { label: "Drive", pct: 75 },
-      { label: "Control", pct: 65 },
+    heroQuestionPrefix: "WHERE DOES ",
+    heroQuestionHighlight: "POWER",
+    heroQuestionSuffix: " RISE?",
+    icon: Crown,
+    accentColor: "#1D63B8",
+    cardBg: "#F2F7FD",
+    barTrackColor: "#DCE9F8",
+    badgeBg: "#E3EEF8",
+    transformationChar: "權",
+    metrics: [
+      { label: "Authority", value: 90 },
+      { label: "Drive", value: 75 },
+      { label: "Control", value: 65 },
     ],
-    headerGradient: "linear-gradient(135deg, #1e40af 0%, #2563eb 50%, #3b82f6 100%)",
-    bodyGradient: "linear-gradient(145deg, #eff6ff 0%, #dbeafe 100%)",
-    borderColor: "#93c5fd",
-    barFill: "#2563eb",
-    barGradient: "linear-gradient(90deg, #1e40af, #3b82f6)",
-    palaceColor: "#1e3a8a",
-    watermarkColor: "#2563eb",
-    watermarkChar: "權",
-    cardShadow: "0 4px 24px rgba(37,99,235,0.12)",
   },
   "化科": {
-    heroQuestion: "WHERE DOES YOUR FAME RISE?",
-    icon: "🌟",
-    bars: [
-      { label: "Reputation", pct: 85 },
-      { label: "Visibility", pct: 70 },
-      { label: "Recognition", pct: 60 },
+    heroQuestionPrefix: "WHERE DOES YOUR ",
+    heroQuestionHighlight: "FAME",
+    heroQuestionSuffix: " RISE?",
+    icon: Star,
+    accentColor: "#D97706",
+    cardBg: "#FFF8F0",
+    barTrackColor: "#FCEBD5",
+    badgeBg: "#FEF0DC",
+    transformationChar: "科",
+    metrics: [
+      { label: "Reputation", value: 85 },
+      { label: "Visibility", value: 70 },
+      { label: "Recognition", value: 60 },
     ],
-    headerGradient: "linear-gradient(135deg, #b45309 0%, #d97706 50%, #f59e0b 100%)",
-    bodyGradient: "linear-gradient(145deg, #fffbeb 0%, #fef3c7 100%)",
-    borderColor: "#fcd34d",
-    barFill: "#d97706",
-    barGradient: "linear-gradient(90deg, #b45309, #f59e0b)",
-    palaceColor: "#92400e",
-    watermarkColor: "#d97706",
-    watermarkChar: "科",
-    cardShadow: "0 4px 24px rgba(217,119,6,0.12)",
   },
   "化忌": {
-    heroQuestion: "WHERE IS ENERGY BLOCKED?",
-    icon: "⚠️",
-    bars: [
-      { label: "Blockage", pct: 80 },
-      { label: "Resistance", pct: 65 },
-      { label: "Challenge", pct: 55 },
+    heroQuestionPrefix: "WHERE IS ",
+    heroQuestionHighlight: "ENERGY",
+    heroQuestionSuffix: " BLOCKED?",
+    icon: AlertTriangle,
+    accentColor: "#DC2626",
+    cardBg: "#FEF5F5",
+    barTrackColor: "#FCE0E0",
+    badgeBg: "#FCE8E8",
+    transformationChar: "忌",
+    metrics: [
+      { label: "Blockage", value: 80 },
+      { label: "Resistance", value: 65 },
+      { label: "Challenge", value: 55 },
     ],
-    headerGradient: "linear-gradient(135deg, #9f1239 0%, #dc2626 50%, #ef4444 100%)",
-    bodyGradient: "linear-gradient(145deg, #fff1f2 0%, #ffe4e6 100%)",
-    borderColor: "#fda4af",
-    barFill: "#dc2626",
-    barGradient: "linear-gradient(90deg, #9f1239, #ef4444)",
-    palaceColor: "#9f1239",
-    watermarkColor: "#dc2626",
-    watermarkChar: "忌",
-    cardShadow: "0 4px 24px rgba(220,38,38,0.12)",
   },
 };
 
-/** Normalise traditional/simplified transformation variants to a single config key */
-const normaliseTransformation = (t: string): string => {
-  if (t === "化禄") return "化祿";
-  if (t === "化权") return "化權";
-  return t;
+const normaliseTransformation = (transformation: string): string => {
+  if (transformation === "化禄") {
+    return "化祿";
+  }
+  if (transformation === "化权") {
+    return "化權";
+  }
+  return transformation;
 };
 
-/**
- * Maps Chinese star names (both traditional and simplified) to their Pinyin equivalents.
- * Covers all 14 main stars plus the 4 auxiliary stars that can carry transformations.
- */
 const STAR_NAME_TO_PINYIN: Record<string, string> = {
-  // Traditional
   "紫微": "Zi Wei",
   "天機": "Tian Ji",
   "太陽": "Tai Yang",
@@ -145,7 +138,6 @@ const STAR_NAME_TO_PINYIN: Record<string, string> = {
   "文曲": "Wen Qu",
   "左輔": "Zuo Fu",
   "右弼": "You Bi",
-  // Simplified (chart data may use either)
   "天机": "Tian Ji",
   "太阳": "Tai Yang",
   "廉贞": "Lian Zhen",
@@ -157,218 +149,219 @@ const STAR_NAME_TO_PINYIN: Record<string, string> = {
   "左辅": "Zuo Fu",
 };
 
-/**
- * Returns the Pinyin name for a star, or the original Chinese name if no mapping exists.
- */
 const getStarPinyin = (chineseName: string): string =>
   STAR_NAME_TO_PINYIN[chineseName] ?? chineseName;
 
-/**
- * Props for the FourKeyPalace component
- */
 type FourKeyPalaceProps = {
   chartData: ChartData;
-  /**
-   * Optional function that maps a physical palace number (1–12) to an
-   * English palace name for the active timeframe.
-   * When provided, this overrides the natal palace name from the analysis result.
-   * When not provided (or returns an empty string), the natal name is used.
-   */
   resolvePalaceName?: (palaceNumber: number) => string;
-  /** Static mode for PDF capture. */
   forPdfCapture?: boolean;
 };
 
-/**
- * FourKeyPalace — Destiny Alert Map
- *
- * Displays a 2×2 grid of the four natal transformations. Each card shows:
- *   Zone 1: Hero question (what this transformation answers)
- *   Zone 2: Palace name (the answer) + triggering star in pinyin
- *   Zone 3: Energy profile bars (static per transformation type)
- *   Zone 4: 3-line insight (theme, reality, directive)
- */
-const FourKeyPalace: React.FC<FourKeyPalaceProps> = ({ chartData, resolvePalaceName, forPdfCapture }) => {
-  const analysisResult = analyzeDestinyAlert(chartData);
+type MetricBarRowProps = {
+  label: string;
+  value: number;
+  accentColor: string;
+};
 
-  if (analysisResult.alerts.length === 0) {
-    return (
-      <div className="dark:bg-gray-900">
-        <div {...(forPdfCapture ? { "data-pdf-page-break-before": "" } : {})}>
-          <GradientSectionHeader
-            badgeText="05"
-            title="DESTINY ALERT MAP"
-            subtitle="Four signals showing where your life force is most activated."
-            showDivider={!forPdfCapture}
-            forPdfCapture={forPdfCapture}
-          />
-        </div>
-        <p className="text-center text-gray-500 dark:text-gray-400 py-8 px-6">
-          No transformation data available.
-        </p>
-      </div>
-    );
-  }
+/**
+ * Single labeled progress bar with percentage.
+ */
+const MetricBarRow: React.FC<MetricBarRowProps> = ({
+  label,
+  value,
+  accentColor,
+}) => (
+  <div className="flex items-center gap-3">
+    <span className="w-[5.5rem] shrink-0 text-xs text-theme-fg-secondary">
+      {label}
+    </span>
+    <div className="h-2 min-w-0 flex-1 overflow-hidden rounded-full [background-color:var(--alert-track)]">
+      <div
+        className="h-full rounded-full transition-[width] duration-500 ease-out"
+        style={{ width: `${value}%`, backgroundColor: accentColor }}
+      />
+    </div>
+    <span
+      className="w-9 shrink-0 text-right text-xs font-semibold"
+      style={{ color: accentColor }}
+    >
+      {value}%
+    </span>
+  </div>
+);
+
+type DestinyAlertCardProps = {
+  alert: PalaceAlertData;
+  config: TransformationConfig;
+  displayPalace: string;
+  pdfPageBreakBefore?: boolean;
+};
+
+/**
+ * Single destiny alert signal card — hero question, metrics, insight copy.
+ */
+const DestinyAlertCard: React.FC<DestinyAlertCardProps> = ({
+  alert,
+  config,
+  displayPalace,
+  pdfPageBreakBefore,
+}) => {
+  const HeaderIcon = config.icon;
+
+  const cardStyle = {
+    "--alert-accent": config.accentColor,
+    "--alert-card-bg": config.cardBg,
+    "--alert-border": `${config.accentColor}22`,
+    "--alert-badge-bg": config.badgeBg,
+    "--alert-track": config.barTrackColor,
+  } as React.CSSProperties;
 
   return (
-    <div className="dark:bg-gray-900">
-      {/* Section header — matches all other analysis sections */}
+    <article
+      {...(pdfPageBreakBefore ? { "data-pdf-page-break-before": "" } : {})}
+      className={[
+        "relative overflow-hidden rounded-2xl border p-5 shadow-sm sm:p-6",
+        lightPanelClass,
+        "[background-color:var(--alert-card-bg)] [border-color:var(--alert-border)]",
+      ].join(" ")}
+      style={cardStyle}
+    >
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute bottom-3 right-3 select-none font-serif text-[5rem] font-black leading-none sm:bottom-4 sm:right-4 sm:text-[5.5rem]"
+        style={{
+          color: config.accentColor,
+          opacity: 0.07,
+        }}
+      >
+        {config.transformationChar}
+      </div>
+
+      <div className="relative z-10">
+        <div className="flex items-start gap-3">
+          <div
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full shadow-sm"
+            style={{ backgroundColor: config.accentColor }}
+          >
+            <HeaderIcon className="h-5 w-5 text-white" aria-hidden="true" />
+          </div>
+
+          <p className="min-w-0 flex-1 pt-0.5 text-[11px] font-bold uppercase leading-snug tracking-[0.12em] text-navy sm:text-xs">
+            {config.heroQuestionPrefix}
+            <span style={{ color: config.accentColor }}>{config.heroQuestionHighlight}</span>
+            {config.heroQuestionSuffix}
+          </p>
+
+          <Sparkles
+            className="mt-0.5 h-4 w-4 shrink-0 text-[var(--color-accent-gradient-5)]/55"
+            aria-hidden="true"
+          />
+        </div>
+
+        <div className="mt-4 flex items-center justify-between gap-3">
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-theme-fg-secondary/80">
+            Activates
+          </p>
+          <span
+            className={[
+              "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold",
+              "[background-color:var(--alert-badge-bg)] [color:var(--alert-accent)]",
+            ].join(" ")}
+          >
+            <User className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+            {getStarPinyin(alert.starName)}
+          </span>
+        </div>
+
+        <h3
+          className="mt-2 font-serif text-2xl font-bold leading-tight sm:text-[1.65rem]"
+          style={{ color: config.accentColor }}
+        >
+          {displayPalace}
+        </h3>
+
+        <div className="mt-5 space-y-3">
+          {config.metrics.map((metric) => (
+            <MetricBarRow
+              key={metric.label}
+              label={metric.label}
+              value={metric.value}
+              accentColor={config.accentColor}
+            />
+          ))}
+        </div>
+
+        <div className="mt-5 space-y-2 text-sm leading-relaxed text-theme-fg-secondary">
+          <p>{alert.line1}</p>
+          <p>{alert.line2}</p>
+          <p className="font-bold italic" style={{ color: config.accentColor }}>
+            {alert.line3}
+          </p>
+        </div>
+      </div>
+    </article>
+  );
+};
+
+const FourKeyPalace: React.FC<FourKeyPalaceProps> = ({
+  chartData,
+  resolvePalaceName,
+  forPdfCapture,
+}) => {
+  const analysisResult = analyzeDestinyAlert(chartData);
+
+  const sectionShell = (content: React.ReactNode) => (
+    <div className="p-6">
       <div {...(forPdfCapture ? { "data-pdf-page-break-before": "" } : {})}>
-        <GradientSectionHeader
+        <AnalysisSectionHeader
+          sectionLabel="Transformation signals"
           badgeText="05"
-          title="DESTINY ALERT MAP"
-          subtitle="Four signals showing where your life force is most activated."
-          showDivider={!forPdfCapture}
+          title="Destiny Alert Map"
+          subtitle="Four signals showing where your life force is most activated — wealth, power, fame, and friction."
+          icon={Compass}
+          pdfBreakAnchor="destiny-alert-hero"
           forPdfCapture={forPdfCapture}
         />
       </div>
+      {content}
+    </div>
+  );
 
-      {/* 2 × 2 card grid */}
-      <div
-        data-pdf-break-anchor="four-key-grid"
-        className={
-          forPdfCapture
-            ? "grid grid-cols-1 gap-5 px-6 pb-6"
-            : "grid grid-cols-1 sm:grid-cols-2 gap-5 px-6 pb-6"
-        }
-      >
-        {analysisResult.alerts.map((alert, index) => {
-          const key = normaliseTransformation(alert.transformation);
-          const config = TRANSFORMATION_CONFIG[key] ?? TRANSFORMATION_CONFIG["化忌"];
+  if (analysisResult.alerts.length === 0) {
+    return sectionShell(
+      <p className="py-8 text-center text-gray-500 dark:text-gray-400">
+        No transformation data available.
+      </p>
+    );
+  }
 
-          // Resolve palace name: use timeframe override when available, else natal name.
-          const displayPalace =
-            (resolvePalaceName ? resolvePalaceName(alert.palaceNumber) : "") ||
-            alert.palace;
+  return sectionShell(
+    <div
+      data-pdf-break-anchor="four-key-grid"
+      className={
+        forPdfCapture
+          ? "grid grid-cols-1 gap-6"
+          : "grid grid-cols-1 gap-6 sm:grid-cols-2"
+      }
+    >
+      {analysisResult.alerts.map((alert, index) => {
+        const key = normaliseTransformation(alert.transformation);
+        const config = TRANSFORMATION_CONFIG[key] ?? TRANSFORMATION_CONFIG["化忌"];
+        const displayPalace =
+          (resolvePalaceName ? resolvePalaceName(alert.palaceNumber) : "") ||
+          alert.palace;
 
-          return (
-            <div
-              key={`${alert.palaceNumber}-${alert.transformation}`}
-              {...(forPdfCapture && index === 2
-                ? { "data-pdf-page-break-before": "" }
-                : {})}
-              className="relative rounded-2xl overflow-hidden flex flex-col"
-              style={{
-                background: config.bodyGradient,
-                border: `2px solid ${config.borderColor}`,
-                boxShadow: config.cardShadow,
-              }}
-            >
-              {/* Zone 1 — Hero question (colored gradient header strip) */}
-              <div
-                className="px-5 py-4"
-                style={{
-                  background: config.headerGradient,
-                  boxShadow: "0 2px 12px rgba(0,0,0,0.15)",
-                }}
-              >
-                <p className="text-white font-black text-lg tracking-wide leading-tight"
-                  style={{ textShadow: "0 1px 4px rgba(0,0,0,0.2)" }}>
-                  {config.icon} {config.heroQuestion}
-                </p>
-              </div>
-
-              {/* Watermark character — large faded in background */}
-              <div
-                aria-hidden="true"
-                className="absolute bottom-0 right-2 text-[110px] font-black leading-none select-none pointer-events-none"
-                style={{
-                  color: config.watermarkColor,
-                  opacity: 0.07,
-                  lineHeight: 1,
-                }}
-              >
-                {config.watermarkChar}
-              </div>
-
-              <div className="relative z-10 p-5 flex flex-col gap-4 flex-1">
-                {/* Zone 2 — Palace name (left) and star pill (right), space-between */}
-                <div>
-                  <p className="text-xs uppercase tracking-widest mb-1"
-                    style={{ color: "rgba(107,114,128,0.8)" }}>
-                    Activates
-                  </p>
-                  <div className="flex items-center justify-between gap-3">
-                    <h3
-                      className="text-2xl font-black leading-tight"
-                      style={{ color: config.palaceColor }}
-                    >
-                      {displayPalace}
-                    </h3>
-                    {/* Star pill — right-aligned, same visual weight as palace */}
-                    <span
-                      className="font-bold text-sm rounded-full flex-shrink-0"
-                      style={{
-                        background: "rgba(0,0,0,0.08)",
-                        color: config.palaceColor,
-                        height: "28px",
-                        padding: "0 12px",
-                        lineHeight: 1,
-                        display: "inline-flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                    >
-                      {getStarPinyin(alert.starName)}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Zone 3 — Energy profile bars */}
-                <div className="flex flex-col gap-2.5">
-                  {config.bars.map((bar) => (
-                    <div key={bar.label} className="flex items-center gap-3">
-                      <span
-                        className="text-xs w-24 flex-shrink-0"
-                        style={{ color: "rgba(107,114,128,0.9)" }}
-                      >
-                        {bar.label}
-                      </span>
-                      {/* Track */}
-                      <div
-                        className="flex-1 rounded-full overflow-hidden"
-                        style={{
-                          height: "8px",
-                          background: "rgba(0,0,0,0.08)",
-                        }}
-                      >
-                        {/* Fill */}
-                        <div
-                          className="h-full rounded-full"
-                          style={{
-                            width: `${bar.pct}%`,
-                            background: config.barGradient,
-                            transition: forPdfCapture ? "none" : "width 0.7s ease",
-                          }}
-                        />
-                      </div>
-                      <span
-                        className="text-xs w-8 text-right flex-shrink-0"
-                        style={{ color: "rgba(107,114,128,0.7)" }}
-                      >
-                        {bar.pct}%
-                      </span>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Zone 4 — 3-line insight */}
-                <div className="flex flex-col gap-1 text-sm leading-relaxed"
-                  style={{ color: "rgba(55,65,81,0.95)" }}>
-                  <p>{alert.line1}</p>
-                  <p>{alert.line2}</p>
-                  <p
-                    className="font-semibold italic"
-                    style={{ color: config.palaceColor }}
-                  >
-                    {alert.line3}
-                  </p>
-                </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
+        return (
+          <DestinyAlertCard
+            key={`${alert.palaceNumber}-${alert.transformation}`}
+            alert={alert}
+            config={config}
+            displayPalace={displayPalace}
+            pdfPageBreakBefore={Boolean(forPdfCapture && index === 2)}
+          />
+        );
+      })}
     </div>
   );
 };

@@ -25,6 +25,7 @@ import { PdfChartData } from "../components/PdfDocument";
 import { useAlertContext } from "../context/AlertContext";
 import { ChartSettingsProvider } from "../context/ChartSettingsContext";
 import ChartSettingsModal from "../components/ChartSettingsModal";
+import { chartScrollWrapperClass } from "../styles/chartUi";
 
 const ENABLE_PDF_EXPORT = false;
 
@@ -716,14 +717,7 @@ const FreeResultContent: React.FC = () => {
                   </h2>
 
                   {calculatedChartData ? (
-                    <div
-                      className="flex-grow overflow-auto p-0"
-                      style={{
-                        minHeight:
-                          window.innerWidth < 640
-                            ? "calc(100vh - 150px)"
-                            : undefined,
-                      }}>
+                    <div className={chartScrollWrapperClass}>
                       <ZWDSChart chartData={calculatedChartData} />
                     </div>
                   ) : (

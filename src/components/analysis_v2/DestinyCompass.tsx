@@ -201,7 +201,7 @@ const DestinyCompass: React.FC<DestinyCompassProps> = ({ chartData }) => {
   // Handle empty data
   if (yearCards.length === 0) {
     return (
-      <div className="p-6 dark:bg-gray-900">
+      <div className="p-6">
         <div className="w-full border-t border-gray-400 dark:border-gray-600 mb-6"></div>
         <h2 className="text-4xl mb-2 font-bold text-center text-gray-800 dark:text-white">
           DESTINY COMPASS
@@ -214,7 +214,7 @@ const DestinyCompass: React.FC<DestinyCompassProps> = ({ chartData }) => {
   }
 
   return (
-    <div className="p-6 dark:bg-gray-900">
+    <div className="p-6">
       <style>
         {`
          @keyframes slideInRight {

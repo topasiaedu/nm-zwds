@@ -5,6 +5,21 @@ import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useAlertContext } from "../context/AlertContext";
 import { Database } from "../../database.types";
+import {
+  profileFormCancelButtonClass,
+  profileFormCardClass,
+  profileFormCheckboxClass,
+  profileFormCheckboxLabelClass,
+  profileFormDescriptionClass,
+  profileFormErrorTextClass,
+  profileFormHintClass,
+  profileFormInputClass,
+  profileFormInputErrorClass,
+  profileFormLabelClass,
+  profileFormSubmitButtonClass,
+  profileFormSubmitButtonDisabledClass,
+  profileFormTitleClass,
+} from "../styles/profileFormUi";
 
 type ProfileInsert = Database["public"]["Tables"]["profiles"]["Insert"];
 
@@ -240,17 +255,13 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ isSelfProfile, onSuccess, dis
 
   return (
     <div className="max-w-3xl mx-auto">
-      <div className="rounded-2xl shadow-xl overflow-hidden
-                    border border-white/10
-                    backdrop-filter backdrop-blur-2xl 
-                    bg-white/10 dark:bg-gray-800/90
-                    transition-all duration-300 p-8">
-        <h2 className="text-2xl font-bold mb-4 dark:text-white">
+      <div className={profileFormCardClass}>
+        <h2 className={profileFormTitleClass}>
           {isSelfProfile
             ? t("profile.createSelfTitle")
             : t("profile.createOtherTitle")}
         </h2>
-        <p className="text-gray-600 dark:text-gray-400 mb-6">
+        <p className={profileFormDescriptionClass}>
           {isSelfProfile
             ? t("profile.createSelfDesc")
             : t("profile.createOtherDesc")}
@@ -259,7 +270,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ isSelfProfile, onSuccess, dis
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label htmlFor="name" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+              <label htmlFor="name" className={profileFormLabelClass}>
                 {t("form.name")}
               </label>
               <input
@@ -268,14 +279,14 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ isSelfProfile, onSuccess, dis
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                className={profileFormInputClass}
                 placeholder={isSelfProfile ? t("form.yourNamePlaceholder") : t("form.theirNamePlaceholder")}
                 required
               />
             </div>
 
             <div>
-              <label htmlFor="gender" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+              <label htmlFor="gender" className={profileFormLabelClass}>
                 {t("form.gender")}
               </label>
               <select
@@ -283,7 +294,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ isSelfProfile, onSuccess, dis
                 name="gender"
                 value={formData.gender}
                 onChange={handleChange}
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                className={profileFormInputClass}
                 required
               >
                 <option value="">{t("form.selectGender")}</option>
@@ -296,7 +307,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ isSelfProfile, onSuccess, dis
           {/* Email field - only shown for free test */}
           {showEmailField && (
             <div>
-              <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+              <label htmlFor="email" className={profileFormLabelClass}>
                 {t("form.email")}
               </label>
               <input
@@ -305,7 +316,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ isSelfProfile, onSuccess, dis
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                className={profileFormInputClass}
                 placeholder={t("form.emailPlaceholder") || "your@email.com"}
                 required
               />
@@ -313,10 +324,10 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ isSelfProfile, onSuccess, dis
           )}
 
           <div>
-            <label htmlFor="birthDate" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+            <label htmlFor="birthDate" className={profileFormLabelClass}>
               {t("form.birthDate")}
             </label>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
+            <p className={profileFormHintClass}>
               {t("form.dateFormatHint") || "Enter date in DD/MM/YYYY format (e.g., 31/12/1990)"}
             </p>
             <input
@@ -327,18 +338,18 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ isSelfProfile, onSuccess, dis
               onChange={handleChange}
               placeholder="DD/MM/YYYY"
               pattern="\d{2}/\d{2}/\d{4}"
-              className={`bg-gray-50 border ${dateError ? "border-red-500" : "border-gray-300"} text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white`}
+              className={dateError ? profileFormInputErrorClass : profileFormInputClass}
               required
             />
             {dateError && (
-              <p className="mt-1 text-sm text-red-500">
+              <p className={profileFormErrorTextClass}>
                 {dateError}
               </p>
             )}
           </div>
 
           <div>
-            <label htmlFor="birthTime" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+            <label htmlFor="birthTime" className={profileFormLabelClass}>
               {t("form.birthTime")}
             </label>
 
@@ -348,8 +359,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ isSelfProfile, onSuccess, dis
               value={formData.birthTime}
               onChange={handleChange}
               disabled={dontRememberBirthTime}
-              className={`bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white ${dontRememberBirthTime ? "opacity-50 cursor-not-allowed" : ""
-                }`}
+              className={`${profileFormInputClass} ${dontRememberBirthTime ? "opacity-50 cursor-not-allowed" : ""}`}
               required={!dontRememberBirthTime}
             >
               <option value="">{t("form.selectTime") || "Select time"}</option>
@@ -374,9 +384,9 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ isSelfProfile, onSuccess, dis
                   type="checkbox"
                   checked={dontRememberBirthTime}
                   onChange={handleDontRememberChange}
-                  className="w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 dark:focus:ring-purple-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                  className={profileFormCheckboxClass}
                 />
-                <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">
+                <span className={profileFormCheckboxLabelClass}>
                   {t("form.dontRememberBirthTime")}
                 </span>
               </label>
@@ -387,25 +397,25 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ isSelfProfile, onSuccess, dis
             <button
               type="button"
               onClick={() => navigate(-1)}
-              className="flex-1 px-5 py-3 text-gray-700 dark:text-gray-300 font-medium rounded-lg transition-all 
-                       bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700
-                       focus:ring-4 focus:ring-gray-300 focus:outline-none"
+              className={profileFormCancelButtonClass}
             >
               {t("form.cancel") || "Cancel"}
             </button>
             <button
               type="submit"
               disabled={disabled}
-              className={`flex-1 px-5 py-3 text-white font-medium rounded-lg transition-all 
-                       ${disabled
-                  ? "bg-gray-400 cursor-not-allowed opacity-50"
-                  : "bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700"
-                }
-                       focus:ring-4 focus:ring-purple-300 focus:outline-none`}
+              className={
+                disabled ? profileFormSubmitButtonDisabledClass : profileFormSubmitButtonClass
+              }
             >
               {disabled ? (
                 <span className="flex items-center justify-center">
-                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <svg
+                    className="animate-spin -ml-1 mr-3 h-5 w-5 text-theme-btn-primary-text"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>

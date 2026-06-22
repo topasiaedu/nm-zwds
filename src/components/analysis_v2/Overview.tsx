@@ -1,11 +1,18 @@
 import React from "react";
-import { Badge } from "flowbite-react";
+import { Sparkles } from "lucide-react";
 import { ChartData } from "../../utils/zwds/types";
-import { analyzeOverview, OverviewAnalysisResult } from "../../utils/zwds/analysis/overviewAnalysis";
-import GradientSectionHeader from "./shared/GradientSectionHeader";
+import {
+  analyzeOverview,
+  OverviewAnalysisResult,
+} from "../../utils/zwds/analysis/overviewAnalysis";
+import { analysisHeroTitleLargeClass } from "../../styles/typographyUi";
+import { AnalysisSectionHeader } from "./shared/AnalysisSectionHeader";
+import { CorePersonalitySection } from "./shared/CorePersonalitySection";
+import { OverviewStrengthsChallenges } from "./shared/OverviewStrengthsChallenges";
+import { GrowthTipsTimeline } from "./shared/GrowthTipsTimeline";
 
 /**
- * Type definition for a feature item to be displayed as a badge
+ * Type definition for a feature item to be displayed in lists
  */
 type FeatureItem = {
   id: string;
@@ -33,16 +40,17 @@ type OverviewProps = {
 };
 
 /**
- * Overview component displaying personality analysis in a two-column layout
+ * Overview component displaying personality analysis with a hero header and varied layouts
  */
-const Overview: React.FC<OverviewProps> = ({ chartData, palaceOverride, forPdfCapture }) => {
-  // Analyze the chart data to get real data
-  const analysisResult: OverviewAnalysisResult = analyzeOverview(chartData, palaceOverride);
+const Overview: React.FC<OverviewProps> = ({
+  chartData,
+  palaceOverride,
+  forPdfCapture,
+}) => {  const analysisResult: OverviewAnalysisResult = analyzeOverview(
+    chartData,
+    palaceOverride
+  );
 
-
-
-
-  // Transform analysis results into the component's expected format
   const featuresData: FeaturesData = {
     strengths: analysisResult.strengths.map((strength, index) => ({
       id: `strength-${index + 1}`,
@@ -58,146 +66,49 @@ const Overview: React.FC<OverviewProps> = ({ chartData, palaceOverride, forPdfCa
     })),
   };
 
-  /**
-   * Renders feature items as styled badges
-   */
-  const renderFeatureItems = (
-    items: FeatureItem[],
-    color: string
-  ): JSX.Element[] => {
-    return items.map((item) => (
-      <Badge
-        key={item.id}
-        color={color}
-        className="mr-2 mb-2 inline-flex items-center"
-        style={{
-          minHeight: "24px",
-          lineHeight: 1,
-          paddingTop: 0,
-          paddingBottom: 0,
-        }}>
-        {item.label}
-      </Badge>
-    ));
-  };
-
-  /**
-   * Renders tip items with premium card styling
-   */
-  const renderTipItems = (items: FeatureItem[]): JSX.Element[] => {
-    return items.map((item) => (
-      <div
-        key={item.id}
-        className={`rounded-xl border border-blue-200 dark:border-blue-700 bg-gradient-to-br from-blue-50/50 to-indigo-50/50 dark:from-blue-900/10 dark:to-indigo-900/10 p-4 ${forPdfCapture ? "" : "hover:shadow-lg transition-shadow"}`}>
-        <p className="text-sm font-medium text-gray-900 dark:text-white leading-relaxed">
-          {item.label}
-        </p>
-      </div>
-    ));
-  };
-
-
   return (
-    <div className="p-6 dark:bg-gray-900">
-      {/* Section Header */}
-      <GradientSectionHeader
+    <div className="p-6">
+      <AnalysisSectionHeader
+        sectionLabel="Core identity"
         badgeText="01"
-        title="PERSONALITY BLUEPRINT"
+        title="Personality Blueprint"
         subtitle="Discover your core strengths, challenges, and strategic growth opportunities"
-        showDivider={!forPdfCapture}
+        icon={Sparkles}
+        titleClassName={analysisHeroTitleLargeClass}
+        pdfBreakAnchor="overview-hero"
         forPdfCapture={forPdfCapture}
       />
 
-      {/* Core Personality Description - Premium Card */}
-      <div
-        data-pdf-break-anchor="overview-core-personality"
-        className={`rounded-2xl shadow-lg border bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700 p-8 mb-12 ${forPdfCapture ? "break-inside-avoid-page" : ""}`}>
-        <div className="flex items-center gap-3 mb-6">
-          <span className="text-3xl">🎭</span>
-          <h3 className="text-lg font-bold text-gray-900 dark:text-white">
-            Your Core Personality
-          </h3>
-        </div>
-        {analysisResult.descriptions.length > 0 ? (
-          <div className="space-y-4">
-            {analysisResult.descriptions.map((description, index) => (
-              <p key={`description-${index}`} className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
-                {description}
-              </p>
-            ))}
-          </div>
-        ) : (
-          <p className="text-sm text-gray-600 dark:text-gray-400 text-center py-4">
-            No analysis data available for the stars in your life palace. Please ensure your chart data is properly calculated.
-          </p>
-        )}
-      </div>
+      <CorePersonalitySection
+        personalityProfiles={analysisResult.personalityProfiles}
+        supplementaryProfiles={analysisResult.supplementaryProfiles}
+        forPdfCapture={forPdfCapture}
+      />
 
-      {/* Strengths and Challenges - Premium Cards */}
-      <div
+      {/* Strengths & challenges — paired trait cards */}
+      <section
         data-pdf-break-anchor="overview-strengths-challenges"
         {...(forPdfCapture ? { "data-pdf-page-break-before": "" } : {})}
-        className={`grid gap-6 mb-12 ${
-          forPdfCapture ? "grid-cols-1" : "grid-cols-1 md:grid-cols-2"
-        }`}
+        className="relative mb-10"
+        aria-label="Strengths and challenges"
       >
-        {/* Strengths Column */}
-        <div className="rounded-2xl shadow-lg border bg-gradient-to-br from-green-50/50 to-emerald-50/50 dark:from-green-900/10 dark:to-emerald-900/10 border-green-200 dark:border-green-700 p-6">
-          <div className="flex items-center gap-3 mb-6">
-            <span className="text-3xl">💪</span>
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white">
-              Strengths
-            </h3>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {featuresData.strengths.length > 0 ? (
-              renderFeatureItems(featuresData.strengths, "success")
-            ) : (
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                No strength data available
-              </p>
-            )}
-          </div>
-        </div>
+        <OverviewStrengthsChallenges
+          strengths={featuresData.strengths}
+          weaknesses={featuresData.weaknesses}
+          forPdfCapture={forPdfCapture}
+        />
+      </section>
 
-        {/* Potential Challenges Column */}
-        <div className="rounded-2xl shadow-lg border bg-gradient-to-br from-amber-50/50 to-orange-50/50 dark:from-amber-900/10 dark:to-orange-900/10 border-amber-200 dark:border-amber-700 p-6">
-          <div className="flex items-center gap-3 mb-6">
-            <span className="text-3xl">⚡</span>
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white">
-              Potential Challenges
-            </h3>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {featuresData.weaknesses.length > 0 ? (
-              renderFeatureItems(featuresData.weaknesses, "failure")
-            ) : (
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                No challenge data available
-              </p>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* Growth Tips - Premium Card */}
-      <div data-pdf-break-anchor="overview-growth-tips" className="rounded-2xl shadow-lg border bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700 p-8">
-        <div className="flex items-center gap-3 mb-6">
-          <span className="text-3xl">🌱</span>
-          <h3 className="text-lg font-bold text-gray-900 dark:text-white">
-            Growth Tips
-          </h3>
-        </div>
-        <div className={forPdfCapture ? "grid grid-cols-2 gap-4" : "grid grid-cols-1 md:grid-cols-2 gap-4"}>
-          {featuresData.tips.length > 0 ? (
-            renderTipItems(featuresData.tips)
-          ) : (
-            <p className="text-sm text-gray-600 dark:text-gray-400 text-center py-4 col-span-full">
-              No tip data available
-            </p>
-          )}
-        </div>
-      </div>
+      {/* Growth tips — alternating vertical timeline on page surface */}
+      <section
+        data-pdf-break-anchor="overview-growth-tips"
+        className="mb-10"
+      >
+        <GrowthTipsTimeline
+          tips={featuresData.tips}
+          forPdfCapture={forPdfCapture}
+        />
+      </section>
     </div>
   );
 };

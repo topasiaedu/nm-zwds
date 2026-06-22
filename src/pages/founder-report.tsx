@@ -1,5 +1,9 @@
 import React, { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link, Navigate } from "react-router-dom";
+import {
+  BrandGradientText,
+  wrapPhraseInBrandGradient,
+} from "../components/BrandGradientText";
 import PageTransition from "../components/PageTransition";
 import ZWDSChart from "../components/ZWDSChart";
 import { ZWDSCalculator } from "../utils/zwds/calculator";
@@ -10,6 +14,18 @@ import { useLanguage } from "../context/LanguageContext";
 import { ChartSettingsProvider } from "../context/ChartSettingsContext";
 import ChartSettingsModal from "../components/ChartSettingsModal";
 import { WealthCode } from "../components/analysis_v2";
+import {
+  founderReportBackButtonClass,
+  founderReportBackIconWrapClass,
+  founderReportContainerClass,
+  founderReportGlowClass,
+  founderReportHeroClass,
+  founderReportHeroLabelClass,
+  founderReportHeroSubtitleClass,
+  founderReportHeroTitleClass,
+  founderReportHeroTitleIconClass,
+  founderReportPageClass,
+} from "../styles/founderReportUi";
 
 type SectionChartProps = { chartData: ZWDSChartData };
 type BusinessCalendarSectionProps = { chartData: ZWDSChartData; reportCreatedAt: string };
@@ -647,42 +663,38 @@ const FounderReportContent: React.FC = () => {
   }
 
   return (
-    <PageTransition>
-      <div className="relative container mx-auto px-0 xs:px-1 sm:px-2 md:px-4 py-2 sm:py-4 md:py-8 scroll-smooth print:bg-white">
-
-
-        {/* Header */}
-        <div className="relative mb-8">
-          <div className="flex items-center mb-4">
-            <Link
-              to="/dashboard"
-              className="flex items-center text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 mr-4 print:hidden"
-            >
-              <svg
-                className="w-5 h-5 mr-1"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M10 19l-7-7m0 0l7-7m-7 7h18"
-                />
-              </svg>
-              {t("general.back") || "Back"}
-            </Link>
-
-            <div className="flex items-center flex-wrap gap-3">
-              <h1 className="text-2xl sm:text-3xl font-bold dark:text-white flex items-center">
+    <>
+      <div className={founderReportGlowClass} aria-hidden="true" />
+      <PageTransition>
+        <div className={founderReportPageClass}>
+          <div className={founderReportContainerClass}>
+            <header className={founderReportHeroClass}>
+              <Link to="/dashboard" className={founderReportBackButtonClass}>
+                <span className={founderReportBackIconWrapClass} aria-hidden="true">
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M15 19l-7-7 7-7"
+                    />
+                  </svg>
+                </span>
+                <span>{t("general.back") || "Back"}</span>
+              </Link>
+              <p className={founderReportHeroLabelClass}>{"Founder Edition"}</p>
+              <h1 className={founderReportHeroTitleClass}>
                 <svg
-                  className="w-7 h-7 mr-2 text-amber-500"
+                  className={founderReportHeroTitleIconClass}
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
+                  aria-hidden="true"
                 >
                   <path
                     strokeLinecap="round"
@@ -691,22 +703,18 @@ const FounderReportContent: React.FC = () => {
                     d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                   />
                 </svg>
-                {"Founder Timing Decision System Report"}
+                {wrapPhraseInBrandGradient(
+                  "Founder Timing Decision System Report",
+                  { phrase: "Founder Timing" }
+                )}
               </h1>
-
-              {/* Premium badge/indicator */}
-              <div className="inline-block bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-4 py-2 rounded-full text-sm font-bold">
-                {"Founder Edition"}
-              </div>
-            </div>
-          </div>
-
-          {!error && chartMeta && (
-            <p className="text-gray-600 dark:text-gray-400">
-              {`Strategic Business Intelligence for ${chartMeta.name}`}
-            </p>
-          )}
-        </div>
+              {!error && chartMeta ? (
+                <p className={founderReportHeroSubtitleClass}>
+                  {"Strategic Business Intelligence for "}
+                  <BrandGradientText>{chartMeta.name}</BrandGradientText>
+                </p>
+              ) : null}
+            </header>
 
         {error ? (
           // Error state
@@ -849,8 +857,10 @@ const FounderReportContent: React.FC = () => {
 
         {/* Chart Settings Modal (kept for parity with `result.tsx`) */}
         <ChartSettingsModal pageType="result" />
-      </div>
-    </PageTransition>
+          </div>
+        </div>
+      </PageTransition>
+    </>
   );
 };
 
