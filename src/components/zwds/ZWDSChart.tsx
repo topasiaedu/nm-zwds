@@ -158,6 +158,7 @@ interface ZWDSChartProps {
   blueprintMode?: "dna" | "dayun" | "liunian" | "liumonth";
 }
 
+/** Each chart mode owns its own independent set of user-highlighted palaces. */
 type BlueprintHighlightKey = "dna" | "dayun" | "liunian" | "liumonth" | "default";
 
 /**
@@ -204,27 +205,26 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
   const { isAdmin } = useTierAccess();
   const canUsePalaceHighlights = isAdmin;
 
+  /**
+   * Each chart mode (DNA Chart, Da Yun, Liu Nian, Liu Month) maintains its own
+   * independent set of user-highlighted palaces. Highlights added in one mode are
+   * not visible in another — they are saved per-mode and restored when the user
+   * returns to that mode.
+   */
   const blueprintHighlightKey: BlueprintHighlightKey = blueprintMode ?? "default";
+  /** Persists the highlight set for each mode across mode switches. */
   const highlightsByModeRef = useRef<Partial<Record<BlueprintHighlightKey, Set<number>>>>({});
   const prevBlueprintHighlightKeyRef = useRef<BlueprintHighlightKey | null>(null);
+  /** Mirror of `highlightedPalaces` kept in a ref so the save-on-switch effect can read without a stale closure. */
   const highlightedPalacesRef = useRef<Set<number>>(new Set());
 
-  // User-controlled yellow highlights for the active blueprint/timeframe
   const [highlightedPalaces, setHighlightedPalaces] = useState<Set<number>>(() =>
     isPdfExport ? new Set() : getDefaultHighlightSet(chartData)
   );
   highlightedPalacesRef.current = highlightedPalaces;
 
-  // Sync showMonths with controlled prop.
-  // When showMonthsControlled is null, also clear the internal state so months
-  // are not left visible after switching away from Liu Month mode.
-  React.useEffect(() => {
-    if (showMonthsControlled !== undefined) {
-      setShowMonths(showMonthsControlled);
-    }
-  }, [showMonthsControlled]);
-
-  // Save highlights for the outgoing mode and restore (or default) for the incoming mode
+  // When the active chart mode changes: save the outgoing mode's highlights then
+  // restore (or initialise with defaults) the incoming mode's highlights.
   useEffect(() => {
     if (isPdfExport || !canUsePalaceHighlights) {
       return;
@@ -249,6 +249,15 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
 
     prevBlueprintHighlightKeyRef.current = blueprintHighlightKey;
   }, [blueprintHighlightKey, chartData, isPdfExport, canUsePalaceHighlights]);
+
+  // Sync showMonths with controlled prop.
+  // When showMonthsControlled is null, also clear the internal state so months
+  // are not left visible after switching away from Liu Month mode.
+  React.useEffect(() => {
+    if (showMonthsControlled !== undefined) {
+      setShowMonths(showMonthsControlled);
+    }
+  }, [showMonthsControlled]);
 
   const { language } = useLanguage();
   const { settings } = useChartSettings();
@@ -422,6 +431,7 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
       } else {
         next.add(palaceNumber);
       }
+      // Immediately persist the change for the active mode so it survives a mode switch.
       highlightsByModeRef.current[blueprintHighlightKey] = next;
       return next;
     });

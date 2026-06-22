@@ -39,7 +39,6 @@ import {
   chartPalaceMobileStarItemTwoColClass,
   chartPalaceMobileStarRowClass,
   chartPalaceMobileStarsStackClass,
-  chartPalaceShellClass,
   chartPalaceStarColumnClass,
   chartPalaceStarNameClass,
   chartPalaceStarsRowClass,
@@ -378,11 +377,11 @@ const Palace: React.FC<PalaceProps> = ({
       ? {
           /* boxShadow already set in daXianStyle */
         }
-      : isHighlighted
-      ? { 
+      : isUserHighlighted
+      ? {
           borderColor: chartBrandChrome.highlightBorderColor,
           borderWidth: "4px",
-          borderStyle: "solid"
+          borderStyle: "solid",
         }
       : { boxShadow: "none" }),
     transition: "all 0.3s ease",
@@ -907,7 +906,7 @@ const Palace: React.FC<PalaceProps> = ({
       {ZodiacIcon && (
         <div
           className={`${chartPalaceWatermarkClass} ${
-            hasDayunStyleGlow && !isSelected ? "opacity-[0.42] dark:opacity-[0.46]" : ""
+            hasYellowGlow && !isSelected ? "opacity-[0.42] dark:opacity-[0.46]" : ""
           }`}
         >
           <ZodiacIconWrapper
