@@ -252,6 +252,9 @@ const ResultContent: React.FC = () => {
     } else if (mode === "liumonth") {
       // Liu Month: month labels come from controlled showMonths + ZWDSChart uniform mode,
       // not from year clicks (yearAgeClickInteraction stays false so bottom row is inert).
+      // Palace click and highlight are enabled so users can select palaces and
+      // view activation lines just like in every other chart mode.
+      updateSetting("palaceClickInteraction", true);
       updateSetting("liuNianTag", true);
       updateSetting("showDaYunHighlight", false);
       updateSetting("showDaMingCornerTag", false);
@@ -261,7 +264,6 @@ const ResultContent: React.FC = () => {
       updateSetting("yearAgeClickInteraction", false);
       updateSetting("daXianClickInteraction", false);
       updateSetting("palaceNameClickInteraction", false);
-      updateSetting("palaceClickInteraction", false);
     }
   }, [updateSetting]);
 
