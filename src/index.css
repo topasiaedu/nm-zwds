@@ -1,30 +1,569 @@
 /* see https://github.com/themesberg/flowbite-admin-dashboard/blob/main/src/css/input.css */
 
+@import "./styles/color-scheme.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Basic styling */
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+/* Auth pages: opposite-color radial glow (cream bg → purple glow; dark bg → cream glow) */
+.auth-page-bg {
+  /* Must stay fixed — do not set position: relative (it overrides Tailwind fixed and clips the glow) */
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #F6F0E8;
+  overflow: hidden;
 }
 
-/* Dark mode styling */
-:root {
-  --background-light: #f3f4f6;
-  --background-dark: #111827;
-  --text-light: #111827;
-  --text-dark: #f3f4f6;
+.auth-page-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background: radial-gradient(
+    ellipse 90% 80% at 88% 8%,
+    rgba(107, 91, 149, 0.42) 0%,
+    rgba(74, 63, 107, 0.2) 32%,
+    transparent 68%
+  );
+}
+
+.auth-page-bg::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3px;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.55;
+  background: linear-gradient(to right, #080657, #3D0F68, #8B1167, #D91744, #FE8E01);
+}
+
+.dark .auth-page-bg {
+  background-color: #2D1B4E;
+}
+
+.dark .auth-page-bg::before {
+  background: radial-gradient(
+    ellipse 90% 80% at 88% 8%,
+    rgba(246, 240, 232, 0.28) 0%,
+    rgba(212, 175, 123, 0.14) 28%,
+    rgba(232, 169, 137, 0.06) 48%,
+    transparent 72%
+  );
+}
+
+.dark .auth-page-bg::after {
+  opacity: 0.85;
+  background: linear-gradient(to right, #1A0F2E, #D4B896, #E8A989);
+}
+
+/*
+ * Dashboard radial glow — fixed to viewport (not the content box).
+ * Avoids diagonal cutoff from: (1) glow sized to ~546px content area,
+ * (2) PageTransition motion.div transform creating a containing block.
+ */
+/* Light: purple radial (matches .auth-page-bg) — no warm/orange stops */
+.dashboard-glow {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background: radial-gradient(
+    ellipse 90% 80% at 88% 8%,
+    rgba(107, 91, 149, 0.28) 0%,
+    rgba(74, 63, 107, 0.12) 32%,
+    transparent 68%
+  );
+}
+
+/* Dark: cream/gold radial (matches .dark .auth-page-bg) */
+.dark .dashboard-glow {
+  background: radial-gradient(
+    ellipse 90% 80% at 88% 8%,
+    rgba(246, 240, 232, 0.22) 0%,
+    rgba(212, 175, 123, 0.12) 28%,
+    rgba(232, 169, 137, 0.05) 48%,
+    transparent 72%
+  );
+}
+
+/*
+ * Chart page glow — stronger brand purple radial than dashboard.
+ */
+.chart-glow {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+  background: radial-gradient(
+    ellipse 90% 80% at 88% 8%,
+    rgba(107, 91, 149, 0.38) 0%,
+    rgba(74, 63, 107, 0.16) 32%,
+    transparent 68%
+  );
+}
+
+/* Subtle scattered star field */
+.chart-glow::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.45;
+  background-image:
+    radial-gradient(1px 1px at 8% 12%, rgba(107, 91, 149, 0.55), transparent),
+    radial-gradient(1px 1px at 18% 28%, rgba(74, 63, 107, 0.4), transparent),
+    radial-gradient(1px 1px at 32% 8%, rgba(107, 91, 149, 0.35), transparent),
+    radial-gradient(1px 1px at 45% 22%, rgba(74, 63, 107, 0.45), transparent),
+    radial-gradient(1px 1px at 58% 14%, rgba(107, 91, 149, 0.3), transparent),
+    radial-gradient(1px 1px at 72% 6%, rgba(74, 63, 107, 0.4), transparent),
+    radial-gradient(1px 1px at 88% 18%, rgba(107, 91, 149, 0.35), transparent),
+    radial-gradient(1px 1px at 6% 42%, rgba(74, 63, 107, 0.35), transparent),
+    radial-gradient(1px 1px at 22% 55%, rgba(107, 91, 149, 0.4), transparent),
+    radial-gradient(1px 1px at 38% 48%, rgba(74, 63, 107, 0.3), transparent),
+    radial-gradient(1px 1px at 52% 62%, rgba(107, 91, 149, 0.45), transparent),
+    radial-gradient(1px 1px at 68% 44%, rgba(74, 63, 107, 0.35), transparent),
+    radial-gradient(1px 1px at 82% 58%, rgba(107, 91, 149, 0.4), transparent),
+    radial-gradient(1px 1px at 94% 38%, rgba(74, 63, 107, 0.3), transparent),
+    radial-gradient(1px 1px at 12% 72%, rgba(107, 91, 149, 0.35), transparent),
+    radial-gradient(1px 1px at 28% 84%, rgba(74, 63, 107, 0.4), transparent),
+    radial-gradient(1px 1px at 44% 76%, rgba(107, 91, 149, 0.3), transparent),
+    radial-gradient(1px 1px at 60% 88%, rgba(74, 63, 107, 0.45), transparent),
+    radial-gradient(1px 1px at 76% 72%, rgba(107, 91, 149, 0.35), transparent),
+    radial-gradient(1px 1px at 90% 82%, rgba(74, 63, 107, 0.4), transparent),
+    radial-gradient(1.5px 1.5px at 26% 18%, rgba(107, 91, 149, 0.5), transparent),
+    radial-gradient(1.5px 1.5px at 64% 32%, rgba(74, 63, 107, 0.45), transparent),
+    radial-gradient(1.5px 1.5px at 48% 68%, rgba(107, 91, 149, 0.4), transparent),
+    radial-gradient(1.5px 1.5px at 84% 52%, rgba(74, 63, 107, 0.45), transparent);
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  mask-image: radial-gradient(
+    ellipse 95% 90% at 50% 45%,
+    black 15%,
+    transparent 88%
+  );
+}
+
+/* Sparse accent stars with a gentle twinkle */
+.chart-glow::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.55;
+  background-image:
+    radial-gradient(2px 2px at 15% 20%, rgba(107, 91, 149, 0.65), transparent),
+    radial-gradient(2px 2px at 55% 12%, rgba(254, 142, 1, 0.5), transparent),
+    radial-gradient(2px 2px at 78% 35%, rgba(107, 91, 149, 0.55), transparent),
+    radial-gradient(2px 2px at 35% 65%, rgba(217, 23, 68, 0.45), transparent),
+    radial-gradient(2px 2px at 62% 78%, rgba(107, 91, 149, 0.5), transparent),
+    radial-gradient(2px 2px at 92% 68%, rgba(254, 142, 1, 0.4), transparent);
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  animation: chart-star-twinkle 8s ease-in-out infinite alternate;
+  mask-image: radial-gradient(
+    ellipse 95% 90% at 50% 45%,
+    black 10%,
+    transparent 90%
+  );
+}
+
+@keyframes chart-star-twinkle {
+  0% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 0.65;
+  }
+  100% {
+    opacity: 0.45;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chart-glow::after {
+    animation: none;
+    opacity: 0.45;
+  }
+}
+
+.dark .chart-glow {
+  background: radial-gradient(
+    ellipse 90% 80% at 88% 8%,
+    rgba(246, 240, 232, 0.28) 0%,
+    rgba(212, 175, 123, 0.16) 28%,
+    rgba(232, 169, 137, 0.07) 48%,
+    transparent 72%
+  );
+}
+
+.dark .chart-glow::before {
+  opacity: 0.35;
+  background-image:
+    radial-gradient(1px 1px at 8% 12%, rgba(246, 240, 232, 0.45), transparent),
+    radial-gradient(1px 1px at 18% 28%, rgba(212, 175, 123, 0.35), transparent),
+    radial-gradient(1px 1px at 32% 8%, rgba(246, 240, 232, 0.3), transparent),
+    radial-gradient(1px 1px at 45% 22%, rgba(212, 175, 123, 0.4), transparent),
+    radial-gradient(1px 1px at 58% 14%, rgba(246, 240, 232, 0.28), transparent),
+    radial-gradient(1px 1px at 72% 6%, rgba(212, 175, 123, 0.35), transparent),
+    radial-gradient(1px 1px at 88% 18%, rgba(246, 240, 232, 0.32), transparent),
+    radial-gradient(1px 1px at 6% 42%, rgba(212, 175, 123, 0.3), transparent),
+    radial-gradient(1px 1px at 22% 55%, rgba(246, 240, 232, 0.38), transparent),
+    radial-gradient(1px 1px at 38% 48%, rgba(212, 175, 123, 0.28), transparent),
+    radial-gradient(1px 1px at 52% 62%, rgba(246, 240, 232, 0.42), transparent),
+    radial-gradient(1px 1px at 68% 44%, rgba(212, 175, 123, 0.32), transparent),
+    radial-gradient(1px 1px at 82% 58%, rgba(246, 240, 232, 0.36), transparent),
+    radial-gradient(1px 1px at 94% 38%, rgba(212, 175, 123, 0.28), transparent),
+    radial-gradient(1px 1px at 12% 72%, rgba(246, 240, 232, 0.34), transparent),
+    radial-gradient(1px 1px at 28% 84%, rgba(212, 175, 123, 0.38), transparent),
+    radial-gradient(1px 1px at 44% 76%, rgba(246, 240, 232, 0.3), transparent),
+    radial-gradient(1px 1px at 60% 88%, rgba(212, 175, 123, 0.4), transparent),
+    radial-gradient(1px 1px at 76% 72%, rgba(246, 240, 232, 0.32), transparent),
+    radial-gradient(1px 1px at 90% 82%, rgba(212, 175, 123, 0.36), transparent),
+    radial-gradient(1.5px 1.5px at 26% 18%, rgba(246, 240, 232, 0.48), transparent),
+    radial-gradient(1.5px 1.5px at 64% 32%, rgba(212, 175, 123, 0.42), transparent),
+    radial-gradient(1.5px 1.5px at 48% 68%, rgba(246, 240, 232, 0.38), transparent),
+    radial-gradient(1.5px 1.5px at 84% 52%, rgba(212, 175, 123, 0.4), transparent);
+}
+
+.dark .chart-glow::after {
+  opacity: 0.5;
+  background-image:
+    radial-gradient(2px 2px at 15% 20%, rgba(246, 240, 232, 0.55), transparent),
+    radial-gradient(2px 2px at 55% 12%, rgba(212, 175, 123, 0.45), transparent),
+    radial-gradient(2px 2px at 78% 35%, rgba(246, 240, 232, 0.5), transparent),
+    radial-gradient(2px 2px at 35% 65%, rgba(212, 175, 123, 0.4), transparent),
+    radial-gradient(2px 2px at 62% 78%, rgba(246, 240, 232, 0.48), transparent),
+    radial-gradient(2px 2px at 92% 68%, rgba(212, 175, 123, 0.38), transparent);
+}
+
+/*
+ * ZWDS chart grid — explicit contrast (avoids theme inheritance / missing utilities).
+ */
+.zwds-chart-grid .zwds-palace-star-text,
+.zwds-chart-grid .zwds-palace-star-text span:not(.zwds-palace-transformation-tag) {
+  color: #1a1e3f;
+}
+
+.dark .zwds-chart-grid .zwds-palace-star-text,
+.dark .zwds-chart-grid .zwds-palace-star-text span:not(.zwds-palace-transformation-tag) {
+  color: #ffffff;
+}
+
+.zwds-chart-grid .zwds-palace-bottom-text {
+  color: #6b7280;
+}
+
+.dark .zwds-chart-grid .zwds-palace-bottom-text {
+  color: #ffffff;
+}
+
+.dark .zwds-chart-grid .zwds-palace-title,
+.dark .zwds-chart-grid .zwds-palace-subtitle:not(.zwds-palace-daxian-highlight),
+.dark .zwds-chart-grid .zwds-palace-meta:not(.zwds-palace-year-highlight),
+.dark .zwds-chart-grid .zwds-palace-badge-icon {
+  color: #ffffff;
+}
+
+/* Selected palace — light text on brand-purple gradient (light + dark themes) */
+.zwds-chart-grid .zwds-palace-selected {
+  background-image: linear-gradient(135deg, #6b5b95, #4a3f6b);
+  color: #ffffff;
+}
+
+.dark .zwds-chart-grid .zwds-palace-selected {
+  background-image: linear-gradient(
+    135deg,
+    rgba(107, 91, 149, 0.95),
+    rgba(74, 63, 107, 0.95)
+  );
+  color: #ffffff;
+}
+
+.zwds-chart-grid .zwds-palace-selected .zwds-palace-star-text,
+.zwds-chart-grid .zwds-palace-selected .zwds-palace-star-text span:not(.zwds-palace-transformation-tag),
+.zwds-chart-grid .zwds-palace-selected .zwds-palace-bottom-text,
+.zwds-chart-grid .zwds-palace-selected .zwds-palace-title,
+.zwds-chart-grid .zwds-palace-selected .zwds-palace-subtitle,
+.zwds-chart-grid .zwds-palace-selected .zwds-palace-meta:not(.zwds-palace-year-highlight) {
+  color: #ffffff;
+}
+
+.dark .zwds-chart-grid .zwds-palace-selected .zwds-palace-star-text,
+.dark .zwds-chart-grid .zwds-palace-selected .zwds-palace-star-text span:not(.zwds-palace-transformation-tag),
+.dark .zwds-chart-grid .zwds-palace-selected .zwds-palace-bottom-text,
+.dark .zwds-chart-grid .zwds-palace-selected .zwds-palace-title,
+.dark .zwds-chart-grid .zwds-palace-selected .zwds-palace-subtitle,
+.dark .zwds-chart-grid .zwds-palace-selected .zwds-palace-meta:not(.zwds-palace-year-highlight) {
+  color: #ffffff;
+}
+
+.zwds-chart-grid .zwds-palace-selected .zwds-palace-year-highlight {
+  color: #fca5a5;
+}
+
+.dark .zwds-chart-grid .zwds-palace-selected .zwds-palace-year-highlight {
+  color: #fca5a5;
+}
+
+.zwds-chart-grid .zwds-palace-selected .zwds-palace-badge-icon {
+  color: #ffffff;
+}
+
+/* 四化 pills — sharp green / blue / yellow / red (override star-text inheritance) */
+.zwds-chart-grid .zwds-palace-transformation-tag.zwds-trans-lu {
+  color: #15803d;
+  background-color: #dcfce7;
+  border-color: #22c55e;
+}
+
+.zwds-chart-grid .zwds-palace-transformation-tag.zwds-trans-quan {
+  color: #1d4ed8;
+  background-color: #dbeafe;
+  border-color: #3b82f6;
+}
+
+.zwds-chart-grid .zwds-palace-transformation-tag.zwds-trans-ke {
+  color: #a16207;
+  background-color: #fef9c3;
+  border-color: #eab308;
+}
+
+.zwds-chart-grid .zwds-palace-transformation-tag.zwds-trans-ji {
+  color: #b91c1c;
+  background-color: #fee2e2;
+  border-color: #ef4444;
+}
+
+.dark .zwds-chart-grid .zwds-palace-transformation-tag.zwds-trans-lu {
+  color: #bbf7d0;
+  background-color: rgba(22, 163, 74, 0.38);
+  border-color: #4ade80;
+}
+
+.dark .zwds-chart-grid .zwds-palace-transformation-tag.zwds-trans-quan {
+  color: #93c5fd;
+  background-color: rgba(37, 99, 235, 0.38);
+  border-color: #60a5fa;
+}
+
+.dark .zwds-chart-grid .zwds-palace-transformation-tag.zwds-trans-ke {
+  color: #fde047;
+  background-color: rgba(202, 138, 4, 0.38);
+  border-color: #facc15;
+}
+
+.dark .zwds-chart-grid .zwds-palace-transformation-tag.zwds-trans-ji {
+  color: #fca5a5;
+  background-color: rgba(220, 38, 38, 0.38);
+  border-color: #f87171;
+}
+
+/* Selected palace — vivid pills on purple gradient */
+.zwds-chart-grid .zwds-palace-selected .zwds-palace-transformation-tag.zwds-trans-lu {
+  color: #14532d;
+  background-color: #86efac;
+  border-color: #16a34a;
+}
+
+.zwds-chart-grid .zwds-palace-selected .zwds-palace-transformation-tag.zwds-trans-quan {
+  color: #1e3a8a;
+  background-color: #93c5fd;
+  border-color: #2563eb;
+}
+
+.zwds-chart-grid .zwds-palace-selected .zwds-palace-transformation-tag.zwds-trans-ke {
+  color: #713f12;
+  background-color: #fde047;
+  border-color: #ca8a04;
+}
+
+.zwds-chart-grid .zwds-palace-selected .zwds-palace-transformation-tag.zwds-trans-ji {
+  color: #7f1d1d;
+  background-color: #fca5a5;
+  border-color: #dc2626;
+}
+
+.dark .zwds-chart-grid .zwds-palace-selected .zwds-palace-transformation-tag.zwds-trans-lu {
+  color: #14532d;
+  background-color: #86efac;
+  border-color: #16a34a;
+}
+
+.dark .zwds-chart-grid .zwds-palace-selected .zwds-palace-transformation-tag.zwds-trans-quan {
+  color: #1e3a8a;
+  background-color: #93c5fd;
+  border-color: #2563eb;
+}
+
+.dark .zwds-chart-grid .zwds-palace-selected .zwds-palace-transformation-tag.zwds-trans-ke {
+  color: #713f12;
+  background-color: #fde047;
+  border-color: #ca8a04;
+}
+
+.dark .zwds-chart-grid .zwds-palace-selected .zwds-palace-transformation-tag.zwds-trans-ji {
+  color: #7f1d1d;
+  background-color: #fca5a5;
+  border-color: #dc2626;
+}
+
+/* 四化 refresh icons — match pill hues */
+.zwds-chart-grid .zwds-palace-transformation-icon.zwds-trans-lu {
+  color: #16a34a;
+}
+
+.zwds-chart-grid .zwds-palace-transformation-icon.zwds-trans-quan {
+  color: #2563eb;
+}
+
+.zwds-chart-grid .zwds-palace-transformation-icon.zwds-trans-ke {
+  color: #ca8a04;
+}
+
+.zwds-chart-grid .zwds-palace-transformation-icon.zwds-trans-ji {
+  color: #dc2626;
+}
+
+.zwds-chart-grid .zwds-palace-selected .zwds-palace-transformation-icon.zwds-trans-lu {
+  color: #86efac;
+}
+
+.zwds-chart-grid .zwds-palace-selected .zwds-palace-transformation-icon.zwds-trans-quan {
+  color: #93c5fd;
+}
+
+.zwds-chart-grid .zwds-palace-selected .zwds-palace-transformation-icon.zwds-trans-ke {
+  color: #fde047;
+}
+
+.zwds-chart-grid .zwds-palace-selected .zwds-palace-transformation-icon.zwds-trans-ji {
+  color: #fca5a5;
+}
+
+/* Da Ming tag — stronger contrast; overrides selected-palace color inheritance */
+.zwds-chart-grid .zwds-palace-daming-tag {
+  background-color: rgba(107, 91, 149, 0.25);
+  color: #4a3f6b;
+  border-color: rgba(107, 91, 149, 0.45);
+}
+
+.dark .zwds-chart-grid .zwds-palace-daming-tag {
+  background-color: rgba(255, 255, 255, 0.22);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+.zwds-chart-grid .zwds-palace-selected .zwds-palace-daming-tag {
+  background-color: #faf9f6;
+  color: #4a3f6b;
+  border-color: rgba(255, 255, 255, 0.75);
+}
+
+.dark .zwds-chart-grid .zwds-palace-selected .zwds-palace-daming-tag {
+  background-color: #ffffff;
+  color: #4a3f6b;
+  border-color: rgba(255, 255, 255, 0.85);
+}
+
+.zwds-chart-grid .zwds-palace-selected .zwds-palace-secondary-name {
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.dark .zwds-chart-grid .zwds-palace-selected .zwds-palace-secondary-name {
+  color: rgba(255, 255, 255, 0.92);
+}
+
+/* Palace footer — equal thirds on sm+; flex space-between on mobile */
+.zwds-chart-grid .zwds-palace-footer {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+@media (max-width: 639px) {
+  .zwds-chart-grid .zwds-palace-footer {
+    display: flex;
+    justify-content: space-between;
+    grid-template-columns: unset;
+  }
+}
+
+.zwds-chart-grid .zwds-palace-footer > * {
+  min-width: 0;
+  max-width: 100%;
+}
+
+/* Palace zodiac watermark — ensure SVG fills the anchor box */
+.zwds-palace-watermark svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Equal 4×4 grid — every palace cell and the 2×2 center are the same unit size */
+.zwds-chart-grid {
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+}
+
+@media (max-width: 639px) {
+  .zwds-chart-grid {
+    touch-action: manipulation;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(4, minmax(9.5rem, 1fr));
+  }
+
+  [data-zwds-chart-container="true"] {
+    height: auto;
+  }
+
+  .zwds-center-info {
+    font-size: 0.875rem;
+    z-index: 0;
+  }
+}
+
+.zwds-center-info {
+  z-index: 0;
+}
+
+.zwds-center-info .zwds-center-label {
+  color: #6b7280;
+  font-weight: 600;
+}
+
+.zwds-center-info .zwds-center-value,
+.zwds-center-info .zwds-center-value span {
+  color: #1a2b48;
+}
+
+.dark .zwds-center-info .zwds-center-label {
+  color: #9ca3af;
+}
+
+.dark .zwds-center-info .zwds-center-value,
+.dark .zwds-center-info .zwds-center-value span {
+  color: #f6f0e8;
+}
+
+body {
+  margin: 0;
+  font-family: Inter, InterVariable, ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--color-page-bg);
+  color: var(--color-text-primary);
 }
 
 .dark {
-  background-color: var(--background-dark);
-  color: var(--text-dark);
+  background-color: var(--color-page-bg);
+  color: var(--color-text-primary);
 }
 
 html {
@@ -39,10 +578,10 @@ html, body, #root {
   padding: 0;
 }
 
-/* Tailwind dark mode background */
+/* Tailwind dark mode shell (class-based) */
 @media (prefers-color-scheme: dark) {
   .dark {
-    @apply bg-gray-900 text-gray-300;
+    @apply bg-surface-dark text-cream;
   }
 }
 
@@ -119,27 +658,27 @@ html, body, #root {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #d1d5db;
+  background: #8B1167;
   border-radius: 6px !important;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #9ca3af;
+  background: #9B8FB5;
 }
 
 /* Dark mode scrollbar styles */
 .dark ::-webkit-scrollbar-thumb {
-  background: #4b5563;
+  background: #4A3F6B;
 }
 
 .dark ::-webkit-scrollbar-thumb:hover {
-  background: #6b7280;
+  background: #6B5B95;
 }
 
 /* Custom scrollbar styles for our app */
 .custom-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: #d1d5db transparent;
+  scrollbar-color: #8B1167 transparent;
 }
 
 .custom-scrollbar::-webkit-scrollbar {
@@ -151,24 +690,24 @@ html, body, #root {
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #d1d5db;
+  background: #8B1167;
   border-radius: 6px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #9ca3af;
+  background: #9B8FB5;
 }
 
 .dark .custom-scrollbar {
-  scrollbar-color: #4b5563 transparent;
+  scrollbar-color: #4A3F6B transparent;
 }
 
 .dark .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #4b5563;
+  background: #4A3F6B;
 }
 
 .dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #6b7280;
+  background: #6B5B95;
 }
 
 /* Custom scrollbar for Firefox */
@@ -178,17 +717,17 @@ html, body, #root {
 
 /* Track */
 * {
-  scrollbar-color: #d1d5db transparent;
+  scrollbar-color: #8B1167 transparent;
 }
 
 /* Handle on hover */
 * {
-  scrollbar-color: #9ca3af transparent;
+  scrollbar-color: #9B8FB5 transparent;
 }
 
 /* Dark mode Firefox scrollbar */
 .dark * {
-  scrollbar-color: #4b5563 transparent;
+  scrollbar-color: #4A3F6B transparent;
 }
 
 /* Moving neon border animation for CAEGPT card */
@@ -270,5 +809,34 @@ html, body, #root {
   .print-root {
     max-width: none;
     margin: 0;
+  }
+}
+
+/* Wealth code — top-ranked card border zoom + fade ripple */
+@keyframes zwds-wealth-top-border-zoom-fade {
+  0% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1.055);
+    opacity: 0;
+  }
+}
+
+.zwds-wealth-top-border-ripple {
+  pointer-events: none;
+  animation: zwds-wealth-top-border-zoom-fade 2.4s ease-out infinite;
+  transform-origin: center center;
+}
+
+.zwds-wealth-top-border-ripple-delay {
+  animation-delay: 1.2s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .zwds-wealth-top-border-ripple {
+    animation: none;
+    opacity: 0;
   }
 }

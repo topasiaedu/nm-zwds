@@ -94,7 +94,11 @@ export const ZodiacModal: React.FC<ZodiacModalProps> = ({
             {ZodiacIcon && (
               <div className="flex justify-center mb-4">
                 <div className="w-24 h-24 md:w-32 md:h-32 bg-white/20 backdrop-blur-sm rounded-3xl p-4 md:p-6 flex items-center justify-center shadow-lg">
-                  <ZodiacIconWrapper Icon={ZodiacIcon} className="w-full h-full text-white brightness-0 invert" />
+                  <ZodiacIconWrapper
+                    Icon={ZodiacIcon}
+                    className="h-full w-full"
+                    invertToWhite
+                  />
                 </div>
               </div>
             )}

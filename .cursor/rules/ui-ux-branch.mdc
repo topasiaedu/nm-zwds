@@ -1,0 +1,32 @@
+---
+description: UI/UX and frontend design work uses the feature/ui-ux-improvements branch
+globs: src/**/*.{tsx,ts,css},docs/color-scheme/**,docs/ui-ux/**,public/**,index.html,tailwind.config.*
+alwaysApply: false
+---
+
+# UI/UX branch workflow
+
+This project tracks **UI/UX and frontend design** on a long-lived branch, not on `main`.
+
+## Before editing
+
+1. Confirm the current branch is `feature/ui-ux-improvements` (or `feature/ui-ux/<topic>` branched from it).
+2. If the user is on `main`, suggest checking out the UI/UX branch before making visual or layout changes:
+
+   ```powershell
+   git checkout feature/ui-ux-improvements
+   ```
+
+3. Do not move unrelated backend or ZWDS engine changes onto this branch unless the user asks.
+
+## Scope on this branch
+
+- Components, pages, styles, themes, color tokens
+- `docs/color-scheme/`, `docs/ui-ux/`
+- Presentation assets under `public/`
+
+## Commits and PRs
+
+- Prefer commit messages: `feat(ui): …`, `fix(ui): …`, `style: …`
+- Merge to `main` via PR when a UI milestone is ready
+- See `docs/ui-ux/BRANCHING.md` for the full workflow

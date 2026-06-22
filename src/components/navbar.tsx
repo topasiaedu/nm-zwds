@@ -6,6 +6,7 @@ import { useTierAccess } from "../context/TierContext";
 import { useLanguage } from "../context/LanguageContext";
 import LanguageToggle from "./LanguageToggle";
 import ThemeToggle from "./ThemeToggle";
+import { brandGradientTextClass } from "../styles/typographyUi";
 
 /**
  * Navbar component with authentication status and user controls
@@ -57,7 +58,7 @@ const Navbar: React.FC = () => {
   }, []);
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 h-14 bg-white/10 dark:bg-gray-900/10 border-gray-200 px-2 sm:px-4 border-b border-white/10 dark:border-gray-800/50 backdrop-blur-md">
+    <nav className="fixed top-0 left-0 right-0 z-50 h-14 bg-surface-elevated/80 dark:bg-surface-darkSecondary/80 px-2 sm:px-4 border-b border-accent-gold/30 dark:border-brand-purpleDeep backdrop-blur-md">
       <div className="h-full max-w-screen-xl flex flex-wrap items-center justify-between mx-auto">
         <div className="flex items-center space-x-1 sm:space-x-3">
           {/* Language toggle - visible on free-test routes only for now */}
@@ -77,10 +78,10 @@ const Navbar: React.FC = () => {
             <div className="relative z-20" ref={dropdownRef}>
               <button
                 type="button"
-                className="flex items-center text-sm rounded-full focus:ring-4 focus:ring-purple-300 dark:focus:ring-purple-600"
+                className="flex items-center text-sm rounded-full focus:ring-4 focus:ring-brand-purple/40 dark:focus:ring-accent-goldDark/40"
                 onClick={() => setDropdownOpen(!dropdownOpen)}>
                 <span className="sr-only">Open user menu</span>
-                <div className="relative w-7 h-7 sm:w-8 sm:h-8 overflow-hidden bg-gradient-to-r from-purple-500 to-indigo-500 rounded-full shadow ring-2 ring-white/20 dark:ring-gray-800/70">
+                <div className="relative w-7 h-7 sm:w-8 sm:h-8 overflow-hidden bg-gradient-to-r from-brand-purple to-brand-purpleDeep rounded-full shadow ring-2 ring-accent-gold/40 dark:ring-brand-purpleDeep/70">
                   <svg
                     className="absolute w-9 h-9 sm:w-10 sm:h-10 text-white/70 -left-1 -top-1"
                     fill="currentColor"
@@ -98,14 +99,14 @@ const Navbar: React.FC = () => {
               {dropdownOpen && (
                 <div
                   className="absolute left-0 mt-2 w-48 rounded-2xl shadow-xl
-                              border border-gray-200 dark:border-gray-600
-                              bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700
+                              border border-accent-gold/40 dark:border-brand-purpleDeep
+                              bg-surface-elevated dark:bg-surface-darkSecondary
                               transition-all duration-300 z-50">
-                  <div className="px-4 py-3 text-sm border-b border-gray-200 dark:border-gray-600">
-                    <div className="font-medium truncate dark:text-white">
+                  <div className="px-4 py-3 text-sm border-b border-accent-gold/30 dark:border-brand-purpleDeep">
+                    <div className="font-medium truncate text-navy dark:text-cream">
                       {user.user_metadata?.display_name || user.email?.split("@")[0] || "User"}
                     </div>
-                    <div className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                    <div className="text-xs text-muted dark:text-muted-dark truncate">
                       {user.email}
                     </div>
                   </div>
@@ -113,7 +114,7 @@ const Navbar: React.FC = () => {
                     <li>
                       <Link
                         to="/profile"
-                        className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-white transition-all duration-200"
+                        className="block px-4 py-2 text-navy dark:text-cream hover:bg-surface-warm dark:hover:bg-brand-purpleDeep/50 transition-all duration-200"
                         onClick={() => setDropdownOpen(false)}>
                         {t("navbar.profile")}
                       </Link>
@@ -121,17 +122,17 @@ const Navbar: React.FC = () => {
                     <li>
                       <Link
                         to="/settings"
-                        className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-white transition-all duration-200"
+                        className="block px-4 py-2 text-navy dark:text-cream hover:bg-surface-warm dark:hover:bg-brand-purpleDeep/50 transition-all duration-200"
                         onClick={() => setDropdownOpen(false)}>
                         {t("navbar.settings")}
                       </Link>
                     </li>
                   </ul>
                   {isAdmin && (
-                    <div className="py-2 border-t border-gray-200 dark:border-gray-600">
+                    <div className="py-2 border-t border-accent-gold/30 dark:border-brand-purpleDeep">
                       <Link
                         to="/admin"
-                        className="flex items-center px-4 py-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all duration-200"
+                        className="flex items-center px-4 py-2 text-accent-coral dark:text-accent-coralDark hover:bg-surface-warm dark:hover:bg-brand-purpleDeep/50 transition-all duration-200"
                         onClick={() => setDropdownOpen(false)}
                       >
                         <svg
@@ -151,10 +152,10 @@ const Navbar: React.FC = () => {
                       </Link>
                     </div>
                   )}
-                  <div className="py-2 border-t border-gray-200 dark:border-gray-600">
+                  <div className="py-2 border-t border-accent-gold/30 dark:border-brand-purpleDeep">
                     <button
                       onClick={handleSignOut}
-                      className="block w-full px-4 py-2 text-left text-sm text-red-500 hover:bg-gray-100 dark:hover:bg-gray-600 transition-all duration-200">
+                      className="block w-full px-4 py-2 text-left text-sm text-accent-coral dark:text-accent-coralDark hover:bg-surface-warm dark:hover:bg-brand-purpleDeep/50 transition-all duration-200">
                       {t("navbar.signOut")}
                     </button>
                   </div>
@@ -164,16 +165,22 @@ const Navbar: React.FC = () => {
           )}
         </div>
 
-        <div className="flex flex-col items-center leading-tight">
+        <Link
+          to="/dashboard"
+          className="flex flex-col items-center leading-tight rounded-lg transition-opacity hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple/40 dark:focus-visible:ring-accent-goldDark/40"
+          aria-label={t("navbar.dashboard")}
+        >
           <div className="flex items-center">
-            <span className="text-xl sm:text-2xl md:text-3xl font-bold whitespace-nowrap bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent dark:from-purple-400 dark:to-indigo-400">
+            <span
+              className={`text-xl sm:text-2xl md:text-3xl font-bold whitespace-nowrap ${brandGradientTextClass}`}
+            >
               紫微斗数
             </span>
-            <span className="ml-1 text-xs sm:text-sm font-bold px-1 sm:px-2 py-0.5 rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 text-white dark:from-purple-500 dark:to-indigo-500 uppercase tracking-wider">
+            <span className="ml-1 text-xs sm:text-sm font-bold px-1 sm:px-2 py-0.5 rounded-lg bg-gradient-to-r from-[#080657] via-[#8B1167] to-[#FE8E01] text-cream dark:from-accent-goldDark dark:via-accent-coralDark dark:to-accent-coral dark:text-surface-darkSecondary uppercase tracking-wider">
               CAE
             </span>
           </div>
-        </div>
+        </Link>
 
         {!user && (
           <div className="flex items-center space-x-1 sm:space-x-3">

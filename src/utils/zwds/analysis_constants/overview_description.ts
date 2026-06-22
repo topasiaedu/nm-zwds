@@ -108,3 +108,28 @@ export const OVERVIEW_DESCRIPTION_CONSTANTS = {
       "You are a fierce spirit — ambitious, strong-willed, and unafraid to question authority. Beneath your composed surface lies a passionate fire that refuses to accept limits or unjust systems. You’re driven by a desire to live authentically, often challenging outdated norms and pushing boundaries to forge a new path. Though you can come across as intense or rebellious, your intentions are rarely selfish — you want change, and you’re willing to lead the charge. When your boldness is paired with empathy and vision, you evolve into a courageous leader who inspires transformation and dares others to claim their power.",
   },
 } as const;
+
+/** Display archetype labels for the personality highlight card (keyed by star name). */
+export const OVERVIEW_ARCHETYPE_TITLES: Record<
+  keyof typeof OVERVIEW_DESCRIPTION_CONSTANTS,
+  string
+> = {
+  紫微: "THE LEADER",
+  天府: "THE STEWARD",
+  天相: "THE DIPLOMAT",
+  武曲: "THE EXECUTOR",
+  天机: "THE STRATEGIST",
+  文曲: "THE ARTIST",
+  文昌: "THE SCHOLAR",
+  贪狼: "THE CREATOR",
+  太阳: "THE RADIANT",
+  太阴: "THE GUARDIAN",
+  巨门: "THE TRUTH SEEKER",
+  天同: "THE HEALER",
+  七杀: "THE TRAILBLAZER",
+  破军: "THE TRANSFORMER",
+  左輔: "THE ANCHOR",
+  右弼: "THE HARMONIZER",
+  天梁: "THE PROTECTOR",
+  廉贞: "THE REBEL",
+};

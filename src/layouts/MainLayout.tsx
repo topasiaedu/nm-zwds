@@ -20,7 +20,7 @@ interface MainLayoutProps {
  */
 export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   return (
-    <div className="relative min-h-screen w-full overflow-hidden bg-gray-50 dark:bg-gray-900 transition-colors duration-500">
+    <div className="relative min-h-screen w-full overflow-hidden bg-surface-cream dark:bg-surface-dark transition-colors duration-500">
       {/* Background animation removed to fix memory leak */}
       
       {/* Navbar with circular buttons */}

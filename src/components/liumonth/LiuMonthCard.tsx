@@ -422,7 +422,7 @@ export const LiuMonthCard: React.FC<LiuMonthCardProps> = ({
   /** Graceful fallback when palace data is unavailable */
   if (!monthData || !guidanceData) {
     return (
-      <div className="w-full py-16 flex items-center justify-center bg-gray-50 dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-700">
+      <div className="w-full py-16 flex items-center justify-center bg-gray-50 rounded-2xl border border-gray-100 dark:border-gray-700">
         <p className="text-gray-500 dark:text-gray-400 text-sm">
           Monthly forecast data unavailable for this palace.
         </p>
@@ -434,7 +434,7 @@ export const LiuMonthCard: React.FC<LiuMonthCardProps> = ({
   const palaceEnglish = PALACE_ENGLISH[palaceName] ?? "Unknown Palace";
 
   return (
-    <div className="p-6 dark:bg-gray-900">
+    <div className="p-6">
       {/* ── 1. Hero Card ── */}
       <HeroCard
         seasonStyle={seasonStyle}

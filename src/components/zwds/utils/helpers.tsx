@@ -2,6 +2,11 @@
  * Helper functions for ZWDS chart component
  */
 
+import {
+  chartTransformationSemantic,
+  type TransformationType,
+} from "../../../styles/chartSemanticColors";
+
 /**
  * Normalize Chinese characters between traditional and simplified forms
  * to ensure consistent star name matching
@@ -133,27 +138,27 @@ export const translateTransformation = (
 /**
  * Get color for transformation type
  */
-export const getTransformationColor = (type?: "祿" | "權" | "科" | "忌"): string => {
+export const getTransformationColor = (type?: TransformationType): string => {
   if (!type) return "";
-  switch (type) {
-    case "祿": return "text-green-500";
-    case "權": return "text-cyan-500"; // Changed from blue to cyan
-    case "科": return "text-yellow-500";
-    case "忌": return "text-red-500";
-    default: return "text-gray-500";
-  }
+  return chartTransformationSemantic[type].textClass;
 };
 
 /**
  * Get transformation badge color styling for selected elements
  */
-export const getTransformationBadgeColor = (type?: "祿" | "權" | "科" | "忌"): string => {
+export const getTransformationBadgeColor = (type?: TransformationType): string => {
   if (!type) return "";
+  const entry = chartTransformationSemantic[type];
   switch (type) {
-    case "祿": return "text-green-300 font-bold px-1 py-0.5 bg-green-900/30 rounded";
-    case "權": return "text-cyan-300 font-bold px-1 py-0.5 bg-cyan-900/30 rounded";
-    case "科": return "text-yellow-300 font-bold px-1 py-0.5 bg-yellow-900/30 rounded";
-    case "忌": return "text-red-300 font-bold px-1 py-0.5 bg-red-900/30 rounded";
-    default: return "text-gray-300 font-bold";
+    case "祿":
+      return `${entry.textClassSelected} font-bold px-1 py-0.5 bg-green-900/30 rounded`;
+    case "權":
+      return `${entry.textClassSelected} font-bold px-1 py-0.5 bg-blue-900/30 rounded`;
+    case "科":
+      return `${entry.textClassSelected} font-bold px-1 py-0.5 bg-yellow-900/30 rounded`;
+    case "忌":
+      return `${entry.textClassSelected} font-bold px-1 py-0.5 bg-red-900/30 rounded`;
+    default:
+      return "text-gray-300 font-bold";
   }
 }; 
