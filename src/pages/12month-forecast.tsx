@@ -14,6 +14,7 @@ import { ZWDSCalculator } from "../utils/zwds/calculator";
 import { ChartInput } from "../utils/zwds/types";
 import { getPalaceForAspectLiuMonth } from "../utils/destiny-navigator/palace-resolver";
 
+import { parseBirthHourForChart } from "../utils/zwds/utils";
 import ForecastForm from "../components/ForecastForm";
 
 interface GenerationProgress {
@@ -55,7 +56,7 @@ const TwelveMonthForecast: React.FC = () => {
         year: birthDate.getFullYear(),
         month: birthDate.getMonth() + 1,
         day: birthDate.getDate(),
-        hour: extractHour(birthTime),
+        hour: parseBirthHourForChart(birthTime),
         gender: gender as "male" | "female",
         name: name,
         email: email || undefined
@@ -337,28 +338,6 @@ const TwelveMonthForecast: React.FC = () => {
 };
 
 // Helper Functions
-
-function extractHour(birthTime: string): number {
-  const timeRegex = /(\d{1,2}):?(\d{2})?\s*(AM|PM)?/i;
-  const match = timeRegex.exec(birthTime);
-
-  if (!match) {
-    return 12; // Default to noon
-  }
-
-  let hour = parseInt(match[1], 10);
-  const isPM = match[3]?.toUpperCase() === "PM";
-  const isAM = match[3]?.toUpperCase() === "AM";
-
-  if (isPM && hour < 12) {
-    hour += 12;
-  }
-  if (isAM && hour === 12) {
-    hour = 0;
-  }
-
-  return hour;
-}
 
 async function calculateMonthlyPalaces(chartData: any, year: number) {
   const monthlyData = [];

@@ -17,6 +17,7 @@ import {
 } from "./liuMonthData";
 import { PALACE_REPORT_COPY, type PalaceReportCopy } from "./liuMonthReportCopy";
 import { getLunarMonthDateRanges, type LunarMonthRange } from "./lunarMonthRanges";
+import { parseBirthHourForChart } from "../zwds/utils";
 
 /** English display names for each palace. */
 export const PALACE_ENGLISH: Record<string, string> = {
@@ -78,31 +79,6 @@ export interface MonthlyForecastReport {
 }
 
 /**
- * Parse birth_time string into hour index for ZWDSCalculator.
- */
-export function extractHourFromBirthTime(birthTime: string): number {
-  const timeRegex = /(\d{1,2}):?(\d{2})?\s*(AM|PM)?/i;
-  const match = timeRegex.exec(birthTime);
-
-  if (match === null) {
-    return 12;
-  }
-
-  let hour = parseInt(match[1], 10);
-  const isPM = match[3]?.toUpperCase() === "PM";
-  const isAM = match[3]?.toUpperCase() === "AM";
-
-  if (isPM && hour < 12) {
-    hour += 12;
-  }
-  if (isAM && hour === 12) {
-    hour = 0;
-  }
-
-  return hour;
-}
-
-/**
  * Build ChartInput from URL/form parameters.
  */
 export function chartInputFromParams(params: {
@@ -122,7 +98,7 @@ export function chartInputFromParams(params: {
     year: birthDate.getFullYear(),
     month: birthDate.getMonth() + 1,
     day: birthDate.getDate(),
-    hour: extractHourFromBirthTime(params.birthTime),
+    hour: parseBirthHourForChart(params.birthTime),
     gender: params.gender,
     email: params.email,
   };

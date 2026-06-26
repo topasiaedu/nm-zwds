@@ -134,6 +134,57 @@ export function getHourBranch(hour: number): number {
 }
 
 /**
+ * Normalize a 24-hour clock value to the period-start hour used by ZWDS star tables.
+ * Wen Chang / Wen Qu lookups use keys 23, 1, 3, 5, …, 21 (start of each 时辰).
+ */
+export function normalizeBirthHourForChart(hour: number): number {
+  if (!Number.isFinite(hour)) {
+    throw new Error(`Invalid hour: ${hour}`);
+  }
+  if (hour < 0 || hour > 23) {
+    throw new Error(`Hour out of range: ${hour}. Must be 0–23.`);
+  }
+  if (hour === 23 || hour === 0) {
+    return 23;
+  }
+  if (hour % 2 === 0) {
+    return hour - 1;
+  }
+  return hour;
+}
+
+/**
+ * Parse birth_time (HH:MM, optional AM/PM, or plain hour) for chart calculation.
+ */
+export function parseBirthHourForChart(birthTime: string): number {
+  const trimmed = birthTime.trim();
+
+  if (/^\d{1,2}$/.test(trimmed)) {
+    return normalizeBirthHourForChart(parseInt(trimmed, 10));
+  }
+
+  const timeRegex = /(\d{1,2}):?(\d{2})?\s*(AM|PM)?/i;
+  const match = timeRegex.exec(trimmed);
+
+  if (match === null) {
+    return normalizeBirthHourForChart(12);
+  }
+
+  let hour = parseInt(match[1], 10);
+  const isPM = match[3]?.toUpperCase() === "PM";
+  const isAM = match[3]?.toUpperCase() === "AM";
+
+  if (isPM && hour < 12) {
+    hour += 12;
+  }
+  if (isAM && hour === 12) {
+    hour = 0;
+  }
+
+  return normalizeBirthHourForChart(hour);
+}
+
+/**
  * Convert a solar (Gregorian) date to a lunar day string (e.g., "初一", "初二", etc.)
  * @param year Solar year (e.g., 2024)
  * @param month Solar month (1-12)

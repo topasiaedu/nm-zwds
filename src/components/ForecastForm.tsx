@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 
 import { ChartInput } from "../utils/zwds/types";
+import { parseBirthHourForChart } from "../utils/zwds/utils";
 
 // Note: EarthlyBranches logic duplicated from ProfileForm to avoid prop drilling complexity
 // In a real refactor, extract to shared constant provided by context or generic hook
@@ -62,7 +63,7 @@ const ForecastForm: React.FC<ForecastFormProps> = ({ onSubmit, isGenerating }) =
     }
 
     const [year, month, day] = formData.birthDate.split("-").map(Number);
-    const hour = parseInt(birthTime.split(":")[0]);
+    const hour = parseBirthHourForChart(birthTime);
 
     if (isNaN(year) || isNaN(month) || isNaN(day)) {
       setDateError("Invalid Date");
