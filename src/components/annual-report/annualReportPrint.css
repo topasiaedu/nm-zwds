@@ -1,0 +1,941 @@
+/**
+ * A4 print layout + 3-level hierarchy (Part → Section → Sub-section).
+ *
+ * Design System — "Scholarly Ink":
+ *   Cover / Part 0  — Slate-charcoal (foundation, natal baseline)
+ *   Part 1          — Deep indigo / lavender (annual story, cosmic)
+ *   Part 2          — Deep teal / jade (monthly flow, cycles)
+ *   Part 3          — Warm amber / gold (year map, harvest)
+ *
+ * Goal: clear, calm, easy to read and study.
+ * No red / orange anywhere except semantic error states.
+ */
+
+@page {
+  size: A4 portrait;
+  margin: 8mm 8mm 10mm 8mm;
+}
+
+/* ── Document base ── */
+
+.annual-report-document {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  line-height: 1.6;
+  color: #1e293b;
+  background-color: #dfe3e8;
+}
+
+/* ── Top brand bar (thin stripe at top of every page) ── */
+
+.annual-report-brand-bar {
+  height: 5px;
+  background: linear-gradient(90deg, #1e293b 0%, #3730a3 50%, #0f766e 100%);
+}
+
+/* Cover page gets a special gold-navy bar */
+.annual-report-cover .annual-report-brand-bar {
+  height: 6px;
+  background: linear-gradient(90deg, #1e293b 0%, #3730a3 40%, #0f766e 70%, #b45309 100%);
+}
+
+.annual-report-page-inner {
+  padding: 1.25rem 1.5rem;
+}
+
+.annual-report-page-footer {
+  margin-top: 1.25rem;
+  padding-top: 0.6rem;
+  border-top: 1px solid #cbd5e1;
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.65rem;
+  color: #94a3b8;
+  letter-spacing: 0.03em;
+}
+
+/* ── Cover page zone ── */
+
+.annual-report-cover .report-part-zone-cover {
+  background: linear-gradient(160deg, #f8fafc 0%, #f1f5f9 100%);
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* ── Part zones (Level 0 background tint — each Part looks different) ── */
+
+.report-part-zone {
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin: -0.5rem;
+}
+
+/* Cover & Part 0 — neutral slate foundation */
+.report-part-zone-cover,
+.report-part-zone-0 {
+  background-color: #f8fafc;
+  border: 1px solid #cbd5e1;
+}
+
+/* Part 1 — soft lavender (annual story / cosmic) */
+.report-part-zone-1 {
+  background-color: #f5f3ff;
+  border: 1px solid #ddd6fe;
+}
+
+/* Part 2 — soft jade / mint (monthly cycles) */
+.report-part-zone-2 {
+  background-color: #f0fdfa;
+  border: 1px solid #99f6e4;
+}
+
+/* Part 3 — soft warm cream-gold (year map / harvest) */
+.report-part-zone-3 {
+  background-color: #fffbeb;
+  border: 1px solid #fde68a;
+}
+
+/* ── Level 1: Part header banner ── */
+
+.report-part-header {
+  margin-bottom: 1.25rem;
+  padding: 0.9rem 1.2rem;
+  border-radius: 0.5rem;
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  color: #ffffff;
+}
+
+/* Cover / Part 0 header stays slate */
+.report-part-zone-cover .report-part-header,
+.report-part-zone-0 .report-part-header {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+}
+
+/* Part 1 — deep indigo */
+.report-part-zone-1 .report-part-header {
+  background: linear-gradient(135deg, #312e81 0%, #4338ca 100%);
+}
+
+/* Part 2 — deep teal */
+.report-part-zone-2 .report-part-header {
+  background: linear-gradient(135deg, #134e4a 0%, #0f766e 100%);
+}
+
+/* Part 3 — deep amber */
+.report-part-zone-3 .report-part-header {
+  background: linear-gradient(135deg, #78350f 0%, #a16207 100%);
+}
+
+.report-part-header-kicker {
+  margin: 0 0 0.2rem 0;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+
+.report-part-header-title {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.report-part-header-subtitle {
+  margin: 0.35rem 0 0 0;
+  font-size: 0.82rem;
+  opacity: 0.85;
+  line-height: 1.45;
+}
+
+/* Monthly chapter header — month name is the primary scan target */
+.report-part-header--monthly {
+  padding: 1rem 1.25rem 1.1rem;
+}
+
+.report-part-header--monthly .report-part-header-kicker {
+  margin-bottom: 0.35rem;
+  opacity: 0.75;
+}
+
+.report-part-header-hero {
+  margin: 0;
+  font-size: 2.5rem;
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: 0.02em;
+}
+
+.report-part-header-dates {
+  margin: 0.4rem 0 0 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+  line-height: 1.35;
+  opacity: 0.95;
+}
+
+.report-part-header--monthly .report-part-header-subtitle {
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.22);
+  font-size: 0.8rem;
+  opacity: 0.88;
+}
+
+/* Continuation label on page 2+ of a Part */
+.report-page-continued {
+  margin: 0 0 0.85rem 0;
+  padding: 0.35rem 0 0.5rem;
+  border-bottom: 1px solid #e2e8f0;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #64748b;
+  letter-spacing: 0.02em;
+}
+
+/* ── Level 2: Section box ── */
+
+.report-section {
+  margin-bottom: 0.9rem;
+  border-radius: 0.375rem;
+  overflow: hidden;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.report-part-zone-1 .report-section {
+  border-color: #ddd6fe;
+}
+
+.report-part-zone-2 .report-section {
+  border-color: #99f6e4;
+}
+
+.report-part-zone-3 .report-section {
+  border-color: #fde68a;
+}
+
+.report-part-zone-0 .report-section {
+  border-color: #cbd5e1;
+}
+
+/* Section header bar */
+.report-section-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0.85rem;
+  background-color: #f1f5f9;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.report-part-zone-1 .report-section-header {
+  background-color: #ede9fe;
+  border-bottom-color: #ddd6fe;
+}
+
+.report-part-zone-2 .report-section-header {
+  background-color: #ccfbf1;
+  border-bottom-color: #99f6e4;
+}
+
+.report-part-zone-3 .report-section-header {
+  background-color: #fef3c7;
+  border-bottom-color: #fde68a;
+}
+
+/* Section index badge — plain numerals, high contrast, easy to scan */
+.report-section-index {
+  flex-shrink: 0;
+  min-width: 1.85rem;
+  height: 1.85rem;
+  padding: 0 0.35rem;
+  border-radius: 0.375rem;
+  background-color: #1e293b;
+  color: #ffffff;
+  font-size: 0.875rem;
+  font-weight: 800;
+  line-height: 1;
+  text-align: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-variant-numeric: tabular-nums;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
+}
+
+.report-part-zone-1 .report-section-index {
+  background-color: #3730a3;
+  color: #ffffff;
+}
+
+/* Outlined badge on mint header — stronger contrast than solid teal on teal */
+.report-part-zone-2 .report-section-index {
+  background-color: #ffffff;
+  color: #134e4a;
+  border: 2px solid #0f766e;
+  box-shadow: 0 1px 3px rgba(15, 118, 110, 0.2);
+}
+
+.report-part-zone-3 .report-section-index {
+  background-color: #92400e;
+  color: #ffffff;
+}
+
+/* Dimmed index for continued sections */
+.report-section-continued .report-section-index {
+  background-color: #e2e8f0;
+  color: #475569;
+  border: 2px solid #94a3b8;
+  box-shadow: none;
+}
+
+.report-section-continued .report-section-header {
+  opacity: 0.9;
+}
+
+.report-section-title {
+  flex: 1;
+  margin: 0;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: #1e293b;
+}
+
+.report-section-extra {
+  flex-shrink: 0;
+}
+
+.report-section-body {
+  padding: 0.85rem 1.1rem;
+  font-size: 0.875rem;
+  color: #374151;
+  line-height: 1.65;
+}
+
+/* ── Level 3: Sub-section strip ── */
+
+.report-subsection {
+  margin-bottom: 0.8rem;
+  padding: 0.6rem 0.75rem;
+  border-radius: 0.25rem;
+  background-color: #f8fafc;
+  border-left: 3px solid #cbd5e1;
+}
+
+.report-part-zone-1 .report-subsection {
+  border-left-color: #a5b4fc;
+  background-color: #faf9ff;
+}
+
+.report-part-zone-2 .report-subsection {
+  border-left-color: #5eead4;
+  background-color: #f5fffe;
+}
+
+.report-part-zone-3 .report-subsection {
+  border-left-color: #fbbf24;
+  background-color: #fffef5;
+}
+
+.report-subsection:last-child {
+  margin-bottom: 0;
+}
+
+.report-subsection-label {
+  margin: 0 0 0.35rem 0;
+  font-size: 0.67rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #64748b;
+}
+
+.report-subsection-body {
+  font-size: 0.875rem;
+  color: #374151;
+  line-height: 1.65;
+}
+
+/* ── Shared content primitives ── */
+
+.report-bullet-list {
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+.report-bullet-list li {
+  margin-bottom: 0.35rem;
+  line-height: 1.6;
+}
+
+.report-cluster-row {
+  display: flex;
+  gap: 0.65rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.report-cluster-row:last-child {
+  border-bottom: none;
+}
+
+.report-cluster-label {
+  flex-shrink: 0;
+  min-width: 8.5rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #475569;
+  padding-top: 0.1rem;
+}
+
+.report-cluster-text {
+  flex: 1;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: #374151;
+}
+
+.report-kv-row {
+  margin: 0 0 0.45rem 0;
+}
+
+.report-kv-label {
+  font-weight: 700;
+  color: #111827;
+}
+
+/* Inset panel (e.g. 流月四化 table) */
+.report-inset-panel {
+  margin-top: 0.75rem;
+  padding: 0.65rem 0.85rem;
+  border-radius: 0.375rem;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+}
+
+.report-inset-panel-title {
+  margin: 0 0 0.4rem 0;
+  font-size: 0.63rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: #64748b;
+}
+
+/* ── Data table ── */
+
+.report-data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+}
+
+.report-data-table th {
+  padding: 0.5rem 0.65rem;
+  background-color: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  font-size: 0.63rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #475569;
+  white-space: nowrap;
+}
+
+.report-data-table td {
+  padding: 0.45rem 0.65rem;
+  border: 1px solid #e2e8f0;
+  vertical-align: top;
+  line-height: 1.55;
+  color: #374151;
+}
+
+/* Subtle zebra striping for scanability */
+.report-data-table tbody tr:nth-child(even) td {
+  background-color: #f8fafc;
+}
+
+/* ── Action Plan cards (Section 4 "Your action plan") ── */
+
+.report-action-plan {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0.6rem;
+  margin-top: 0.15rem;
+}
+
+.report-action-card {
+  border-radius: 0.375rem;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+}
+
+.report-action-card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.7rem;
+  font-size: 0.63rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  border-bottom: 1px solid transparent;
+}
+
+.report-action-card-icon {
+  font-size: 0.9rem;
+  line-height: 1;
+}
+
+.report-action-card-label {
+  line-height: 1;
+}
+
+.report-action-card-body {
+  flex: 1;
+  padding: 0.6rem 0.7rem;
+  font-size: 0.82rem;
+  line-height: 1.6;
+}
+
+/* Do This — emerald */
+.report-action-card--do {
+  border-color: #bbf7d0;
+}
+
+.report-action-card--do .report-action-card-header {
+  background-color: #dcfce7;
+  color: #14532d;
+  border-bottom-color: #86efac;
+}
+
+.report-action-card--do .report-action-card-body {
+  background-color: #f0fdf4;
+  color: #166534;
+}
+
+.report-action-card--do .report-bullet-list li::marker {
+  color: #22c55e;
+}
+
+/* Avoid This — amber */
+.report-action-card--avoid {
+  border-color: #fde68a;
+}
+
+.report-action-card--avoid .report-action-card-header {
+  background-color: #fef3c7;
+  color: #78350f;
+  border-bottom-color: #fcd34d;
+}
+
+.report-action-card--avoid .report-action-card-body {
+  background-color: #fffbeb;
+  color: #92400e;
+}
+
+.report-action-card--avoid .report-bullet-list li::marker {
+  color: #f59e0b;
+}
+
+/* Best Timing — slate-blue */
+.report-action-card--timing {
+  border-color: #bfdbfe;
+}
+
+.report-action-card--timing .report-action-card-header {
+  background-color: #dbeafe;
+  color: #1e3a8a;
+  border-bottom-color: #93c5fd;
+}
+
+.report-action-card--timing .report-action-card-body {
+  background-color: #eff6ff;
+  color: #1e40af;
+}
+
+.report-action-card-timing-text {
+  margin: 0;
+  font-size: 0.82rem;
+  line-height: 1.6;
+  font-style: italic;
+}
+
+@media print {
+  .report-action-plan {
+    break-inside: avoid;
+  }
+}
+
+/* ── Scores row ── */
+
+.report-ratings-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem 1.25rem;
+  margin-top: 0.6rem;
+  padding-top: 0.6rem;
+  border-top: 1px solid #e2e8f0;
+  font-size: 0.8rem;
+  align-items: center;
+}
+
+/* ── Harmony badges (semantic colors — kept as-is for meaning) ── */
+
+.annual-report-harmony-badge {
+  display: inline-block;
+  padding: 0.15rem 0.55rem;
+  border-radius: 9999px;
+  font-size: 0.63rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.annual-report-harmony-favorable  { background: #dcfce7; color: #166534; }
+.annual-report-harmony-supportive { background: #dbeafe; color: #1e40af; }
+.annual-report-harmony-watchful   { background: #fef3c7; color: #92400e; }
+.annual-report-harmony-challenging { background: #fee2e2; color: #9f1239; }
+.annual-report-harmony-neutral    { background: #f1f5f9; color: #475569; }
+
+/* ── Energy / score bar ── */
+
+.annual-report-energy-bar {
+  height: 0.375rem;
+  border-radius: 9999px;
+  background-color: #e2e8f0;
+  overflow: hidden;
+}
+
+/* Indigo gradient — calm, legible, no aggressive red */
+.annual-report-energy-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4338ca 0%, #818cf8 100%);
+}
+
+/* ── Screen toolbar ── */
+
+.annual-report-toolbar {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 50;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.annual-report-toolbar button {
+  padding: 0.65rem 1.25rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+  transition: opacity 0.15s ease, transform 0.1s ease;
+}
+
+.annual-report-toolbar button:hover {
+  opacity: 0.92;
+  transform: translateY(-1px);
+}
+
+.annual-report-toolbar-print {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  color: #ffffff;
+}
+
+.annual-report-toolbar-top {
+  background: #ffffff;
+  color: #334155;
+  border: 1px solid #cbd5e1 !important;
+}
+
+/* ── Per-month color themes (Part 2 — 正月 through 腊月) ── */
+
+.report-part-zone.report-month-theme {
+  background-color: var(--month-zone-bg);
+  border-color: var(--month-zone-border);
+}
+
+.report-part-zone.report-month-theme .report-part-header {
+  background: linear-gradient(
+    135deg,
+    var(--month-header-from) 0%,
+    var(--month-header-to) 100%
+  );
+}
+
+.report-part-zone.report-month-theme .report-section {
+  border-color: var(--month-section-border);
+}
+
+.report-part-zone.report-month-theme .report-section-header {
+  background-color: var(--month-section-header-bg);
+  border-bottom-color: var(--month-section-header-border);
+}
+
+.report-part-zone.report-month-theme .report-section-index {
+  background-color: #ffffff;
+  color: var(--month-index-text);
+  border: 2px solid var(--month-index-border);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+.report-part-zone.report-month-theme .report-section-continued .report-section-index {
+  background-color: var(--month-section-header-bg);
+  color: var(--month-index-text);
+  border-color: var(--month-section-header-border);
+  box-shadow: none;
+}
+
+.report-part-zone.report-month-theme .report-subsection {
+  border-left-color: var(--month-subsection-border);
+  background-color: var(--month-subsection-bg);
+}
+
+.report-part-zone.report-month-theme .report-page-continued {
+  border-bottom-color: var(--month-section-header-border);
+  color: var(--month-index-text);
+}
+
+.annual-report-month-page .annual-report-brand-bar {
+  background: linear-gradient(
+    90deg,
+    var(--month-header-from) 0%,
+    var(--month-header-to) 100%
+  );
+}
+
+/* 正月 — Rose (new year) */
+.report-month-theme-1 {
+  --month-zone-bg: #fff1f2;
+  --month-zone-border: #fecdd3;
+  --month-header-from: #9f1239;
+  --month-header-to: #be123c;
+  --month-section-border: #fecdd3;
+  --month-section-header-bg: #ffe4e6;
+  --month-section-header-border: #fda4af;
+  --month-subsection-border: #fb7185;
+  --month-subsection-bg: #fff8f8;
+  --month-index-border: #be123c;
+  --month-index-text: #9f1239;
+}
+
+/* 二月 — Orchid */
+.report-month-theme-2 {
+  --month-zone-bg: #fdf4ff;
+  --month-zone-border: #f5d0fe;
+  --month-header-from: #86198f;
+  --month-header-to: #a21caf;
+  --month-section-border: #f5d0fe;
+  --month-section-header-bg: #fae8ff;
+  --month-section-header-border: #e9d5ff;
+  --month-subsection-border: #d946ef;
+  --month-subsection-bg: #fefaff;
+  --month-index-border: #a21caf;
+  --month-index-text: #86198f;
+}
+
+/* 三月 — Spring green */
+.report-month-theme-3 {
+  --month-zone-bg: #f0fdf4;
+  --month-zone-border: #bbf7d0;
+  --month-header-from: #166534;
+  --month-header-to: #15803d;
+  --month-section-border: #bbf7d0;
+  --month-section-header-bg: #dcfce7;
+  --month-section-header-border: #86efac;
+  --month-subsection-border: #4ade80;
+  --month-subsection-bg: #f7fef9;
+  --month-index-border: #15803d;
+  --month-index-text: #166534;
+}
+
+/* 四月 — Emerald */
+.report-month-theme-4 {
+  --month-zone-bg: #ecfdf5;
+  --month-zone-border: #a7f3d0;
+  --month-header-from: #065f46;
+  --month-header-to: #047857;
+  --month-section-border: #a7f3d0;
+  --month-section-header-bg: #d1fae5;
+  --month-section-header-border: #6ee7b7;
+  --month-subsection-border: #34d399;
+  --month-subsection-bg: #f5fffb;
+  --month-index-border: #047857;
+  --month-index-text: #065f46;
+}
+
+/* 五月 — Teal */
+.report-month-theme-5 {
+  --month-zone-bg: #f0fdfa;
+  --month-zone-border: #99f6e4;
+  --month-header-from: #115e59;
+  --month-header-to: #0f766e;
+  --month-section-border: #99f6e4;
+  --month-section-header-bg: #ccfbf1;
+  --month-section-header-border: #5eead4;
+  --month-subsection-border: #2dd4bf;
+  --month-subsection-bg: #f5fffe;
+  --month-index-border: #0f766e;
+  --month-index-text: #115e59;
+}
+
+/* 六月 — Sky blue */
+.report-month-theme-6 {
+  --month-zone-bg: #f0f9ff;
+  --month-zone-border: #bae6fd;
+  --month-header-from: #075985;
+  --month-header-to: #0369a1;
+  --month-section-border: #bae6fd;
+  --month-section-header-bg: #e0f2fe;
+  --month-section-header-border: #7dd3fc;
+  --month-subsection-border: #38bdf8;
+  --month-subsection-bg: #f8fcff;
+  --month-index-border: #0369a1;
+  --month-index-text: #075985;
+}
+
+/* 七月 — Royal blue */
+.report-month-theme-7 {
+  --month-zone-bg: #eff6ff;
+  --month-zone-border: #bfdbfe;
+  --month-header-from: #1e3a8a;
+  --month-header-to: #1d4ed8;
+  --month-section-border: #bfdbfe;
+  --month-section-header-bg: #dbeafe;
+  --month-section-header-border: #93c5fd;
+  --month-subsection-border: #60a5fa;
+  --month-subsection-bg: #f8faff;
+  --month-index-border: #1d4ed8;
+  --month-index-text: #1e3a8a;
+}
+
+/* 八月 — Indigo */
+.report-month-theme-8 {
+  --month-zone-bg: #eef2ff;
+  --month-zone-border: #c7d2fe;
+  --month-header-from: #312e81;
+  --month-header-to: #4338ca;
+  --month-section-border: #c7d2fe;
+  --month-section-header-bg: #e0e7ff;
+  --month-section-header-border: #a5b4fc;
+  --month-subsection-border: #818cf8;
+  --month-subsection-bg: #f8f9ff;
+  --month-index-border: #4338ca;
+  --month-index-text: #312e81;
+}
+
+/* 九月 — Violet */
+.report-month-theme-9 {
+  --month-zone-bg: #f5f3ff;
+  --month-zone-border: #ddd6fe;
+  --month-header-from: #4c1d95;
+  --month-header-to: #6d28d9;
+  --month-section-border: #ddd6fe;
+  --month-section-header-bg: #ede9fe;
+  --month-section-header-border: #c4b5fd;
+  --month-subsection-border: #a78bfa;
+  --month-subsection-bg: #faf9ff;
+  --month-index-border: #6d28d9;
+  --month-index-text: #4c1d95;
+}
+
+/* 十月 — Amber */
+.report-month-theme-10 {
+  --month-zone-bg: #fffbeb;
+  --month-zone-border: #fde68a;
+  --month-header-from: #92400e;
+  --month-header-to: #b45309;
+  --month-section-border: #fde68a;
+  --month-section-header-bg: #fef3c7;
+  --month-section-header-border: #fcd34d;
+  --month-subsection-border: #fbbf24;
+  --month-subsection-bg: #fffef5;
+  --month-index-border: #b45309;
+  --month-index-text: #92400e;
+}
+
+/* 十一月 — Bronze */
+.report-month-theme-11 {
+  --month-zone-bg: #fdf8f3;
+  --month-zone-border: #e7d5c4;
+  --month-header-from: #78350f;
+  --month-header-to: #9a3412;
+  --month-section-border: #e7d5c4;
+  --month-section-header-bg: #f5ebe0;
+  --month-section-header-border: #d6bfa3;
+  --month-subsection-border: #d97706;
+  --month-subsection-bg: #fffcf8;
+  --month-index-border: #9a3412;
+  --month-index-text: #78350f;
+}
+
+/* 腊月 — Winter slate */
+.report-month-theme-12 {
+  --month-zone-bg: #f1f5f9;
+  --month-zone-border: #cbd5e1;
+  --month-header-from: #334155;
+  --month-header-to: #475569;
+  --month-section-border: #cbd5e1;
+  --month-section-header-bg: #e2e8f0;
+  --month-section-header-border: #94a3b8;
+  --month-subsection-border: #64748b;
+  --month-subsection-bg: #f8fafc;
+  --month-index-border: #475569;
+  --month-index-text: #334155;
+}
+
+/* ── Print rules ── */
+
+@media print {
+  html,
+  body {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    background: #ffffff !important;
+  }
+
+  .annual-report-no-print {
+    display: none !important;
+  }
+
+  .annual-report-document {
+    background: #ffffff !important;
+  }
+
+  .annual-report-print-page {
+    break-after: page;
+    page-break-after: always;
+    box-shadow: none !important;
+  }
+
+  .annual-report-avoid-break {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .annual-report-page-inner {
+    padding: 0;
+  }
+}
+
+/* ── Screen display ── */
+
+@media screen {
+  .annual-report-print-page {
+    max-width: 210mm;
+    margin: 0 auto 1.5rem;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+    background: #ffffff;
+  }
+}

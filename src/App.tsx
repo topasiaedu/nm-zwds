@@ -48,6 +48,7 @@ import WealthCodePreviewPage from "./pages/dev/wealth-code-preview";
 import TwelveMonthForecast from "./pages/12month-forecast";
 import PrintResult from "./pages/PrintResult";
 import PrintMonthlyForecast from "./pages/PrintMonthlyForecast";
+import PrintAnnualReport from "./pages/annual-report";
 // Import centralized config
 import FREE_TEST_CONFIG from "./config/freeTestConfig";
 import { Analytics } from "@vercel/analytics/react"
@@ -136,6 +137,7 @@ const App: React.FC = () => {
                     <Route path="/chart-test" element={<ChartTest />} />
                     <Route path="/print/result/:id" element={<PrintResult />} />
                     <Route path="/print/monthly-forecast" element={<PrintMonthlyForecast />} />
+                    <Route path="/print/annual-report" element={<PrintAnnualReport />} />
                     <Route path="/membership-expired" element={<MembershipExpired />} />
                     <Route path="/membership-paused" element={<MembershipPaused />} />
                     <Route path="/12month-forecast" element={<TwelveMonthForecast />} />
