@@ -94,12 +94,24 @@ export interface ActivationSummary {
   transformationKinds: TransformationKind[];
 }
 
+/** One score chip inside a life area cluster card. */
+export interface LifeAreaScoreChip {
+  label: string;
+  score: number;
+}
+
+/** Structured life area cluster with scores and insight text. */
+export interface LifeAreaCluster {
+  scores: LifeAreaScoreChip[];
+  insight: string;
+}
+
 /** Life area cluster content (blocks A–D). */
 export interface LifeAreaClusters {
-  selfAndMindset: string;
-  workAndMoney: string;
-  peopleAndLove: string;
-  bodyHomeAndWorld: string;
+  selfAndMindset: LifeAreaCluster;
+  workAndMoney: LifeAreaCluster;
+  peopleAndLove: LifeAreaCluster;
+  bodyHomeAndWorld: LifeAreaCluster;
 }
 
 /** See · Hear · Do block. */
@@ -114,8 +126,31 @@ export interface SeeHearDo {
 /** Grow Stronger block. */
 export interface GrowStronger {
   characterFocus: string;
-  practice: string;
+  /** One-line explanation of the skill. */
+  skillHint: string;
+  /** Short habit name shown as a headline. */
+  practiceTitle: string;
+  /** Plain numbered steps for the daily habit. */
+  practiceSteps: string[];
   pressureNote: string;
+}
+
+/** Colored band on the Part 6 month rhythm timeline. */
+export interface TimingRhythmBand {
+  startPercent: number;
+  endPercent: number;
+  startLabel: string;
+  endLabel: string;
+}
+
+/** Date anchors and bands for the Part 6 month rhythm visual. */
+export interface MonthRhythmVisual {
+  monthStartLabel: string;
+  monthEndLabel: string;
+  earlyEndLabel: string;
+  lateStartLabel: string;
+  favorableBand: TimingRhythmBand;
+  cautionBand: TimingRhythmBand;
 }
 
 /** Timing note block. */
@@ -124,6 +159,7 @@ export interface TimingNote {
   cautionWindow: string;
   branchHarmony: BranchHarmonyType;
   branchExplanation: string;
+  rhythmVisual: MonthRhythmVisual;
 }
 
 /** Month snapshot block (①). */
@@ -223,9 +259,15 @@ export interface YearMapMonthRow {
   keyword: string;
 }
 
+/** One month row with score for Part 3.2 category cards. */
+export interface MonthCategoryMonthRow {
+  label: string;
+  score: number;
+}
+
 /** Best/challenging month category. */
 export interface MonthCategoryEntry {
-  months: string[];
+  monthRows: MonthCategoryMonthRow[];
   why: string;
   strategy: string;
 }
@@ -240,6 +282,26 @@ export interface AnnualPlaybook {
   closingLine: string;
 }
 
+/** One turning point month for Part 3.3. */
+export interface TurningPointEntry {
+  monthLabel: string;
+  harmony: BranchHarmonyType;
+  explanation: string;
+}
+
+/** One golden window month for Part 3.3. */
+export interface GoldenWindowEntry {
+  monthLabel: string;
+  solarDateRange: string;
+  window: string;
+}
+
+/** One caution window month for Part 3.3. */
+export interface CautionWindowEntry {
+  monthLabel: string;
+  window: string;
+}
+
 /** Year map synthesis for Part 3. */
 export interface YearMapData {
   overviewRows: YearMapMonthRow[];
@@ -250,9 +312,9 @@ export interface YearMapData {
     health: MonthCategoryEntry;
     mostChallenging: MonthCategoryEntry;
   };
-  turningPoints: string[];
-  goldenWindows: string[];
-  cautionCalendar: string[];
+  turningPoints: TurningPointEntry[];
+  goldenWindows: GoldenWindowEntry[];
+  cautionCalendar: CautionWindowEntry[];
   playbook: AnnualPlaybook;
 }
 

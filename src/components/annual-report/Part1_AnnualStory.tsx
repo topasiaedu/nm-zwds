@@ -4,9 +4,15 @@
 
 import React from "react";
 import type { AnnualRunReport } from "../../utils/annual-report/types";
-import { EnergyBar } from "./reportUtils";
-import { getPalaceEnglish } from "../../utils/annual-report/domainConfig";
-import { getPlainAnnualTransformationInsight } from "../../utils/annual-report/starCombinations";
+import {
+  AnnualTransformationCard,
+  AnnualTransformationGrid,
+  OpportunityRiskSplit,
+  QuarterScoreGrid,
+} from "./reportUtils";
+import { getPlainLifeAreaName } from "../../utils/annual-report/domainConfig";
+import { getBriefAnnualTransformationInsight } from "../../utils/annual-report/starCombinations";
+import { getStarEnglishLabel } from "../../utils/annual-report/reportLabels";
 import ReportPrintPage from "./ReportPrintPage";
 import {
   ReportPartHeader,
@@ -40,75 +46,32 @@ const Part1AnnualStory: React.FC<Part1AnnualStoryProps> = ({ report }) => {
           <p className="mb-0">{annualStory.energyArc}</p>
         </ReportSubSection>
         <ReportSubSection label="Quarter by quarter">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {annualStory.quarterlyArc.map((q) => (
-              <div key={q.quarter}>
-                <EnergyBar score={q.averageScore} label={`${q.quarter}: ${q.label}`} />
-                <p className="text-xs text-gray-600 mb-0">{q.summary}</p>
-              </div>
-            ))}
-          </div>
+          <QuarterScoreGrid quarters={annualStory.quarterlyArc} />
         </ReportSubSection>
       </ReportSection>
 
-      <ReportSection index="1.2" title="Annual Transformations (流年四化)">
+      <ReportSection index="1.2" title="Annual Transformations">
         <p className="text-sm text-gray-600 mb-3">
-          These four shifts show where this year&apos;s energy lands on your chart and what to watch for.
+          Where this year&apos;s energy lands on your chart.
         </p>
-        <table className="report-data-table">
-          <thead>
-            <tr>
-              <th>Shift</th>
-              <th>Star</th>
-              <th>Lands in</th>
-              <th>What it means for you</th>
-            </tr>
-          </thead>
-          <tbody>
-            {annualStory.liuYearTransformations.map((activation) => (
-              <tr key={`${activation.kind}-${activation.starName}`}>
-                <td>{activation.kind}</td>
-                <td>{activation.starName}</td>
-                <td>{getPalaceEnglish(activation.targetPalaceName)}</td>
-                <td className="text-xs">
-                  {getPlainAnnualTransformationInsight(
-                    activation.kind,
-                    getPalaceEnglish(activation.targetPalaceName)
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <AnnualTransformationGrid>
+          {annualStory.liuYearTransformations.map((activation) => (
+            <AnnualTransformationCard
+              key={`${activation.kind}-${activation.starName}`}
+              kind={activation.kind}
+              starLabel={getStarEnglishLabel(activation.starName)}
+              palaceLabel={getPlainLifeAreaName(activation.targetPalaceName)}
+              insight={getBriefAnnualTransformationInsight(activation.kind)}
+            />
+          ))}
+        </AnnualTransformationGrid>
       </ReportSection>
 
       <ReportSection index="1.3" title="Opportunities and Risks">
-        <ReportSubSection label="Opportunities">
-          <ul className="space-y-2 text-sm">
-            {annualStory.opportunities.map((item) => (
-              <li key={item.title} className="border-l-2 border-emerald-500 pl-3 py-0.5">
-                <p className="font-semibold text-slate-800">{item.title}</p>
-                <p className="text-slate-600">{item.detail}</p>
-                <p className="text-emerald-700 text-xs mt-0.5">
-                  <strong>What to do:</strong> {item.posture}
-                </p>
-              </li>
-            ))}
-          </ul>
-        </ReportSubSection>
-        <ReportSubSection label="Risks">
-          <ul className="space-y-2 text-sm">
-            {annualStory.risks.map((item) => (
-              <li key={item.title} className="border-l-2 border-amber-500 pl-3 py-0.5">
-                <p className="font-semibold text-slate-800">{item.title}</p>
-                <p className="text-slate-600">{item.detail}</p>
-                <p className="text-amber-700 text-xs mt-0.5">
-                  <strong>What to do:</strong> {item.posture}
-                </p>
-              </li>
-            ))}
-          </ul>
-        </ReportSubSection>
+        <OpportunityRiskSplit
+          opportunities={annualStory.opportunities}
+          risks={annualStory.risks}
+        />
       </ReportSection>
     </ReportPrintPage>
   );

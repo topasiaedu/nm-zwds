@@ -200,7 +200,8 @@ export function getDomainScore(
 }
 
 /**
- * Pick keyword from dominant palace activation and score.
+ * Pick a one-word action verb from the month's dominant palace and score.
+ * Used in Part 2 headers and Part 3.1 overview map.
  */
 export function deriveMonthKeyword(
   liuMonthPalaceName: string,
@@ -208,27 +209,24 @@ export function deriveMonthKeyword(
 ): string {
   const palaceKeywords: Record<string, string> = {
     "官禄": "Lead",
-    "财帛": "Harvest",
-    "夫妻": "Align",
-    "疾厄": "Restore",
-    "迁移": "Expand",
-    "交友": "Connect",
-    "田宅": "Ground",
-    "福德": "Reflect",
-    "兄弟": "Filter",
-    "子女": "Build",
+    "财帛": "Earn",
+    "夫妻": "Connect",
+    "疾厄": "Rest",
+    "迁移": "Explore",
+    "交友": "Network",
+    "田宅": "Settle",
+    "福德": "Recharge",
+    "兄弟": "Choose",
+    "子女": "Create",
     "父母": "Release",
     "命宫": "Invest",
   };
 
-  const base = palaceKeywords[liuMonthPalaceName] ?? "Focus";
-  if (averageScore >= 4) {
-    return `${base}`;
-  }
   if (averageScore <= 2) {
-    return `Steady`;
+    return "Protect";
   }
-  return base;
+
+  return palaceKeywords[liuMonthPalaceName] ?? "Focus";
 }
 
 /**

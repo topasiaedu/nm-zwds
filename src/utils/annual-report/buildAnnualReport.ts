@@ -9,11 +9,10 @@ import { getLunarMonthDateRanges } from "../forecast/lunarMonthRanges";
 import { parseBirthHourForChart } from "../zwds/utils";
 import { computeLiuYearTransformations } from "./liuYearTransformations";
 import { computeLiuMonthTransformations } from "./liuMonthTransformations";
-import { evaluateBranchHarmony, buildTimingWindows } from "./branchHarmony";
+import { evaluateBranchHarmony, buildMonthRhythmVisual, buildTimingWindows } from "./branchHarmony";
 import {
   collectPlainMonthlyInsights,
-  getPlainAnnualActivationTitle,
-  getPlainAnnualTransformationInsight,
+  getBriefAnnualActivationTitle,
   getPlainStarCombinationInsight,
 } from "./starCombinations";
 import {
@@ -26,6 +25,11 @@ import {
   palaceHasJi,
 } from "./domainScoring";
 import { REPORT_DOMAINS, getPalaceEnglish, getPlainLifeAreaName } from "./domainConfig";
+import {
+  getAnnualFlowLabel,
+  getLunarMonthEnglishLabel,
+  getTransformationKindLabel,
+} from "./reportLabels";
 import type {
   ActivationSummary,
   AnnualMonthEntry,
@@ -34,6 +38,7 @@ import type {
   AnnualStory,
   DomainRow,
   GrowStronger,
+  LifeAreaCluster,
   LifeAreaClusters,
   LiuMonthTransformationSet,
   MonthFocusGuide,
@@ -116,8 +121,10 @@ const PALACE_MONTH_THEMES: Record<string, string> = {
 function formatPlainActivationReason(activations: TransformationActivation[]): string {
   return activations
     .map((activation) => {
-      const timing = activation.sourceLabel.includes("流月") ? "This month" : "This year";
-      return `${timing}: ${activation.kind} activates ${getPalaceEnglish(activation.targetPalaceName)}`;
+      const timing = activation.sourceLabel.toLowerCase().includes("month")
+        ? "This month"
+        : "This year";
+      return `${timing}: ${getTransformationKindLabel(activation.kind)} activates ${getPalaceEnglish(activation.targetPalaceName)}`;
     })
     .join(". ");
 }
@@ -168,12 +175,15 @@ function buildReportMeta(
   const firstRange = lunarRanges[0];
   const lunarYearLabel =
     firstRange !== undefined
-      ? `农历 ${firstRange.lunarMonthLabel}年起`
-      : "农历 reference per lunar month ranges";
+      ? `Lunar year from ${getLunarMonthEnglishLabel(firstRange.lunarMonth)}`
+      : "Lunar year by month ranges";
 
   return {
     lunarYearLabel,
-    stemBranchLabel: `${liuYear.yearHeavenlyStem}${liuYear.yearEarthlyBranch} 流年`,
+    stemBranchLabel: getAnnualFlowLabel(
+      liuYear.yearHeavenlyStem,
+      liuYear.yearEarthlyBranch
+    ),
     yearPalaceNumber: liuYear.yearPalaceNumber,
     disclaimer:
       "This report shows patterns in your chart, not fixed outcomes. Use it as a guide, and trust your own judgment too.",
@@ -212,46 +222,34 @@ function buildAnnualStory(
         : "This year favors steady building. Lay groundwork now so the rest of the year can pay off.";
 
   const energyArc =
-    `Your year runs on ${liuYear.yearHeavenlyStem}${liuYear.yearEarthlyBranch} annual energy, centered on palace ${liuYear.yearPalaceNumber}. ` +
-    `Energy often picks up in the middle months. Where 化忌 lands, move more carefully. ` +
+    `Your year runs on ${getAnnualFlowLabel(liuYear.yearHeavenlyStem, liuYear.yearEarthlyBranch)}, centered on palace ${liuYear.yearPalaceNumber}. ` +
+    `Energy often picks up in the middle months. Where pressure lands, move more carefully. ` +
     `Use the end of the year to review what worked and what to change next.`;
 
   const opportunities: OpportunityRiskItem[] = liuYear.activations
     .filter((a) => a.kind !== "化忌")
-    .slice(0, 3)
     .map((a) => ({
-      title: getPlainAnnualActivationTitle(a.kind, getPalaceEnglish(a.targetPalaceName)),
-      detail: getPlainAnnualTransformationInsight(a.kind, getPalaceEnglish(a.targetPalaceName)),
+      title: getBriefAnnualActivationTitle(
+        a.kind,
+        getPlainLifeAreaName(a.targetPalaceName)
+      ),
+      detail: "",
       posture:
         a.kind === "化祿"
-          ? "Say yes to the best openings in this area."
-          : "Take the lead. Make the first move.",
+          ? "Say yes to good openings."
+          : "Take the lead.",
     }));
-
-  while (opportunities.length < 3) {
-    opportunities.push({
-      title: "Steady progress in other life areas",
-      detail: "Some parts of your chart stay calm this year. That is a good place to stack small wins.",
-      posture: "Each week, complete one small task that moves you forward.",
-    });
-  }
 
   const risks: OpportunityRiskItem[] = liuYear.activations
     .filter((a) => a.kind === "化忌")
-    .slice(0, 3)
     .map((a) => ({
-      title: getPlainAnnualActivationTitle(a.kind, getPalaceEnglish(a.targetPalaceName)),
-      detail: getPlainAnnualTransformationInsight(a.kind, getPalaceEnglish(a.targetPalaceName)),
-      posture: "Slow down. Check the facts. Protect your boundaries.",
+      title: getBriefAnnualActivationTitle(
+        a.kind,
+        getPlainLifeAreaName(a.targetPalaceName)
+      ),
+      detail: "",
+      posture: "Slow down. Check the facts.",
     }));
-
-  while (risks.length < 3) {
-    risks.push({
-      title: "Taking on too much",
-      detail: "Even good months can drain you if your calendar stays full. Rest is part of the plan.",
-      posture: "Block recovery time before you add new commitments.",
-    });
-  }
 
   return {
     yearTheme,
@@ -259,8 +257,8 @@ function buildAnnualStory(
     energyArc,
     quarterlyArc: buildQuarterlyArc(months),
     liuYearTransformations: liuYear.activations,
-    opportunities: opportunities.slice(0, 3),
-    risks: risks.slice(0, 3),
+    opportunities,
+    risks,
   };
 }
 
@@ -448,35 +446,53 @@ function buildLifeAreaClusters(
   const loveScore = score("love");
   const healthScore = score("health");
 
-  const selfAndMindset =
-    `Wellbeing score: ${lifeScore}/5. ` +
-    (lifeScore >= 4
-      ? "You feel more confident this month. Speak up early and set the tone."
-      : lifeScore <= 2
-        ? "Inner pressure may build. Pause before big decisions and choose clarity over speed."
-        : "Your mood is fairly balanced. Watch the first half of the month, then act with confidence.");
+  const selfAndMindset: LifeAreaCluster = {
+    scores: [{ label: "Wellbeing", score: lifeScore }],
+    insight:
+      lifeScore >= 4
+        ? "You feel more confident this month. Speak up early and set the tone."
+        : lifeScore <= 2
+          ? "Inner pressure may build. Pause before big decisions and choose clarity over speed."
+          : "Your mood is fairly balanced. Watch the first half of the month, then act with confidence.",
+  };
 
-  const workAndMoney =
-    `Career ${careerScore}/5, Wealth ${wealthScore}/5. ` +
-    (careerScore >= 4 && wealthScore >= 3
-      ? "Work visibility and income potential align. Pitch ideas, publish work, or close deals."
-      : wealthScore >= 4
-        ? "Money flow improves. Review finances and use assets you already have."
-        : "Steady output beats bold leaps. Protect your reputation and cash flow.");
+  const workAndMoney: LifeAreaCluster = {
+    scores: [
+      { label: "Career", score: careerScore },
+      { label: "Wealth", score: wealthScore },
+    ],
+    insight:
+      careerScore >= 4 && wealthScore >= 3
+        ? "Work visibility and income potential align. Pitch ideas, publish work, or close deals."
+        : wealthScore >= 4
+          ? "Money flow improves. Review finances and use assets you already have."
+          : "Steady output beats bold leaps. Protect your reputation and cash flow.",
+  };
 
-  const peopleAndLove =
-    `Love ${loveScore}/5, Network ${score("network")}/5. ` +
-    (loveScore >= 4
-      ? "Partnership energy opens. Start honest alignment talks with the people who matter."
-      : palaceHasJi("夫妻", monthActivations)
-        ? "Relationship friction is possible. Listen first, then negotiate."
-        : "Your social circle matters. One good introduction can shift outcomes.");
+  const peopleAndLove: LifeAreaCluster = {
+    scores: [
+      { label: "Love", score: loveScore },
+      { label: "Network", score: score("network") },
+    ],
+    insight:
+      loveScore >= 4
+        ? "Partnership energy opens. Start honest alignment talks with the people who matter."
+        : palaceHasJi("夫妻", monthActivations)
+          ? "Relationship friction is possible. Listen first, then negotiate."
+          : "Your social circle matters. One good introduction can shift outcomes.",
+  };
 
-  const bodyHomeAndWorld =
-    `Health ${healthScore}/5, Home ${score("family")}/5, Travel ${score("external")}/5. ` +
-    (healthScore <= 2
-      ? "Your body needs care. Sleep, digestion, and stress recovery come first."
-      : "Keep routines steady. Plan family and travel moves instead of acting on impulse.");
+  const bodyHomeAndWorld: LifeAreaCluster = {
+    scores: [
+      { label: "Health", score: healthScore },
+      { label: "Home", score: score("family") },
+      { label: "Travel", score: score("external") },
+    ],
+    insight:
+      healthScore <= 2
+        ? "Your body needs care. Sleep, digestion, and stress recovery come first."
+        : "Keep routines steady. Plan family and travel moves instead of acting on impulse.",
+  };
 
   return { selfAndMindset, workAndMoney, peopleAndLove, bodyHomeAndWorld };
 }
@@ -569,20 +585,48 @@ function buildGrowStronger(monthActivations: TransformationActivation[]): GrowSt
     "福德": "Stillness",
   };
 
+  const skillHints: Record<string, string> = {
+    Decisiveness: "Make clear calls instead of waiting for perfect information.",
+    Discipline: "Keep small promises to yourself, especially when motivation dips.",
+    Empathy: "Listen first so others feel heard before you push your view.",
+    Patience: "Give situations time to settle before you react.",
+    "Self trust": "Back your own judgment instead of chasing outside approval.",
+    Stillness: "Create quiet space so your next move is intentional.",
+    Boundaries: "Protect your time and energy without guilt.",
+    Consistency: "Repeat the same small routine until it becomes automatic.",
+  };
+
+  const habitActions: Record<string, string> = {
+    Decisiveness: "Pick one delayed decision and make a clear choice.",
+    Discipline: "Finish one task you already committed to, even if it is small.",
+    Empathy: "Ask someone how they are doing, then listen without interrupting.",
+    Patience: "Pause for one breath before you reply when something frustrates you.",
+    "Self trust": "Take one step without asking for extra approval first.",
+    Stillness: "Spend five quiet minutes with no phone or notifications.",
+    Boundaries: "Say no to one request that would stretch you too thin.",
+    Consistency: "Do the same small routine at the same time today.",
+  };
+
   const characterFocus =
     jiPalace !== undefined
       ? characterMap[jiPalace.targetPalaceName] ?? "Boundaries"
       : "Consistency";
 
+  const practiceSteps = [
+    "Set aside 10 minutes at the end of the day.",
+    "Write down one win and one challenge from today.",
+    habitActions[characterFocus] ??
+      `Do one small action that builds ${characterFocus.toLowerCase()}.`,
+  ];
+
   return {
     characterFocus,
-    practice:
-      `Each day, spend 10 minutes noting one win and one friction point. ` +
-      `Practice ${characterFocus.toLowerCase()} this month.`,
+    skillHint: skillHints[characterFocus] ?? skillHints.Consistency,
+    practiceTitle: "10-minute evening check-in",
+    practiceSteps,
     pressureNote:
       jiPalace !== undefined
-        ? `化忌 in ${getPalaceEnglish(jiPalace.targetPalaceName)} adds pressure. ` +
-          `Slow down instead of pulling back. Use it to sharpen your judgment.`
+        ? `When ${getPalaceEnglish(jiPalace.targetPalaceName).toLowerCase()} feels heavy, slow down instead of pulling back. Use the pause to think before you act.`
         : "Use this month's momentum to build one habit that lasts beyond this cycle.",
   };
 }
@@ -596,7 +640,9 @@ function buildMonthEntry(
   liuYearActivations: TransformationActivation[],
   annualKeyword: string,
   lunarMonthLabel: string,
-  solarDateRange: string
+  solarDateRange: string,
+  solarStart: Date,
+  solarEnd: Date
 ): AnnualMonthEntry {
   const monthPalace = chartData.palaces[liuMonthSet.monthPalaceNumber - 1];
   const lifePalace = chartData.palaces[chartData.lifePalace - 1];
@@ -615,7 +661,8 @@ function buildMonthEntry(
     liuMonthSet.monthEarthlyBranch,
     lifePalace?.earthlyBranch ?? "子"
   );
-  const timing = buildTimingWindows(solarDateRange, harmony.harmony);
+  const timing = buildTimingWindows(solarStart, solarEnd, harmony.harmony);
+  const rhythmVisual = buildMonthRhythmVisual(solarStart, solarEnd, harmony.harmony);
 
   const starInsights = collectPlainMonthlyInsights(liuMonthSet.activations, getPalaceEnglish);
 
@@ -672,6 +719,7 @@ function buildMonthEntry(
       cautionWindow: timing.caution,
       branchHarmony: harmony.harmony,
       branchExplanation: harmony.explanation,
+      rhythmVisual,
     },
   };
 }
@@ -691,15 +739,17 @@ function buildMonthCategory(
   });
 
   const top = sorted.slice(0, 3);
-  const topScores = top.map((m) => getDomainScore(m.domainScores, domainKey));
   const domainLabel = domainKey.charAt(0).toUpperCase() + domainKey.slice(1);
   const why =
     top.length > 0
-      ? `${domainLabel} scores are ${topScores.join("/")} out of 5 in these months. Chart activations make them stand out.`
+      ? `Chart activations make these months stand out for ${domainLabel.toLowerCase()}.`
       : `These months have the strongest chart support for ${domainLabel.toLowerCase()}.`;
 
   return {
-    months: top.map((m) => m.lunarMonthLabel),
+    monthRows: top.map((m) => ({
+      label: m.lunarMonthLabel,
+      score: getDomainScore(m.domainScores, domainKey),
+    })),
     why,
     strategy: ascending
       ? "Simplify commitments and protect recovery time."
@@ -751,8 +801,16 @@ function buildYearMap(
   };
 
   const turningPoints = months
-    .filter((m) => m.timingNote.branchHarmony === "challenging" || m.timingNote.branchHarmony === "favorable")
-    .map((m) => `${m.lunarMonthLabel}: ${m.timingNote.branchExplanation}`)
+    .filter(
+      (m) =>
+        m.timingNote.branchHarmony === "challenging" ||
+        m.timingNote.branchHarmony === "favorable"
+    )
+    .map((m) => ({
+      monthLabel: m.lunarMonthLabel,
+      harmony: m.timingNote.branchHarmony,
+      explanation: m.timingNote.branchExplanation,
+    }))
     .slice(0, 6);
 
   return {
@@ -766,12 +824,27 @@ function buildYearMap(
     },
     turningPoints,
     goldenWindows: months
-      .filter((m) => m.timingNote.branchHarmony === "favorable" || m.timingNote.branchHarmony === "supportive")
-      .map((m) => `${m.lunarMonthLabel} (${m.solarDateRange}): ${m.timingNote.favorableWindow}`)
+      .filter(
+        (m) =>
+          m.timingNote.branchHarmony === "favorable" ||
+          m.timingNote.branchHarmony === "supportive"
+      )
+      .map((m) => ({
+        monthLabel: m.lunarMonthLabel,
+        solarDateRange: m.solarDateRange,
+        window: m.timingNote.favorableWindow,
+      }))
       .slice(0, 6),
     cautionCalendar: months
-      .filter((m) => m.timingNote.branchHarmony === "challenging" || m.timingNote.branchHarmony === "watchful")
-      .map((m) => `${m.lunarMonthLabel}: ${m.timingNote.cautionWindow}`)
+      .filter(
+        (m) =>
+          m.timingNote.branchHarmony === "challenging" ||
+          m.timingNote.branchHarmony === "watchful"
+      )
+      .map((m) => ({
+        monthLabel: m.lunarMonthLabel,
+        window: m.timingNote.cautionWindow,
+      }))
       .slice(0, 6),
     playbook,
   };
@@ -802,8 +875,10 @@ export function buildAnnualReport(
       liuMonthSet,
       liuYear.activations,
       annualKeyword,
-      range?.lunarMonthLabel ?? `${liuMonthSet.lunarMonth}`,
-      range?.solarDateRange ?? ""
+      getLunarMonthEnglishLabel(liuMonthSet.lunarMonth),
+      range?.solarDateRange ?? "",
+      range?.solarStart ?? new Date(reportYear, 0, 1),
+      range?.solarEnd ?? new Date(reportYear, 11, 31)
     );
   });
 

@@ -116,26 +116,26 @@ export function getPlainMonthlyTransformationInsight(
   switch (kind) {
     case "化祿":
       return (
-        `化祿 lands in your ${palaceEnglishName} this month. ` +
+        `Abundance lands in your ${palaceEnglishName} this month. ` +
         `Support and resources flow more easily here. ` +
         `Say yes to the best openings in this part of your life.`
       );
     case "化權":
       return (
-        `化權 lands in your ${palaceEnglishName} this month. ` +
+        `Authority lands in your ${palaceEnglishName} this month. ` +
         `You have more say in this area. ` +
         `Step up and make decisions instead of waiting.`
       );
     case "化科":
       return (
-        `化科 lands in your ${palaceEnglishName} this month. ` +
+        `Recognition lands in your ${palaceEnglishName} this month. ` +
         `Your reputation and clarity matter here. ` +
         `Share your work and communicate in plain terms.`
       );
     case "化忌":
       return (
-        `化忌 lands in your ${palaceEnglishName} this month. ` +
-        `This area may feel pressured. ` +
+        `Pressure lands in your ${palaceEnglishName} this month. ` +
+        `This area may feel stressed. ` +
         `Slow down, check details, and fix small problems early.`
       );
     default:
@@ -189,6 +189,26 @@ export function collectPlainMonthlyInsights(
 }
 
 /**
+ * Brief one-line insight for Part 1.2 transformation cards.
+ */
+export function getBriefAnnualTransformationInsight(
+  kind: TransformationKind
+): string {
+  switch (kind) {
+    case "化祿":
+      return "Support flows more easily. Say yes to good openings.";
+    case "化權":
+      return "You have more say here. Step up and lead.";
+    case "化科":
+      return "Your reputation matters. Share your work clearly.";
+    case "化忌":
+      return "This area may feel tight. Slow down and check details.";
+    default:
+      return "Notice what shifts in this area first.";
+  }
+}
+
+/**
  * Plain language insight for Part 1 annual transformation table and story blocks.
  * No em dashes; short sentences with a clear next step.
  */
@@ -199,30 +219,51 @@ export function getPlainAnnualTransformationInsight(
   switch (kind) {
     case "化祿":
       return (
-        `化祿 lands in your ${palaceEnglishName}. ` +
+        `Abundance lands in your ${palaceEnglishName}. ` +
         `Support and resources flow more easily here this year. ` +
         `Look for openings in this part of your life and act on the best ones.`
       );
     case "化權":
       return (
-        `化權 lands in your ${palaceEnglishName}. ` +
+        `Authority lands in your ${palaceEnglishName}. ` +
         `You have more say and influence in this area. ` +
         `Step up, make decisions, and do not wait for others to lead.`
       );
     case "化科":
       return (
-        `化科 lands in your ${palaceEnglishName}. ` +
+        `Recognition lands in your ${palaceEnglishName}. ` +
         `Your reputation and clarity matter here. ` +
         `Share your work, write things down, and communicate in plain terms.`
       );
     case "化忌":
       return (
-        `化忌 lands in your ${palaceEnglishName}. ` +
+        `Pressure lands in your ${palaceEnglishName}. ` +
         `This area may feel pressured or blocked. ` +
         `Slow down, check the details, and fix small problems before they grow.`
       );
     default:
       return `This year puts extra focus on your ${palaceEnglishName}. Notice what shifts there first.`;
+  }
+}
+
+/**
+ * Short title for Part 1.3 opportunity and risk cards.
+ */
+export function getBriefAnnualActivationTitle(
+  kind: TransformationKind,
+  lifeArea: string
+): string {
+  switch (kind) {
+    case "化祿":
+      return `Good flow · ${lifeArea}`;
+    case "化權":
+      return `More influence · ${lifeArea}`;
+    case "化科":
+      return `Strong reputation · ${lifeArea}`;
+    case "化忌":
+      return `Pressure · ${lifeArea}`;
+    default:
+      return `Focus · ${lifeArea}`;
   }
 }
 

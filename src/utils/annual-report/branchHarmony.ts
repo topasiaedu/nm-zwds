@@ -8,7 +8,7 @@
 
 import type { EarthlyBranchType } from "../zwds/types";
 
-import type { BranchHarmonyType } from "./types";
+import type { BranchHarmonyType, MonthRhythmVisual, TimingRhythmBand } from "./types";
 
 
 
@@ -205,187 +205,185 @@ export function evaluateBranchHarmony(
 ): BranchHarmonyResult {
 
   if (isSanHe(liuMonthBranch, lifePalaceBranch)) {
-
     return {
-
       harmony: "favorable",
-
       explanation:
-
-        `This month's branch ${liuMonthBranch} harmonizes with your Life Palace ${lifePalaceBranch} (三合). ` +
-
-        `Timing supports key moves. Act with confidence but still check the details.`,
-
+        "This month's rhythm aligns well with your chart. " +
+        "Key moves are supported, but still check the details before you commit.",
     };
-
   }
-
-
 
   if (isLiuHe(liuMonthBranch, lifePalaceBranch)) {
-
     return {
-
       harmony: "supportive",
-
       explanation:
-
-        `This month's branch ${liuMonthBranch} pairs well with your Life Palace ${lifePalaceBranch} (六合). ` +
-
-        `Good month to coordinate plans and work with others.`,
-
+        "This month works smoothly with your chart. " +
+        "It is a good time to coordinate plans and work with others.",
     };
-
   }
-
-
 
   if (isLiuChong(liuMonthBranch, lifePalaceBranch)) {
-
     return {
-
       harmony: "challenging",
-
       explanation:
-
-        `This month's branch ${liuMonthBranch} clashes with your Life Palace ${lifePalaceBranch} (六冲). ` +
-
-        `Go slow on major moves. Focus on stability first.`,
-
+        "This month pushes against your chart's flow. " +
+        "Go slow on major moves and focus on stability first.",
     };
-
   }
-
-
 
   if (isLiuHai(liuMonthBranch, lifePalaceBranch)) {
-
     return {
-
       harmony: "watchful",
-
       explanation:
-
-        `This month's branch ${liuMonthBranch} forms friction with your Life Palace ${lifePalaceBranch} (六害). ` +
-
-        `Watch for misunderstandings and misaligned expectations.`,
-
+        "This month carries hidden friction with your chart. " +
+        "Watch for misunderstandings and misaligned expectations.",
     };
-
   }
 
-
-
   return {
-
     harmony: "neutral",
-
     explanation:
-
-      `This month's branch ${liuMonthBranch} is neutral with your Life Palace ${lifePalaceBranch}. ` +
-
-      `Timing is neither strongly for nor against you. Plan as usual.`,
-
+      "This month is neutral for your chart. " +
+      "Timing is neither strongly for nor against you, so plan as usual.",
   };
 
 }
 
 
 
-/**
-
- * Split a solar date range string into start and end parts.
-
- */
-
-function splitSolarDateRange(solarDateRange: string): { start: string; end: string; mid: string } {
-
-  const parts = solarDateRange.split(/[–-]/).map((s) => s.trim());
-
-  const start = parts[0] ?? "Early month";
-
-  const end = parts[1] ?? "Late month";
-
-  const mid = parts.length >= 2 ? `Mid ${parts[0]?.split(" ")[0] ?? "month"}` : "Mid month";
-
-  return { start, end, mid };
-
+/** Percent spans on the month timeline for good vs go-slow windows. */
+export interface TimingZonePercents {
+  favorableStart: number;
+  favorableEnd: number;
+  cautionStart: number;
+  cautionEnd: number;
 }
 
+export const TIMING_ZONES_BY_HARMONY: Record<BranchHarmonyType, TimingZonePercents> = {
+  favorable: { favorableStart: 0, favorableEnd: 100, cautionStart: 38, cautionEnd: 52 },
+  supportive: { favorableStart: 0, favorableEnd: 58, cautionStart: 68, cautionEnd: 100 },
+  challenging: { favorableStart: 0, favorableEnd: 28, cautionStart: 42, cautionEnd: 100 },
+  watchful: { favorableStart: 38, favorableEnd: 58, cautionStart: 0, cautionEnd: 100 },
+  neutral: { favorableStart: 0, favorableEnd: 55, cautionStart: 55, cautionEnd: 100 },
+};
 
+const SHORT_MONTHS: readonly string[] = [
+  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+] as const;
 
 /**
-
- * Build timing window labels from harmony and solar date range.
-
+ * Format a date as "Mon D" for timing window labels.
  */
+function formatShortTimingDate(date: Date): string {
+  const month = SHORT_MONTHS[date.getMonth()] ?? "Mon";
+  return `${month} ${date.getDate()}`;
+}
 
-export function buildTimingWindows(
+/**
+ * Map a 0–100 position to a calendar date within the lunar month's solar span.
+ */
+function dateAtMonthProgress(start: Date, end: Date, percent: number): Date {
+  const startMs = start.getTime();
+  const endMs = end.getTime();
+  if (endMs <= startMs) {
+    return new Date(startMs);
+  }
+  const clamped = Math.min(100, Math.max(0, percent));
+  return new Date(startMs + Math.round((endMs - startMs) * (clamped / 100)));
+}
 
-  solarDateRange: string,
+/**
+ * Build a reader-facing window label from percent spans on the month timeline.
+ */
+function formatWindowLabel(
+  solarStart: Date,
+  solarEnd: Date,
+  fromPercent: number,
+  toPercent: number
+): string {
+  const fromDate = dateAtMonthProgress(solarStart, solarEnd, fromPercent);
+  const toDate = dateAtMonthProgress(solarStart, solarEnd, toPercent);
+  const fromLabel = formatShortTimingDate(fromDate);
+  const toLabel = formatShortTimingDate(toDate);
 
-  harmony: BranchHarmonyType
-
-): { favorable: string; caution: string } {
-
-  const { start, end, mid } = splitSolarDateRange(solarDateRange);
-
-
-
-  switch (harmony) {
-
-    case "favorable":
-
-      return {
-
-        favorable: `From ${start} to ${end}. Strong window for key moves across the month.`,
-
-        caution: `Around ${mid}. You can still act, but confirm details twice.`,
-
-      };
-
-    case "supportive":
-
-      return {
-
-        favorable: `From ${start} to ${mid}. Best opening window for new steps.`,
-
-        caution: `Around ${end}. Wrap up tasks instead of starting big commitments.`,
-
-      };
-
-    case "challenging":
-
-      return {
-
-        favorable: `Around ${start}. Light planning only. Save big moves for later.`,
-
-        caution: `From ${mid} to ${end}. Hold steady and avoid major commitments.`,
-
-      };
-
-    case "watchful":
-
-      return {
-
-        favorable: `Around ${mid}. Best after you clear misunderstandings.`,
-
-        caution: `From ${start} to ${end}. Verify agreements and health routines.`,
-
-      };
-
-    default:
-
-      return {
-
-        favorable: `From ${start} to ${mid}. Reasonable window for steady action.`,
-
-        caution: `From ${mid} to ${end}. Slow down if plans feel rushed.`,
-
-      };
-
+  if (fromLabel === toLabel) {
+    return `Around ${fromLabel}`;
   }
 
+  const span = toPercent - fromPercent;
+  if (span <= 18) {
+    const center = dateAtMonthProgress(solarStart, solarEnd, (fromPercent + toPercent) / 2);
+    return `Around ${formatShortTimingDate(center)}`;
+  }
+
+  return `From ${fromLabel} to ${toLabel}`;
 }
 
+/**
+ * Build date anchors and band positions for the Part 6 month rhythm visual.
+ */
+export function buildMonthRhythmVisual(
+  solarStart: Date,
+  solarEnd: Date,
+  harmony: BranchHarmonyType
+): MonthRhythmVisual {
+  const zones = TIMING_ZONES_BY_HARMONY[harmony];
+
+  const band = (startPercent: number, endPercent: number): TimingRhythmBand => ({
+    startPercent,
+    endPercent,
+    startLabel: formatShortTimingDate(dateAtMonthProgress(solarStart, solarEnd, startPercent)),
+    endLabel: formatShortTimingDate(dateAtMonthProgress(solarStart, solarEnd, endPercent)),
+  });
+
+  return {
+    monthStartLabel: formatShortTimingDate(solarStart),
+    monthEndLabel: formatShortTimingDate(solarEnd),
+    earlyEndLabel: formatShortTimingDate(dateAtMonthProgress(solarStart, solarEnd, 33.3)),
+    lateStartLabel: formatShortTimingDate(dateAtMonthProgress(solarStart, solarEnd, 66.6)),
+    favorableBand: band(zones.favorableStart, zones.favorableEnd),
+    cautionBand: band(zones.cautionStart, zones.cautionEnd),
+  };
+}
+
+/**
+ * Build timing window labels from harmony and the month's solar start/end dates.
+ * Window percents match the Part 6 month rhythm bar (TIMING_ZONES_BY_HARMONY).
+ */
+export function buildTimingWindows(
+  solarStart: Date,
+  solarEnd: Date,
+  harmony: BranchHarmonyType
+): { favorable: string; caution: string } {
+  const zones = TIMING_ZONES_BY_HARMONY[harmony];
+
+  switch (harmony) {
+    case "favorable":
+      return {
+        favorable: `${formatWindowLabel(solarStart, solarEnd, zones.favorableStart, zones.favorableEnd)}. Strong window for key moves across the month.`,
+        caution: `${formatWindowLabel(solarStart, solarEnd, zones.cautionStart, zones.cautionEnd)}. You can still act, but confirm details twice.`,
+      };
+    case "supportive":
+      return {
+        favorable: `${formatWindowLabel(solarStart, solarEnd, zones.favorableStart, zones.favorableEnd)}. Best opening window for new steps.`,
+        caution: `${formatWindowLabel(solarStart, solarEnd, zones.cautionStart, zones.cautionEnd)}. Wrap up tasks instead of starting big commitments.`,
+      };
+    case "challenging":
+      return {
+        favorable: `${formatWindowLabel(solarStart, solarEnd, zones.favorableStart, zones.favorableEnd)}. Light planning only. Save big moves for later.`,
+        caution: `${formatWindowLabel(solarStart, solarEnd, zones.cautionStart, zones.cautionEnd)}. Hold steady and avoid major commitments.`,
+      };
+    case "watchful":
+      return {
+        favorable: `${formatWindowLabel(solarStart, solarEnd, zones.favorableStart, zones.favorableEnd)}. Best after you clear misunderstandings.`,
+        caution: `${formatWindowLabel(solarStart, solarEnd, zones.cautionStart, zones.cautionEnd)}. Verify agreements and health routines.`,
+      };
+    default:
+      return {
+        favorable: `${formatWindowLabel(solarStart, solarEnd, zones.favorableStart, zones.favorableEnd)}. Reasonable window for steady action.`,
+        caution: `${formatWindowLabel(solarStart, solarEnd, zones.cautionStart, zones.cautionEnd)}. Slow down if plans feel rushed.`,
+      };
+  }
+}
 

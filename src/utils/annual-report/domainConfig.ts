@@ -13,14 +13,14 @@ export interface DomainConfig {
 
 /** Eight domain rows for the annual matrix and monthly ratings. */
 export const REPORT_DOMAINS: readonly DomainConfig[] = [
-  { key: "career", label: "Career 官禄", palaceName: "官禄", englishName: "Career Palace" },
-  { key: "wealth", label: "Wealth 财帛", palaceName: "财帛", englishName: "Wealth Palace" },
-  { key: "love", label: "Love 夫妻", palaceName: "夫妻", englishName: "Spouse Palace" },
-  { key: "health", label: "Health 疾厄", palaceName: "疾厄", englishName: "Health Palace" },
-  { key: "family", label: "Family 田宅", palaceName: "田宅", englishName: "Property Palace" },
-  { key: "network", label: "Network 交友", palaceName: "交友", englishName: "Friends Palace" },
-  { key: "inner", label: "Inner 福德", palaceName: "福德", englishName: "Wellbeing Palace" },
-  { key: "external", label: "External 迁移", palaceName: "迁移", englishName: "Travel Palace" },
+  { key: "career", label: "Career", palaceName: "官禄", englishName: "Career Palace" },
+  { key: "wealth", label: "Wealth", palaceName: "财帛", englishName: "Wealth Palace" },
+  { key: "love", label: "Love", palaceName: "夫妻", englishName: "Spouse Palace" },
+  { key: "health", label: "Health", palaceName: "疾厄", englishName: "Health Palace" },
+  { key: "family", label: "Family", palaceName: "田宅", englishName: "Property Palace" },
+  { key: "network", label: "Network", palaceName: "交友", englishName: "Friends Palace" },
+  { key: "inner", label: "Inner", palaceName: "福德", englishName: "Wellbeing Palace" },
+  { key: "external", label: "External", palaceName: "迁移", englishName: "Travel Palace" },
 ] as const;
 
 /** English display names for all palaces. */
