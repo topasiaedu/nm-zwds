@@ -140,7 +140,7 @@ function isLiuHe(a: EarthlyBranchType, b: EarthlyBranchType): boolean {
 
 function isLiuHai(a: EarthlyBranchType, b: EarthlyBranchType): boolean {
 
-  for (const [x, y] of LIU_HE_PAIRS) {
+  for (const [x, y] of LIU_HAI_PAIRS) {
 
     if ((a === x && b === y) || (a === y && b === x)) {
 
