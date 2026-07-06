@@ -6,7 +6,7 @@ import {
   PALACE_MONTH_DATA,
   PALACE_GUIDANCE_DATA,
   SEASON_STYLES,
-} from "../../../utils/forecast/liuMonthData";
+} from "../../../utils/forecast/alignmentAdvantage/executionPlaybookData";
 import MonthGrid from "../MonthGrid";
 import type { MonthPillData } from "../MonthGrid";
 import { C } from "../shared/constants";
@@ -182,7 +182,7 @@ export const ChapterExecutionPlaybook: React.FC<ChapterExecutionPlaybookProps> =
         />
       </div>
 
-      {/* Month detail: CEO Briefing */}
+      {/* Month detail: Strategic Briefing */}
       {selectedPalaceNum !== null && selectedPalace !== null ? (() => {
         const mData = PALACE_MONTH_DATA[selectedPalace.name];
         const gData = PALACE_GUIDANCE_DATA[selectedPalace.name];
@@ -307,7 +307,7 @@ export const ChapterExecutionPlaybook: React.FC<ChapterExecutionPlaybookProps> =
                 </div>
                 <div>
                   <p className="text-[10px] font-bold uppercase tracking-[0.2em] mb-4" style={{ color: C.navy }}>
-                    CEO Reflection
+                    Strategic Reflection
                   </p>
                   <div className="space-y-4">
                     {gData.reflectionQuestions.slice(0, 2).map((q, idx) => (
