@@ -31,32 +31,32 @@ export interface WealthTypeProfile {
 
 export const WEALTH_TYPE: Record<WealthCodeKey, WealthTypeProfile> = {
   investmentBrain: {
-    category:    "Equity Growth",
-    tagline:     "You build wealth through capital deployment and compounding over time.",
+    category:    "Asset Growth",
+    tagline:     "You build wealth by acquiring assets and letting them grow over time.",
     description:
-      "Your chart is wired for systematic accumulation. You do not chase quick wins: you build positions, protect downside, and let time compound your advantage. The longer the time horizon, the more your edge multiplies.",
-    examples:    ["Equity stakes in businesses", "Long-horizon asset portfolios", "Structured financial instruments"],
+      "You are built for long-term investing. You don't chase quick money or trendy side hustles. You buy assets, protect what you have, and let time do the work. The longer you hold, the more your wealth multiplies.",
+    examples:    ["Stock portfolios", "Real estate", "Long-term investments"],
   },
   brandingMagnet: {
-    category:    "Earned Income",
-    tagline:     "You build wealth by monetising your influence, visibility, and personal brand.",
+    category:    "Reputation & Influence",
+    tagline:     "You build wealth by monetizing your name, your network, and your expertise.",
     description:
-      "Your chart is wired for high-leverage earned income. The more visible and recognised you become, the more your earning capacity scales: your personal brand IS the asset. Income follows attention, not effort alone.",
-    examples:    ["Premium personal services", "Audience monetisation", "Licensing and intellectual property"],
+      "Your biggest asset is your reputation. The more visible you become, the more money you make. Whether you are climbing the corporate ladder or consulting on the side, your income grows when people know who you are.",
+    examples:    ["Consulting fees", "Paid speaking or writing", "High-visibility leadership roles"],
   },
   strategyPlanner: {
-    category:    "Strategic Windfalls",
-    tagline:     "You build wealth through positioning, systems, and capitalising on rare high-value moments.",
+    category:    "Strategic Moves",
+    tagline:     "You build wealth by planning ahead and capturing big opportunities when they arrive.",
     description:
-      "Your chart is wired for strategic accumulation through preparation and timing. You build systems that compound quietly, then capture disproportionate returns when your moment arrives. Wealth is won in the planning phase, not the execution phase.",
-    examples:    ["Business exits and equity events", "Strategic consulting and advisory fees", "Long-cycle investment plays"],
+      "You make money by seeing what others miss. You build systems quietly, wait for the right moment, and then make a major move. Your biggest financial wins will come from careful planning, not just working harder.",
+    examples:    ["Negotiating major job offers", "Selling a side business", "Timing a market shift"],
   },
   collaborator: {
-    category:    "Passive Returns",
-    tagline:     "You build wealth through relationships, joint ventures, and network-leveraged returns.",
+    category:    "Partnerships",
+    tagline:     "You build wealth through the people you know and the alliances you build.",
     description:
-      "Your chart is wired for wealth that flows through people. Your strongest income streams come from partnerships, referrals, and collaborative structures where trust is the currency. Passive returns accumulate when you have built the right alliances.",
-    examples:    ["Partnership revenue and referral networks", "Revenue-sharing arrangements", "Co-ownership structures"],
+      "Your wealth flows through people. Your best income streams will come from partnerships, referrals, and team efforts. You make money when you connect the right people or team up with someone who has what you lack.",
+    examples:    ["Referral fees", "Revenue-sharing agreements", "Co-owned projects"],
   },
 };
 
@@ -66,24 +66,24 @@ export const WEALTH_TYPE: Record<WealthCodeKey, WealthTypeProfile> = {
 
 export const STOP_DOING: Record<WealthCodeKey, [string, string, string]> = {
   investmentBrain: [
-    "Chasing shiny opportunities without a clear investment thesis written down",
-    "Moving to execution before the numbers and structure make sense",
-    "Letting short-term noise override your long-horizon positioning",
+    "Throwing money at trendy investments without doing your own research first",
+    "Buying things just because you have cash, instead of waiting for a good deal",
+    "Panicking and selling when the market drops temporarily",
   ],
   brandingMagnet: [
-    "Undercharging because visibility feels like 'enough' compensation",
-    "Saying yes to every speaking, content, or collaboration request without a monetisation plan",
-    "Treating audience size as the goal instead of conversion rate as the metric",
+    "Doing free work because you think 'exposure' pays the bills",
+    "Saying yes to every meeting or podcast without a plan to actually make money from it",
+    "Caring more about how many followers you have than how much money you are making",
   ],
   strategyPlanner: [
-    "Over-planning without a committed execution date: strategy without action is just delay",
-    "Waiting for the 'perfect' strategic window instead of working with the current one",
-    "Building systems for other people instead of protecting your own highest-leverage work",
+    "Planning forever without actually launching the project or making the move",
+    "Waiting for the 'perfect' time to ask for a raise or start a side hustle",
+    "Building amazing systems for your boss while ignoring your own personal finances",
   ],
   collaborator: [
-    "Over-investing in relationships that extract more than they contribute to your growth",
-    "Closing deals and moving on without building the recurring relationship structure",
-    "Letting the quality of your partnerships drift without periodic alignment reviews",
+    "Spending all your time helping people who never help you back",
+    "Doing a deal on a handshake instead of putting the money split in writing",
+    "Staying in a bad partnership just because you don't want to hurt their feelings",
   ],
 };
 
@@ -92,10 +92,10 @@ export const STOP_DOING: Record<WealthCodeKey, [string, string, string]> = {
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const ACTION_PLAN_ITEMS: Record<WealthCodeKey, string> = {
-  investmentBrain:  "Review your capital allocation: identify one underperforming position to restructure or exit",
-  brandingMagnet:   "Identify one high-visibility opportunity to monetise this quarter: price it 20% above your instinct",
-  strategyPlanner:  "Schedule a dedicated strategy day: review your systems, eliminate one bottleneck, and commit to one Q1 execution date",
-  collaborator:     "Reach out to your three most valuable dormant relationships and propose a specific collaboration or referral arrangement",
+  investmentBrain:  "Look at where your money is sitting right now. Move it out of dead accounts and into something that actually grows.",
+  brandingMagnet:   "Find one way to charge money for your expertise this month. Price it 20% higher than you feel comfortable with.",
+  strategyPlanner:  "Pick one big goal for the next 3 months. Block off a full weekend just to plan exactly how you will achieve it.",
+  collaborator:     "Call three people you haven't spoken to in a year and propose a specific way you can help each other make money.",
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -113,41 +113,41 @@ export const IDEAL_COLLABORATOR: Record<WealthCodeKey, CollaboratorProfile> = {
   investmentBrain: {
     type:        "Branding Magnet or Collaborator",
     description:
-      "You handle the capital strategy, structure, and long-term positioning. You need someone who builds relationships, drives visibility, and stays in motion: the things your archetype systematically deprioritises. Without them, your best ideas stall at the distribution stage.",
+      "You are great at managing money and planning for the future, but you hate selling yourself. You need someone who is loud, social, and loves networking. Without them, your great ideas will stay hidden.",
     lookFor:     [
-      "High social capacity and natural relationship-builder",
-      "Execution-focused, not analysis-focused",
-      "Comfortable with ambiguity and fast pivots",
+      "Highly social and loves talking to people",
+      "Takes action quickly instead of over-analyzing",
+      "Comfortable taking risks and adapting on the fly",
     ],
   },
   brandingMagnet: {
     type:        "Investment Brain or Strategy Planner",
     description:
-      "You generate attention, relationships, and revenue momentum. You need someone who builds the structural framework, manages capital efficiency, and protects your margins: the things visibility-focused archetypes naturally skip. Without them, revenue comes in fast and leaks out just as quickly.",
+      "You are great at getting attention and starting new things, but you hate the boring details. You need someone who loves spreadsheets, organizing, and protecting money. Without them, you will make a lot of money but spend it all.",
     lookFor:     [
-      "Financially disciplined and numbers-first thinker",
-      "Systems-builder who can scale what you have already created",
-      "Comfortable operating behind the scenes without needing the spotlight",
+      "Great with money and highly disciplined",
+      "Loves organizing and building systems",
+      "Happy to work behind the scenes without needing the spotlight",
     ],
   },
   strategyPlanner: {
     type:        "Branding Magnet or Collaborator",
     description:
-      "You see five moves ahead, build the systems, and protect long-term positioning. You need someone who can activate your strategy in the market: generating the visibility and relationships that translate your plans into traction. Without them, your systems are built perfectly but quietly.",
+      "You are a master at planning five steps ahead, but you can get stuck in your own head. You need someone who just goes out and does the work. Without them, you will have a perfect plan that never actually launches.",
     lookFor:     [
-      "Externally-facing and network-rich",
-      "Action-biased rather than analysis-biased",
-      "Strong presence and communication skills",
+      "Has a huge network and knows everyone",
+      "Prefers taking action over sitting in meetings",
+      "Great at pitching ideas and closing deals",
     ],
   },
   collaborator: {
     type:        "Investment Brain or Strategy Planner",
     description:
-      "You build the trust, relationships, and collaborative structures that create revenue. You need someone who brings financial structure and long-horizon thinking: so the opportunities your network generates are captured systematically rather than flowing through without a container.",
+      "You are amazing at building trust and bringing people together, but you often forget to ask for the money. You need someone who is strict about contracts, pricing, and long-term planning. Without them, people will take advantage of you.",
     lookFor:     [
-      "Strong financial and capital management discipline",
-      "Structured thinker who can formalise informal arrangements",
-      "Long-term orientation, not short-term opportunism",
+      "Strict about money and contracts",
+      "Thinks about the long-term, not just the quick win",
+      "Not afraid to be the 'bad guy' in a negotiation",
     ],
   },
 };
@@ -163,24 +163,24 @@ export const IDEAL_COLLABORATOR: Record<WealthCodeKey, CollaboratorProfile> = {
  */
 export const FOCUS_ON: Record<WealthCodeKey, [string, string, string]> = {
   investmentBrain: [
-    "Building and documenting a clear investment thesis for every capital decision before committing",
-    "Identifying one compounding asset position to deepen rather than adding more positions horizontally",
-    "Creating a quarterly review cadence to objectively score each position against your original thesis",
+    "Write down exactly why you are buying an asset before you spend a single dollar",
+    "Put more money into your best investment instead of buying ten different mediocre things",
+    "Check your investments once a quarter and sell the ones that aren't performing",
   ],
   brandingMagnet: [
-    "Converting your existing audience or reputation into one premium, high-margin offer this quarter",
-    "Establishing a consistent content or visibility cadence that compounds your authority over time",
-    "Identifying your highest-conversion channel and doubling down on it while reducing scattered efforts",
+    "Turn your skills into one premium service or product that you can sell this month",
+    "Post online or speak at events consistently so people remember who you are",
+    "Figure out exactly how you get your best clients or job offers, and only do that",
   ],
   strategyPlanner: [
-    "Choosing one major strategic objective for the next 90 days and eliminating all decisions that do not serve it",
-    "Scheduling protected thinking time each week: your best leverage comes from strategy, not execution",
-    "Identifying the single system in your business that, if optimised, would create the largest downstream return",
+    "Pick one major goal for the next 90 days and say no to everything else",
+    "Block off two hours every week just to think. Stop being busy and start being strategic",
+    "Find the one task that takes up most of your time and automate it or hire someone to do it",
   ],
   collaborator: [
-    "Mapping your three most valuable untapped relationships and initiating a specific, reciprocal collaboration",
-    "Structuring your best joint venture arrangements into formal agreements with clear revenue-sharing terms",
-    "Building a referral pipeline that runs systematically: your wealth flows through people, make that flow deliberate",
+    "Make a list of the three most powerful people you know and ask them how you can work together",
+    "Stop doing favors for free. Put your referral fees or revenue splits in writing",
+    "Build a system where people naturally send you clients or job offers",
   ],
 };
 
@@ -233,28 +233,28 @@ export interface PhaseAlignmentEntry {
 
 export const PHASE_ALIGNMENT_MATRIX: Record<PhaseAlignmentSeasonKey, Record<PhaseAlignmentWealthKey, PhaseAlignmentEntry>> = {
   expansion: {
-    investmentBrain:  { copy: "Spring cycles reward bold capital deployment. Your Investment Brain is perfectly suited for this growth window: this is your season to place calculated bets and expand your portfolio.", watchOut: ["Spreading capital across too many positions at once instead of going deep on your best thesis", "Acting on FOMO-driven opportunities rather than pre-researched conviction plays"] },
-    brandingMagnet:   { copy: "Spring is launch season, and your Branding Magnet thrives in visibility and expansion. Amplify your presence now: the market is receptive and your signal carries further.", watchOut: ["Launching without a monetisation funnel behind your visibility push", "Over-creating content without converting your existing audience first"] },
-    strategyPlanner:  { copy: "Your Strategy Planner archetype aligns well with Spring's growth momentum. Use this period to execute plans you've been developing. Momentum builds quickly when you move now.", watchOut: ["Over-planning when the window requires execution: Spring rewards action, not refinement", "Missing the launch window because the plan isn't 'perfect' yet"] },
-    collaborator:     { copy: "Spring opens doors and builds bridges. Your Collaborator wealth code finds its strongest expression in forming new partnerships and joint ventures during this expansion window.", watchOut: ["Saying yes to every introduction and spreading your relationship capital too thin", "Entering partnerships without clarity on structure and mutual contribution"] },
+    investmentBrain:  { copy: "Spring is for aggressive growth. This is the time to buy assets and expand your portfolio. The market is moving fast, so place your bets.", watchOut: ["Buying too many different things instead of going deep on your best idea", "Buying out of FOMO instead of doing your own research"] },
+    brandingMagnet:   { copy: "Spring is launch season. The market is paying attention right now, so get loud. Launch the product, pitch the service, and be as visible as possible.", watchOut: ["Getting lots of attention but having nothing to actually sell", "Creating free content forever instead of asking for the sale"] },
+    strategyPlanner:  { copy: "Spring is when you stop planning and start doing. Take the strategy you've been working on and launch it. Momentum builds quickly if you move right now.", watchOut: ["Still planning when you should be launching", "Waiting for the plan to be 'perfect' instead of just starting"] },
+    collaborator:     { copy: "Spring opens doors. This is the best time to form new partnerships, sign joint ventures, and meet new people. Your network will grow fast right now.", watchOut: ["Saying yes to every meeting and spreading yourself too thin", "Starting partnerships without putting the money split in writing"] },
   },
   visibility: {
-    investmentBrain:  { copy: "Summer is harvest season. Your Investment Brain should focus on monetising returns from previous positions and scaling what's already working. Resist the urge to open new positions: harvest first.", watchOut: ["Opening new speculative positions when you should be compounding existing ones", "Underestimating the compounding power of consolidating before expanding"] },
-    brandingMagnet:   { copy: "Summer is your highest-leverage season. Branding Magnets collect the rewards of their visibility in Summer. Monetise your audience, launch premium offers, and convert attention into revenue.", watchOut: ["Staying in creation mode instead of shifting into monetisation mode this season", "Discounting your premium offers when the market is most receptive to full-price conversions"] },
-    strategyPlanner:  { copy: "Your Strategy Planner is built for Summer. Systematic execution of your plans produces outsized returns now. Consolidate gains, optimise operations, and extract maximum value from existing systems.", watchOut: ["Starting new strategic initiatives before capturing the value from current ones", "Over-optimising systems instead of deploying them and capturing returns"] },
-    collaborator:     { copy: "Summer rewards your Collaborator's network of trust. Revenue generated through partnerships and referrals accelerates now. Deepen existing alliances and activate your inner circle.", watchOut: ["Neglecting your highest-value existing relationships while chasing new ones", "Failing to formalise revenue-sharing structures while trust is high"] },
+    investmentBrain:  { copy: "Summer is harvest season. Focus on making money from the assets you already own. Don't start a bunch of new investments—cash in on the ones that are working.", watchOut: ["Buying new, risky assets when you should be collecting profits", "Underestimating how much money you can make just by holding your best assets"] },
+    brandingMagnet:   { copy: "Summer is your most profitable season. You have the audience's attention, now it's time to get paid. Launch your most expensive offers and convert attention into cash.", watchOut: ["Creating more free content instead of selling", "Discounting your prices when people are actually willing to pay full price"] },
+    strategyPlanner:  { copy: "Summer is when your systems pay off. Run the play, optimize your workflow, and extract as much money as possible from the systems you built.", watchOut: ["Starting a brand new project before you finish making money from the current one", "Tweaking the system endlessly instead of just letting it run"] },
+    collaborator:     { copy: "Summer is when your network pays you back. The trust you built will turn into referrals and revenue. Lean into your closest alliances and ask for the business.", watchOut: ["Ignoring your best clients while trying to find new ones", "Doing deals on a handshake instead of formalizing the revenue share"] },
   },
   consolidation: {
-    investmentBrain:  { copy: "Autumn demands caution from your Investment Brain. This is a consolidation season: protect capital, de-risk positions, and avoid speculative moves. Patience here prevents costly mistakes.", watchOut: ["Making speculative new investments against the seasonal current", "Letting overconfidence from recent gains lead to overexposure"] },
-    brandingMagnet:   { copy: "Autumn calls for pruning, not growing. For your Branding Magnet, this means cutting low-ROI channels and doubling down on what converts. Protect your reputation by saying no more often.", watchOut: ["Launching major campaigns in a season that rewards consolidation over expansion", "Ignoring negative audience feedback signals that surface more clearly in Autumn"] },
-    strategyPlanner:  { copy: "Your Strategy Planner's instinct to plan is perfectly timed in Autumn. Use this season to audit, refine, and prepare your next Spring strategy. Avoid committing to major new initiatives.", watchOut: ["Committing resources to new strategic bets when the season calls for review", "Over-auditing and never committing to the revised strategy: analysis paralysis in Autumn"] },
-    collaborator:     { copy: "Autumn is a season for reviewing partnerships. Your Collaborator should audit relationships: strengthen the ones that compound, and gracefully exit those that drain. Quality over quantity now.", watchOut: ["Avoiding difficult conversations about underperforming partnerships out of politeness", "Entering new partnership agreements during a season designed for review, not initiation"] },
+    investmentBrain:  { copy: "Autumn is for protecting what you have. De-risk your portfolio, cut your losers, and don't make any wild bets. Patience right now will save you a lot of money.", watchOut: ["Making risky investments just because you feel bored", "Getting cocky from recent wins and betting too much money"] },
+    brandingMagnet:   { copy: "Autumn is for cutting the fat. Stop doing the marketing channels that don't work. Focus entirely on the one or two things that actually bring in paying clients.", watchOut: ["Trying to launch a massive new campaign when the market is slowing down", "Ignoring negative feedback from your audience"] },
+    strategyPlanner:  { copy: "Autumn is for reviewing the tape. Look at what worked and what failed. Start drafting your plan for next year, but don't launch any massive new initiatives yet.", watchOut: ["Committing time and money to a new idea when you should be reviewing the old ones", "Over-analyzing your failures until you get paralyzed"] },
+    collaborator:     { copy: "Autumn is for firing bad clients and ending bad partnerships. Keep the relationships that make you money and gracefully exit the ones that drain your energy.", watchOut: ["Avoiding a hard conversation with a bad partner just to be polite", "Signing a new partnership agreement when you should be cleaning house"] },
   },
   foundation: {
-    investmentBrain:  { copy: "Winter is your Investment Brain's research and due-diligence season. Study markets, identify the plays you'll execute in Spring, and build conviction without pulling the trigger yet.", watchOut: ["Acting on Winter-season conviction before the Spring execution window opens", "Under-investing in research and due diligence and entering Spring underprepared"] },
-    brandingMagnet:   { copy: "Winter fuels your Branding Magnet's creative engine. Build content, develop your positioning, and lay the groundwork for a powerful Spring launch. The audience you earn now grows with you.", watchOut: ["Expecting Winter-built content to produce immediate revenue: it compounds into Spring", "Neglecting your existing audience while building new content for future audiences"] },
-    strategyPlanner:  { copy: "Winter is the Strategy Planner's season. Systems, frameworks, and long-horizon plans built in Winter become Spring's competitive advantage. This is your most productive planning window.", watchOut: ["Treating Winter as a rest period when it is actually your highest-leverage planning season", "Building strategies without execution dates: plans without commitments are just intentions"] },
-    collaborator:     { copy: "Winter deepens relationships. Your Collaborator should invest in authentic connection: mentor others, seek mentors, and plant seeds for partnerships that will flourish in the Spring cycle.", watchOut: ["Withdrawing from your network entirely during Winter: relationships need maintenance, not just activation", "Treating relationship-building as optional when it is your primary wealth-generation mechanism"] },
+    investmentBrain:  { copy: "Winter is for research. Study the market, find the undervalued assets, and build your thesis. Don't pull the trigger yet—just get ready for Spring.", watchOut: ["Buying the asset now instead of waiting for the Spring growth cycle", "Being lazy and not doing the research, so you miss the Spring opportunities"] },
+    brandingMagnet:   { copy: "Winter is for building in the dark. Write the book, film the course, or rebrand your website. The work you do quietly now will explode when Spring arrives.", watchOut: ["Getting frustrated that your new content isn't making money immediately", "Ignoring your current paying clients because you are too busy building new stuff"] },
+    strategyPlanner:  { copy: "Winter is your superpower. Build the systems, write the SOPs, and map out your 12-month strategy. The plans you make now will be your unfair advantage later.", watchOut: ["Using Winter as an excuse to just take a vacation and do nothing", "Making a massive plan but refusing to set a hard launch date"] },
+    collaborator:     { copy: "Winter is for deepening trust. Check in on your mentors, help out your peers, and plant the seeds for deals you want to close next year.", watchOut: ["Disappearing completely and letting your network go cold", "Thinking you don't need to network just because business is slow right now"] },
   },
 };
 
