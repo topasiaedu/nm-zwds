@@ -16,6 +16,10 @@ import type { WealthCodeKey } from "../../zwds/analysis_constants/wealth_code_ma
 
 /** The four wealth-attraction categories referenced in the offer brief. */
 export type WealthCategory =
+  | "Asset Growth"
+  | "Reputation & Influence"
+  | "Strategic Moves"
+  | "Partnerships"
   | "Earned Income"
   | "Passive Returns"
   | "Equity Growth"
