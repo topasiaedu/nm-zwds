@@ -27,7 +27,7 @@ export const PEOPLE_PALACE_SHORT_LABELS: Record<PeoplePalaceKey, string> = {
 
 /** Chapter opener: strategic framing for business owners. */
 export const PEOPLE_STACK_INTRO =
-  "In business, you operate through five relationship layers: peers, partner, allies, sponsors, and successors. " +
+  "In your career and business, you operate through five relationship layers: peers, partners, allies, sponsors, and junior talent. " +
   "This chapter maps how your chart wires each layer, where to invest attention, and what to watch this cycle.";
 
 /** Explains how priority scores should be read (not pass/fail). */
@@ -133,9 +133,9 @@ export const PEOPLE_PALACE_FRAMING: Record<PeoplePalaceKey, PeoplePalaceFraming>
 export const PEOPLE_PALACE_PLAYBOOK: Record<PeoplePalaceKey, PeoplePalacePlaybook> = {
   "兄弟": {
     keyActions: [
-      "Force your peers to put their commitments in writing. If you share projects, clients, or money, document exactly who owns what and how either of you can walk away.",
+      "Force your peers to put their commitments in writing. If you share projects, clients, or resources, document exactly who owns what and how either of you can walk away.",
       "Stop doing your coworkers' jobs. If a peer drops the ball, let the ball drop. Covering for them only trains them to be lazy.",
-      "Audit your peer collaborations. If a partnership is costing you more time than it makes you money, kill it this week.",
+      "Audit your peer collaborations. If a partnership is costing you more time than it delivers value, step away this week.",
     ],
     watchOut: [
       "Paying for a peer's mistakes because you are afraid of looking difficult.",
@@ -171,12 +171,12 @@ export const PEOPLE_PALACE_PLAYBOOK: Record<PeoplePalaceKey, PeoplePalacePlayboo
   },
   "交友": {
     keyActions: [
-      "Stop going to networking events that don't make you money. Cut your social calendar in half and only meet with people who can actually fund or accelerate your next move.",
-      "Stop doing free favors. If someone in your network asks for your expertise, send them a pricing sheet or ask for a specific, high-value introduction in return.",
-      "Identify the three people in your network who actually send you business or opportunities. Take them to dinner. Ignore the rest.",
+      "Stop going to networking events that don't produce real opportunities. Cut your social calendar in half and only meet with people who can actually accelerate your career or business.",
+      "Stop doing free favors. If someone in your network asks to 'pick your brain', ask for a specific, high-value introduction in return, or simply say no. Protect your time.",
+      "Identify the three people in your network who actually send you high-quality opportunities or referrals. Take them to dinner. Ignore the rest.",
     ],
     watchOut: [
-      "Wasting hours giving free advice to 'friends' who will never hire you or refer you.",
+      "Wasting hours giving free advice to 'friends' who will never reciprocate or advance your goals.",
       "Saying yes to every introduction and filling your calendar with useless coffee chats.",
     ],
     successMetrics: [
@@ -191,7 +191,7 @@ export const PEOPLE_PALACE_PLAYBOOK: Record<PeoplePalaceKey, PeoplePalacePlayboo
   "父母": {
     keyActions: [
       "Stop asking your mentors for general advice. Bring them a specific, high-stakes problem, present your proposed solution, and ask them to tear it apart.",
-      "Ask your boss or sponsor exactly what you need to do to get your next promotion or raise. Get the metrics in writing, hit them, and demand the payout.",
+      "Ask your boss or sponsor exactly what you need to do to get your next promotion or raise. Get the metrics in writing, hit them, and hold them to the agreement.",
       "Cut off family members or senior figures who use money to control you. If a loan or gift comes with strings attached, give it back.",
     ],
     watchOut: [
@@ -209,8 +209,8 @@ export const PEOPLE_PALACE_PLAYBOOK: Record<PeoplePalaceKey, PeoplePalacePlayboo
   },
   "子女": {
     keyActions: [
-      "Stop micromanaging your team. Give them a clear deadline and a specific outcome, then step back. If they fail, replace them. Stop being their safety net.",
-      "Cut funding to any side project or junior initiative that hasn't hit its targets in the last 90 days. Stop throwing good money after bad ideas.",
+      "Stop micromanaging your team. Give them a clear deadline and a specific outcome, then step back. If they drop the ball, let them face the consequences. Stop being their safety net.",
+      "Cut resources or funding to any side project or junior initiative that hasn't hit its targets in the last 90 days. Stop throwing good time and money after bad ideas.",
       "Identify your single best junior operator and give them a project that scares them. The fastest way to build leverage is to force your best people to step up.",
     ],
     watchOut: [
