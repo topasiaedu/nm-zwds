@@ -133,13 +133,13 @@ export const PEOPLE_PALACE_FRAMING: Record<PeoplePalaceKey, PeoplePalaceFraming>
 export const PEOPLE_PALACE_PLAYBOOK: Record<PeoplePalaceKey, PeoplePalacePlaybook> = {
   "兄弟": {
     keyActions: [
-      "If you share a business with a peer or sibling, put in writing who does what, who owns what share, and how either of you can exit. Verbal deals between equals fall apart when real money shows up.",
-      "Once a month, spend 15 minutes with any peer you share money or clients with: who brought in what, who paid for what. Do this before bad feelings build up.",
-      "When you disagree with a peer, talk it through within 48 hours. Problems you avoid do not go away. They wait until the worst possible moment.",
+      "Force your peers to put their commitments in writing. If you share projects, clients, or money, document exactly who owns what and how either of you can walk away.",
+      "Stop doing your coworkers' jobs. If a peer drops the ball, let the ball drop. Covering for them only trains them to be lazy.",
+      "Audit your peer collaborations. If a partnership is costing you more time than it makes you money, kill it this week.",
     ],
     watchOut: [
-      "Paying for a peer's mistakes again and again because you do not want to seem small-minded",
-      "Competing with a peer for approval instead of competing for the same business result",
+      "Paying for a peer's mistakes because you are afraid of looking difficult.",
+      "Treating a coworker like a friend when they are actually competing with you for the same promotion or client.",
     ],
     successMetrics: [
       "Said no to a coworker asking you to do their job",
@@ -152,13 +152,13 @@ export const PEOPLE_PALACE_PLAYBOOK: Record<PeoplePalaceKey, PeoplePalacePlayboo
   },
   "夫妻": {
     keyActions: [
-      "Block a fixed 30-minute slot each week with your business partner or spouse for money, decisions, and boundaries. Protect that slot before you protect anything else on your calendar.",
-      "For any commitment over $10k or three months of your time, both of you must agree in writing before work starts. One person saying yes and the other staying quiet is how partnerships break.",
-      "Tension in a one-to-one relationship is active. Schedule a direct talk about the one issue you have been avoiding. Waiting makes it personal.",
+      "Set a hard rule with your primary partner or spouse: no major financial or time commitments without two 'yes' votes. One person deciding and the other staying quiet is how partnerships die.",
+      "Stop avoiding the hard conversation about money. Sit down this week and explicitly state your financial goals and risk limits. If you aren't aligned, you are dragging each other down.",
+      "Renegotiate any 50/50 split where you are doing 80% of the work. If your partner won't step up, step away from the joint project.",
     ],
     watchOut: [
-      "Avoiding a hard conversation because the relationship feels fragile this week",
-      "Letting your partner cover a problem you know is yours because speaking up feels harder",
+      "Staying silent about a bad decision because you don't want to start a fight.",
+      "Outsourcing your financial or strategic thinking entirely to your partner.",
     ],
     successMetrics: [
       "Had a clear, honest conversation about money and goals",
@@ -171,13 +171,13 @@ export const PEOPLE_PALACE_PLAYBOOK: Record<PeoplePalaceKey, PeoplePalacePlayboo
   },
   "交友": {
     keyActions: [
-      "List ten people who could realistically send you a paying client this year. Message the top three this month with a clear ask, not a vague catch-up.",
-      "Before you say yes to an introduction, referral, or joint project, ask: what do they bring that I cannot get on my own, and what am I giving up? If you cannot answer the second part, wait 72 hours.",
-      "You are influencing how your friend and partner circle runs right now. Set terms on any joint effort before charm pushes past what you actually want.",
+      "Stop going to networking events that don't make you money. Cut your social calendar in half and only meet with people who can actually fund or accelerate your next move.",
+      "Stop doing free favors. If someone in your network asks for your expertise, send them a pricing sheet or ask for a specific, high-value introduction in return.",
+      "Identify the three people in your network who actually send you business or opportunities. Take them to dinner. Ignore the rest.",
     ],
     watchOut: [
-      "Letting the most charming person in the room set the terms while you carry the work",
-      "Thinking someone is a good partner because you get along, not because you want the same outcome",
+      "Wasting hours giving free advice to 'friends' who will never hire you or refer you.",
+      "Saying yes to every introduction and filling your calendar with useless coffee chats.",
     ],
     successMetrics: [
       "Asked for and received a direct referral or introduction",
@@ -190,13 +190,13 @@ export const PEOPLE_PALACE_PLAYBOOK: Record<PeoplePalaceKey, PeoplePalacePlayboo
   },
   "父母": {
     keyActions: [
-      "Pick the one mentor, board member, or senior family figure whose opinion actually changes your decisions. Book one focused conversation with them this quarter and bring a written list of what you want to discuss.",
-      "Put every family loan, gift, or informal money arrangement in writing with a payback or review date. Family money without paperwork becomes family conflict later.",
-      "Make one specific ask this quarter of someone above you: an introduction, a door opened, or a decision unblocked. Being respected does not help you if you never ask for anything concrete.",
+      "Stop asking your mentors for general advice. Bring them a specific, high-stakes problem, present your proposed solution, and ask them to tear it apart.",
+      "Ask your boss or sponsor exactly what you need to do to get your next promotion or raise. Get the metrics in writing, hit them, and demand the payout.",
+      "Cut off family members or senior figures who use money to control you. If a loan or gift comes with strings attached, give it back.",
     ],
     watchOut: [
-      "Saying yes to a boss, mentor, or parent out of guilt when it actually hurts your business",
-      "Chasing approval from someone senior when what you need is a straight no and honest feedback",
+      "Waiting for a boss or mentor to notice your hard work instead of explicitly asking for the reward.",
+      "Taking advice from senior people who haven't actually built what you are trying to build.",
     ],
     successMetrics: [
       "Asked a boss or mentor a highly specific, strategic question",
@@ -209,13 +209,13 @@ export const PEOPLE_PALACE_PLAYBOOK: Record<PeoplePalaceKey, PeoplePalacePlayboo
   },
   "子女": {
     keyActions: [
-      "For each child, junior hire, or person you are training, set one clear goal for the next 90 days. Check progress on a fixed date, not when someone chases you.",
-      "Cap how much time and money you put into any one person or project each week. Endless support without structure creates dependence, not growth.",
-      "Celebrate finished results in public and be specific about what they did. Praise effort in private. People learn from what you reward, not from what you say you value.",
+      "Stop micromanaging your team. Give them a clear deadline and a specific outcome, then step back. If they fail, replace them. Stop being their safety net.",
+      "Cut funding to any side project or junior initiative that hasn't hit its targets in the last 90 days. Stop throwing good money after bad ideas.",
+      "Identify your single best junior operator and give them a project that scares them. The fastest way to build leverage is to force your best people to step up.",
     ],
     watchOut: [
-      "Pouring too much time and money into people or projects you care about because saying no feels cruel",
-      "Offering warmth and encouragement with no deadlines until everyone is busy and nothing gets done",
+      "Doing the work yourself because 'it's faster' instead of forcing your team to learn.",
+      "Keeping low-performers around because you feel bad letting them go.",
     ],
     successMetrics: [
       "Set a strict deadline for a junior team member and held them to it",
@@ -236,29 +236,29 @@ export interface LuActivationSummary {
 
 export const LU_ACTIVATION_BY_PALACE: Record<PeoplePalaceKey, LuActivationSummary> = {
   "兄弟": {
-    headline: "Strongest leverage node: Peers & Co-investors",
-    meaning: "Your chart routes the highest-yield opportunities and operational support through peer networks and co-founders.",
-    practicalTip: "Formalize equity and capital contributions early to protect the relationship.",
+    headline: "Strongest leverage node: Peers & Collaborators",
+    meaning: "Your chart routes the highest-yield opportunities and operational support through your peers and colleagues.",
+    practicalTip: "Formalize who owns what in any joint project early to protect the relationship.",
   },
   "夫妻": {
     headline: "Strongest leverage node: Primary Partner",
-    meaning: "Your chart routes the most natural strategic leverage and stability through your spouse or primary co-founder.",
-    practicalTip: "Establish a 'two-yes' rule for any major capital deployment.",
+    meaning: "Your chart routes the most natural strategic leverage and stability through your spouse or primary partner.",
+    practicalTip: "Establish a 'two-yes' rule for any major financial or time commitment.",
   },
   "交友": {
     headline: "Strongest leverage node: Professional Network",
-    meaning: "Your chart routes the most lucrative deal flow, referrals, and joint ventures through your wider professional orbit.",
-    practicalTip: "Cap low-ROI social commitments to protect your networking capital.",
+    meaning: "Your chart routes the most lucrative deal flow, referrals, and opportunities through your wider professional orbit.",
+    practicalTip: "Cap low-ROI social commitments to protect your networking bandwidth.",
   },
   "父母": {
-    headline: "Strongest leverage node: Sponsors & Board",
+    headline: "Strongest leverage node: Sponsors & Mentors",
     meaning: "Your chart routes the most direct access to capital and high-level approval through mentors and sponsors.",
     practicalTip: "Bring structured solutions to your mentors, not just updates.",
   },
   "子女": {
-    headline: "Strongest leverage node: Junior Talent & Assets",
-    meaning: "Your chart routes the highest long-term ROI through the junior talent you develop and the scalable assets you build.",
-    practicalTip: "Set strict, 90-day measurable KPIs for any project you fund.",
+    headline: "Strongest leverage node: Junior Talent & Projects",
+    meaning: "Your chart routes the highest long-term ROI through the junior talent you develop and the projects you build.",
+    practicalTip: "Set strict, 90-day measurable targets for any project you fund or manage.",
   },
 };
 
@@ -301,17 +301,17 @@ export const PHASE_PEOPLE_PRIORITY: Record<
   },
   summer: {
     palaceKey: "父母",
-    headline: "Prioritize Sponsors & Board this cycle",
+    headline: "Prioritize Sponsors & Mentors this cycle",
     action: "Invest in sponsors, mentors, and upstream authority. The Visibility phase rewards those who have high-level backing.",
   },
   autumn: {
     palaceKey: "夫妻",
     headline: "Prioritize Primary Partnership this cycle",
-    action: "Align with your core partner on risk tolerance and capital protection. Consolidation requires a unified strategic front.",
+    action: "Align with your core partner on risk tolerance and resource protection. Consolidation requires a unified strategic front.",
   },
   winter: {
     palaceKey: "子女",
-    headline: "Prioritize Junior Talent & Assets this cycle",
-    action: "Structure what you are building for the long term: junior talent, scalable IP, and maturing operational projects.",
+    headline: "Prioritize Junior Talent & Projects this cycle",
+    action: "Structure what you are building for the long term: junior talent, scalable projects, and maturing operations.",
   },
 };
