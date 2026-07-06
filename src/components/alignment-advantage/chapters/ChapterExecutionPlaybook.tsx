@@ -167,7 +167,7 @@ export const ChapterExecutionPlaybook: React.FC<ChapterExecutionPlaybookProps> =
           </p>
           {strategicData.dayun !== null && (
             <p className="text-sm leading-relaxed" style={{ color: C.navy, opacity: 0.8 }}>
-              {strategicData.dayun.coreMessage}
+              {SEASON_STYLES[strategicData.phaseLabel as keyof typeof SEASON_STYLES]?.coreMessage ?? strategicData.dayun.coreMessage}
             </p>
           )}
         </div>
@@ -220,7 +220,7 @@ export const ChapterExecutionPlaybook: React.FC<ChapterExecutionPlaybookProps> =
             {/* Dimension bars */}
             <div>
               <p className="text-[10px] font-bold uppercase tracking-[0.2em] mb-4 border-b border-[#e8ddd0] pb-2" style={{ color: C.navy }}>
-                Energy Allocation
+                Capacity Allocation
               </p>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {mData.dimensionBars.map((bar) => (

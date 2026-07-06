@@ -153,7 +153,7 @@ export const ChapterOperatingSystem: React.FC<{
               className="text-[10px] font-bold uppercase tracking-[0.3em]"
               style={{ color: C.coral }}
             >
-              Founder&apos;s Environment Matrix
+              Strategic Environment Matrix
             </p>
           </div>
 
