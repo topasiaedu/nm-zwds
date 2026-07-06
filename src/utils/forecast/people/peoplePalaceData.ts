@@ -133,97 +133,97 @@ export const PEOPLE_PALACE_FRAMING: Record<PeoplePalaceKey, PeoplePalaceFraming>
 export const PEOPLE_PALACE_PLAYBOOK: Record<PeoplePalaceKey, PeoplePalacePlaybook> = {
   "兄弟": {
     keyActions: [
-      "Audit your peer collaborations. If you share resources, credit, or side-project responsibilities, clarify who owns what in writing.",
-      "Identify the peers who have access to the information or opportunities you need next. Propose a mutually beneficial exchange of value.",
-      "Address friction with key colleagues or collaborators immediately. Unspoken tension in this domain directly erodes your daily execution.",
+      "Stop doing your coworkers' jobs for them. Let them fail if they don't do the work.",
+      "Find colleagues who are smarter than you and figure out how you can help each other.",
+      "Address friction with key colleagues immediately. Unspoken tension ruins your focus.",
     ],
     watchOut: [
-      "Subsidizing an underperforming peer's workload because you want to avoid a difficult conversation.",
-      "Competing with peers for status instead of collaborating to capture larger opportunities.",
+      "Doing favors or covering for someone until you secretly resent them.",
+      "Competing with your peers to look good instead of teaming up to get results.",
     ],
     successMetrics: [
-      "Clear ownership established on every shared commitment",
-      "Peer conflicts addressed and resolved within 48 hours",
+      "Said no to a coworker asking you to do their job",
+      "Addressed one major source of tension with a peer",
     ],
     reflectionQuestions: [
-      "Which peer compounds my outcomes versus drains my capacity?",
-      "Am I treating this person as a collaborator or a competitor?",
+      "Which of my peers actually makes me better at my job?",
+      "Am I treating this person as a teammate or a competitor?",
     ],
   },
   "夫妻": {
     keyActions: [
-      "Ensure your primary partner is fully aligned on your current risk tolerance and career or financial strategy.",
-      "Establish a 'two-yes' rule for any major financial commitment or career pivot to protect your shared stability.",
-      "Schedule a dedicated sync to address the one major transition or risk you have been avoiding discussing.",
+      "Sit down with your partner and clearly state your financial goals for the year. Stop guessing.",
+      "Agree on a budget limit (e.g., 'we must discuss any purchase over $1,000').",
+      "Schedule a dedicated time to talk about the one big decision you've been avoiding.",
     ],
     watchOut: [
-      "Taking unilateral financial or career risks that destabilize your home-base.",
-      "Outsourcing your personal blind spots to a partner instead of taking responsibility for them.",
+      "Making a huge career change or spending a lot of money without telling your partner.",
+      "Expecting your partner to fix your own bad habits or bad moods.",
     ],
     successMetrics: [
-      "Two-yes rule held on every major decision this quarter",
-      "Clear alignment achieved on the next 12-month trajectory",
+      "Had a clear, honest conversation about money and goals",
+      "Set a clear rule for how you make big decisions together",
     ],
     reflectionQuestions: [
-      "Does this partnership amplify my strengths or enable my complacency?",
-      "What does this bond need from me operationally this month?",
+      "Is my partner helping me grow, or holding me back?",
+      "What hard conversation am I avoiding right now?",
     ],
   },
   "交友": {
     keyActions: [
-      "Audit your network for leverage. Identify three people who have access to the rooms you want to enter, and make a specific proposal.",
-      "Cap your social and networking commitments. Treat your attention as capital and stop deploying it into low-ROI interactions.",
-      "Before accepting a new collaboration, define exactly what leverage you are gaining and what time you are giving up.",
+      "Pick three people who already have what you want, and ask them for a focused 15-minute call.",
+      "Stop doing useless coffee chats. Only meet with people who align with your goals.",
+      "Before saying yes to a favor, decide exactly what you are getting out of it.",
     ],
     watchOut: [
-      "Deploying time into relationships based on history rather than current alignment.",
-      "Allowing charismatic people to dictate your schedule while you carry the execution load.",
+      "Hanging out with people just because you went to school together 10 years ago.",
+      "Letting loud, demanding people waste your time while you do all the work.",
     ],
     successMetrics: [
-      "Two alliances with measurable career or financial outcomes per quarter",
-      "One guilt-free 'no' to low-alignment asks per week",
+      "Asked for and received a direct referral or introduction",
+      "Cut out one networking commitment that was wasting your time",
     ],
     reflectionQuestions: [
-      "Who compounds my time versus consumes it?",
-      "What do new contacts assume about my value within 30 days?",
+      "Who in my network can actually help me get to the next level?",
+      "Which friendships have expired and need to be let go?",
     ],
   },
   "父母": {
     keyActions: [
-      "Identify the sponsor or senior leader who has the political capital to unblock your next major move. Make a specific, concrete ask.",
-      "Formalize any informal family financial arrangements or eldercare responsibilities with clear boundaries.",
-      "Stop seeking approval and start seeking leverage. Bring solutions and structured requests to your mentors, not just updates.",
+      "Ask your boss or mentor exactly what it takes to get to the next level. Be specific.",
+      "If you help your parents financially, decide on a fixed monthly amount and stick to it.",
+      "Stop asking your mentors for general advice. Bring them a problem and a proposed solution.",
     ],
     watchOut: [
-      "Saying yes to a boss or senior family figure out of obligation when it actively damages your own trajectory.",
-      "Chasing mentorship when what you actually need is a direct introduction or an opportunity.",
+      "Taking on a terrible project just because your boss asked you to, hurting your own career.",
+      "Asking a mentor for 'a quick chat' without having specific questions prepared.",
     ],
     successMetrics: [
-      "Every mentor tie has a named outcome this cycle",
-      "Family financial boundaries reviewed and clearly communicated",
+      "Asked a boss or mentor a highly specific, strategic question",
+      "Set a clear boundary regarding family financial support",
     ],
     reflectionQuestions: [
-      "Who accelerates my ceiling versus shrinks it?",
-      "How do I respond when upstream approval is withheld?",
+      "Am I too afraid of my boss to do my best work?",
+      "What would change if I treated my mentors like peers instead of teachers?",
     ],
   },
   "子女": {
     keyActions: [
-      "Set strict, 90-day measurable milestones for any junior team members you manage or long-term projects you are building.",
-      "Cap the time and resources you provide to underperforming projects or mentees. Cut your losses early.",
-      "Reward execution, not just effort. Celebrate finished results to set the standard for those you lead.",
+      "Give your team or your kids clear deadlines and expectations. Stop hand-holding.",
+      "Stop throwing money or time at projects (or people) that aren't improving. Cut them off.",
+      "Praise people when they actually finish the job, not just when they try hard.",
     ],
     watchOut: [
-      "Deploying endless time into people or projects because cutting them off feels too harsh.",
-      "Providing warmth and encouragement without deadlines, creating dependence rather than capability.",
+      "Being so nice to your team that they become completely dependent on you.",
+      "Refusing to cancel a bad project or fire a bad employee because it feels mean.",
     ],
     successMetrics: [
-      "Visible milestone tracker per project or mentee updated monthly",
-      "Named growth outcome for each initiative you nurture this season",
+      "Set a strict deadline for a junior team member and held them to it",
+      "Stopped funding or spending time on a failing project",
     ],
     reflectionQuestions: [
-      "Does this person/project need more structure or more warmth right now?",
-      "Am I inviting growth or enabling endless preparation?",
+      "Am I helping my team grow, or just doing their work for them?",
+      "What failing project or bad employee do I need to cut loose?",
     ],
   },
 };
