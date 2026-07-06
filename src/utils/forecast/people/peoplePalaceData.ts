@@ -133,13 +133,13 @@ export const PEOPLE_PALACE_FRAMING: Record<PeoplePalaceKey, PeoplePalaceFraming>
 export const PEOPLE_PALACE_PLAYBOOK: Record<PeoplePalaceKey, PeoplePalacePlaybook> = {
   "兄弟": {
     keyActions: [
-      "Stop doing your coworkers' jobs for them. Let them fail if they don't do the work.",
-      "Find colleagues who are smarter than you and figure out how you can help each other.",
-      "Address friction with key colleagues immediately. Unspoken tension ruins your focus.",
+      "If you share a business with a peer or sibling, put in writing who does what, who owns what share, and how either of you can exit. Verbal deals between equals fall apart when real money shows up.",
+      "Once a month, spend 15 minutes with any peer you share money or clients with: who brought in what, who paid for what. Do this before bad feelings build up.",
+      "When you disagree with a peer, talk it through within 48 hours. Problems you avoid do not go away. They wait until the worst possible moment.",
     ],
     watchOut: [
-      "Doing favors or covering for someone until you secretly resent them.",
-      "Competing with your peers to look good instead of teaming up to get results.",
+      "Paying for a peer's mistakes again and again because you do not want to seem small-minded",
+      "Competing with a peer for approval instead of competing for the same business result",
     ],
     successMetrics: [
       "Said no to a coworker asking you to do their job",
@@ -152,13 +152,13 @@ export const PEOPLE_PALACE_PLAYBOOK: Record<PeoplePalaceKey, PeoplePalacePlayboo
   },
   "夫妻": {
     keyActions: [
-      "Sit down with your partner and clearly state your financial goals for the year. Stop guessing.",
-      "Agree on a budget limit (e.g., 'we must discuss any purchase over $1,000').",
-      "Schedule a dedicated time to talk about the one big decision you've been avoiding.",
+      "Block a fixed 30-minute slot each week with your business partner or spouse for money, decisions, and boundaries. Protect that slot before you protect anything else on your calendar.",
+      "For any commitment over $10k or three months of your time, both of you must agree in writing before work starts. One person saying yes and the other staying quiet is how partnerships break.",
+      "Tension in a one-to-one relationship is active. Schedule a direct talk about the one issue you have been avoiding. Waiting makes it personal.",
     ],
     watchOut: [
-      "Making a huge career change or spending a lot of money without telling your partner.",
-      "Expecting your partner to fix your own bad habits or bad moods.",
+      "Avoiding a hard conversation because the relationship feels fragile this week",
+      "Letting your partner cover a problem you know is yours because speaking up feels harder",
     ],
     successMetrics: [
       "Had a clear, honest conversation about money and goals",
@@ -171,13 +171,13 @@ export const PEOPLE_PALACE_PLAYBOOK: Record<PeoplePalaceKey, PeoplePalacePlayboo
   },
   "交友": {
     keyActions: [
-      "Pick three people who already have what you want, and ask them for a focused 15-minute call.",
-      "Stop doing useless coffee chats. Only meet with people who align with your goals.",
-      "Before saying yes to a favor, decide exactly what you are getting out of it.",
+      "List ten people who could realistically send you a paying client this year. Message the top three this month with a clear ask, not a vague catch-up.",
+      "Before you say yes to an introduction, referral, or joint project, ask: what do they bring that I cannot get on my own, and what am I giving up? If you cannot answer the second part, wait 72 hours.",
+      "You are influencing how your friend and partner circle runs right now. Set terms on any joint effort before charm pushes past what you actually want.",
     ],
     watchOut: [
-      "Hanging out with people just because you went to school together 10 years ago.",
-      "Letting loud, demanding people waste your time while you do all the work.",
+      "Letting the most charming person in the room set the terms while you carry the work",
+      "Thinking someone is a good partner because you get along, not because you want the same outcome",
     ],
     successMetrics: [
       "Asked for and received a direct referral or introduction",
@@ -190,13 +190,13 @@ export const PEOPLE_PALACE_PLAYBOOK: Record<PeoplePalaceKey, PeoplePalacePlayboo
   },
   "父母": {
     keyActions: [
-      "Ask your boss or mentor exactly what it takes to get to the next level. Be specific.",
-      "If you help your parents financially, decide on a fixed monthly amount and stick to it.",
-      "Stop asking your mentors for general advice. Bring them a problem and a proposed solution.",
+      "Pick the one mentor, board member, or senior family figure whose opinion actually changes your decisions. Book one focused conversation with them this quarter and bring a written list of what you want to discuss.",
+      "Put every family loan, gift, or informal money arrangement in writing with a payback or review date. Family money without paperwork becomes family conflict later.",
+      "Make one specific ask this quarter of someone above you: an introduction, a door opened, or a decision unblocked. Being respected does not help you if you never ask for anything concrete.",
     ],
     watchOut: [
-      "Taking on a terrible project just because your boss asked you to, hurting your own career.",
-      "Asking a mentor for 'a quick chat' without having specific questions prepared.",
+      "Saying yes to a boss, mentor, or parent out of guilt when it actually hurts your business",
+      "Chasing approval from someone senior when what you need is a straight no and honest feedback",
     ],
     successMetrics: [
       "Asked a boss or mentor a highly specific, strategic question",
@@ -209,13 +209,13 @@ export const PEOPLE_PALACE_PLAYBOOK: Record<PeoplePalaceKey, PeoplePalacePlayboo
   },
   "子女": {
     keyActions: [
-      "Give your team or your kids clear deadlines and expectations. Stop hand-holding.",
-      "Stop throwing money or time at projects (or people) that aren't improving. Cut them off.",
-      "Praise people when they actually finish the job, not just when they try hard.",
+      "For each child, junior hire, or person you are training, set one clear goal for the next 90 days. Check progress on a fixed date, not when someone chases you.",
+      "Cap how much time and money you put into any one person or project each week. Endless support without structure creates dependence, not growth.",
+      "Celebrate finished results in public and be specific about what they did. Praise effort in private. People learn from what you reward, not from what you say you value.",
     ],
     watchOut: [
-      "Being so nice to your team that they become completely dependent on you.",
-      "Refusing to cancel a bad project or fire a bad employee because it feels mean.",
+      "Pouring too much time and money into people or projects you care about because saying no feels cruel",
+      "Offering warmth and encouragement with no deadlines until everyone is busy and nothing gets done",
     ],
     successMetrics: [
       "Set a strict deadline for a junior team member and held them to it",
