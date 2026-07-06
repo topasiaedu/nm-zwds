@@ -9,7 +9,6 @@ import { getPhaseWealthActions } from "../shared/phaseWealthGuidance";
 import {
   SeasonPhaseSvg,
   PhaseActionsSvg,
-  RiskShieldSvg,
   PHASE_LABELS,
 } from "../shared/phaseWealthVisuals";
 
@@ -134,8 +133,8 @@ export const PhaseWealthAlignmentSheet: React.FC<PhaseWealthAlignmentSheetProps>
           {actions.length > 0 && (
             <div>
               <SectionLabel index="01" title="What To Do Now" />
-              <div className="rounded-3xl overflow-hidden relative min-h-[220px]" style={{ background: C.navy }}>
-                <div className="absolute right-5 top-5 w-20 h-20 opacity-15 pointer-events-none">
+              <div className="rounded-3xl overflow-hidden relative min-h-[220px]" style={{ background: C.white, border: `1px solid ${C.navy}35` }}>
+                <div className="absolute right-5 top-5 w-20 h-20 opacity-5 pointer-events-none">
                   <PhaseActionsSvg />
                 </div>
                 <div className="p-6 space-y-4 relative z-10">
@@ -143,11 +142,11 @@ export const PhaseWealthAlignmentSheet: React.FC<PhaseWealthAlignmentSheetProps>
                     <div key={action} className="flex items-start gap-3">
                       <span
                         className="shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold mt-0.5"
-                        style={{ background: `${C.coral}30`, color: C.white, border: `1px solid ${C.coral}50` }}
+                        style={{ background: `${C.coral}15`, color: C.coral, border: `1px solid ${C.coral}30` }}
                       >
                         {idx + 1}
                       </span>
-                      <p className="text-sm leading-snug" style={{ color: "rgba(255,255,255,0.9)" }}>
+                      <p className="text-sm leading-snug" style={{ color: C.navy }}>
                         {action}
                       </p>
                     </div>
@@ -162,19 +161,11 @@ export const PhaseWealthAlignmentSheet: React.FC<PhaseWealthAlignmentSheetProps>
               <SectionLabel index="02" title="What To Watch During This Period" />
               <div
                 className="rounded-3xl p-6 min-h-[220px]"
-                style={{ background: C.white, border: `1px solid ${C.coral}35` }}
+                style={{ background: `${C.coral}08`, border: `1px solid ${C.coral}35` }}
               >
-                <div className="flex items-center gap-3 mb-5">
-                  <div className="w-11 h-11 shrink-0">
-                    <RiskShieldSvg />
-                  </div>
-                  <p className="text-[9px] font-bold uppercase tracking-wider" style={{ color: C.coral }}>
-                    Common mistakes in this phase
-                  </p>
-                </div>
-                <div className="space-y-3">
+                <div className="space-y-4 pt-2">
                   {alignEntry.watchOut.map((item) => (
-                    <p key={item} className="text-sm leading-snug pl-3 relative" style={{ color: C.navy }}>
+                    <p key={item} className="text-sm leading-snug pl-4 relative" style={{ color: C.navy }}>
                       <span
                         className="absolute left-0 top-[0.5em] w-1.5 h-1.5 rounded-full"
                         style={{ background: C.coral }}

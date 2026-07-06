@@ -44,8 +44,8 @@ const PHASE_WEALTH_ACTIONS: PhaseWealthActionMap = {
       "Stop creating new content angles until your current offer is selling consistently. More content does not fix a weak conversion.",
     ],
     strategyPlanner: [
-      "Find the one product or service generating your highest margin right now and sell more of it before this window closes.",
-      "Write two or three client wins as short case studies this quarter. You will need this proof when the next expansion push starts.",
+      "Find the one skill or service generating your highest return right now and double down on it before this window closes.",
+      "Write two or three professional wins as short case studies this quarter. You will need this proof when the next expansion push starts.",
       "Finish improving one core delivery process before approving anything new. Scaling a broken process multiplies the problem.",
     ],
     collaborator: [
@@ -62,14 +62,14 @@ const PHASE_WEALTH_ACTIONS: PhaseWealthActionMap = {
       "Do not open new speculative positions during consolidation. The phase rewards patience, not trading frequency.",
     ],
     brandingMagnet: [
-      "List every marketing channel you are active on and cut any that has not produced a paying client in the last 90 days. Focused effort beats scattered presence.",
-      "Fix one problem in your delivery or client experience that you have been deferring. A reputation breaks faster in a quiet market than a busy one.",
-      "Say no to any visibility opportunity that does not lead directly to revenue. Exposure without conversion is just noise right now.",
+      "List every marketing channel or networking effort you are active on and cut any that has not produced a real result in the last 90 days. Focused effort beats scattered presence.",
+      "Fix one problem in your delivery or professional reputation that you have been deferring. A reputation breaks faster in a quiet market than a busy one.",
+      "Say no to any visibility opportunity that does not lead directly to your goals. Exposure without a clear outcome is just noise right now.",
     ],
     strategyPlanner: [
-      "Pull your last three months of revenue by client or product line. Find the two where you are working the hardest for the lowest return and fix the rate or the scope before next quarter.",
-      "Pick the one process in your business that breaks every time you are busy and write the fix this month while you have space to think clearly.",
-      "Sit down with each key person in your business and ask: what is not working that you have not told me yet? Small problems left unspoken during consolidation compound into expensive ones.",
+      "Look at your last three months of income or projects. Find the two where you are working the hardest for the lowest return and fix the terms or step away before next quarter.",
+      "Pick the one process in your daily work that breaks every time you are busy and write the fix this month while you have space to think clearly.",
+      "Sit down with each key person you work with and ask: what is not working that you have not told me yet? Small problems left unspoken during consolidation compound into expensive ones.",
     ],
     collaborator: [
       "Review every active partnership and ask one honest question about each: is this producing results, or just comfortable to maintain? Exit the ones that drain time without return.",
@@ -90,7 +90,7 @@ const PHASE_WEALTH_ACTIONS: PhaseWealthActionMap = {
       "Send one useful message to your existing audience this month with no sales pitch attached. Relationships cool in quiet seasons if you go dark.",
     ],
     strategyPlanner: [
-      "Document the three core processes your business runs on. If they exist only in your head, you have a single point of failure waiting to surface.",
+      "Document the three core processes your daily work runs on. If they exist only in your head, you have a single point of failure waiting to surface.",
       "Write a 12-month plan and attach a committed start date to each initiative. A plan with no dates attached is a wish list.",
       "Identify the one pricing, hiring, or delivery gap that will slow you down when the next busy season arrives. Fix it now while you have the capacity.",
     ],
@@ -111,15 +111,15 @@ const PHASE_FALLBACK_ACTIONS: Record<PhaseAlignmentSeasonKey, [string, string, s
   visibility: [
     "Monetise what is already working before you build anything new.",
     "Raise prices or tighten offer scope where you are undercharging for the value you deliver.",
-    "Collect written proof from happy clients this quarter. You will need it when the next expansion push starts.",
+    "Collect written proof from happy clients or colleagues this quarter. You will need it when the next expansion push starts.",
   ],
   consolidation: [
-    "Look at your top three revenue sources and find the one where you are working the hardest for the lowest return. Fix the pricing or scope before you add anything new.",
+    "Look at your top three income sources or projects and find the one where you are working the hardest for the lowest return. Fix the terms or scope before you add anything new.",
     "Pause major new bets. Use this period to fix what is already running rather than starting something fresh.",
-    "Have one direct conversation with each key person in your business and ask what is not working. Small problems left unspoken during consolidation tend to surface as expensive ones next quarter.",
+    "Have one direct conversation with each key person you work with and ask what is not working. Small problems left unspoken during consolidation tend to surface as expensive ones next quarter.",
   ],
   foundation: [
-    "Document the two or three core processes your business depends on. If they only exist in someone's head, that is a risk.",
+    "Document the two or three core processes your work depends on. If they only exist in someone's head, that is a risk.",
     "Fix one structural weakness that would slow you down in a busier season.",
     "Protect cash and capacity so you can move decisively when the cycle shifts.",
   ],
