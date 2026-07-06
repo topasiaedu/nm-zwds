@@ -75,9 +75,6 @@ export const PhaseWealthAlignmentSheet: React.FC<PhaseWealthAlignmentSheetProps>
         >
           Your Timing Read
         </h2>
-        <p className="text-sm leading-relaxed max-w-lg" style={{ color: C.muted }}>
-          Where you sit in the business cycle right now — and what to focus on during this period.
-        </p>
       </div>
 
       {/* Hero: 2×2 cycle grid + side read */}
@@ -129,6 +126,17 @@ export const PhaseWealthAlignmentSheet: React.FC<PhaseWealthAlignmentSheetProps>
 
       {/* Action plan — two equal columns */}
       <div className="pt-8" style={{ borderTop: `1px solid ${C.border}60` }}>
+        <div className="mb-8 text-center">
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] mb-2" style={{ color: C.coral }}>
+            The Intersection
+          </p>
+          <p className="text-sm font-semibold" style={{ color: C.navy }}>
+            {archetypeLabel} × {phaseLabel} Phase
+          </p>
+          <p className="text-xs mt-1 max-w-md mx-auto" style={{ color: C.muted }}>
+            Your specific playbook for navigating this cycle based on your wealth archetype.
+          </p>
+        </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {actions.length > 0 && (
             <div>
