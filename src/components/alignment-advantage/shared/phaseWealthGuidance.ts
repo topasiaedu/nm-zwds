@@ -68,8 +68,8 @@ const PHASE_WEALTH_ACTIONS: PhaseWealthActionMap = {
     ],
     strategyPlanner: [
       "Look at your last three months of income or projects. Find the two where you are working the hardest for the lowest return and fix the terms or step away before next quarter.",
-      "Pick the one process in your daily work that breaks every time you are busy and write the fix this month while you have space to think clearly.",
-      "Sit down with each key person you work with and ask: what is not working that you have not told me yet? Small problems left unspoken during consolidation compound into expensive ones.",
+      "Identify the one task that completely falls apart unless you personally oversee it. Build a system so someone else can do it, or kill the task entirely. Stop being the bottleneck.",
+      "Stop assuming your team or partners are aligned. Ask them point-blank what is slowing them down or wasting money right now. If they don't have an answer, they aren't paying attention.",
     ],
     collaborator: [
       "Review every active partnership and ask one honest question about each: is this producing results, or just comfortable to maintain? Exit the ones that drain time without return.",
@@ -115,8 +115,8 @@ const PHASE_FALLBACK_ACTIONS: Record<PhaseAlignmentSeasonKey, [string, string, s
   ],
   consolidation: [
     "Look at your top three income sources or projects and find the one where you are working the hardest for the lowest return. Fix the terms or scope before you add anything new.",
-    "Pause major new bets. Use this period to fix what is already running rather than starting something fresh.",
-    "Have one direct conversation with each key person you work with and ask what is not working. Small problems left unspoken during consolidation tend to surface as expensive ones next quarter.",
+    "Stop starting new things just because you are bored. Force yourself to fix the broken operations in your current projects before you launch anything else.",
+    "Stop ignoring the friction in your team or partnerships. Force the uncomfortable conversation today about who is dropping the ball, and set a hard deadline to fix it.",
   ],
   foundation: [
     "Document the two or three core processes your work depends on. If they only exist in someone's head, that is a risk.",
