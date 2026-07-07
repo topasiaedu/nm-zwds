@@ -217,6 +217,12 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
   const prevBlueprintHighlightKeyRef = useRef<BlueprintHighlightKey | null>(null);
   /** Mirror of `highlightedPalaces` kept in a ref so the save-on-switch effect can read without a stale closure. */
   const highlightedPalacesRef = useRef<Set<number>>(new Set());
+  /**
+   * Tracks the previous chartData reference. When chartData is replaced (e.g.
+   * birth-hour offset changes), all cached highlights reference a stale chart
+   * and must be discarded before recomputing from the new data.
+   */
+  const prevChartDataRef = useRef<ChartData | null>(null);
 
   const [highlightedPalaces, setHighlightedPalaces] = useState<Set<number>>(() =>
     isPdfExport ? new Set() : getDefaultHighlightSet(chartData)
@@ -225,18 +231,32 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
 
   // When the active chart mode changes: save the outgoing mode's highlights then
   // restore (or initialise with defaults) the incoming mode's highlights.
+  // When chartData changes (e.g. birth-hour adjustment), all cached highlights
+  // are stale and must be recomputed from the new chart.
   useEffect(() => {
     if (isPdfExport || !canUsePalaceHighlights) {
       return;
     }
 
     const prevKey = prevBlueprintHighlightKeyRef.current;
+    // True when chartData reference has been replaced (birth-hour change, etc.).
+    // Skip the null-check on first mount so we don't treat mount as a data change.
+    const chartDataChanged =
+      prevChartDataRef.current !== null && prevChartDataRef.current !== chartData;
+    prevChartDataRef.current = chartData;
 
-    if (prevKey !== null && prevKey !== blueprintHighlightKey) {
+    // All cached mode highlights reference palaces in the old chart — discard them.
+    if (chartDataChanged) {
+      highlightsByModeRef.current = {};
+    }
+
+    // Save outgoing mode's highlights only when switching modes without a chart change.
+    // If chartData also changed the old highlights are already discarded above.
+    if (prevKey !== null && prevKey !== blueprintHighlightKey && !chartDataChanged) {
       highlightsByModeRef.current[prevKey] = new Set(highlightedPalacesRef.current);
     }
 
-    if (prevKey === null || prevKey !== blueprintHighlightKey) {
+    if (prevKey === null || prevKey !== blueprintHighlightKey || chartDataChanged) {
       const saved = highlightsByModeRef.current[blueprintHighlightKey];
       if (saved !== undefined) {
         setHighlightedPalaces(new Set(saved));
