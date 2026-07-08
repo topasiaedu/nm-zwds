@@ -47,6 +47,34 @@ export const TRANSFORMATION_ENGLISH: Record<string, string> = {
   "化忌": "Hua Ji",
 };
 
+/** Short activation labels matching main ZWDS chart (Lu / Quan / Ke / Ji). */
+const TRANSFORMATION_SHORT_LABEL: Record<string, string> = {
+  "化禄": "Lu",
+  "化祿": "Lu",
+  "化权": "Quan",
+  "化權": "Quan",
+  "化科": "Ke",
+  "化忌": "Ji",
+};
+
+/** Activation colors matching main chart: Lu green, Quan blue, Ke yellow, Ji red. */
+const TRANSFORMATION_COLORS: Record<string, string> = {
+  "化禄": "#22c55e",
+  "化祿": "#22c55e",
+  "化权": "#3b82f6",
+  "化權": "#3b82f6",
+  "化科": "#eab308",
+  "化忌": "#ef4444",
+};
+
+export function getTransformationShortLabel(transformation: string): string | undefined {
+  return TRANSFORMATION_SHORT_LABEL[transformation];
+}
+
+export function getTransformationColor(transformation: string): string | undefined {
+  return TRANSFORMATION_COLORS[transformation];
+}
+
 export const C = {
   navy:      "#1a1e3f",
   navyMid:   "#252a5c",

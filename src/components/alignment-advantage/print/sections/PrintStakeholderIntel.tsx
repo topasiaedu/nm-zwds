@@ -3,19 +3,15 @@ import { Users } from "lucide-react";
 import { SectionPill } from "../primitives/SectionPill";
 import { OrnamentalDivider } from "../primitives/OrnamentalDivider";
 import { IconCircle } from "../primitives/IconCircle";
-import { PrintSparkle } from "../primitives/PrintSparkle";
 import { TwelvePalaceMiniGrid } from "../../shared/TwelvePalaceMiniGrid";
-import { PEOPLE_SYNTHESIS } from "../../../../utils/forecast/people/peoplePalaceData";
 import type { PeoplePalaceKey } from "../../../../utils/forecast/people/peoplePalaceData";
 import {
   analyzePeoplePalaces,
   analyzePeopleChapterStats,
   buildPeoplePriorityBars,
   buildPeopleSnapshotHighlights,
-  buildPeopleCrossPalaceStrategy,
   buildPalaceActivationTiles,
   buildPalaceStarRoster,
-  resolvePeopleSynthesisKey,
 } from "../../shared/helpers/peoplePalaceAnalysis";
 import {
   getPeoplePalaceActions,
@@ -162,7 +158,6 @@ const PrintPalaceBriefing: React.FC<{
 
 export const PrintStakeholderIntelOverview: React.FC<PrintStakeholderIntelProps> = ({
   chartData,
-  strategicData,
 }) => {
   const palaceReadings = useMemo(() => analyzePeoplePalaces(chartData), [chartData]);
   const chapterStats = useMemo(() => analyzePeopleChapterStats(chartData), [chartData]);
@@ -174,11 +169,6 @@ export const PrintStakeholderIntelOverview: React.FC<PrintStakeholderIntelProps>
     () => buildPeopleSnapshotHighlights(palaceReadings, chapterStats.luTargetPalace),
     [palaceReadings, chapterStats.luTargetPalace]
   );
-  const crossPalaceStrategy = useMemo(
-    () => buildPeopleCrossPalaceStrategy(chartData, palaceReadings, strategicData?.season ?? undefined),
-    [chartData, palaceReadings, strategicData?.season]
-  );
-  const synthesisKey = useMemo(() => resolvePeopleSynthesisKey(chartData), [chartData]);
 
   return (
     <>
@@ -234,34 +224,6 @@ export const PrintStakeholderIntelOverview: React.FC<PrintStakeholderIntelProps>
             </div>
           ))}
         </div>
-
-        <p className="pp-section-header" style={{ marginTop: 24 }}>People Strategy</p>
-        <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 12, marginBottom: 20 }}>
-          <div style={{ background: "#fff", border: "1px solid rgba(201,135,58,0.2)", borderRadius: 12, padding: "14px 16px" }}>
-            <p style={{ fontSize: 9, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "#6b5b95", marginBottom: 4 }}>Ideal Collaborator</p>
-            <p style={{ fontSize: 13, fontWeight: 700, color: "#1a1e3f", margin: "0 0 8px", fontFamily: "Georgia,'Times New Roman',serif" }}>
-              {crossPalaceStrategy.primaryPalaceLabel} Lead
-            </p>
-            <p style={{ fontSize: 11, color: "#1a1e3f", lineHeight: 1.55, margin: 0 }}>{crossPalaceStrategy.idealCollaborator}</p>
-          </div>
-          {crossPalaceStrategy.cyclePriority !== null && (
-            <div style={{ background: "#1a1e3f", borderRadius: 12, padding: "14px 16px" }}>
-              <p style={{ fontSize: 9, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "rgba(255,255,255,0.4)", marginBottom: 6 }}>This Cycle</p>
-              <p style={{ fontSize: 13, fontWeight: 700, color: "#fdf6ee", margin: "0 0 6px", fontFamily: "Georgia,'Times New Roman',serif" }}>
-                {crossPalaceStrategy.cyclePriority.palaceLabel}
-              </p>
-              <p style={{ fontSize: 11, color: "rgba(255,255,255,0.75)", lineHeight: 1.55, margin: 0 }}>{crossPalaceStrategy.cyclePriority.action}</p>
-            </div>
-          )}
-        </div>
-
-        <div style={{ background: "linear-gradient(135deg, #1a1e3f 0%, #2d1b4e 100%)", borderRadius: 14, padding: "20px 24px", display: "flex", gap: 14, alignItems: "flex-start" }}>
-          <PrintSparkle size={14} color="#e8642d" style={{ marginTop: 2 }} />
-          <div>
-            <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "#e8642d", marginBottom: 6 }}>Pattern Across Your Five Palaces</p>
-            <p style={{ fontSize: 13, color: "#ffffff", lineHeight: 1.6 }}>{PEOPLE_SYNTHESIS[synthesisKey]}</p>
-          </div>
-        </div>
       </section>
     </>
   );
@@ -270,7 +232,6 @@ export const PrintStakeholderIntelOverview: React.FC<PrintStakeholderIntelProps>
 /** One print page per palace briefing. */
 export const PrintStakeholderIntelPalaces: React.FC<PrintStakeholderIntelProps> = ({
   chartData,
-  strategicData,
 }) => {
   const palaceReadings = useMemo(() => analyzePeoplePalaces(chartData), [chartData]);
   const chapterStats = useMemo(() => analyzePeopleChapterStats(chartData), [chartData]);

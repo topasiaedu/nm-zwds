@@ -55,6 +55,19 @@ export const PalaceRelationshipSvg: React.FC<{
     );
   }
 
+  if (palaceKey === "子女") {
+    return (
+      <svg className={className} viewBox="0 0 80 80" fill="none" aria-hidden="true">
+        <circle cx="28" cy="28" r="11" stroke={C.navy} strokeWidth="1.5" fill={`${C.navy}08`} />
+        <path d="M18 54 Q28 44 38 54" stroke={C.navy} strokeWidth="1.5" strokeLinecap="round" fill="none" />
+        <circle cx="54" cy="42" r="8" stroke={C.coral} strokeWidth="1.5" fill={`${C.coral}10`} />
+        <path d="M47 58 Q54 50 61 58" stroke={C.coral} strokeWidth="1.5" strokeLinecap="round" fill="none" />
+        <path d="M36 32 Q44 26 52 38" stroke={C.gold} strokeWidth="1.5" strokeLinecap="round" fill="none" strokeDasharray="2 3" />
+        <path d="M54 50 V60 M50 56 L54 60 L58 56" stroke={C.gold} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    );
+  }
+
   return (
     <svg className={className} viewBox="0 0 80 80" fill="none" aria-hidden="true">
       <path d="M40 20 V52" stroke="#16a34a" strokeWidth="1.5" strokeLinecap="round" />

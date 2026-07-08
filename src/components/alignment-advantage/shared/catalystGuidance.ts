@@ -65,7 +65,7 @@ const CATALYST_PALACE_BRIEFS: Record<CatalystKind, Record<CoreTriadPalace, Catal
       directive: "Your work is getting noticed. This is the time to ask for a promotion or pitch a big project.",
       moves: [
         "Ask for the lead role on a project. Your boss or clients are ready to support you",
-        "Write down exactly what you achieved this week and make sure the right people see it",
+        "Write down your recent wins and make sure the right people see them",
       ],
     },
   },

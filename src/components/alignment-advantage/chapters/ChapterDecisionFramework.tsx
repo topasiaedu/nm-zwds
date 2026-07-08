@@ -1,17 +1,11 @@
-import React, { useState } from "react";
+import React from "react";
 import { C } from "../shared/constants";
 import { SectionWatermark } from "../shared/SectionWatermark";
 import { SectionHeader } from "../shared/SectionHeader";
-import { AxisCard, type AxisAnswer } from "../shared/AxisCard";
+import { AxisCard } from "../shared/AxisCard";
 import { Sparkle } from "../shared/Sparkle";
-import { FRAMEWORK_RECOMMENDATIONS, WEALTH_TYPE } from "../../../utils/forecast/wealthContentData";
+import { WEALTH_TYPE } from "../../../utils/forecast/wealthContentData";
 import type { WealthCodeKey } from "../../../utils/zwds/analysis_constants/wealth_code_mapping";
-
-export interface DecisionFrameworkState {
-  structural: AxisAnswer;
-  timing:     AxisAnswer;
-  wealth:     AxisAnswer;
-}
 
 export interface ChapterDecisionFrameworkProps {
   strategicData: {
@@ -41,13 +35,6 @@ export const ChapterDecisionFramework: React.FC<ChapterDecisionFrameworkProps> =
   phaseConfig,
   signalHex,
 }) => {
-  const [framework, setFramework] = useState<DecisionFrameworkState>({ structural: null, timing: null, wealth: null });
-
-  const timingAnswer: AxisAnswer = strategicData.timingAligned;
-  const wealthAnswer: AxisAnswer = strategicData.wealthAligned;
-  const frameworkScore = [framework.structural === true, timingAnswer === true, wealthAnswer === true].filter(Boolean).length;
-  const recommendation = framework.structural !== null ? FRAMEWORK_RECOMMENDATIONS[frameworkScore] : null;
-
   return (
     <section id="decision" className="scroll-mt-16 mb-32 pt-16 relative overflow-hidden bg-white rounded-[40px] p-10 md:p-16 shadow-[0_8px_32px_rgba(0,0,0,0.03)] border border-[#e8ddd0]/50">
       <SectionWatermark type="target" />
@@ -149,33 +136,13 @@ export const ChapterDecisionFramework: React.FC<ChapterDecisionFrameworkProps> =
         <p className="text-[10px] font-bold uppercase tracking-[0.2em] mb-4 text-slate-400">
           Deal-Flow Checklist
         </p>
-        {framework.structural !== null && (
-          <div className="flex items-center gap-3 mb-6">
-            {[0, 1, 2].map((i) => (
-              <div
-                key={i}
-                className="h-2 flex-1 rounded-full transition-all"
-                style={{
-                  background: i < frameworkScore
-                    ? (frameworkScore === 3 ? "#16a34a" : frameworkScore === 2 ? C.gold : C.coral)
-                    : `${C.border}40`,
-                }}
-              />
-            ))}
-            <span className="text-sm font-semibold shrink-0" style={{ color: C.muted }}>
-              {frameworkScore} / 3
-            </span>
-          </div>
-        )}
         <div className="flex flex-col border-t border-[#e8ddd0]/60">
           <AxisCard
             variant="checklist"
             title="01. Structural"
             description="Does this align with your core design?"
             value={strLabel.label}
-            isAutoFilled={false}
-            answer={framework.structural}
-            onAnswer={(v) => { setFramework((p) => ({ ...p, structural: v })); }}
+            showStatus={false}
           />
           <AxisCard
             variant="checklist"
@@ -189,54 +156,17 @@ export const ChapterDecisionFramework: React.FC<ChapterDecisionFrameworkProps> =
             }`}
             value={strategicData.signal === "green" ? "Green Light"
               : strategicData.signal === "yellow" ? "Yellow Light" : "Red Light"}
-            isAutoFilled={true}
-            answer={timingAnswer}
+            answer={strategicData.timingAligned}
           />
           <AxisCard
             variant="checklist"
             title="03. Wealth"
-            description={`Does this move avoid your top profit drain?`}
+            description="Does this move avoid your top profit drain?"
             value={strategicData.wealthArchetype}
-            isAutoFilled={true}
-            answer={wealthAnswer}
+            answer={strategicData.wealthAligned}
           />
         </div>
       </div>
-
-      {/* ── Recommendation Output ── */}
-      {recommendation !== null && (
-        <div
-          className="rounded-3xl p-8 mb-8"
-          style={{
-            background: C.cream,
-            border: `1px solid ${C.border}40`, boxShadow: "0 8px 32px rgba(0,0,0,0.03)",
-            borderLeft: `4px solid ${frameworkScore === 3 ? "#16a34a" : frameworkScore === 2 ? C.gold : C.coral}`,
-          }}
-        >
-          <p
-            className="text-xl font-bold mb-3"
-            style={{ color: frameworkScore === 3 ? "#16a34a" : frameworkScore === 2 ? C.gold : C.coral }}
-          >
-            {recommendation.heading}
-          </p>
-          <p className="text-base leading-relaxed mb-4" style={{ color: C.muted }}>
-            {recommendation.copy}
-          </p>
-        </div>
-      )}
-
-      {framework.structural !== null && (
-        <div className="text-center mt-8">
-          <button
-            type="button"
-            onClick={() => { setFramework({ structural: null, timing: null, wealth: null }); }}
-            className="text-sm font-bold transition-colors"
-            style={{ color: C.muted, textDecoration: "underline", textUnderlineOffset: "4px" }}
-          >
-            Reset framework
-          </button>
-        </div>
-      )}
     </section>
   );
 };

@@ -261,7 +261,7 @@ export const ChapterExecutionPlaybook: React.FC<ChapterExecutionPlaybookProps> =
                   </p>
                 </div>
                 <div className="space-y-4">
-                  {gData.keyActions.map((action, idx) => (
+                  {gData.keyActions.slice(0, 3).map((action, idx) => (
                     <div key={idx} className="pb-3 border-b border-[#e8ddd0]/50 last:border-0">
                       <p className="text-sm leading-relaxed" style={{ color: C.navy }}>{action}</p>
                     </div>
@@ -280,7 +280,7 @@ export const ChapterExecutionPlaybook: React.FC<ChapterExecutionPlaybookProps> =
                   </p>
                 </div>
                 <div className="space-y-4">
-                  {gData.watchOut.map((warning, idx) => (
+                  {gData.watchOut.slice(0, 3).map((warning, idx) => (
                     <div key={idx} className="pb-3 border-b border-[#e8ddd0]/50 last:border-0">
                       <p className="text-sm leading-relaxed text-gray-600">{warning}</p>
                     </div>
@@ -289,38 +289,21 @@ export const ChapterExecutionPlaybook: React.FC<ChapterExecutionPlaybookProps> =
               </div>
             </div>
 
-            {/* Metrics & Reflection */}
+            {/* Strategic Reflection */}
             <div className="pt-8 border-t border-[#e8ddd0]">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-                <div>
-                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] mb-4" style={{ color: C.navy }}>
-                    Win Metrics
+              <p className="text-[10px] font-bold uppercase tracking-[0.2em] mb-4" style={{ color: C.navy }}>
+                Strategic Reflection
+              </p>
+              <div className="space-y-4">
+                {gData.reflectionQuestions.slice(0, 2).map((q, idx) => (
+                  <p
+                    key={idx}
+                    className="text-sm italic text-gray-600 pl-4 py-1"
+                    style={{ borderLeft: `2px solid ${C.coral}` }}
+                  >
+                    &quot;{q}&quot;
                   </p>
-                  <div className="space-y-2">
-                    {gData.successMetrics.map((metric, idx) => (
-                      <div key={idx} className="flex items-start gap-3">
-                        <span className="text-[#16a34a] text-sm mt-0.5">✓</span>
-                        <span className="text-sm text-gray-700">{metric}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                <div>
-                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] mb-4" style={{ color: C.navy }}>
-                    Strategic Reflection
-                  </p>
-                  <div className="space-y-4">
-                    {gData.reflectionQuestions.slice(0, 2).map((q, idx) => (
-                      <p
-                        key={idx}
-                        className="text-sm italic text-gray-600 pl-4 py-1"
-                        style={{ borderLeft: `2px solid ${C.coral}` }}
-                      >
-                        &quot;{q}&quot;
-                      </p>
-                    ))}
-                  </div>
-                </div>
+                ))}
               </div>
             </div>
 

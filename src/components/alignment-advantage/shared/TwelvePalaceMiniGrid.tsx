@@ -5,8 +5,8 @@ import { STAR_BRIEF } from "../../../utils/forecast/starBriefDescriptions";
 import {
   C,
   PALACE_ENGLISH,
-  TRANSFORMATION_ENGLISH,
-  classifyMainStar,
+  getTransformationColor,
+  getTransformationShortLabel,
   BRANCH_TO_AREA,
 } from "./constants";
 
@@ -62,32 +62,32 @@ export const TwelvePalaceMiniGrid: React.FC<{ chartData: ChartData; highlightPal
                   {STAR_BRIEF[star.name]?.pinyin ?? star.name}
                 </span>
                 {star.transformations?.map((trans, idx) => {
-                  const transEng = TRANSFORMATION_ENGLISH[trans];
-                  return transEng ? (
-                    <span key={idx} style={{ color: C.gold, fontSize: 7, fontWeight: "bold" }}>[{transEng}]</span>
+                  const label = getTransformationShortLabel(trans);
+                  const color = getTransformationColor(trans);
+                  return label && color ? (
+                    <span key={idx} style={{ color, fontSize: 7, fontWeight: "bold" }}>{label}</span>
                   ) : null;
                 })}
               </div>
             );
           })}
           {mainStars.map((star) => {
-            const ns = classifyMainStar(star.name);
-            
             return (
               <div key={star.name} className="flex items-center gap-1 flex-wrap">
                 <span
                   className="text-[9px] font-bold tracking-wide"
                   style={{
-                    color: ns === "north" ? "#1e3a8a" : ns === "south" ? "#9f1239" : C.navy,
+                    color: C.navy,
                     fontFamily: "Georgia, serif"
                   }}
                 >
                   {STAR_BRIEF[star.name]?.pinyin ?? star.name}
                 </span>
                 {star.transformations?.map((trans, idx) => {
-                  const transEng = TRANSFORMATION_ENGLISH[trans];
-                  return transEng ? (
-                    <span key={idx} style={{ color: C.gold, fontSize: 7, fontWeight: "bold" }}>[{transEng}]</span>
+                  const label = getTransformationShortLabel(trans);
+                  const color = getTransformationColor(trans);
+                  return label && color ? (
+                    <span key={idx} style={{ color, fontSize: 7, fontWeight: "bold" }}>{label}</span>
                   ) : null;
                 })}
               </div>

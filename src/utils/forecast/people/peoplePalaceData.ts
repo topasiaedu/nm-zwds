@@ -135,7 +135,7 @@ export const PEOPLE_PALACE_PLAYBOOK: Record<PeoplePalaceKey, PeoplePalacePlayboo
     keyActions: [
       "Force your peers to put their commitments in writing. If you share projects, clients, or resources, document exactly who owns what and how either of you can walk away.",
       "Stop doing your coworkers' jobs. If a peer drops the ball, let the ball drop. Covering for them only trains them to be lazy.",
-      "Audit your peer collaborations. If a partnership is costing you more time than it delivers value, step away this week.",
+      "Audit your peer collaborations. If a partnership is costing you more time than it delivers value, step away before you invest more.",
     ],
     watchOut: [
       "Paying for a peer's mistakes because you are afraid of looking difficult.",
@@ -153,7 +153,7 @@ export const PEOPLE_PALACE_PLAYBOOK: Record<PeoplePalaceKey, PeoplePalacePlayboo
   "夫妻": {
     keyActions: [
       "Set a hard rule with your primary partner or spouse: no major financial or time commitments without two 'yes' votes. One person deciding and the other staying quiet is how partnerships die.",
-      "Stop avoiding the hard conversation about money. Sit down this week and explicitly state your financial goals and risk limits. If you aren't aligned, you are dragging each other down.",
+      "Stop avoiding the hard conversation about money. Sit down soon and explicitly state your financial goals and risk limits. If you aren't aligned, you are dragging each other down.",
       "Renegotiate any 50/50 split where you are doing 80% of the work. If your partner won't step up, step away from the joint project.",
     ],
     watchOut: [

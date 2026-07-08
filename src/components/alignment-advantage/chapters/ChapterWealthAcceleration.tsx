@@ -110,50 +110,32 @@ export const ChapterWealthAcceleration: React.FC<ChapterWealthAccelerationProps>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="md:col-span-2 space-y-6">
-              <div className="p-8 rounded-3xl" style={{ background: C.white, border: `1px solid ${C.border}60`, boxShadow: "0 4px 24px rgba(0,0,0,0.02)" }}>
-                <p className="text-[10px] font-bold uppercase tracking-[0.24em] mb-3" style={{ color: C.muted }}>
-                  Dominant Wealth Archetype
-                </p>
-                <p className="text-3xl font-bold mb-4" style={{ color: C.navy, fontFamily: "Georgia,'Times New Roman',serif" }}>
-                  {strategicData.wealthProfile.dominantArchetype}
-                </p>
-                <p className="text-sm leading-relaxed mb-6" style={{ color: C.navy }}>
-                  {firstSentences(String(strategicData.wealthProfile.summaryText), 2)}
-                </p>
+          <div className="p-8 rounded-3xl" style={{ background: C.white, border: `1px solid ${C.border}60`, boxShadow: "0 4px 24px rgba(0,0,0,0.02)" }}>
+            <p className="text-[10px] font-bold uppercase tracking-[0.24em] mb-3" style={{ color: C.muted }}>
+              Dominant Wealth Archetype
+            </p>
+            <p className="text-3xl font-bold mb-4" style={{ color: C.navy, fontFamily: "Georgia,'Times New Roman',serif" }}>
+              {strategicData.wealthProfile.dominantArchetype}
+            </p>
+            <p className="text-sm leading-relaxed mb-6" style={{ color: C.navy }}>
+              {firstSentences(String(strategicData.wealthProfile.summaryText), 2)}
+            </p>
 
-                <div className="w-full h-px mb-6" style={{ background: `linear-gradient(90deg, ${C.border}, transparent)` }} />
+            <div className="w-full h-px mb-6" style={{ background: `linear-gradient(90deg, ${C.border}, transparent)` }} />
 
-                <p className="text-[10px] font-bold uppercase tracking-[0.2em] mb-4" style={{ color: C.muted }}>
-                  What this looks like in practice
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {wtProfile.examples.map((ex) => (
-                    <span
-                      key={ex}
-                      className="rounded-full px-4 py-2 text-xs font-medium"
-                      style={{ background: `${C.navy}08`, color: C.navy, border: `1px solid ${C.border}60` }}
-                    >
-                      {ex}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            <div className="space-y-6">
-              <div className="p-6 rounded-3xl h-full flex flex-col justify-center" style={{ background: C.navy, boxShadow: "0 8px 32px rgba(26,30,63,0.15)" }}>
-                <p className="text-[10px] font-bold uppercase tracking-[0.24em] mb-4" style={{ color: "rgba(255,255,255,0.4)" }}>
-                  Archetype Profile
-                </p>
-                <div className="inline-flex rounded-full px-4 py-2 text-sm font-bold mb-6 self-start" style={{ background: `${C.coral}25`, color: C.coral, border: `1px solid ${C.coral}40` }}>
-                  {strategicData.wealthProfile.profileType}
-                </div>
-                <p className="text-sm leading-relaxed italic" style={{ color: "rgba(255,255,255,0.8)" }}>
-                  &ldquo;{wtProfile.tagline}&rdquo;
-                </p>
-              </div>
+            <p className="text-[10px] font-bold uppercase tracking-[0.2em] mb-4" style={{ color: C.muted }}>
+              What this looks like in practice
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {wtProfile.examples.map((ex) => (
+                <span
+                  key={ex}
+                  className="rounded-full px-4 py-2 text-xs font-medium"
+                  style={{ background: `${C.navy}08`, color: C.navy, border: `1px solid ${C.border}60` }}
+                >
+                  {ex}
+                </span>
+              ))}
             </div>
           </div>
         </div>

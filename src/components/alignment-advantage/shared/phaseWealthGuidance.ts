@@ -26,7 +26,7 @@ const PHASE_WEALTH_ACTIONS: PhaseWealthActionMap = {
       "Ship a working version before you feel ready. Real feedback from the market in week six beats a polished plan in month six.",
     ],
     collaborator: [
-      "Write down two people who can open a door you cannot open alone. Message both of them this week, not when the timing feels perfect.",
+      "Write down two people who can open a door you cannot open alone. Message both of them soon, not when the timing feels perfect.",
       "Propose one joint offer with one partner. Write the terms clearly: who brings what, who earns what, and for how long.",
       "Reply to every warm introduction within 24 hours. Interest fades fast and a slow response signals low priority.",
     ],
@@ -49,7 +49,7 @@ const PHASE_WEALTH_ACTIONS: PhaseWealthActionMap = {
       "Finish improving one core delivery process before approving anything new. Scaling a broken process multiplies the problem.",
     ],
     collaborator: [
-      "Call your top three referral partners this week. Give them a lead or a piece of intel they can use immediately. Keep the pipeline flowing.",
+      "Call your top three referral partners. Give them a lead or a piece of intel they can use immediately. Keep the pipeline flowing.",
       "Put revenue-sharing terms in writing with any active partner. Trust is high right now and verbal agreements become disputes later.",
       "Ask your best partner directly: who else should you be talking to? One warm introduction from them is worth ten cold outreaches.",
     ],

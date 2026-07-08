@@ -15,11 +15,11 @@ const PEOPLE_PALACE_BASE_ACTIONS: Record<PeoplePalaceKey, ActionTriple> = {
   ],
   "夫妻": [
     "Block a fixed 30-minute slot each week with your business partner or spouse for money, decisions, and boundaries. Protect that slot before you protect anything else on your calendar.",
-    "For any commitment over $10k or three months of your time, both of you must agree in writing before work starts. One person saying yes and the other staying quiet is how partnerships break.",
+    "For any major financial commitment or project that ties up three months of your time, both of you must agree in writing before work starts. One person saying yes and the other staying quiet is how partnerships break.",
     "Write a one-page list of who owns what in the business, start to finish. Review it when either of you feels overworked or unappreciated.",
   ],
   "交友": [
-    "List ten people who could realistically send you a paying client this year. Message the top three this month with a clear ask, not a vague catch-up.",
+    "List ten people who could realistically send you a paying client this year. Message the top three with a clear ask, not a vague catch-up.",
     "Before you say yes to an introduction, referral, or joint project, ask: what do they bring that I cannot get on my own, and what am I giving up? If you cannot answer the second part, wait 72 hours.",
     "Keep a simple note of every referral you receive and every one you give. Return the favour within two weeks or say so directly. Unreturned favours turn into quiet resentment.",
   ],
@@ -66,9 +66,9 @@ const PALACE_ACTIVATION_ACTION: Record<
 > = {
   "兄弟": {
     lu: "A peer is opening doors for you right now. Accept the help, but write down what you owe back before you use up the goodwill.",
-    quan: "Power struggles with peers are live right now. Agree who leads each shared decision this month before someone else takes charge by default.",
+    quan: "Power struggles with peers are live right now. Agree who leads each shared decision before someone else takes charge by default.",
     ke: "Your reputation with peers is visible right now. One public win with a business partner or sibling ally beats three private promises.",
-    ji: "Tension with a peer is showing up. Address the specific issue in writing this week. Unspoken problems get expensive when money is involved.",
+    ji: "Tension with a peer is showing up. Address the specific issue in writing within 48 hours. Unspoken problems get expensive when money is involved.",
   },
   "夫妻": {
     lu: "Your partner is bringing resources your way now. Say clearly what you need from them this quarter instead of assuming they already know.",
@@ -79,11 +79,11 @@ const PALACE_ACTIVATION_ACTION: Record<
   "交友": {
     lu: "Your network is opening doors right now. Follow up on every warm introduction within 48 hours while people still remember making it.",
     quan: "You are influencing how your friend and partner circle runs right now. Set terms on any joint effort before charm pushes past what you actually want.",
-    ke: "People in your network are watching what you deliver, not what you promise. Finish one visible win with a partner this month before asking for the next favour.",
+    ke: "People in your network are watching what you deliver, not what you promise. Finish one visible win with a partner before asking for the next favour.",
     ji: "A friendship, referral, or partnership is under strain. Clarify expectations in writing before the next ask, not after the next letdown.",
   },
   "父母": {
-    lu: "Support from above is available now. Make one concrete ask of a mentor or boss this month and attach a clear outcome you want.",
+    lu: "Support from above is available now. Make one concrete ask of a mentor or boss and attach a clear outcome you want.",
     quan: "Bosses and mentors expect you to lead right now, not just follow. Bring a recommendation to your next senior conversation, not only questions.",
     ke: "Mentors and bosses are watching your track record right now. Send a short update on what you finished before you ask for the next introduction.",
     ji: "Tension with a boss, mentor, or family money is active. Put agreements and boundaries in writing now. Verbal deals with senior figures fail under pressure.",
@@ -92,7 +92,7 @@ const PALACE_ACTIVATION_ACTION: Record<
     lu: "What you are building with your team or family is resourced right now. Invest in structure and deadlines, not more comfort, while support is available.",
     quan: "Junior staff and people you train respond to clear leadership from you right now. Set firm standards before you take on anyone else to develop.",
     ke: "People you develop are building their name through you. Link their public wins to specific standards you set, not vague encouragement.",
-    ji: "Someone you are training is hitting friction. Talk about performance or scope directly this week. Softening the message now makes the next talk harder.",
+    ji: "Someone you are training is hitting friction. Talk about performance or scope directly while the issue is still small. Softening the message now makes the next talk harder.",
   },
 };
 
@@ -107,7 +107,7 @@ const PALACE_ACTIVATION_WATCH: Record<
   },
   "夫妻": {
     quan: "Going along with your partner's call because it is faster, then resenting a result you did not shape",
-    ji: "Avoiding a hard conversation because the relationship feels fragile this week",
+    ji: "Avoiding a hard conversation because the relationship feels fragile while tension is active",
   },
   "交友": {
     lu: "Saying yes to every social opening because help feels plentiful and saying no feels cheap",
@@ -129,7 +129,7 @@ const PALACE_STAR_CONTEXT: Partial<Record<string, string>> = {
   "交友:贪狼":
     "Your friend and partner circle runs on charm and variety. Keep the people who follow through on results, not the ones who only keep things fun.",
   "交友:廉贞":
-    "Allies see you as intense and principled. They stay when the rules are clear. They drift when the relationship runs on mood instead of agreed terms.",
+    "Allies see you as intense and firm about your standards. They stay when the rules are clear. They drift when the relationship runs on mood instead of agreed terms.",
   "交友:紫微":
     "Your network revolves around your standards. People stay when they know their role. They leave when everything becomes a loyalty test.",
   "夫妻:天同":
@@ -137,7 +137,7 @@ const PALACE_STAR_CONTEXT: Partial<Record<string, string>> = {
   "夫妻:廉贞":
     "One-to-one bonds run hot and committed with you. Agree who decides what early, or passion turns into control.",
   "兄弟:廉贞":
-    "Peers see you as competitive and exacting. Shared businesses work when roles are written down, not assumed from history.",
+    "Peers see you as competitive and hard to please. Shared businesses work when roles are written down, not assumed from history.",
   "兄弟:七杀":
     "Peer relationships with you move fast and can break hard. Write down ownership and exit terms before speed creates damage you cannot undo.",
   "父母:天梁":
@@ -228,7 +228,7 @@ export function getPalaceActivationHint(reading: PeoplePalaceReading): string | 
     lu: "Support and opportunities are flowing through this relationship right now. Put the terms in writing.",
     quan: "You have more say in this area right now. Agree who decides what before someone else assumes it.",
     ke: "Your reputation in this area is on display. Show results before you ask for more.",
-    ji: "Tension is building here. Talk about it directly this week.",
+    ji: "Tension is building here. Talk about it directly while friction is still manageable.",
   };
 
   return hints[activation];
