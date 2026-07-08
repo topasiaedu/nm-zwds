@@ -19,9 +19,9 @@ const PEOPLE_PALACE_BASE_ACTIONS: Record<PeoplePalaceKey, ActionTriple> = {
     "Write a one-page list of who owns what in the business, start to finish. Review it when either of you feels overworked or unappreciated.",
   ],
   "交友": [
-    "List ten people who could realistically send you a paying client this year. Message the top three with a clear ask, not a vague catch-up.",
-    "Before you say yes to an introduction, referral, or joint project, ask: what do they bring that I cannot get on my own, and what am I giving up? If you cannot answer the second part, wait 72 hours.",
-    "Keep a simple note of every referral you receive and every one you give. Return the favour within two weeks or say so directly. Unreturned favours turn into quiet resentment.",
+    "Pick three people you would actually want to build something with: co-create a project, share a client relationship, or open a new market together. Reach out to each with one concrete collaboration idea, not a vague catch-up.",
+    "Before you start any joint project, write one sentence on the outcome you both want and who owns what. If either person cannot say that clearly, pause. Do not begin until you can.",
+    "For every active collaboration, name the other person's role and your role out loud. Shared effort without named ownership is how joint work turns into quiet resentment.",
   ],
   "父母": [
     "Pick the one mentor, board member, or senior family figure whose opinion actually changes your decisions. Book one focused conversation with them this quarter and bring a written list of what you want to discuss.",
@@ -78,7 +78,7 @@ const PALACE_ACTIVATION_ACTION: Record<
   },
   "交友": {
     lu: "Your network is opening doors right now. Follow up on every warm introduction within 48 hours while people still remember making it.",
-    quan: "You are influencing how your friend and partner circle runs right now. Set terms on any joint effort before charm pushes past what you actually want.",
+    quan: "You have more pull in how this collaboration runs right now. Agree who decides, who delivers, and who gets credit before the work starts.",
     ke: "People in your network are watching what you deliver, not what you promise. Finish one visible win with a partner before asking for the next favour.",
     ji: "A friendship, referral, or partnership is under strain. Clarify expectations in writing before the next ask, not after the next letdown.",
   },
