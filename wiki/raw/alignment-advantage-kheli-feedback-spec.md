@@ -1,7 +1,7 @@
 # Alignment Advantage — Kheli Feedback Implementation Spec
 
 **Branch:** `feature/alignment-advantage`  
-**Status:** Approved for implementation (July 2026)  
+**Status:** Implemented (July 2026). See `alignment-advantage-implementation-record.md` and ingested `wiki/alignment-advantage.md`.  
 **Scope:** Web report + PDF/print export must stay in sync where applicable
 
 ---
