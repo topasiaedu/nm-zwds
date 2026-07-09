@@ -1,19 +1,24 @@
 /**
  * AreasOfLife — Destiny Scoreboard (Section 06)
  *
- * Radar overview + per-pillar score cards with expandable readings.
+ * Editorial pillar pills + radar overview + per-pillar flat reading panels.
  */
 
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   Briefcase,
   ChartColumn,
-  ChevronDown,
+  Check,
   ChevronUp,
+  ArrowRight,
   Coins,
+  FileText,
+  Hand,
   HeartHandshake,
   HeartPulse,
   LayoutGrid,
+  MousePointerClick,
+  Sparkles,
   Users,
   type LucideIcon,
 } from "lucide-react";
@@ -29,16 +34,12 @@ import { useLanguage } from "../../context/LanguageContext";
 import {
   calculateLifeAreaScores,
   analyzeLifeAreas,
-  getScoreBadgeClasses,
   type ChartDataType,
   type LifeAreaResult,
 } from "../../utils/zwds/analysis";
-import { BrandGradientText } from "../BrandGradientText";
-import {
-  analysisHeroTitleClass,
-  brandGradientTextClass,
-} from "../../styles/typographyUi";
-import { pdfCaptureNumericBadgeStyle } from "./shared/pdfCaptureNumericBadgeStyle";
+import { AnalysisSectionHeader } from "./shared/AnalysisSectionHeader";
+import { SubsectionSparkleDivider } from "./shared/SubsectionSparkleDivider";
+import { lightPanelClass } from "../../styles/chartUi";
 
 const AREA_PREVIEW_CHAR_LIMIT = 300;
 
@@ -50,19 +51,99 @@ const LIFE_AREA_ICONS: Record<string, LucideIcon> = {
   "👥": Users,
 };
 
-/** Per-pillar accent — left border + icon chip (distinct from generic indigo). */
+/** Per-pillar semantic accent — card tint, bar, header gradient, and watermark. */
 const AREA_ACCENTS: Record<
   string,
-  { from: string; to: string; border: string }
+  {
+    accent: string;
+    cardBg: string;
+    darkCardBg: string;
+    barTrack: string;
+    darkBarTrack: string;
+    headerFrom: string;
+    headerTo: string;
+    watermark: string;
+  }
 > = {
-  "财帛": { from: "#d97706", to: "#f59e0b", border: "#fcd34d" },
-  "官禄": { from: "#2563eb", to: "#3b82f6", border: "#93c5fd" },
-  "疾厄": { from: "#e11d48", to: "#f43f5e", border: "#fda4af" },
-  "夫妻": { from: "#db2777", to: "#ec4899", border: "#f9a8d4" },
-  "交友": { from: "#7c3aed", to: "#8b5cf6", border: "#c4b5fd" },
+  "财帛": {
+    accent: "#D97706",
+    cardBg: "#FFF8F0",
+    darkCardBg: "#302820",
+    barTrack: "#FCEBD5",
+    darkBarTrack: "#3d3528",
+    headerFrom: "#D97706",
+    headerTo: "#F59E0B",
+    watermark: "财",
+  },
+  "官禄": {
+    accent: "#3F7BB8",
+    cardBg: "#F2F7FD",
+    darkCardBg: "#252d38",
+    barTrack: "#DCE9F8",
+    darkBarTrack: "#2e3d4f",
+    headerFrom: "#4F8FD4",
+    headerTo: "#6BAADC",
+    watermark: "禄",
+  },
+  "疾厄": {
+    accent: "#D91744",
+    cardBg: "#FFF8F4",
+    darkCardBg: "#322828",
+    barTrack: "#FCE0E0",
+    darkBarTrack: "#3d2e2e",
+    headerFrom: "#D91744",
+    headerTo: "#E84A6F",
+    watermark: "厄",
+  },
+  "夫妻": {
+    accent: "#C45A8A",
+    cardBg: "#FDF2F7",
+    darkCardBg: "#352830",
+    barTrack: "#F8DCE8",
+    darkBarTrack: "#3d2e35",
+    headerFrom: "#C45A8A",
+    headerTo: "#D97AAC",
+    watermark: "缘",
+  },
+  "交友": {
+    accent: "#7B5FC4",
+    cardBg: "#F3EFF8",
+    darkCardBg: "#2c2838",
+    barTrack: "#EDE8F5",
+    darkBarTrack: "#322f3a",
+    headerFrom: "#8B6FC8",
+    headerTo: "#A67ED9",
+    watermark: "友",
+  },
 };
 
-const DEFAULT_AREA_ACCENT = { from: "#6366f1", to: "#8b5cf6", border: "#a5b4fc" };
+const DEFAULT_AREA_ACCENT = {
+  accent: "#6B5B95",
+  cardBg: "#F3EFF8",
+  darkCardBg: "#2c2838",
+  barTrack: "#EDE8F5",
+  darkBarTrack: "#322f3a",
+  headerFrom: "#6B5B95",
+  headerTo: "#8B7BA8",
+  watermark: "★",
+};
+
+/**
+ * CSS custom properties for themed pillar surfaces (light + dark).
+ */
+const getAreaThemeVars = (
+  theme: (typeof AREA_ACCENTS)[string] | typeof DEFAULT_AREA_ACCENT,
+  options?: { activeBorder?: boolean }
+): React.CSSProperties =>
+  ({
+    "--area-accent": theme.accent,
+    "--area-card-bg": theme.cardBg,
+    "--area-card-bg-dark": theme.darkCardBg,
+    "--area-border": options?.activeBorder ? `${theme.accent}55` : `${theme.accent}22`,
+    "--area-border-dark": `${theme.accent}44`,
+    "--area-bar-track": theme.barTrack,
+    "--area-bar-track-dark": theme.darkBarTrack,
+  }) as React.CSSProperties;
 
 const normalizeStarName = (name: string): string => {
   const charMap: Record<string, string> = {
@@ -93,137 +174,152 @@ const getPreviewAreaText = (description: string, expanded: boolean): string => {
 const areaExceedsPreviewLimit = (description: string): boolean =>
   description.length > AREA_PREVIEW_CHAR_LIMIT;
 
-type DestinyScoreboardHeroProps = {
-  forPdfCapture?: boolean;
-};
-
-const DestinyScoreboardHero: React.FC<DestinyScoreboardHeroProps> = ({
-  forPdfCapture,
-}) => (
-  <div
-    data-pdf-break-anchor="destiny-scoreboard-hero"
-    className="relative mb-10 overflow-hidden rounded-3xl border-2 border-brand-purple/25 shadow-2xl dark:border-accent-gold/70 dark:shadow-[0_12px_48px_rgba(251,146,60,0.28)] dark:ring-2 dark:ring-accent-gold/40"
-  >
-    <div
-      className="absolute inset-0 bg-gradient-to-br from-brand-purpleDeep via-brand-purple to-indigo-700 dark:from-orange-600 dark:via-amber-600 dark:to-orange-700"
-      aria-hidden="true"
-    />
-    <div
-      className="absolute inset-0 opacity-[0.18] dark:opacity-[0.28]"
-      style={{
-        backgroundImage: `radial-gradient(circle at 18% 40%, rgba(255,255,255,0.35) 1px, transparent 1px),
-            radial-gradient(circle at 82% 70%, rgba(255,255,255,0.2) 1px, transparent 1px)`,
-        backgroundSize: "42px 42px",
-      }}
-      aria-hidden="true"
-    />
-    <div
-      className="absolute -right-8 -top-10 h-48 w-48 rounded-full bg-accent-gold/20 blur-3xl dark:bg-amber-300/30"
-      aria-hidden="true"
-    />
-
-    <div className="relative z-10 flex flex-col gap-6 px-6 py-10 sm:flex-row sm:items-center sm:justify-between sm:px-10 sm:py-12">
-      <div className="min-w-0 flex-1">
-        <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-3 py-1.5 backdrop-blur-sm">
-          <LayoutGrid className="h-3.5 w-3.5 text-accent-gold" aria-hidden="true" />
-          <span className="text-xs font-bold uppercase tracking-[0.2em] text-white/90">
-            Section 06
-          </span>
-        </div>
-        <div className="flex flex-wrap items-center gap-3">
-          <span
-            style={
-              forPdfCapture
-                ? pdfCaptureNumericBadgeStyle("#4A3F6B")
-                : {
-                    background: "rgba(255, 255, 255, 0.95)",
-                    color: "#4A3F6B",
-                    height: "40px",
-                    minWidth: "52px",
-                    padding: "0 14px",
-                    borderRadius: "12px",
-                    fontSize: "20px",
-                    fontWeight: "800",
-                    lineHeight: 1,
-                    display: "inline-flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }
-            }
-          >
-            06
-          </span>
-          <BrandGradientText as="h2" className={analysisHeroTitleClass}>
-            Destiny Scoreboard
-          </BrandGradientText>
-        </div>
-        <p className="mt-4 max-w-2xl text-base font-medium leading-relaxed text-white/90 sm:text-lg">
-          Your personal scorecard across the five destiny pillars — see the shape
-          of your chart at a glance, then dive into each area.
-        </p>
-      </div>
-      <div
-        className={`flex h-20 w-20 flex-shrink-0 items-center justify-center rounded-2xl border border-white/20 bg-white/10 shadow-lg sm:h-24 sm:w-24 ${
-          forPdfCapture ? "" : "backdrop-blur-md"
-        }`}
-      >
-        <ChartColumn className="h-10 w-10 text-white sm:h-12 sm:w-12" aria-hidden="true" />
-      </div>
-    </div>
-    <div
-      className="relative z-10 h-1.5 bg-gradient-to-r from-accent-goldDark via-accent-coralDark to-indigo-400 dark:from-amber-200 dark:via-white dark:to-amber-100"
-      aria-hidden="true"
-    />
-  </div>
-);
-
-type ScorePillarChipProps = {
+type ScorePillarPillProps = {
   area: LifeAreaResult;
-  isTopPillar?: boolean;
+  isActive: boolean;
+  isTopPillar: boolean;
+  onSelect: () => void;
   forPdfCapture?: boolean;
 };
 
-const ScorePillarChip: React.FC<ScorePillarChipProps> = ({ area, isTopPillar = false }) => {
-  const accent = AREA_ACCENTS[area.area] ?? DEFAULT_AREA_ACCENT;
+/**
+ * Scrollable pillar card — white panel with themed accent, score bar, and status.
+ */
+const ScorePillarPill: React.FC<ScorePillarPillProps> = ({
+  area,
+  isActive,
+  isTopPillar,
+  onSelect,
+  forPdfCapture,
+}) => {
+  const theme = AREA_ACCENTS[area.area] ?? DEFAULT_AREA_ACCENT;
   const Icon = LIFE_AREA_ICONS[area.icon];
+  const hoverClass = forPdfCapture
+    ? ""
+    : "cursor-pointer transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md";
 
   return (
-    <div
-      className="flex min-w-[140px] flex-1 flex-col rounded-xl border bg-white p-3 dark:border-gray-700 dark:bg-gray-800"
-      style={{ borderColor: accent.border, borderLeftWidth: 4, borderLeftColor: accent.from }}
+    <button
+      type="button"
+      role="tab"
+      onClick={onSelect}
+      disabled={forPdfCapture}
+      aria-selected={isActive}
+      aria-label={`${area.displayName}, ${area.score}% — ${isActive ? "currently viewing" : "tap to view reading"}`}
+      className={[
+        "relative w-full max-w-[44vw] shrink-0 snap-center rounded-2xl border-2 p-2.5 text-left shadow-sm xs:max-w-none xs:w-[11.5rem] sm:min-w-0 sm:w-full sm:shrink sm:p-4",
+        lightPanelClass,
+        hoverClass,
+        isActive
+          ? [
+              "border-solid shadow-md",
+              "[background-color:var(--area-card-bg)] [border-color:var(--area-border)]",
+            ].join(" ")
+          : "border-theme-border-subtle bg-white hover:border-brand-purple/40 hover:bg-[#FAF7FD]",
+      ].join(" ")}
+      style={{
+        ...getAreaThemeVars(theme, { activeBorder: isActive }),
+        ...(isActive ? { boxShadow: `0 8px 24px ${theme.accent}18` } : undefined),
+      }}
     >
-      <div className="flex items-center gap-2">
-        {Icon ? (
-          <Icon className="h-4 w-4 flex-shrink-0" style={{ color: accent.from }} aria-hidden="true" />
-        ) : (
-          <span className="text-base" role="img" aria-label={area.displayName}>
-            {area.icon}
-          </span>
-        )}
+      <div className="flex items-start justify-between gap-2">
+        <div
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full sm:h-9 sm:w-9"
+          style={{
+            backgroundColor: isActive ? theme.accent : `${theme.accent}18`,
+          }}
+        >
+          {Icon ? (
+            <Icon
+              className="h-4 w-4"
+              style={{ color: isActive ? "#FFFFFF" : theme.accent }}
+              aria-hidden="true"
+            />
+          ) : (
+            <span className="text-sm" role="img" aria-label={area.displayName}>
+              {area.icon}
+            </span>
+          )}
+        </div>
+
         {isTopPillar ? (
           <span
-            className={`truncate text-xs font-bold uppercase tracking-wide ${brandGradientTextClass}`}
+            className="rounded-full px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-[0.12em] text-white xs:px-2 xs:text-[9px] xs:tracking-[0.14em]"
+            style={{ backgroundColor: theme.accent }}
           >
-            {area.displayName}
+            Top
           </span>
-        ) : (
-          <span className="truncate text-xs font-bold uppercase tracking-wide text-gray-700 dark:text-gray-300">
-            {area.displayName}
-          </span>
-        )}
+        ) : null}
       </div>
-      <p
-        className={`mt-2 text-2xl font-black ${
-          isTopPillar ? brandGradientTextClass : getScoreBadgeClasses(area.score)
-        }`}
-      >
-        {area.score}%
+
+      <p className="mt-2 line-clamp-3 text-[8px] font-bold uppercase leading-snug tracking-[0.12em] text-theme-fg-secondary xs:mt-3 xs:text-[9px] xs:tracking-[0.14em] sm:text-[10px] sm:tracking-[0.18em]">
+        {area.displayName}
       </p>
-    </div>
+
+      <p
+        className="mt-1 font-serif text-xl font-bold tabular-nums leading-none xs:text-2xl sm:text-3xl"
+        style={{ color: theme.accent }}
+      >
+        {area.score}
+        <span className="ml-0.5 text-sm font-semibold text-theme-fg-secondary sm:text-base">%</span>
+      </p>
+
+      <div className="mt-2 h-1.5 overflow-hidden rounded-full [background-color:var(--area-bar-track)] sm:mt-3">
+        <div
+          className="h-full rounded-full transition-[width] duration-500 ease-out"
+          style={{ width: `${area.score}%`, backgroundColor: theme.accent }}
+        />
+      </div>
+
+      {!forPdfCapture ? (
+        <div
+          className="mt-2 inline-flex items-center gap-1 text-[8px] font-bold uppercase tracking-[0.12em] xs:mt-3 xs:gap-1.5 xs:text-[9px] xs:tracking-[0.14em] sm:text-[10px]"
+          style={{ color: isActive ? theme.accent : theme.accent }}
+        >
+          {isActive ? (
+            <>
+              <Check className="h-3 w-3 shrink-0 xs:h-3.5 xs:w-3.5" aria-hidden="true" />
+              <span className="sm:hidden">Active</span>
+              <span className="hidden sm:inline">Now viewing</span>
+            </>
+          ) : (
+            <>
+              <Hand className="h-3 w-3 shrink-0 xs:h-3.5 xs:w-3.5" aria-hidden="true" />
+              <span className="sm:hidden">View</span>
+              <span className="hidden sm:inline">Tap to view</span>
+            </>
+          )}
+        </div>
+      ) : null}
+    </button>
   );
 };
 
-type LifeAreaCardProps = {
+/**
+ * Prominent callout explaining that pillar cards are interactive selectors.
+ */
+const PillarSelectionCallout: React.FC = () => (
+  <div className="mb-4 rounded-2xl border border-brand-purple/25 bg-gradient-to-r from-[#EDE8F5] via-[#FAF7FD] to-white p-3 shadow-sm light-panel sm:p-5">
+    <div className="flex items-start gap-2.5 sm:gap-4">
+      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand-purple text-white shadow-sm sm:h-11 sm:w-11">
+        <MousePointerClick className="h-4 w-4 sm:h-5 sm:w-5" aria-hidden="true" />
+      </div>
+      <div className="min-w-0">
+        <h3 className="font-serif text-lg font-bold text-navy sm:text-2xl">
+          Explore Your Pillars
+        </h3>
+        <p className="mt-1.5 text-xs leading-relaxed text-theme-fg-secondary sm:mt-2 sm:text-base">
+          <span className="font-bold text-brand-purple">
+            Tap any pillar card below
+          </span>{" "}
+          to switch the reading. Each card reveals a different area of your destiny scoreboard.
+        </p>
+      </div>
+    </div>
+  </div>
+);
+
+type LifeAreaPanelProps = {
   area: LifeAreaResult;
   description: string;
   expanded: boolean;
@@ -232,7 +328,10 @@ type LifeAreaCardProps = {
   pdfPageBreakBefore?: boolean;
 };
 
-const LifeAreaCard: React.FC<LifeAreaCardProps> = ({
+/**
+ * Themed reading panel — gradient header, score bar, nested reading box.
+ */
+const LifeAreaPanel: React.FC<LifeAreaPanelProps> = ({
   area,
   description,
   expanded,
@@ -240,85 +339,122 @@ const LifeAreaCard: React.FC<LifeAreaCardProps> = ({
   forPdfCapture,
   pdfPageBreakBefore,
 }) => {
-  const accent = AREA_ACCENTS[area.area] ?? DEFAULT_AREA_ACCENT;
+  const theme = AREA_ACCENTS[area.area] ?? DEFAULT_AREA_ACCENT;
   const Icon = LIFE_AREA_ICONS[area.icon];
-  const hoverClass = forPdfCapture ? "" : "transition-shadow duration-300 hover:shadow-md";
   const isExpanded = Boolean(forPdfCapture || expanded);
   const showReadMore = !forPdfCapture && areaExceedsPreviewLimit(description);
+  const starLabel =
+    area.stars.length === 1
+      ? "1 star influencing this pillar"
+      : `${area.stars.length} stars influencing this pillar`;
 
   return (
     <article
       data-pdf-break-anchor={`area-card-${area.area}`}
       {...(pdfPageBreakBefore ? { "data-pdf-page-break-before": "" } : {})}
-      className={`overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800 ${hoverClass}`}
-      style={{ borderLeftWidth: 4, borderLeftColor: accent.from }}
+      className={[
+        "relative overflow-hidden rounded-2xl border shadow-sm",
+        lightPanelClass,
+        "[background-color:var(--area-card-bg)] [border-color:var(--area-border)]",
+        "dark:shadow-black/20",
+      ].join(" ")}
+      style={getAreaThemeVars(theme)}
     >
-      <div className="p-4 sm:p-5">
-        <div className="flex flex-wrap items-start justify-between gap-3">
-          <div className="flex min-w-0 items-center gap-3">
-            <div
-              className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl shadow-sm"
-              style={{
-                background: `linear-gradient(135deg, ${accent.from}, ${accent.to})`,
-              }}
-            >
-              {Icon ? (
-                <Icon className="h-5 w-5 text-white" aria-hidden="true" />
-              ) : (
-                <span className="text-lg" role="img" aria-label={area.displayName}>
-                  {area.icon}
-                </span>
-              )}
-            </div>
-            <div className="min-w-0">
-              <h4 className="font-bold text-gray-900 dark:text-white">
-                {area.displayName}
-              </h4>
-              <p className="text-xs text-gray-500 dark:text-gray-400">
-                {area.stars.length} star{area.stars.length === 1 ? "" : "s"} influencing this pillar
-              </p>
-            </div>
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute bottom-3 right-3 select-none font-serif text-[5rem] font-black leading-none sm:bottom-4 sm:right-4 sm:text-[5.5rem]"
+        style={{
+          color: theme.accent,
+          opacity: 0.07,
+        }}
+      >
+        {theme.watermark}
+      </div>
+
+      <div
+        className="relative flex items-center justify-between gap-4 px-5 py-4"
+        style={{
+          background: `linear-gradient(135deg, ${theme.headerFrom}, ${theme.headerTo})`,
+        }}
+      >
+        <div className="flex min-w-0 items-center gap-3">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/15">
+            {Icon ? (
+              <Icon className="h-5 w-5 text-white" aria-hidden="true" />
+            ) : (
+              <span className="text-base text-white" role="img" aria-label={area.displayName}>
+                {area.icon}
+              </span>
+            )}
           </div>
-          <div
-            className="flex flex-shrink-0 items-center rounded-full px-3 py-1"
-            style={{
-              background: `linear-gradient(135deg, ${accent.from}, ${accent.to})`,
-            }}
-          >
-            <span className="text-sm font-bold text-white">{area.score}%</span>
+          <div className="min-w-0">
+            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/80">
+              Destiny Pillar
+            </p>
+            <h4 className="font-serif text-lg font-bold leading-tight text-white sm:text-xl">
+              {area.displayName}
+            </h4>
           </div>
         </div>
 
-        {/* Score bar */}
-        <div className="mt-4">
-          <div
-            className="h-2 overflow-hidden rounded-full"
-            style={{ background: "rgba(0,0,0,0.08)" }}
+        <p className="shrink-0 font-serif text-3xl font-bold tabular-nums text-white sm:text-4xl">
+          {area.score}
+          <span className="text-lg font-semibold text-white/90">%</span>
+        </p>
+      </div>
+
+      <div className="relative z-10 p-5 sm:p-6">
+        <div className="flex items-center gap-2">
+          <span
+            className="h-2 w-2 shrink-0 rounded-full"
+            style={{ backgroundColor: theme.accent }}
+            aria-hidden="true"
+          />
+          <p
+            className="text-[10px] font-bold uppercase tracking-[0.2em]"
+            style={{ color: theme.accent }}
           >
-            <div
-              className="h-full rounded-full"
-              style={{
-                width: `${area.score}%`,
-                background: `linear-gradient(90deg, ${accent.from}, ${accent.to})`,
-                transition: forPdfCapture ? "none" : "width 0.6s ease",
-              }}
-            />
-          </div>
+            {starLabel}
+          </p>
+          <Sparkles
+            className="ml-auto h-3.5 w-3.5 shrink-0 text-[var(--color-accent-gradient-5)]/55 dark:text-accent-goldDark/50"
+            aria-hidden="true"
+          />
+        </div>
+
+        <div className="mt-3 h-2 overflow-hidden rounded-full [background-color:var(--area-bar-track)]">
+          <div
+            className="h-full rounded-full transition-[width] duration-500 ease-out"
+            style={{ width: `${area.score}%`, backgroundColor: theme.accent }}
+          />
         </div>
 
         {description ? (
-          <div className="mt-4 border-t border-gray-100 pt-4 dark:border-gray-700">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400">
-              Reading
-            </p>
-            <p className="mt-2 text-sm leading-relaxed text-gray-700 dark:text-gray-300">
+          <div className="mt-5 rounded-xl border border-theme-border-subtle bg-white/90 p-5 shadow-sm sm:p-6">
+            <div className="flex items-center gap-2">
+              <FileText
+                className="h-4 w-4 shrink-0"
+                style={{ color: theme.accent }}
+                aria-hidden="true"
+              />
+              <p
+                className="text-[10px] font-bold uppercase tracking-[0.2em]"
+                style={{ color: theme.accent }}
+              >
+                Reading
+              </p>
+            </div>
+
+            <p className="mt-4 text-sm leading-relaxed text-theme-fg-secondary sm:text-[15px]">
               {getPreviewAreaText(description, isExpanded)}
             </p>
+
             {showReadMore ? (
               <button
                 type="button"
                 onClick={onToggle}
-                className="mt-3 inline-flex items-center gap-1 text-xs font-bold uppercase tracking-wider text-indigo-600 transition-colors hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300"
+                className="mt-4 inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-[0.14em] transition-opacity hover:opacity-80"
+                style={{ color: theme.accent }}
               >
                 {expanded ? (
                   <>
@@ -327,8 +463,8 @@ const LifeAreaCard: React.FC<LifeAreaCardProps> = ({
                   </>
                 ) : (
                   <>
-                    Read more
-                    <ChevronDown className="h-3.5 w-3.5" aria-hidden="true" />
+                    See more
+                    <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
                   </>
                 )}
               </button>
@@ -347,6 +483,8 @@ const AreasOfLife: React.FC<{
 }> = ({ chartData, palaceOverride, forPdfCapture }) => {
   const { t, language } = useLanguage();
   const [expandedAreas, setExpandedAreas] = useState<Record<string, boolean>>({});
+  const [selectedAreaKey, setSelectedAreaKey] = useState<string | null>(null);
+  const hasInitializedSelection = useRef(false);
 
   const toggleArea = (areaId: string) => {
     setExpandedAreas((prev) => ({
@@ -386,6 +524,23 @@ const AreasOfLife: React.FC<{
     );
     return top.area;
   }, [lifeAreaAnalysis]);
+
+  useEffect(() => {
+    if (lifeAreaAnalysis.length === 0 || hasInitializedSelection.current) {
+      return;
+    }
+    const defaultKey = topPillarAreaKey ?? lifeAreaAnalysis[0]?.area ?? null;
+    setSelectedAreaKey(defaultKey);
+    hasInitializedSelection.current = true;
+  }, [lifeAreaAnalysis, topPillarAreaKey]);
+
+  const selectedArea = useMemo(() => {
+    if (lifeAreaAnalysis.length === 0) {
+      return null;
+    }
+    const match = lifeAreaAnalysis.find((area) => area.area === selectedAreaKey);
+    return match ?? lifeAreaAnalysis[0] ?? null;
+  }, [lifeAreaAnalysis, selectedAreaKey]);
 
   const getCombinedDescription = (area: LifeAreaResult): string => {
     if (!area.stars || area.stars.length === 0) {
@@ -432,134 +587,174 @@ const AreasOfLife: React.FC<{
     return fallback;
   };
 
-  return (
-    <div className="p-6">
-      <div {...(forPdfCapture ? { "data-pdf-page-break-before": "" } : {})}>
-        <DestinyScoreboardHero forPdfCapture={forPdfCapture} />
-      </div>
-
-      {lifeAreaAnalysis.length > 0 ? (
+  const pillarPills =
+    lifeAreaAnalysis.length > 0 ? (
+      <div className="mb-8">
+        {!forPdfCapture ? <PillarSelectionCallout /> : null}
         <div
-          className={`mb-8 flex gap-3 overflow-x-auto pb-1 ${forPdfCapture ? "flex-wrap" : ""}`}
+          className={
+            forPdfCapture
+              ? "grid w-full grid-cols-2 gap-3"
+              : [
+                  "flex w-full gap-2.5 overflow-x-auto pb-1",
+                  "snap-x snap-mandatory [-webkit-overflow-scrolling:touch]",
+                  "[scrollbar-width:thin]",
+                  "sm:grid sm:grid-cols-3 sm:gap-3 sm:overflow-visible sm:pb-0",
+                  "lg:grid-cols-5",
+                ].join(" ")
+          }
+          role="tablist"
+          aria-label="Destiny pillars — tap a card to change the reading below"
         >
           {lifeAreaAnalysis.map((area) => (
-            <ScorePillarChip
-              key={`chip-${area.area}`}
+            <ScorePillarPill
+              key={`pill-${area.area}`}
               area={area}
+              isActive={selectedArea?.area === area.area}
               isTopPillar={area.area === topPillarAreaKey}
+              onSelect={() => setSelectedAreaKey(area.area)}
               forPdfCapture={forPdfCapture}
             />
           ))}
         </div>
-      ) : null}
+      </div>
+    ) : null;
 
-      <div
-        className={
-          forPdfCapture ? "grid grid-cols-1 gap-6" : "grid grid-cols-1 gap-8 lg:grid-cols-12"
-        }
-      >
-        <div
-          data-pdf-break-anchor="areas-radar-chart"
-          className={
-            forPdfCapture ? "" : "lg:col-span-5 lg:sticky lg:top-24 lg:self-start"
-          }
-        >
-          <article className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-md dark:border-gray-700 dark:bg-gray-800">
-            <div className="border-b border-gray-100 bg-gradient-to-r from-indigo-50/80 to-violet-50/50 px-5 py-4 dark:border-gray-700 dark:from-indigo-950/40 dark:to-violet-950/30">
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 shadow-sm">
-                  <ChartColumn className="h-5 w-5 text-white" aria-hidden="true" />
-                </div>
-                <div>
-                  <p className="text-xs font-bold uppercase tracking-widest text-indigo-700 dark:text-indigo-300">
-                    At a glance
-                  </p>
-                  <h3 className="text-sm font-bold text-gray-900 dark:text-white">
-                    Life areas radar
-                  </h3>
-                </div>
-              </div>
-            </div>
-            <div className={`p-4 ${forPdfCapture ? "h-[250px]" : "h-80 md:h-96"}`}>
-              {lifeAreaScores.length > 0 ? (
-                <ResponsiveContainer width="100%" height="100%">
-                  <RadarChart
-                    data={lifeAreaScores}
-                    margin={
-                      forPdfCapture
-                        ? { top: 12, right: 30, bottom: 12, left: 30 }
-                        : { top: 8, right: 8, bottom: 8, left: 8 }
-                    }
-                  >
-                    <PolarGrid stroke="#94a3b8" strokeDasharray="3 3" />
-                    <PolarAngleAxis
-                      dataKey="area"
-                      tick={{
-                        fill: "#64748b",
-                        fontSize: forPdfCapture ? 11 : 12,
-                        fontWeight: 600,
-                      }}
-                    />
-                    <PolarRadiusAxis
-                      angle={90}
-                      domain={[0, 100]}
-                      tick={{ fill: "#94a3b8", fontSize: 10 }}
-                    />
-                    <Radar
-                      name="Score"
-                      dataKey="score"
-                      stroke="#6366f1"
-                      fill="#8b5cf6"
-                      fillOpacity={0.5}
-                      strokeWidth={3}
-                    />
-                  </RadarChart>
-                </ResponsiveContainer>
-              ) : (
-                <div className="flex h-full items-center justify-center">
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    {t("analysis.noDataAvailable") || "No data available"}
-                  </p>
-                </div>
-              )}
-            </div>
-          </article>
+  const radarBlock = (
+    <div
+      data-pdf-break-anchor="areas-radar-chart"
+      className={
+        forPdfCapture ? "" : "lg:col-span-5 lg:sticky lg:top-24 lg:self-start"
+      }
+    >
+      <section>
+        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-theme-fg-secondary">
+          At a glance
+        </p>
+        <div className="mt-1 flex items-center gap-2">
+          <ChartColumn
+            className="h-4 w-4 text-brand-purple dark:text-accent-gold"
+            aria-hidden="true"
+          />
+          <h3 className="text-sm font-bold uppercase tracking-wide text-theme-fg sm:text-base">
+            Life areas radar
+          </h3>
         </div>
-
-        <div
-          className={
-            forPdfCapture
-              ? "space-y-4"
-              : "space-y-4 lg:col-span-7 lg:max-h-[720px] lg:overflow-y-auto lg:pr-1"
-          }
-        >
-          {lifeAreaAnalysis.length > 0 ? (
-            lifeAreaAnalysis.map((area, index) => (
-              <LifeAreaCard
-                key={area.area}
-                area={area}
-                description={getCombinedDescription(area)}
-                expanded={Boolean(expandedAreas[area.area])}
-                onToggle={() => toggleArea(area.area)}
-                forPdfCapture={forPdfCapture}
-                pdfPageBreakBefore={Boolean(
-                  forPdfCapture &&
-                    (index === 1 || index === lifeAreaAnalysis.length - 1)
-                )}
-              />
-            ))
+        <div className={`mt-4 ${forPdfCapture ? "h-[250px]" : "h-72 md:h-80"}`}>
+          {lifeAreaScores.length > 0 ? (
+            <ResponsiveContainer width="100%" height="100%">
+              <RadarChart
+                data={lifeAreaScores}
+                margin={
+                  forPdfCapture
+                    ? { top: 12, right: 30, bottom: 12, left: 30 }
+                    : { top: 8, right: 8, bottom: 8, left: 8 }
+                }
+              >
+                <PolarGrid stroke="#94a3b8" strokeDasharray="3 3" />
+                <PolarAngleAxis
+                  dataKey="area"
+                  tick={{
+                    fill: "#64748b",
+                    fontSize: forPdfCapture ? 11 : 12,
+                    fontWeight: 600,
+                  }}
+                />
+                <PolarRadiusAxis
+                  angle={90}
+                  domain={[0, 100]}
+                  tick={{ fill: "#94a3b8", fontSize: 10 }}
+                />
+                <Radar
+                  name="Score"
+                  dataKey="score"
+                  stroke="#6B5B95"
+                  fill="#8B1167"
+                  fillOpacity={0.35}
+                  strokeWidth={2}
+                />
+              </RadarChart>
+            </ResponsiveContainer>
           ) : (
-            <div className="rounded-2xl border border-gray-200 bg-white p-8 text-center shadow-sm dark:border-gray-700 dark:bg-gray-800">
-              <ChartColumn
-                className="mx-auto mb-4 h-12 w-12 text-gray-400"
-                aria-hidden="true"
-              />
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                {t("analysis.noAnalysisAvailable") || "No analysis available"}
+            <div className="flex h-full items-center justify-center">
+              <p className="text-sm text-theme-fg-secondary">
+                {t("analysis.noDataAvailable") || "No data available"}
               </p>
             </div>
           )}
         </div>
+      </section>
+    </div>
+  );
+
+  const areaPanels =
+    lifeAreaAnalysis.length > 0 ? (
+      forPdfCapture ? (
+        <div className="space-y-8">
+          {lifeAreaAnalysis.map((area, index) => (
+            <LifeAreaPanel
+              key={area.area}
+              area={area}
+              description={getCombinedDescription(area)}
+              expanded={Boolean(expandedAreas[area.area])}
+              onToggle={() => toggleArea(area.area)}
+              forPdfCapture={forPdfCapture}
+              pdfPageBreakBefore={Boolean(
+                index === 1 || index === lifeAreaAnalysis.length - 1
+              )}
+            />
+          ))}
+        </div>
+      ) : selectedArea ? (
+        <div role="tabpanel" aria-label={selectedArea.displayName}>
+          <LifeAreaPanel
+            key={selectedArea.area}
+            area={selectedArea}
+            description={getCombinedDescription(selectedArea)}
+            expanded={Boolean(expandedAreas[selectedArea.area])}
+            onToggle={() => toggleArea(selectedArea.area)}
+            forPdfCapture={forPdfCapture}
+          />
+        </div>
+      ) : null
+    ) : (
+      <div className="py-10 text-center">
+        <ChartColumn
+          className="mx-auto h-10 w-10 text-theme-fg-secondary/50"
+          aria-hidden="true"
+        />
+        <p className="mt-4 text-sm text-theme-fg-secondary">
+          {t("analysis.noAnalysisAvailable") || "No analysis available"}
+        </p>
+      </div>
+    );
+
+  return (
+    <div className="p-6">
+      <div {...(forPdfCapture ? { "data-pdf-page-break-before": "" } : {})}>
+        <AnalysisSectionHeader
+          sectionLabel="Life pillars"
+          badgeText="06"
+          title="Destiny Scoreboard"
+          subtitle="Your personal scorecard across the five destiny pillars — see the shape of your chart at a glance, then dive into each area."
+          icon={LayoutGrid}
+          backgroundImage="/images/chart/trophy.png"
+          backgroundPosition="right 40%"
+          pdfBreakAnchor="destiny-scoreboard-hero"
+          forPdfCapture={forPdfCapture}
+        />
+        <SubsectionSparkleDivider />
+      </div>
+
+      {pillarPills}
+
+      <div
+        className={
+          forPdfCapture ? "grid grid-cols-1 gap-8" : "grid grid-cols-1 gap-8 lg:grid-cols-12"
+        }
+      >
+        {radarBlock}
+        <div className={forPdfCapture ? "" : "lg:col-span-7"}>{areaPanels}</div>
       </div>
     </div>
   );

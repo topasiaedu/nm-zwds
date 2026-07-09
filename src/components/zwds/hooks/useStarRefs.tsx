@@ -25,9 +25,11 @@ const useStarRefs = (chartData: ChartData, selectedPalace: number | null): UseSt
   // Function to register a star element reference
   const registerStarRef = (palaceNumber: number, starName: string, element: HTMLDivElement | null) => {
     const key = `${palaceNumber}:${starName}`;
-    
+
     if (element) {
       starRefs.current.set(key, element);
+    } else {
+      starRefs.current.delete(key);
     }
   };
 

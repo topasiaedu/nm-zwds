@@ -132,9 +132,9 @@ export const chartBrandChrome = {
   centerPanelValueClass: "zwds-center-value",
   centerPanelShadow: "0 4px 16px rgba(107, 91, 149, 0.15)",
   highlightBorderColor: "#ef4444",
-  /** Palace cell surfaces — high contrast inside the chart grid */
-  palaceSurfaceClass: "bg-white dark:bg-gray-800",
-  palaceBorderClass: "border-gray-200 dark:border-gray-600",
+  /** Palace cell surfaces — warm cream inside the chart grid */
+  palaceSurfaceClass: "bg-[#FAF9F6] dark:bg-gray-800",
+  palaceBorderClass: "border-[#E5DDD0] dark:border-gray-600",
 } as const;
 
 /**

@@ -17,6 +17,7 @@ interface TransformationLinesProps {
     isOppositeInfluence?: boolean;
   }>;
   chartRef: React.RefObject<HTMLDivElement>;
+  centerRef?: React.RefObject<HTMLDivElement>;
   palaceRefs: React.MutableRefObject<(HTMLDivElement | null)[]>;
   starRefs: React.MutableRefObject<Map<string, HTMLDivElement>>;
   refsReady: boolean;
@@ -114,12 +115,158 @@ const calculateCenteredBorderPoint = (
   return { x: adjustedX, y: adjustedY };
 };
 
+interface LineSegment {
+  x1: number;
+  y1: number;
+  x2: number;
+  y2: number;
+}
+
+const STAR_ENDPOINT_TRIM_PX = 14;
+
+/** Move the endpoint slightly back from the star so the arrowhead sits on the label. */
+const trimPointToward = (
+  fromX: number,
+  fromY: number,
+  toX: number,
+  toY: number,
+  trimPx: number
+): { x: number; y: number } => {
+  const dx = toX - fromX;
+  const dy = toY - fromY;
+  const length = Math.hypot(dx, dy);
+  if (length <= trimPx) {
+    return { x: toX, y: toY };
+  }
+  const ratio = (length - trimPx) / length;
+  return { x: fromX + dx * ratio, y: fromY + dy * ratio };
+};
+
+type SimpleRect = { left: number; top: number; right: number; bottom: number };
+
+const isInsideRect = (x: number, y: number, r: SimpleRect): boolean =>
+  x >= r.left && x <= r.right && y >= r.top && y <= r.bottom;
+
+/**
+ * Clip a line segment so it stops at the first edge of the center rect it crosses.
+ * Works whether the endpoint lands inside (trim to entry point) or the line passes
+ * through (trim to entry point). Returns the original endpoint if no crossing occurs.
+ */
+const clipLineToCenterBorder = (
+  x1: number,
+  y1: number,
+  x2: number,
+  y2: number,
+  centerRect: SimpleRect | null
+): { x: number; y: number } => {
+  if (!centerRect) return { x: x2, y: y2 };
+
+  // Start must be outside the rect for clipping to make sense
+  if (isInsideRect(x1, y1, centerRect)) return { x: x2, y: y2 };
+  // If endpoint is already outside, no clipping needed
+  if (!isInsideRect(x2, y2, centerRect)) return { x: x2, y: y2 };
+
+  const dx = x2 - x1;
+  const dy = y2 - y1;
+  const eps = 1e-8;
+
+  // Entry parameter — smallest positive t where the ray hits a rect edge
+  let tEntry = Infinity;
+
+  // Left edge: x = left, top ≤ y ≤ bottom
+  if (Math.abs(dx) > eps) {
+    const t = (centerRect.left - x1) / dx;
+    if (t > eps) {
+      const iy = y1 + t * dy;
+      if (iy >= centerRect.top && iy <= centerRect.bottom && t < tEntry) tEntry = t;
+    }
+  }
+  // Right edge: x = right
+  if (Math.abs(dx) > eps) {
+    const t = (centerRect.right - x1) / dx;
+    if (t > eps) {
+      const iy = y1 + t * dy;
+      if (iy >= centerRect.top && iy <= centerRect.bottom && t < tEntry) tEntry = t;
+    }
+  }
+  // Top edge: y = top, left ≤ x ≤ right
+  if (Math.abs(dy) > eps) {
+    const t = (centerRect.top - y1) / dy;
+    if (t > eps) {
+      const ix = x1 + t * dx;
+      if (ix >= centerRect.left && ix <= centerRect.right && t < tEntry) tEntry = t;
+    }
+  }
+  // Bottom edge: y = bottom
+  if (Math.abs(dy) > eps) {
+    const t = (centerRect.bottom - y1) / dy;
+    if (t > eps) {
+      const ix = x1 + t * dx;
+      if (ix >= centerRect.left && ix <= centerRect.right && t < tEntry) tEntry = t;
+    }
+  }
+
+  if (tEntry === Infinity) return { x: x2, y: y2 };
+  return { x: x1 + tEntry * dx, y: y1 + tEntry * dy };
+};
+
+/**
+ * Build a single straight segment from the palace center to just before the star,
+ * clipped to the center panel border when the star is inside that panel.
+ */
+const buildRegularTransformationSegments = (
+  fromCenterX: number,
+  fromCenterY: number,
+  toStarX: number,
+  toStarY: number,
+  centerRect: { left: number; top: number; right: number; bottom: number } | null
+): LineSegment[] => {
+  const trimmedEnd = trimPointToward(
+    fromCenterX,
+    fromCenterY,
+    toStarX,
+    toStarY,
+    STAR_ENDPOINT_TRIM_PX
+  );
+
+  const clippedEnd = clipLineToCenterBorder(
+    fromCenterX,
+    fromCenterY,
+    trimmedEnd.x,
+    trimmedEnd.y,
+    centerRect
+  );
+
+  return [{ x1: fromCenterX, y1: fromCenterY, x2: clippedEnd.x, y2: clippedEnd.y }];
+};
+
+const getArrowheadPoints = (
+  tipX: number,
+  tipY: number,
+  fromX: number,
+  fromY: number,
+  arrowLength: number,
+  arrowWidth: number
+): string => {
+  const angle = Math.atan2(tipY - fromY, tipX - fromX);
+  const x1 =
+    tipX - arrowLength * Math.cos(angle) - arrowWidth * Math.cos(angle - Math.PI / 2);
+  const y1 =
+    tipY - arrowLength * Math.sin(angle) - arrowWidth * Math.sin(angle - Math.PI / 2);
+  const x2 =
+    tipX - arrowLength * Math.cos(angle) - arrowWidth * Math.cos(angle + Math.PI / 2);
+  const y2 =
+    tipY - arrowLength * Math.sin(angle) - arrowWidth * Math.sin(angle + Math.PI / 2);
+  return `${tipX},${tipY} ${x1},${y1} ${x2},${y2}`;
+};
+
 /**
  * Component to render transformation lines between palaces in the ZWDS chart
  */
 const TransformationLines: React.FC<TransformationLinesProps> = ({
   transformations,
   chartRef,
+  centerRef,
   palaceRefs,
   starRefs,
   refsReady,
@@ -144,7 +291,18 @@ const TransformationLines: React.FC<TransformationLinesProps> = ({
   }
   
   const chartRect = chartRef.current.getBoundingClientRect();
-  
+
+  // Center panel exclusion rect — clip arrows that would end inside it
+  const centerBounds = centerRef?.current?.getBoundingClientRect() ?? null;
+  const centerRect = centerBounds
+    ? {
+        left: centerBounds.left - chartRect.left,
+        top: centerBounds.top - chartRect.top,
+        right: centerBounds.right - chartRect.left,
+        bottom: centerBounds.bottom - chartRect.top,
+      }
+    : null;
+
   // Separate transformations into regular and opposite palace influences
   const regularTransformations = transformations.filter(t => !t.isOppositeInfluence);
   const oppositeInfluences = transformations.filter(t => t.isOppositeInfluence);
@@ -218,34 +376,30 @@ const TransformationLines: React.FC<TransformationLinesProps> = ({
       const isSelfTransformation = transformation.fromPalace === transformation.toPalace;
       
       if (isSelfTransformation) {
-        // For self-transformations, draw a curved arc or loop
-        // Get position relative to the star
+        // For self-transformations, draw a curved arc from the palace center toward the star
         const starX = toStarX - fromX;
         const starY = toStarY - fromY;
         
-        // Determine the direction to bend the arc based on star position
+        // Determine the direction to bend the arc based on star position relative to center
         let angle;
         if (Math.abs(starX) > Math.abs(starY)) {
-          // Star is more horizontal from palace center
           angle = starX > 0 ? Math.PI * 3/4 : Math.PI * 1/4;
         } else {
-          // Star is more vertical from palace center
           angle = starY > 0 ? Math.PI * 5/4 : Math.PI * 7/4;
         }
         
-        // Create control points for a bezier curve
-        const radius = Math.min(fromRect.width, fromRect.height) * 0.5;
+        // Control point radius — based on palace size for a natural curve
+        const radius = Math.min(fromRect.width, fromRect.height) * 0.35;
         
-        // Calculate control point coordinates for a quadratic bezier curve
         const controlX = fromX + radius * Math.cos(angle);
         const controlY = fromY + radius * Math.sin(angle);
         
         // Create animated dashes for the arc
-        const arcLength = Math.PI * radius; // Approximate arc length
+        const arcLength = Math.PI * radius;
         const dashLength = arcLength / 10;
         const dashArray = `${dashLength},${dashLength/2}`;
         
-        // Calculate arrowhead angle
+        // Calculate arrowhead angle from last control point to tip
         const arrowAngle = Math.atan2(toStarY - controlY, toStarX - controlX);
         
         return (
@@ -284,55 +438,93 @@ const TransformationLines: React.FC<TransformationLinesProps> = ({
           </g>
         );
       } else {
-        // Draw a line between palace and star
-        const lineLength = Math.sqrt(Math.pow(toStarX - fromX, 2) + Math.pow(toStarY - fromY, 2));
-        
-        // Calculate the angle of the line
-        const angle = Math.atan2(toStarY - fromY, toStarX - fromX);
-        
-        // Calculate arrowhead points - make arrowhead larger
+        const segments = buildRegularTransformationSegments(
+          fromX,
+          fromY,
+          toStarX,
+          toStarY,
+          centerRect
+        );
+
+        if (segments.length === 0) {
+          return null;
+        }
+
         const arrowLength = 12;
         const arrowWidth = 8;
-        
-        const x1 = toStarX - arrowLength * Math.cos(angle) - arrowWidth * Math.cos(angle - Math.PI/2);
-        const y1 = toStarY - arrowLength * Math.sin(angle) - arrowWidth * Math.sin(angle - Math.PI/2);
-        const x2 = toStarX - arrowLength * Math.cos(angle) - arrowWidth * Math.cos(angle + Math.PI/2);
-        const y2 = toStarY - arrowLength * Math.sin(angle) - arrowWidth * Math.sin(angle + Math.PI/2);
-        
-        // Create animated dashes for the lines
-        const dashLength = lineLength / 10;
-        const dashArray = `${dashLength},${dashLength/2}`;
-        
+        const lastSegment = segments[segments.length - 1];
+        const totalLength = segments.reduce(
+          (sum, segment) =>
+            sum + Math.hypot(segment.x2 - segment.x1, segment.y2 - segment.y1),
+          0
+        );
+        const dashLength = totalLength / 10;
+        const dashArray = `${dashLength},${dashLength / 2}`;
+
         return (
           <g key={lineKey} style={lineStyle}>
-            <motion.line
-              x1={fromX}
-              y1={fromY}
-              x2={toStarX}
-              y2={toStarY}
-              stroke={lineColor}
-              strokeWidth={strokeWidth}
-              strokeDasharray={dashArray}
-              initial={disableAnimations ? false : { strokeDashoffset: lineLength }}
-              animate={disableAnimations ? false : { 
-                strokeDashoffset: [lineLength, 0],
-                pathLength: [0, 1]
-              }}
-              transition={disableAnimations ? { duration: 0 } : { 
-                duration: 0.8, // Reduced from 1.5s to 0.8s
-                ease: "easeOut" 
-              }}
-            />
-            <motion.polygon
-              points={`${toStarX},${toStarY} ${x1},${y1} ${x2},${y2}`}
-              fill={lineColor}
-              initial={disableAnimations ? false : { opacity: 0, scale: 0 }}
-              animate={disableAnimations ? false : { opacity: 1, scale: 1 }}
-              transition={disableAnimations ? { duration: 0 } : { 
-                delay: 0.4, // Reduced from 0.8s to 0.4s
-                duration: 0.2 // Reduced from 0.3s to 0.2s
-              }}
-            />
+            {segments.map((segment, segmentIndex) => {
+              const segmentLength = Math.hypot(
+                segment.x2 - segment.x1,
+                segment.y2 - segment.y1
+              );
+              const isLastSegment = segmentIndex === segments.length - 1;
+              const segmentKey = `${lineKey}-segment-${segmentIndex}`;
+
+              return (
+                <React.Fragment key={segmentKey}>
+                  <motion.line
+                    x1={segment.x1}
+                    y1={segment.y1}
+                    x2={segment.x2}
+                    y2={segment.y2}
+                    stroke={lineColor}
+                    strokeWidth={strokeWidth}
+                    strokeDasharray={dashArray}
+                    initial={disableAnimations ? false : { strokeDashoffset: segmentLength }}
+                    animate={
+                      disableAnimations
+                        ? false
+                        : {
+                            strokeDashoffset: [segmentLength, 0],
+                            pathLength: [0, 1],
+                          }
+                    }
+                    transition={
+                      disableAnimations
+                        ? { duration: 0 }
+                        : {
+                            duration: 0.8,
+                            ease: "easeOut",
+                          }
+                    }
+                  />
+                  {isLastSegment && (
+                    <motion.polygon
+                      points={getArrowheadPoints(
+                        lastSegment.x2,
+                        lastSegment.y2,
+                        lastSegment.x1,
+                        lastSegment.y1,
+                        arrowLength,
+                        arrowWidth
+                      )}
+                      fill={lineColor}
+                      initial={disableAnimations ? false : { opacity: 0, scale: 0 }}
+                      animate={disableAnimations ? false : { opacity: 1, scale: 1 }}
+                      transition={
+                        disableAnimations
+                          ? { duration: 0 }
+                          : {
+                              delay: 0.4,
+                              duration: 0.2,
+                            }
+                      }
+                    />
+                  )}
+                </React.Fragment>
+              );
+            })}
           </g>
         );
       }
@@ -445,7 +637,7 @@ const TransformationLines: React.FC<TransformationLinesProps> = ({
       {/* Render regular transformations with smooth transitions */}
       <motion.svg 
         key={regularSvgKey}
-        className="absolute top-0 left-0 w-full h-full pointer-events-none z-50"
+        className="absolute top-0 left-0 h-full w-full"
         style={{ overflow: "visible" }}
         initial={disableAnimations ? false : { opacity: 0 }}
         animate={disableAnimations ? false : { opacity: regularLines.length > 0 ? 1 : 0 }}
@@ -457,7 +649,7 @@ const TransformationLines: React.FC<TransformationLinesProps> = ({
       {/* Render opposite palace influences with static rendering */}
       <svg 
         key={oppositeSvgKey}
-        className="absolute top-0 left-0 w-full h-full pointer-events-none z-50"
+        className="absolute top-0 left-0 h-full w-full"
         style={{ overflow: "visible" }}
       >
         {oppositeLines}

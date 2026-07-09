@@ -43,7 +43,7 @@
   pointer-events: none;
   z-index: 0;
   opacity: 0.55;
-  background: linear-gradient(to right, #1A1E3F, #D4B896);
+  background: linear-gradient(to right, #080657, #3D0F68, #8B1167, #D91744, #FE8E01);
 }
 
 .dark .auth-page-bg {
@@ -160,11 +160,11 @@
   opacity: 0.55;
   background-image:
     radial-gradient(2px 2px at 15% 20%, rgba(107, 91, 149, 0.65), transparent),
-    radial-gradient(2px 2px at 55% 12%, rgba(212, 184, 150, 0.5), transparent),
+    radial-gradient(2px 2px at 55% 12%, rgba(254, 142, 1, 0.5), transparent),
     radial-gradient(2px 2px at 78% 35%, rgba(107, 91, 149, 0.55), transparent),
-    radial-gradient(2px 2px at 35% 65%, rgba(212, 184, 150, 0.45), transparent),
+    radial-gradient(2px 2px at 35% 65%, rgba(217, 23, 68, 0.45), transparent),
     radial-gradient(2px 2px at 62% 78%, rgba(107, 91, 149, 0.5), transparent),
-    radial-gradient(2px 2px at 92% 68%, rgba(212, 184, 150, 0.4), transparent);
+    radial-gradient(2px 2px at 92% 68%, rgba(254, 142, 1, 0.4), transparent);
   background-repeat: no-repeat;
   background-size: 100% 100%;
   animation: chart-star-twinkle 8s ease-in-out infinite alternate;
@@ -248,44 +248,303 @@
  * ZWDS chart grid — explicit contrast (avoids theme inheritance / missing utilities).
  */
 .zwds-chart-grid .zwds-palace-star-text,
-.zwds-chart-grid .zwds-palace-star-text span {
+.zwds-chart-grid .zwds-palace-star-text span:not(.zwds-palace-transformation-tag) {
   color: #1a1e3f;
 }
 
 .dark .zwds-chart-grid .zwds-palace-star-text,
-.dark .zwds-chart-grid .zwds-palace-star-text span {
-  color: #e4e4e7;
-}
-
-.zwds-chart-grid .zwds-palace-selected .zwds-palace-star-text,
-.zwds-chart-grid .zwds-palace-selected .zwds-palace-star-text span {
+.dark .zwds-chart-grid .zwds-palace-star-text span:not(.zwds-palace-transformation-tag) {
   color: #ffffff;
 }
 
 .zwds-chart-grid .zwds-palace-bottom-text {
-  color: #1a1e3f;
+  color: #6b7280;
 }
 
 .dark .zwds-chart-grid .zwds-palace-bottom-text {
-  color: #e4e4e7;
-}
-
-.zwds-chart-grid .zwds-palace-selected .zwds-palace-bottom-text {
   color: #ffffff;
 }
 
-.zwds-center-info .zwds-center-label {
+.dark .zwds-chart-grid .zwds-palace-title,
+.dark .zwds-chart-grid .zwds-palace-subtitle:not(.zwds-palace-daxian-highlight),
+.dark .zwds-chart-grid .zwds-palace-meta:not(.zwds-palace-year-highlight),
+.dark .zwds-chart-grid .zwds-palace-badge-icon {
+  color: #ffffff;
+}
+
+/* Selected palace — light text on brand-purple gradient (light + dark themes) */
+.zwds-chart-grid .zwds-palace-selected {
+  background-image: linear-gradient(135deg, #6b5b95, #4a3f6b);
+  color: #ffffff;
+}
+
+.dark .zwds-chart-grid .zwds-palace-selected {
+  background-image: linear-gradient(
+    135deg,
+    rgba(107, 91, 149, 0.95),
+    rgba(74, 63, 107, 0.95)
+  );
+  color: #ffffff;
+}
+
+.zwds-chart-grid .zwds-palace-selected .zwds-palace-star-text,
+.zwds-chart-grid .zwds-palace-selected .zwds-palace-star-text span:not(.zwds-palace-transformation-tag),
+.zwds-chart-grid .zwds-palace-selected .zwds-palace-bottom-text,
+.zwds-chart-grid .zwds-palace-selected .zwds-palace-title,
+.zwds-chart-grid .zwds-palace-selected .zwds-palace-subtitle,
+.zwds-chart-grid .zwds-palace-selected .zwds-palace-meta:not(.zwds-palace-year-highlight) {
+  color: #ffffff;
+}
+
+.dark .zwds-chart-grid .zwds-palace-selected .zwds-palace-star-text,
+.dark .zwds-chart-grid .zwds-palace-selected .zwds-palace-star-text span:not(.zwds-palace-transformation-tag),
+.dark .zwds-chart-grid .zwds-palace-selected .zwds-palace-bottom-text,
+.dark .zwds-chart-grid .zwds-palace-selected .zwds-palace-title,
+.dark .zwds-chart-grid .zwds-palace-selected .zwds-palace-subtitle,
+.dark .zwds-chart-grid .zwds-palace-selected .zwds-palace-meta:not(.zwds-palace-year-highlight) {
+  color: #ffffff;
+}
+
+.zwds-chart-grid .zwds-palace-selected .zwds-palace-year-highlight {
+  color: #fca5a5;
+}
+
+.dark .zwds-chart-grid .zwds-palace-selected .zwds-palace-year-highlight {
+  color: #fca5a5;
+}
+
+.zwds-chart-grid .zwds-palace-selected .zwds-palace-badge-icon {
+  color: #ffffff;
+}
+
+/* 四化 pills — sharp green / blue / yellow / red (override star-text inheritance) */
+.zwds-chart-grid .zwds-palace-transformation-tag.zwds-trans-lu {
+  color: #15803d;
+  background-color: #dcfce7;
+  border-color: #22c55e;
+}
+
+.zwds-chart-grid .zwds-palace-transformation-tag.zwds-trans-quan {
+  color: #1d4ed8;
+  background-color: #dbeafe;
+  border-color: #3b82f6;
+}
+
+.zwds-chart-grid .zwds-palace-transformation-tag.zwds-trans-ke {
+  color: #a16207;
+  background-color: #fef9c3;
+  border-color: #eab308;
+}
+
+.zwds-chart-grid .zwds-palace-transformation-tag.zwds-trans-ji {
+  color: #b91c1c;
+  background-color: #fee2e2;
+  border-color: #ef4444;
+}
+
+.dark .zwds-chart-grid .zwds-palace-transformation-tag.zwds-trans-lu {
+  color: #bbf7d0;
+  background-color: rgba(22, 163, 74, 0.38);
+  border-color: #4ade80;
+}
+
+.dark .zwds-chart-grid .zwds-palace-transformation-tag.zwds-trans-quan {
+  color: #93c5fd;
+  background-color: rgba(37, 99, 235, 0.38);
+  border-color: #60a5fa;
+}
+
+.dark .zwds-chart-grid .zwds-palace-transformation-tag.zwds-trans-ke {
+  color: #fde047;
+  background-color: rgba(202, 138, 4, 0.38);
+  border-color: #facc15;
+}
+
+.dark .zwds-chart-grid .zwds-palace-transformation-tag.zwds-trans-ji {
+  color: #fca5a5;
+  background-color: rgba(220, 38, 38, 0.38);
+  border-color: #f87171;
+}
+
+/* Selected palace — vivid pills on purple gradient */
+.zwds-chart-grid .zwds-palace-selected .zwds-palace-transformation-tag.zwds-trans-lu {
+  color: #14532d;
+  background-color: #86efac;
+  border-color: #16a34a;
+}
+
+.zwds-chart-grid .zwds-palace-selected .zwds-palace-transformation-tag.zwds-trans-quan {
+  color: #1e3a8a;
+  background-color: #93c5fd;
+  border-color: #2563eb;
+}
+
+.zwds-chart-grid .zwds-palace-selected .zwds-palace-transformation-tag.zwds-trans-ke {
+  color: #713f12;
+  background-color: #fde047;
+  border-color: #ca8a04;
+}
+
+.zwds-chart-grid .zwds-palace-selected .zwds-palace-transformation-tag.zwds-trans-ji {
+  color: #7f1d1d;
+  background-color: #fca5a5;
+  border-color: #dc2626;
+}
+
+.dark .zwds-chart-grid .zwds-palace-selected .zwds-palace-transformation-tag.zwds-trans-lu {
+  color: #14532d;
+  background-color: #86efac;
+  border-color: #16a34a;
+}
+
+.dark .zwds-chart-grid .zwds-palace-selected .zwds-palace-transformation-tag.zwds-trans-quan {
+  color: #1e3a8a;
+  background-color: #93c5fd;
+  border-color: #2563eb;
+}
+
+.dark .zwds-chart-grid .zwds-palace-selected .zwds-palace-transformation-tag.zwds-trans-ke {
+  color: #713f12;
+  background-color: #fde047;
+  border-color: #ca8a04;
+}
+
+.dark .zwds-chart-grid .zwds-palace-selected .zwds-palace-transformation-tag.zwds-trans-ji {
+  color: #7f1d1d;
+  background-color: #fca5a5;
+  border-color: #dc2626;
+}
+
+/* 四化 refresh icons — match pill hues */
+.zwds-chart-grid .zwds-palace-transformation-icon.zwds-trans-lu {
+  color: #16a34a;
+}
+
+.zwds-chart-grid .zwds-palace-transformation-icon.zwds-trans-quan {
+  color: #2563eb;
+}
+
+.zwds-chart-grid .zwds-palace-transformation-icon.zwds-trans-ke {
+  color: #ca8a04;
+}
+
+.zwds-chart-grid .zwds-palace-transformation-icon.zwds-trans-ji {
+  color: #dc2626;
+}
+
+.zwds-chart-grid .zwds-palace-selected .zwds-palace-transformation-icon.zwds-trans-lu {
+  color: #86efac;
+}
+
+.zwds-chart-grid .zwds-palace-selected .zwds-palace-transformation-icon.zwds-trans-quan {
+  color: #93c5fd;
+}
+
+.zwds-chart-grid .zwds-palace-selected .zwds-palace-transformation-icon.zwds-trans-ke {
+  color: #fde047;
+}
+
+.zwds-chart-grid .zwds-palace-selected .zwds-palace-transformation-icon.zwds-trans-ji {
+  color: #fca5a5;
+}
+
+/* Da Ming tag — stronger contrast; overrides selected-palace color inheritance */
+.zwds-chart-grid .zwds-palace-daming-tag {
+  background-color: rgba(107, 91, 149, 0.25);
   color: #4a3f6b;
+  border-color: rgba(107, 91, 149, 0.45);
+}
+
+.dark .zwds-chart-grid .zwds-palace-daming-tag {
+  background-color: rgba(255, 255, 255, 0.22);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+.zwds-chart-grid .zwds-palace-selected .zwds-palace-daming-tag {
+  background-color: #faf9f6;
+  color: #4a3f6b;
+  border-color: rgba(255, 255, 255, 0.75);
+}
+
+.dark .zwds-chart-grid .zwds-palace-selected .zwds-palace-daming-tag {
+  background-color: #ffffff;
+  color: #4a3f6b;
+  border-color: rgba(255, 255, 255, 0.85);
+}
+
+.zwds-chart-grid .zwds-palace-selected .zwds-palace-secondary-name {
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.dark .zwds-chart-grid .zwds-palace-selected .zwds-palace-secondary-name {
+  color: rgba(255, 255, 255, 0.92);
+}
+
+/* Palace footer — equal thirds on sm+; flex space-between on mobile */
+.zwds-chart-grid .zwds-palace-footer {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+@media (max-width: 639px) {
+  .zwds-chart-grid .zwds-palace-footer {
+    display: flex;
+    justify-content: space-between;
+    grid-template-columns: unset;
+  }
+}
+
+.zwds-chart-grid .zwds-palace-footer > * {
+  min-width: 0;
+  max-width: 100%;
+}
+
+/* Palace zodiac watermark — ensure SVG fills the anchor box */
+.zwds-palace-watermark svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Equal 4×4 grid — every palace cell and the 2×2 center are the same unit size */
+.zwds-chart-grid {
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+}
+
+@media (max-width: 639px) {
+  .zwds-chart-grid {
+    touch-action: manipulation;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(4, minmax(9.5rem, 1fr));
+  }
+
+  [data-zwds-chart-container="true"] {
+    height: auto;
+  }
+
+  .zwds-center-info {
+    font-size: 0.875rem;
+    z-index: 0;
+  }
+}
+
+.zwds-center-info {
+  z-index: 0;
+}
+
+.zwds-center-info .zwds-center-label {
+  color: #6b7280;
   font-weight: 600;
 }
 
 .zwds-center-info .zwds-center-value,
 .zwds-center-info .zwds-center-value span {
-  color: #1a1e3f;
+  color: #1a2b48;
 }
 
 .dark .zwds-center-info .zwds-center-label {
-  color: #d4af7b;
+  color: #9ca3af;
 }
 
 .dark .zwds-center-info .zwds-center-value,
@@ -399,7 +658,7 @@ html, body, #root {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #D4B896;
+  background: #8B1167;
   border-radius: 6px !important;
 }
 
@@ -419,7 +678,7 @@ html, body, #root {
 /* Custom scrollbar styles for our app */
 .custom-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: #D4B896 transparent;
+  scrollbar-color: #8B1167 transparent;
 }
 
 .custom-scrollbar::-webkit-scrollbar {
@@ -431,7 +690,7 @@ html, body, #root {
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #D4B896;
+  background: #8B1167;
   border-radius: 6px;
 }
 
@@ -458,7 +717,7 @@ html, body, #root {
 
 /* Track */
 * {
-  scrollbar-color: #D4B896 transparent;
+  scrollbar-color: #8B1167 transparent;
 }
 
 /* Handle on hover */
@@ -550,5 +809,34 @@ html, body, #root {
   .print-root {
     max-width: none;
     margin: 0;
+  }
+}
+
+/* Wealth code — top-ranked card border zoom + fade ripple */
+@keyframes zwds-wealth-top-border-zoom-fade {
+  0% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1.055);
+    opacity: 0;
+  }
+}
+
+.zwds-wealth-top-border-ripple {
+  pointer-events: none;
+  animation: zwds-wealth-top-border-zoom-fade 2.4s ease-out infinite;
+  transform-origin: center center;
+}
+
+.zwds-wealth-top-border-ripple-delay {
+  animation-delay: 1.2s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .zwds-wealth-top-border-ripple {
+    animation: none;
+    opacity: 0;
   }
 }

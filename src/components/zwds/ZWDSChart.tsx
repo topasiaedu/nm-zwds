@@ -8,12 +8,19 @@ import useTransformations from "./hooks/useTransformations";
 import Palace from "./components/Palace";
 import CenterInfo from "./components/CenterInfo";
 import TransformationLines from "./components/TransformationLines";
+import {
+  chartCanvasOuterClass,
+  chartCenterSlotClass,
+  chartGridClass,
+  chartTransformationOverlayClass,
+} from "../../styles/chartUi";
 import { useLanguage } from "../../context/LanguageContext";
 import { useChartSettings } from "../../context/ChartSettingsContext";
+import { useTierAccess } from "../../context/TierContext";
 import { PALACE_NAMES } from "../../utils/zwds/constants";
+import { getCurrentDayunPalace } from "../../utils/destiny-navigator/palace-resolver";
 
 // Breakpoint constants - matching TailwindCSS defaults
-const SCREEN_SM = 640;
 
 // Da Ming tag labels. Spread direction (clockwise vs anticlockwise) depends on gender + Yin/Yang.
 const PALACE_TAGS = [
@@ -144,7 +151,23 @@ interface ZWDSChartProps {
    * Only called for user-driven interactions, not controlled prop syncs.
    */
   onDaXianChange?: (palace: number | null) => void;
+  /**
+   * Blueprint/timeframe key for per-mode yellow highlight persistence.
+   * When omitted, a single shared "default" slot is used (e.g. free-result).
+   */
+  blueprintMode?: "dna" | "dayun" | "liunian" | "liumonth";
 }
+
+/** Each chart mode owns its own independent set of user-highlighted palaces. */
+type BlueprintHighlightKey = "dna" | "dayun" | "liunian" | "liumonth" | "default";
+
+/**
+ * Default yellow highlight set: current Da Yun palace only.
+ */
+const getDefaultHighlightSet = (chartData: ChartData): Set<number> => {
+  const dayunPalace = getCurrentDayunPalace(chartData);
+  return dayunPalace !== null ? new Set([dayunPalace]) : new Set();
+};
 
 /**
  * Component to display the Zi Wei Dou Shu chart in a 4x4 grid layout
@@ -165,6 +188,7 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
   uniformAnnualYearForMonths = false,
   highlightLifePalaceLikeDayun = false,
   liuMonthLifeHighlightPalaceNumber = null,
+  blueprintMode,
 }) => {
   // State to track the selected palace for transformations
   const [selectedPalace, setSelectedPalace] = useState<number | null>(null);
@@ -178,6 +202,73 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
   const [selectedPalaceName, setSelectedPalaceName] = useState<number | null>(
     null
   );
+  const { isAdmin } = useTierAccess();
+  const canUsePalaceHighlights = isAdmin;
+
+  /**
+   * Each chart mode (DNA Chart, Da Yun, Liu Nian, Liu Month) maintains its own
+   * independent set of user-highlighted palaces. Highlights added in one mode are
+   * not visible in another — they are saved per-mode and restored when the user
+   * returns to that mode.
+   */
+  const blueprintHighlightKey: BlueprintHighlightKey = blueprintMode ?? "default";
+  /** Persists the highlight set for each mode across mode switches. */
+  const highlightsByModeRef = useRef<Partial<Record<BlueprintHighlightKey, Set<number>>>>({});
+  const prevBlueprintHighlightKeyRef = useRef<BlueprintHighlightKey | null>(null);
+  /** Mirror of `highlightedPalaces` kept in a ref so the save-on-switch effect can read without a stale closure. */
+  const highlightedPalacesRef = useRef<Set<number>>(new Set());
+  /**
+   * Tracks the previous chartData reference. When chartData is replaced (e.g.
+   * birth-hour offset changes), all cached highlights reference a stale chart
+   * and must be discarded before recomputing from the new data.
+   */
+  const prevChartDataRef = useRef<ChartData | null>(null);
+
+  const [highlightedPalaces, setHighlightedPalaces] = useState<Set<number>>(() =>
+    isPdfExport ? new Set() : getDefaultHighlightSet(chartData)
+  );
+  highlightedPalacesRef.current = highlightedPalaces;
+
+  // When the active chart mode changes: save the outgoing mode's highlights then
+  // restore (or initialise with defaults) the incoming mode's highlights.
+  // When chartData changes (e.g. birth-hour adjustment), all cached highlights
+  // are stale and must be recomputed from the new chart.
+  useEffect(() => {
+    if (isPdfExport || !canUsePalaceHighlights) {
+      return;
+    }
+
+    const prevKey = prevBlueprintHighlightKeyRef.current;
+    // True when chartData reference has been replaced (birth-hour change, etc.).
+    // Skip the null-check on first mount so we don't treat mount as a data change.
+    const chartDataChanged =
+      prevChartDataRef.current !== null && prevChartDataRef.current !== chartData;
+    prevChartDataRef.current = chartData;
+
+    // All cached mode highlights reference palaces in the old chart — discard them.
+    if (chartDataChanged) {
+      highlightsByModeRef.current = {};
+    }
+
+    // Save outgoing mode's highlights only when switching modes without a chart change.
+    // If chartData also changed the old highlights are already discarded above.
+    if (prevKey !== null && prevKey !== blueprintHighlightKey && !chartDataChanged) {
+      highlightsByModeRef.current[prevKey] = new Set(highlightedPalacesRef.current);
+    }
+
+    if (prevKey === null || prevKey !== blueprintHighlightKey || chartDataChanged) {
+      const saved = highlightsByModeRef.current[blueprintHighlightKey];
+      if (saved !== undefined) {
+        setHighlightedPalaces(new Set(saved));
+      } else {
+        const defaultSet = getDefaultHighlightSet(chartData);
+        highlightsByModeRef.current[blueprintHighlightKey] = new Set(defaultSet);
+        setHighlightedPalaces(new Set(defaultSet));
+      }
+    }
+
+    prevBlueprintHighlightKeyRef.current = blueprintHighlightKey;
+  }, [blueprintHighlightKey, chartData, isPdfExport, canUsePalaceHighlights]);
 
   // Sync showMonths with controlled prop.
   // When showMonthsControlled is null, also clear the internal state so months
@@ -193,6 +284,7 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
 
   // Reference to the chart container
   const chartRef = useRef<HTMLDivElement>(null);
+  const centerRef = useRef<HTMLDivElement>(null);
 
   // State to track window size changes
   const [windowSize, setWindowSize] = useState({
@@ -345,6 +437,26 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
     // Redraw counter removed to prevent flashing
   }, [disableInteraction, settings.palaceClickInteraction, selectedPalace, refsReady, setRefsReady]);
 
+  /**
+   * Toggle user yellow highlight on double-click (gated like single palace click).
+   */
+  const handleToggleHighlight = useCallback((palaceNumber: number) => {
+    if (disableInteraction || !settings.palaceClickInteraction || !canUsePalaceHighlights) {
+      return;
+    }
+    setHighlightedPalaces((prev) => {
+      const next = new Set(prev);
+      if (next.has(palaceNumber)) {
+        next.delete(palaceNumber);
+      } else {
+        next.add(palaceNumber);
+      }
+      // Immediately persist the change for the active mode so it survives a mode switch.
+      highlightsByModeRef.current[blueprintHighlightKey] = next;
+      return next;
+    });
+  }, [disableInteraction, settings.palaceClickInteraction, blueprintHighlightKey, canUsePalaceHighlights]);
+
   // Sync internal selection with controlled prop if provided
   useEffect(() => {
     if (selectedPalaceControlled !== null && selectedPalaceControlled !== undefined) {
@@ -372,6 +484,16 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
       setSelectedPalaceName(null);
     }
   }, [selectedPalaceNameControlled]);
+
+  // Re-measure star refs after resize/orientation when a palace is selected
+  useEffect(() => {
+    if (!selectedPalace) {
+      return;
+    }
+    setRefsReady(false);
+    const timer = setTimeout(() => setRefsReady(true), 50);
+    return () => clearTimeout(timer);
+  }, [windowSize, selectedPalace, setRefsReady]);
 
   /**
    * Handle Da Xian click
@@ -579,27 +701,28 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
         disableInteraction={disableInteraction}
         chartSettings={settings}
         isLifePalaceLiuMonthHighlight={isLifePalaceLiuMonthHighlight}
+        canUsePalaceHighlights={canUsePalaceHighlights}
+        isUserHighlighted={
+          canUsePalaceHighlights &&
+          !isPdfExport &&
+          highlightedPalaces.has(palaceNumber)
+        }
+        onToggleHighlight={handleToggleHighlight}
       />
     );
   };
 
   return (
     <motion.div
-      className="w-full mx-auto aspect-square md:aspect-square relative"
+      className={chartCanvasOuterClass}
       initial={isPdfExport ? false : "hidden"}
       animate={isPdfExport ? false : "visible"}
       variants={containerVariants}
       ref={chartRef}
       data-zwds-chart-container="true"
-      style={{
-        minHeight:
-          windowSize.width < SCREEN_SM ? "calc(100vh - 50px)" : undefined,
-        height:
-          windowSize.width < SCREEN_SM ? "calc(100vh - 260px)" : undefined,
-        maxHeight: "900px",
-      }}>
+    >
       <motion.div
-        className={`zwds-chart-grid grid grid-cols-4 grid-rows-4 gap-1.5 xs:gap-2 sm:gap-1.5 md:gap-1 p-1 xs:p-1.5 sm:p-1 md:p-1 h-full rounded-xl ${
+        className={`${chartGridClass} ${
           isPdfExport ? "bg-white" : "bg-surface-warm/50 dark:bg-surface-darkSecondary/80"
         }`}
         initial={isPdfExport ? false : { opacity: 0 }}
@@ -614,7 +737,7 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
         {/* Second row */}
         {renderPalace(12)}
         {/* Center info spans 2x2 */}
-        <div className="col-span-2 row-span-2">
+        <div ref={centerRef} className={chartCenterSlotClass}>
           <CenterInfo chartData={chartData} isPdfExport={isPdfExport} />
         </div>
         {renderPalace(5)}
@@ -631,17 +754,20 @@ const ZWDSChart: React.FC<ZWDSChartProps> = ({
         {renderPalace(7)}
       </motion.div>
 
-      {/* Render transformation lines as overlay */}
-      <TransformationLines
-        transformations={getAllTransformations}
-        chartRef={chartRef}
-        palaceRefs={palaceRefs}
-        starRefs={starRefs}
-        refsReady={refsReady}
-        selectedPalace={selectedPalace}
-        windowSize={windowSize}
-        disableAnimations={isPdfExport}
-      />
+      {/* Render transformation lines above grid + center content */}
+      <div className={chartTransformationOverlayClass}>
+        <TransformationLines
+          transformations={getAllTransformations}
+          chartRef={chartRef}
+          centerRef={centerRef}
+          palaceRefs={palaceRefs}
+          starRefs={starRefs}
+          refsReady={refsReady}
+          selectedPalace={selectedPalace}
+          windowSize={windowSize}
+          disableAnimations={isPdfExport}
+        />
+      </div>
     </motion.div>
   );
 };

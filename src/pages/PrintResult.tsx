@@ -17,6 +17,7 @@ import {
   FourKeyPalace,
 } from "../components/analysis_v2";
 import { NoblemanSection } from "../components/nobleman";
+import { DestinyBlueprintPageHeader } from "../components/analysis_v2/shared/DestinyBlueprintPageHeader";
 import type { LifeAspect } from "../types/destiny-navigator";
 
 type ChartData = PdfChartData;
@@ -381,16 +382,16 @@ const PrintResultContent: React.FC = () => {
           {includeAnalysisBlocks ? (
             <section className="space-y-8">
               <div
-                className="text-center print-avoid-break"
+                className="print-avoid-break"
                 data-pdf-page-break-before=""
               >
-                <h2 className="text-2xl font-bold">
-                  {t("analysis.title") || "PERSONALIZED LIFE REPORT"}
-                </h2>
-                <p className="mt-1 text-sm italic text-gray-600 dark:text-gray-400">
-                  {t("analysis.subtitle") ||
-                    "A custom breakdown of your chart's strengths, patterns, and strategic focus areas."}
-                </p>
+                <DestinyBlueprintPageHeader
+                  sectionTitle={t("analysis.title") || "PERSONALIZED LIFE REPORT"}
+                  subtitle={
+                    t("analysis.subtitle") ||
+                    "A custom breakdown of your chart's strengths, patterns, and strategic focus areas."
+                  }
+                />
               </div>
 
               <Overview

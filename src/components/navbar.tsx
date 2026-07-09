@@ -187,7 +187,7 @@ const Navbar: React.FC = () => {
             >
               紫微斗数
             </span>
-            <span className="ml-1 text-xs sm:text-sm font-bold px-1 sm:px-2 py-0.5 rounded-lg bg-gradient-to-r from-accent-goldDark to-accent-coralDark text-surface-darkSecondary uppercase tracking-wider">
+            <span className="ml-1 text-xs sm:text-sm font-bold px-1 sm:px-2 py-0.5 rounded-lg bg-gradient-to-r from-[#080657] via-[#8B1167] to-[#FE8E01] text-cream dark:from-accent-goldDark dark:via-accent-coralDark dark:to-accent-coral dark:text-surface-darkSecondary uppercase tracking-wider">
               CAE
             </span>
           </div>
