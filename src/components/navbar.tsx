@@ -14,7 +14,20 @@ import { brandGradientTextClass } from "../styles/typographyUi";
 const FREE_TEST_ROUTE_PREFIXES = ["/free-test", "/free-result", "/free-test-ended"];
 
 /** Routes that render their own full-screen layout and don't need the navbar. */
-const NAVBAR_HIDDEN_ROUTES = ["/dashboard", "/alignment-advantage"];
+const NAVBAR_HIDDEN_ROUTES = [
+  "/dashboard",
+  "/calculate",
+  "/alignment-advantage",
+  "/chart",
+  "/result",
+  "/tier3-result",
+  "/founder-report",
+  "/timing-chart",
+  "/destiny-navigator",
+  "/destiny-wealth-navigator",
+  "/profile",
+  "/settings",
+];
 
 const Navbar: React.FC = () => {
   const { user, signOut } = useAuth();
@@ -122,14 +135,6 @@ const Navbar: React.FC = () => {
                     </div>
                   </div>
                   <ul className="py-2 text-sm">
-                    <li>
-                      <Link
-                        to="/profile"
-                        className="block px-4 py-2 text-navy dark:text-cream hover:bg-surface-warm dark:hover:bg-brand-purpleDeep/50 transition-all duration-200"
-                        onClick={() => setDropdownOpen(false)}>
-                        {t("navbar.profile")}
-                      </Link>
-                    </li>
                     <li>
                       <Link
                         to="/settings"

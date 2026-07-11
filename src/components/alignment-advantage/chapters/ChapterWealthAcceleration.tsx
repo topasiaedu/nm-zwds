@@ -110,7 +110,7 @@ export const ChapterWealthAcceleration: React.FC<ChapterWealthAccelerationProps>
             </div>
           </div>
 
-          <div className="p-8 rounded-3xl" style={{ background: C.white, border: `1px solid ${C.border}60`, boxShadow: "0 4px 24px rgba(0,0,0,0.02)" }}>
+          <div className="p-5 sm:p-8 rounded-3xl" style={{ background: C.white, border: `1px solid ${C.border}60`, boxShadow: "0 4px 24px rgba(0,0,0,0.02)" }}>
             <p className="text-[10px] font-bold uppercase tracking-[0.24em] mb-3" style={{ color: C.muted }}>
               Dominant Wealth Archetype
             </p>

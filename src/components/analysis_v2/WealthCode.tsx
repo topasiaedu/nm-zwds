@@ -190,7 +190,7 @@ const WealthCodeScoreCard: React.FC<WealthCodeScoreCardProps> = ({
   const cardBody = (
     <>
       <div
-        className="absolute left-0 top-0 z-20 flex h-12 min-w-[3.25rem] items-center justify-center rounded-br-2xl px-3 shadow-md"
+        className="absolute left-0 top-0 z-10 flex h-12 min-w-[3.25rem] items-center justify-center rounded-br-2xl px-3 shadow-md"
         style={{
           background: `linear-gradient(135deg, ${colorConfig.primary} 0%, ${colorConfig.secondary} 100%)`,
         }}

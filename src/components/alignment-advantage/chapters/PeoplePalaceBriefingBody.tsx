@@ -13,7 +13,7 @@ import {
 } from "../shared/peoplePalaceGuidance";
 import { PeoplePalaceActivationGrid } from "../shared/PeoplePalaceActivationGrid";
 import { PalaceRelationshipSvg, PALACE_CATALYST_TILE_STYLES } from "../shared/peoplePalaceVisuals";
-import { PhaseActionsSvg } from "../shared/phaseWealthVisuals";
+import { WhatToDoNowList } from "../shared/WhatToDoNowList";
 import type { CatalystKind } from "../shared/catalystGuidance";
 
 export interface PeoplePalaceBriefingBodyProps {
@@ -190,26 +190,7 @@ export const PeoplePalaceBriefingBody: React.FC<PeoplePalaceBriefingBodyProps> =
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div>
             <SectionLabel index="01" title="What To Do Now" />
-            <div className="rounded-3xl overflow-hidden relative min-h-[220px]" style={{ background: C.white, border: `1px solid ${C.navy}35` }}>
-              <div className="absolute right-5 top-5 w-20 h-20 opacity-5 pointer-events-none">
-                <PhaseActionsSvg />
-              </div>
-              <div className="p-6 space-y-4 relative z-10">
-                {actions.map((action, idx) => (
-                  <div key={action} className="flex items-start gap-3">
-                    <span
-                      className="shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold mt-0.5"
-                      style={{ background: `${C.coral}15`, color: C.coral, border: `1px solid ${C.coral}30` }}
-                    >
-                      {idx + 1}
-                    </span>
-                    <p className="text-sm leading-snug" style={{ color: C.navy }}>
-                      {action}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <WhatToDoNowList actions={actions} />
           </div>
 
           {risks.length > 0 && (

@@ -13,7 +13,7 @@ export const ReportSheet: React.FC<{
     className={[
       "relative overflow-hidden scroll-mt-16",
       "bg-[#fdf6ee] rounded-[40px]",
-      "p-10 md:p-16",
+      "p-6 sm:p-8 md:p-16",
       "shadow-[0_8px_32px_rgba(0,0,0,0.03)]",
       "border border-[#e8ddd0]/80",
       "mb-8",

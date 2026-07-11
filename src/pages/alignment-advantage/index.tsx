@@ -36,8 +36,9 @@ import {
 } from "../../utils/pdfExportServer";
 import { useAlignmentAdvantageData } from "../../components/alignment-advantage/data/useAlignmentAdvantageData";
 
+import DocumentViewerLayout from "../../components/layout/DocumentViewerLayout";
+import { useAppNavItems } from "../../hooks/useAppNavItems";
 import { C } from "../../components/alignment-advantage/shared/constants";
-import { Sparkle } from "../../components/alignment-advantage/shared/Sparkle";
 import { PageContextStrip } from "../../components/alignment-advantage/shared/PageContextStrip";
 import { SectionWatermark } from "../../components/alignment-advantage/shared/SectionWatermark";
 import { firstSentences } from "../../components/alignment-advantage/shared/textHelpers";
@@ -132,6 +133,7 @@ const AlignmentAdvantage: React.FC = () => {
   const { profiles }              = useProfileContext();
   const { hasAlignmentAdvantage } = useTierAccess();
   const { showAlert }             = useAlertContext();
+  const { items: appNavItems }    = useAppNavItems({ activeKey: "alignment-advantage" });
 
   const profile = profiles.find((p) => p.is_self) ?? null;
   const aaData = useAlignmentAdvantageData(profile);
@@ -166,7 +168,7 @@ const AlignmentAdvantage: React.FC = () => {
     return () => { observer.disconnect(); };
   }, [chartData, strategicData, structureResult]);
 
-  const scrollTo = useCallback((id: ChapterId): void => {
+  const scrollTo = useCallback((id: string): void => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
   }, []);
 
@@ -231,243 +233,58 @@ const AlignmentAdvantage: React.FC = () => {
   const signalHex = strategicData.signal === "green" ? "#16a34a"
     : strategicData.signal === "red" ? C.coral : C.gold;
 
+  const footerActions = (
+    <>
+      <button
+        type="button"
+        onClick={() => { void handleDownloadPlaybook(); }}
+        disabled={pdfLoading}
+        className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold transition-all disabled:opacity-60"
+        style={{ background: `linear-gradient(135deg, ${C.coralDark}, ${C.coral})`, color: C.white }}
+      >
+        {pdfLoading ? (
+          <svg className="w-3.5 h-3.5 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+          </svg>
+        ) : (
+          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+          </svg>
+        )}
+        {pdfLoading ? "Generating…" : "Download Playbook"}
+      </button>
+      <button
+        type="button"
+        onClick={() => { void handlePrintPreview(); }}
+        className="w-full py-2 rounded-xl text-xs font-medium transition-all"
+        style={{ border: "1px solid rgba(255,255,255,0.15)", color: "rgba(255,255,255,0.5)" }}
+      >
+        Print Preview
+      </button>
+    </>
+  );
+
   return (
     <PageTransition>
-      {/* ── Full-viewport two-column shell ─────────────────────────────── */}
-      <div
-        style={{
-          position: "fixed", inset: 0, display: "flex", zIndex: 40, overflow: "hidden",
-          background: C.navyDeep,
-        }}
+      <DocumentViewerLayout
+        profileName={profile.name}
+        contextTitle="Alignment Advantage"
+        appNavItems={appNavItems}
+        chapters={CHAPTERS}
+        activeChapter={activeChapter}
+        onChapterClick={scrollTo}
+        footerActions={footerActions}
       >
-
-        {/* ═══════════════════════════════════════════════════════════════
-            SIDEBAR: mirrors the dashboard sidebar exactly
-            ═══════════════════════════════════════════════════════════════ */}
-        <aside
-          className="shrink-0 flex flex-col overflow-hidden"
-          style={{
-            width: 230,
-            height: "100%",
-            background: `
-              linear-gradient(180deg,
-                ${C.navy}      0%,
-                ${C.navyMid}   55%,
-                ${C.coralDark}88 85%,
-                ${C.coral}55   100%
-              )
-            `,
-            position: "relative",
-          }}
-        >
-          {/* Dot-texture overlay */}
-          <div
-            style={{
-              position: "absolute", inset: 0, pointerEvents: "none", zIndex: 0,
-              backgroundImage: `radial-gradient(circle, rgba(255,255,255,0.03) 1px, transparent 1px)`,
-              backgroundSize: "18px 18px",
-            }}
-          />
-
-          {/* ── Brand header ── */}
-          <div className="relative z-10 px-5 pt-7 pb-5" style={{ borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
-            <div className="flex items-center gap-2 mb-1">
-              <Sparkle size={9} color={C.coral} />
-              <p className="text-[8px] font-bold uppercase tracking-[0.28em]" style={{ color: C.coral }}>
-                Premium Programme
-              </p>
-            </div>
-            <p
-              className="text-base font-bold leading-tight mb-0.5"
-              style={{ color: C.white, fontFamily: "Georgia,'Times New Roman',serif" }}
-            >
-              Alignment Advantage
-            </p>
-            <p className="text-[11px]" style={{ color: "rgba(255,255,255,0.4)" }}>
-              {profile.name}
-            </p>
-          </div>
-
-          {/* ── Summary chips ── */}
-          <div className="relative z-10 px-4 py-4" style={{ borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
-            <p className="text-[8px] font-bold uppercase tracking-[0.2em] mb-2.5" style={{ color: "rgba(255,255,255,0.3)" }}>
-              Your Profile
-            </p>
-            <div className="flex flex-col gap-2">
-              <div
-                className="inline-flex items-center gap-2 rounded-xl px-3 py-1.5"
-                style={{ background: `${C.coral}22`, border: `1px solid ${C.coral}40` }}
-              >
-                <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: C.coral }} />
-                <p className="text-[10px] font-bold truncate" style={{ color: C.white }}>
-                  {strLabel.label}
-                </p>
-              </div>
-              <div
-                className="inline-flex items-center gap-2 rounded-xl px-3 py-1.5"
-                style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.1)" }}
-              >
-                <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: C.gold }} />
-                <p className="text-[10px] font-medium truncate" style={{ color: "rgba(255,255,255,0.7)" }}>
-                  {phaseConfig.label} Phase
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* ── Chapter navigation ── */}
-          <nav className="relative z-10 flex-1 overflow-y-auto px-3 py-4" aria-label="Document chapters">
-            <p className="text-[8px] font-bold uppercase tracking-[0.2em] px-2 mb-3" style={{ color: "rgba(255,255,255,0.3)" }}>
-              Contents
-            </p>
-            <ul className="space-y-0.5">
-              {CHAPTERS.map((ch) => {
-                const isActive = activeChapter === ch.id;
-                return (
-                  <li key={ch.id}>
-                    <button
-                      type="button"
-                      onClick={() => { scrollTo(ch.id); }}
-                      className="w-full text-left flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-150"
-                      style={{
-                        background: isActive ? `${C.coral}22` : "transparent",
-                        borderLeft: isActive ? `2px solid ${C.coral}` : "2px solid transparent",
-                      }}
-                    >
-                      <div className="min-w-0 flex-1">
-                        <p
-                          className="text-xs font-semibold truncate"
-                          style={{ color: isActive ? C.white : "rgba(255,255,255,0.5)" }}
-                        >
-                          {ch.label}
-                        </p>
-                        <p className="text-[9px] truncate" style={{ color: "rgba(255,255,255,0.28)" }}>
-                          {ch.sub}
-                        </p>
-                      </div>
-                      {isActive && (
-                        <div
-                          className="shrink-0 w-1 h-5 rounded-full"
-                          style={{ background: `linear-gradient(180deg, ${C.coral}, ${C.gold})` }}
-                        />
-                      )}
-                    </button>
-                  </li>
-                );
-              })}
-            </ul>
-          </nav>
-
-          {/* ── Action buttons ── */}
-          <div
-            className="relative z-10 px-4 py-4 space-y-2"
-            style={{ borderTop: "1px solid rgba(255,255,255,0.07)" }}
-          >
-            <button
-              type="button"
-              onClick={() => { void handleDownloadPlaybook(); }}
-              disabled={pdfLoading}
-              className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold transition-all disabled:opacity-60"
-              style={{ background: `linear-gradient(135deg, ${C.coralDark}, ${C.coral})`, color: C.white }}
-            >
-              {pdfLoading ? (
-                <svg className="w-3.5 h-3.5 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
-                </svg>
-              ) : (
-                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                </svg>
-              )}
-              {pdfLoading ? "Generating…" : "Download Playbook"}
-            </button>
-            <button
-              type="button"
-              onClick={() => { void handlePrintPreview(); }}
-              className="w-full py-2 rounded-xl text-xs font-medium transition-all"
-              style={{ border: "1px solid rgba(255,255,255,0.15)", color: "rgba(255,255,255,0.5)" }}
-            >
-              Print Preview
-            </button>
-          </div>
-
-          {/* ── User footer with coral gradient ── */}
-          <div
-            className="relative z-10 px-4 py-3 flex items-center gap-3"
-            style={{ borderTop: "1px solid rgba(255,255,255,0.06)", background: "transparent" }}
-          >
-            <div
-              className="w-7 h-7 rounded-full flex items-center justify-center shrink-0 text-xs font-bold"
-              style={{ background: `linear-gradient(135deg, ${C.coral}, ${C.coralDark})`, color: C.white }}
-            >
-              {profile.name.slice(0, 1).toUpperCase()}
-            </div>
-            <div className="min-w-0 flex-1">
-              <p className="text-[10px] font-semibold truncate" style={{ color: "rgba(255,255,255,0.7)" }}>
-                {profile.name}
-              </p>
-              <Link
-                to="/dashboard"
-                className="text-[9px] font-medium transition-colors hover:opacity-80"
-                style={{ color: C.coral }}
-              >
-                ← Dashboard
-              </Link>
-            </div>
-          </div>
-        </aside>
-
-        {/* ═══════════════════════════════════════════════════════════════
-            MAIN CONTENT: warm peach-coral gradient, rich card sections
-            ═══════════════════════════════════════════════════════════════ */}
-        <main
-          className="flex-1 overflow-y-auto"
-          style={{
-            height: "100%",
-            background: `
-              radial-gradient(ellipse 80% 60% at 70% 20%, ${C.coral}18 0%, transparent 60%),
-              radial-gradient(ellipse 50% 40% at 20% 80%, ${C.navyMid}55 0%, transparent 55%),
-              linear-gradient(160deg, ${C.cream} 0%, #f5ece2 60%, #ede4d8 100%)
-            `,
-          }}
-        >
-          {/* ── Session tag bar ── */}
-          <div
-            className="sticky top-0 z-20 flex items-center gap-3 px-8 py-3"
-            style={{
-              background: `${C.navy}ee`,
-              backdropFilter: "blur(12px)",
-              borderBottom: `1px solid rgba(255,255,255,0.07)`,
-            }}
-          >
-            <Sparkle size={9} color={C.coral} />
-            <p className="text-[9px] font-bold uppercase tracking-[0.28em]" style={{ color: C.coral }}>
-              Alignment Advantage
-            </p>
-            <span className="text-[9px]" style={{ color: "rgba(255,255,255,0.2)" }}>·</span>
-            <p className="text-[9px] font-bold uppercase tracking-[0.28em]" style={{ color: "rgba(255,255,255,0.35)" }}>
-              Cae Goh
-            </p>
-            <div className="ml-auto flex items-center gap-2">
-              <p className="text-[9px]" style={{ color: "rgba(255,255,255,0.3)" }}>
-                {new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
-              </p>
-            </div>
-          </div>
-
-          {/* ── Scrollable content ── */}
-          <div className="px-8 py-8 max-w-4xl mx-auto space-y-12">
-
           {/* ══════════════════════════════════════
               SECTION 1: OVERVIEW / COVER
               ══════════════════════════════════════ */}
-          <section id="cover" className="scroll-mt-16 mb-32 pt-16 relative overflow-hidden bg-white rounded-[40px] p-10 md:p-16 shadow-[0_8px_32px_rgba(0,0,0,0.03)] border border-[#e8ddd0]/50">
+          <section id="cover" className="scroll-mt-16 mb-32 pt-16 relative overflow-x-hidden bg-white rounded-[40px] p-6 sm:p-8 md:p-10 lg:p-16 shadow-[0_8px_32px_rgba(0,0,0,0.03)] border border-[#e8ddd0]/50">
             <SectionWatermark type="compass" />
             <PageContextStrip label="Overview · Your Profile at a Glance" />
             
             {/* Hero */}
-            <div className="mb-16 relative z-10">
+            <div className="mb-16 relative z-10 min-w-0 max-w-full">
               <div className="absolute -top-10 -right-10 w-64 h-64 opacity-10 pointer-events-none">
                 <svg viewBox="0 0 100 100" fill="none" stroke="#e8642d" strokeWidth="0.5">
                   <circle cx="50" cy="50" r="45" strokeDasharray="2 4" />
@@ -480,7 +297,7 @@ const AlignmentAdvantage: React.FC = () => {
                 Strategic Playbook · {profile.name}
               </p>
               <h1
-                className="text-6xl font-bold leading-none mb-6"
+                className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6 max-w-full break-words"
                 style={{
                   fontFamily: "Georgia,'Times New Roman',serif",
                   letterSpacing: "-0.03em",
@@ -502,10 +319,10 @@ const AlignmentAdvantage: React.FC = () => {
 
 
             {/* 3-stat summary cards: cream with coral left-border accent */}
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full min-w-0">
               {/* Stat 1: Structure */}
               <div
-                className="rounded-2xl p-5 flex flex-col gap-3"
+                className="rounded-2xl p-5 flex flex-col gap-3 w-full min-w-0"
                 style={{
                   background: C.cream,
                   border: `1px solid ${C.border}60`, boxShadow: "0 4px 24px rgba(0,0,0,0.02)",
@@ -525,7 +342,7 @@ const AlignmentAdvantage: React.FC = () => {
 
               {/* Stat 2: Timing Phase */}
               <div
-                className="rounded-2xl p-5 flex flex-col gap-3"
+                className="rounded-2xl p-5 flex flex-col gap-3 w-full min-w-0"
                 style={{
                   background: C.cream,
                   border: `1px solid ${C.border}60`, boxShadow: "0 4px 24px rgba(0,0,0,0.02)",
@@ -547,7 +364,7 @@ const AlignmentAdvantage: React.FC = () => {
 
               {/* Stat 3: Monthly Signal */}
               <div
-                className="rounded-2xl p-5 flex flex-col gap-3"
+                className="rounded-2xl p-5 flex flex-col gap-3 w-full min-w-0"
                 style={{
                   background: C.cream,
                   border: `1px solid ${C.border}60`, boxShadow: "0 4px 24px rgba(0,0,0,0.02)",
@@ -574,13 +391,13 @@ const AlignmentAdvantage: React.FC = () => {
 
             {/* Wealth archetype highlight */}
             <div
-              className="mt-4 rounded-2xl px-6 py-5 flex items-center justify-between gap-4"
+              className="mt-4 rounded-2xl px-6 py-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4 w-full min-w-0"
               style={{
                 background: `linear-gradient(135deg, ${C.navy}ee, ${C.navyMid}ee)`,
                 border: `1px solid ${C.coral}15`, boxShadow: "0 4px 24px rgba(232,100,45,0.03)",
               }}
             >
-              <div>
+              <div className="w-full min-w-0">
                 <p className="text-[9px] font-bold uppercase tracking-[0.22em] mb-1.5" style={{ color: C.coral }}>
                   Dominant Wealth Archetype
                 </p>
@@ -591,7 +408,10 @@ const AlignmentAdvantage: React.FC = () => {
                   {strategicData.wealthArchetype}
                 </p>
               </div>
-              <p className="text-xs leading-relaxed text-right max-w-xs" style={{ color: "rgba(255,255,255,0.45)" }}>
+              <p
+                className="text-xs leading-relaxed w-full min-w-0 md:max-w-xs md:text-right"
+                style={{ color: "rgba(255,255,255,0.45)" }}
+              >
                 {strategicData.dayun?.coreMessage ?? ""}
               </p>
             </div>
@@ -629,9 +449,7 @@ const AlignmentAdvantage: React.FC = () => {
             />
           )}
 
-          </div>{/* end scrollable content */}
-        </main>
-      </div>
+      </DocumentViewerLayout>
     </PageTransition>
   );
 };

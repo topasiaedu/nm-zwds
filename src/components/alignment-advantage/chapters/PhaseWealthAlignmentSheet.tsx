@@ -8,9 +8,9 @@ import type { WealthCodeKey } from "../../../utils/zwds/analysis_constants/wealt
 import { getPhaseWealthActions } from "../shared/phaseWealthGuidance";
 import {
   SeasonPhaseSvg,
-  PhaseActionsSvg,
   PHASE_LABELS,
 } from "../shared/phaseWealthVisuals";
+import { WhatToDoNowList } from "../shared/WhatToDoNowList";
 
 const PHASE_ACCENT: Record<PhaseAlignmentSeasonKey, string> = {
   expansion: "#16a34a",
@@ -78,32 +78,32 @@ export const PhaseWealthAlignmentSheet: React.FC<PhaseWealthAlignmentSheetProps>
       </div>
 
       {/* Hero: 2×2 cycle grid + side read */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10 min-w-0">
         <div>
           <PhaseCycleGrid activePhaseKey={phaseKey} />
         </div>
 
         <div
-          className="rounded-3xl p-6 flex flex-col justify-center h-full"
+          className="rounded-3xl p-6 flex flex-col justify-center h-full min-w-0"
           style={{
             background: `linear-gradient(160deg, ${phaseAccent}10, ${C.white})`,
             border: `1px solid ${phaseAccent}35`,
             boxShadow: "0 4px 24px rgba(0,0,0,0.03)",
           }}
         >
-          <div className="flex items-start gap-4 mb-5">
+          <div className="flex flex-col sm:flex-row items-start gap-4 mb-5 min-w-0">
             <div
               className="shrink-0 w-16 h-16 rounded-2xl flex items-center justify-center p-2"
               style={{ background: `${phaseAccent}18`, border: `1px solid ${phaseAccent}30` }}
             >
               <SeasonPhaseSvg season={phaseKey} />
             </div>
-            <div>
+            <div className="min-w-0 flex-1 w-full sm:w-auto">
               <p className="text-[9px] font-bold uppercase tracking-[0.18em] mb-1" style={{ color: phaseAccent }}>
                 Your current phase
               </p>
               <p
-                className="text-2xl font-bold leading-tight"
+                className="text-xl sm:text-2xl font-bold leading-tight break-words"
                 style={{ color: C.navy, fontFamily: "Georgia,'Times New Roman',serif" }}
               >
                 {phaseLabel}
@@ -138,26 +138,7 @@ export const PhaseWealthAlignmentSheet: React.FC<PhaseWealthAlignmentSheetProps>
           {actions.length > 0 && (
             <div>
               <SectionLabel index="01" title="What To Do Now" />
-              <div className="rounded-3xl overflow-hidden relative min-h-[220px]" style={{ background: C.white, border: `1px solid ${C.navy}35` }}>
-                <div className="absolute right-5 top-5 w-20 h-20 opacity-5 pointer-events-none">
-                  <PhaseActionsSvg />
-                </div>
-                <div className="p-6 space-y-4 relative z-10">
-                  {actions.map((action, idx) => (
-                    <div key={action} className="flex items-start gap-3">
-                      <span
-                        className="shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold mt-0.5"
-                        style={{ background: `${C.coral}15`, color: C.coral, border: `1px solid ${C.coral}30` }}
-                      >
-                        {idx + 1}
-                      </span>
-                      <p className="text-sm leading-snug" style={{ color: C.navy }}>
-                        {action}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </div>
+              <WhatToDoNowList actions={actions} />
             </div>
           )}
 

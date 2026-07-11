@@ -18,6 +18,10 @@ import { Link } from "react-router-dom";
 import PageTransition from "../../components/PageTransition";
 import { useAlertContext } from "../../context/AlertContext";
 import ConfirmationModal from "../../components/ConfirmationModal";
+import CommandCentreShell from "../../components/layout/CommandCentreShell";
+import { useAppNavItems } from "../../hooks/useAppNavItems";
+import { useTheme } from "../../hooks/useTheme";
+import { getShellTokens, type ShellTokens } from "../../styles/shellTheme";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Design tokens — Cae Goh slide palette
@@ -61,53 +65,6 @@ const OrbitalRing: React.FC<{ className?: string }> = ({ className = "" }) => (
     <circle cx="530" cy="80" r="3" fill={`${C.coral}60`} />
     <circle cx="80" cy="310" r="2" fill={`${C.gold}60`} />
   </svg>
-);
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Sidebar nav item
-// ─────────────────────────────────────────────────────────────────────────────
-
-const NavItem: React.FC<{
-  to:      string;
-  icon:    React.ReactNode;
-  label:   string;
-  active?: boolean;
-  badge?:  string;
-}> = ({ to, icon, label, active = false, badge }) => (
-  <Link
-    to={to}
-    className="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-150"
-    style={{
-      background: active
-        ? `linear-gradient(90deg, ${C.coral}33, ${C.coral}11)`
-        : "transparent",
-      color:      active ? C.coral : "rgba(255,255,255,0.48)",
-      borderLeft: active ? `2px solid ${C.coral}` : "2px solid transparent",
-    }}
-    onMouseEnter={(e) => {
-      if (!active) {
-        e.currentTarget.style.color = "rgba(255,255,255,0.88)";
-        e.currentTarget.style.background = "rgba(255,255,255,0.06)";
-      }
-    }}
-    onMouseLeave={(e) => {
-      if (!active) {
-        e.currentTarget.style.color = "rgba(255,255,255,0.48)";
-        e.currentTarget.style.background = "transparent";
-      }
-    }}
-  >
-    <span className="w-4 h-4 shrink-0">{icon}</span>
-    <span className="text-xs font-semibold truncate flex-1">{label}</span>
-    {badge !== undefined && (
-      <span
-        className="shrink-0 rounded-full px-1.5 py-0.5 text-[9px] font-bold"
-        style={{ background: C.coral, color: C.white }}
-      >
-        {badge}
-      </span>
-    )}
-  </Link>
 );
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -414,6 +371,7 @@ interface ToolCardProps {
   variant?:      "coral" | "navy";
   premium?:      boolean;
   disabled?:     boolean;
+  tokens:        ShellTokens;
 }
 
 const CARD_GRADIENTS: Record<"coral" | "navy", string> = {
@@ -423,7 +381,7 @@ const CARD_GRADIENTS: Record<"coral" | "navy", string> = {
 };
 
 const ToolCard: React.FC<ToolCardProps> = ({
-  to, illustration, title, description, variant = "coral", premium = false, disabled = false,
+  to, illustration, title, description, variant = "coral", premium = false, disabled = false, tokens,
 }) => {
   const IllustrationComponent = ILLUSTRATIONS[illustration];
   return (
@@ -452,7 +410,7 @@ const ToolCard: React.FC<ToolCardProps> = ({
         {/* Premium badge */}
         {premium && (
           <span
-            className="absolute top-3 right-3 rounded-full px-2 py-0.5 text-[8px] font-bold uppercase tracking-widest z-10"
+            className="hidden md:inline-flex absolute top-3 right-3 rounded-full px-2 py-0.5 text-[8px] font-bold uppercase tracking-widest z-10"
             style={{ background: "rgba(255,255,255,0.20)", color: C.white }}
           >
             Premium
@@ -463,25 +421,25 @@ const ToolCard: React.FC<ToolCardProps> = ({
         </div>
       </div>
 
-      {/* ── BOTTOM: Light cream body ── */}
+      {/* ── BOTTOM: Content body — cream in light, elevated surface in dark ── */}
       <div
         className="flex flex-col gap-2 px-4 pt-3.5 pb-4"
         style={{
-          background: C.cream,
-          border: `1px solid ${C.border}`,
+          background: tokens.contentPanelBg,
+          border: `1px solid ${tokens.cardBorder}`,
           borderTop: "none",
         }}
       >
-        <p className="text-sm font-bold leading-tight" style={{ color: C.navy }}>
+        <p className="text-sm font-bold leading-tight" style={{ color: tokens.textPrimary }}>
           {title}
         </p>
-        <p className="text-xs leading-relaxed" style={{ color: C.muted }}>
+        <p className="text-xs leading-relaxed" style={{ color: tokens.textMuted }}>
           {description}
         </p>
         {/* CTA */}
         <div
           className="flex items-center gap-1 pt-2 mt-0.5"
-          style={{ borderTop: `1px solid ${C.border}`, color: C.coral }}
+          style={{ borderTop: `1px solid ${tokens.cardBorder}`, color: C.coral }}
         >
           <span className="text-[11px] font-bold">Open</span>
           <svg
@@ -504,7 +462,8 @@ const SectionHeader: React.FC<{
   label:  string;
   right?: React.ReactNode;
   badge?: string;
-}> = ({ label, right, badge }) => (
+  tokens: ShellTokens;
+}> = ({ label, right, badge, tokens }) => (
   <div className="mb-6">
     <div
       className="w-full h-0.5 mb-4 rounded-full"
@@ -513,12 +472,12 @@ const SectionHeader: React.FC<{
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-2.5">
         <Sparkle size={10} color={C.coral} />
-        <h2 className="text-xs font-bold uppercase tracking-[0.2em]" style={{ color: C.navy }}>
+        <h2 className="text-xs font-bold uppercase tracking-[0.2em]" style={{ color: tokens.textPrimary }}>
           {label}
         </h2>
         {badge !== undefined && (
           <span
-            className="rounded-full px-2 py-0.5 text-[10px] font-bold"
+            className="hidden md:inline-flex rounded-full px-2 py-0.5 text-[10px] font-bold"
             style={{ background: `${C.coral}18`, color: C.coral }}
           >
             {badge}
@@ -531,52 +490,9 @@ const SectionHeader: React.FC<{
 );
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Sidebar section label
-// ─────────────────────────────────────────────────────────────────────────────
-
-const SidebarSection: React.FC<{ label: string }> = ({ label }) => (
-  <div className="flex items-center gap-2 px-3 mt-5 mb-2">
-    <div className="w-3 h-px rounded-full" style={{ background: `${C.coral}50` }} />
-    <p className="text-[9px] font-bold uppercase tracking-[0.22em]" style={{ color: `${C.coral}80` }}>
-      {label}
-    </p>
-  </div>
-);
-
-// ─────────────────────────────────────────────────────────────────────────────
 // SVG icons
 // ─────────────────────────────────────────────────────────────────────────────
 
-const IconChart = (
-  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" className="w-full h-full" aria-hidden="true">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />
-  </svg>
-);
-const IconCalc = (
-  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" className="w-full h-full" aria-hidden="true">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
-  </svg>
-);
-const IconNav = (
-  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" className="w-full h-full" aria-hidden="true">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M13 10V3L4 14h7v7l9-11h-7z" />
-  </svg>
-);
-const IconAI = (
-  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" className="w-full h-full" aria-hidden="true">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-  </svg>
-);
-const IconReport = (
-  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" className="w-full h-full" aria-hidden="true">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-  </svg>
-);
-const IconAlign = (
-  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" className="w-full h-full" aria-hidden="true">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-  </svg>
-);
 const IconDelete = (
   <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" className="w-4 h-4" aria-hidden="true">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -601,6 +517,12 @@ const Dashboard: React.FC = () => {
     tier,
   } = useTierAccess();
 
+  const { items: appNavItems, chartUrl, destinyNavigatorUrl } = useAppNavItems({
+    activeKey: "dashboard",
+  });
+  const { isDark } = useTheme();
+  const tokens = getShellTokens(isDark);
+
   const [deleteConfirmation, setDeleteConfirmation] = useState<{
     isOpen:      boolean;
     profileId:   string;
@@ -609,15 +531,6 @@ const Dashboard: React.FC = () => {
 
   const displayName =
     user?.user_metadata?.display_name || user?.email?.split("@")[0] || "User";
-
-  const selfProfile = React.useMemo(
-    () => profiles.find((p) => p.is_self),
-    [profiles]
-  );
-
-  const destinyNavigatorUrl = selfProfile
-    ? `/destiny-navigator/${selfProfile.id}`
-    : "/calculate";
 
   const recentProfiles = React.useMemo(
     () =>
@@ -649,8 +562,6 @@ const Dashboard: React.FC = () => {
     }
   };
 
-  const chartUrl = tier === "tier3" && !isAdmin ? "/tier3-result" : "/chart";
-
   const greeting = (): string => {
     const h = new Date().getHours();
     if (h < 12) return "Good morning,";
@@ -658,128 +569,39 @@ const Dashboard: React.FC = () => {
     return "Good evening,";
   };
 
-  const dateLabel = new Date().toLocaleDateString("en-US", {
-    weekday: "long", month: "long", day: "numeric", year: "numeric",
-  });
+  const userInitial = displayName.trim().length > 0
+    ? displayName.trim().charAt(0).toUpperCase()
+    : "?";
+
+  const getProfileResultUrl = (profileId: string): string =>
+    tier === "tier3" && !isAdmin
+      ? `/tier3-result/${profileId}`
+      : `/result/${profileId}`;
+
+  const formatProfileDob = (birthday: string): string =>
+    new Date(birthday).toLocaleDateString("en-US", {
+      month: "short", day: "numeric", year: "numeric",
+    });
+
+  const formatProfileGender = (gender: string): string =>
+    gender === "male" ? t("dashboard.table.male") : t("dashboard.table.female");
 
   return (
     <PageTransition>
-      {/* position:fixed to completely escape MainLayout container constraints */}
-      <div
-        style={{
-          position: "fixed",
-          inset: 0,
-          display: "flex",
-          zIndex: 40,
-          overflow: "hidden",
-        }}
-      >
-
-        {/* ── LEFT SIDEBAR ─────────────────────────────────────────────────── */}
-        <aside
-          className="shrink-0 flex flex-col overflow-y-auto relative"
-          style={{
-            width: 230,
-            height: "100%",
-            background: `linear-gradient(180deg, #0f1230 0%, ${C.navy} 40%, #0e1228 100%)`,
-          }}
-        >
-          {/*
-           * Subtle dot-pattern texture overlay — matches slide halftone bg.
-           * Done with a repeating radial-gradient.
-           */}
-          <div
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              backgroundImage: `radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px)`,
-              backgroundSize: "20px 20px",
-            }}
-          />
-
-          {/* ── Brand header ── */}
-          <div className="relative px-5 pt-6 pb-5">
-            {/* Coral glow behind brand */}
-            <div
-              className="absolute top-0 left-0 right-0 h-24 pointer-events-none"
-              style={{
-                background: `radial-gradient(ellipse 80% 80% at 50% 0%, ${C.coral}22 0%, transparent 70%)`,
-              }}
-            />
-            <div className="relative">
-              <div className="flex items-center gap-2 mb-3">
-                <Sparkle size={14} color={C.coral} />
-                <Sparkle size={8} color={`${C.coral}70`} />
-              </div>
-              <p
-                className="text-[10px] font-bold uppercase tracking-[0.26em] mb-1"
-                style={{ color: C.coral }}
-              >
-                Purple Star Astrology
-              </p>
-              <p className="text-xl font-bold text-white leading-tight">紫微斗数</p>
-              <p className="text-[10px] mt-1" style={{ color: "rgba(255,255,255,0.30)" }}>
-                {profiles.length} saved profiles
-              </p>
-            </div>
-          </div>
-
-          {/* Divider */}
-          <div
-            className="mx-5 mb-2"
-            style={{
-              height: 1,
-              background: `linear-gradient(90deg, ${C.coral}50, transparent)`,
-            }}
-          />
-
-          {/* ── Navigation ── */}
-          <nav className="relative flex-1 px-3 py-2">
-            <SidebarSection label="Charts" />
-            <NavItem to={chartUrl} icon={IconChart} label="My Chart" />
-            <NavItem
-              to="/calculate"
-              icon={IconCalc}
-              label="Calculate"
-              badge={profiles.length > 0 ? String(profiles.length) : undefined}
-            />
-
-            {(hasDestinyNavigatorTool || hasAIAssistant) && (
-              <>
-                <SidebarSection label="Tools" />
-                {hasDestinyNavigatorTool && (
-                  <NavItem to={destinyNavigatorUrl} icon={IconNav} label="Destiny Navigator" />
-                )}
-                {hasAIAssistant && (
-                  <NavItem to="/destiny-wealth-navigator" icon={IconAI} label="AI Wealth Assistant" />
-                )}
-              </>
-            )}
-
-            {(hasFounderReport || hasAlignmentAdvantage) && (
-              <>
-                <SidebarSection label="Premium Reports" />
-                {hasFounderReport && (
-                  <NavItem to="/founder-report" icon={IconReport} label="Founder Report" />
-                )}
-                {hasAlignmentAdvantage && (
-                  <NavItem to="/alignment-advantage" icon={IconAlign} label="Alignment Advantage" />
-                )}
-              </>
-            )}
-
-          </nav>
-
-          {/* ── User footer ── */}
-          <div
-            className="relative px-5 py-4"
-            style={{ borderTop: "1px solid rgba(255,255,255,0.07)", background: "transparent" }}
-          >
+      <CommandCentreShell
+        brandLabel="Purple Star Astrology"
+        brandSubLabel={`${profiles.length} saved profiles`}
+        contextTitle="Dashboard"
+        contextSubtitle={`${profiles.length} saved profiles`}
+        appNavItems={appNavItems}
+        sidebarFooter={(
+          <div className="px-5 py-4">
             <div className="flex items-center gap-2.5">
               <div
                 className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0 border border-white/30"
                 style={{ background: "rgba(255,255,255,0.15)", color: C.white }}
               >
-                {displayName.charAt(0).toUpperCase()}
+                {userInitial}
               </div>
               <div className="min-w-0 flex-1">
                 <p className="text-xs font-bold text-white truncate">{displayName}</p>
@@ -790,62 +612,23 @@ const Dashboard: React.FC = () => {
               <Sparkle size={10} color="rgba(255,255,255,0.60)" />
             </div>
           </div>
-        </aside>
-
-        {/* ── MAIN CONTENT AREA ────────────────────────────────────────────── */}
-        <main
-          className="flex-1 overflow-y-auto relative"
-          style={{
-            background: `
-              radial-gradient(ellipse 70% 55% at 95% 0%,   #fcd5b0 0%, transparent 55%),
-              radial-gradient(ellipse 55% 45% at 5%  100%, #fcd8c0 0%, transparent 50%),
-              linear-gradient(155deg, #fef8f0 0%, #fdf3e8 45%, #f8ece0 100%)
-            `,
-          }}
-        >
+        )}
+      >
+        <div className="relative min-w-0">
           {/* Orbital ring decoration */}
           <div
-            className="absolute pointer-events-none"
+            className="absolute pointer-events-none hidden sm:block"
             style={{ top: -60, right: -80, width: 520, height: 360, opacity: 0.9 }}
           >
             <OrbitalRing className="w-full h-full" />
           </div>
 
-          {/* ── Session tag banner ── */}
-          <div
-            className="relative w-full px-10 py-2.5 flex items-center gap-3"
-            style={{
-              background: `linear-gradient(90deg, ${C.navy} 0%, #252b62 50%, #2e3575 100%)`,
-            }}
-          >
-            <Sparkle size={10} color={C.coral} />
-            <p
-              className="text-[9px] font-bold uppercase tracking-[0.28em]"
-              style={{ color: C.coral }}
-            >
-              CAE GOH
-            </p>
-            <div
-              className="flex-1 h-px mx-2"
-              style={{
-                background: `linear-gradient(90deg, ${C.coral}55 0%, ${C.coral}10 60%, transparent 100%)`,
-              }}
-            />
-            <Sparkle size={7} color={`${C.coral}80`} />
-            <p
-              className="text-[9px] font-semibold uppercase tracking-[0.14em]"
-              style={{ color: "rgba(255,255,255,0.38)" }}
-            >
-              {dateLabel}
-            </p>
-          </div>
-
-          <div className="relative px-10 py-10">
+          <div className="relative px-4 sm:px-6 md:px-10 py-6 md:py-10 min-w-0">
 
             {/* ── Welcome Hero ── */}
-            <header className="mb-14 relative">
+            <header className="mb-8 md:mb-14 relative">
               <div
-                className="absolute pointer-events-none"
+                className="absolute pointer-events-none hidden sm:block"
                 style={{
                   top: -20, left: -30,
                   width: 400, height: 130,
@@ -853,15 +636,15 @@ const Dashboard: React.FC = () => {
                   filter: "blur(32px)",
                 }}
               />
-              <div className="relative">
+              <div className="relative min-w-0">
                 <p
-                  className="text-lg font-semibold mb-0.5"
-                  style={{ color: C.muted, fontFamily: "Georgia, 'Times New Roman', serif" }}
+                  className="text-base sm:text-lg font-semibold mb-0.5"
+                  style={{ color: tokens.textMuted, fontFamily: "Georgia, 'Times New Roman', serif" }}
                 >
                   {greeting()}
                 </p>
                 <h1
-                  className="text-5xl font-bold leading-none mb-4"
+                  className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight mb-3 md:mb-4 break-words"
                   style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
                 >
                   <span
@@ -873,9 +656,9 @@ const Dashboard: React.FC = () => {
                   >
                     {displayName}
                   </span>
-                  <Sparkle size={18} color={C.coral} className="inline ml-3 mb-1" />
+                  <Sparkle size={18} color={C.coral} className="inline ml-2 sm:ml-3 mb-1" />
                 </h1>
-                <p className="text-sm font-medium" style={{ color: C.muted }}>
+                <p className="text-sm font-medium" style={{ color: tokens.textMuted }}>
                   Your{" "}
                   <span style={{ color: C.coral, fontWeight: 700 }}>Purple Star Astrology</span>
                   {" "}analytics and tools
@@ -884,10 +667,10 @@ const Dashboard: React.FC = () => {
             </header>
 
             {/* ── Tools Grid ── */}
-            <section className="mb-14">
-              <SectionHeader label="Your Tools" />
+            <section className="mb-8 md:mb-14">
+              <SectionHeader label="Your Tools" tokens={tokens} />
 
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-5">
                 {/* Featured tools — coral gradient, bespoke illustration */}
                 <ToolCard
                   to={chartUrl}
@@ -895,6 +678,7 @@ const Dashboard: React.FC = () => {
                   title={t("dashboard.actions.myChart.title")}
                   description={t("dashboard.actions.myChart.description")}
                   variant="coral"
+                  tokens={tokens}
                 />
                 <ToolCard
                   to="/calculate"
@@ -902,6 +686,7 @@ const Dashboard: React.FC = () => {
                   title={t("dashboard.actions.calculate.title")}
                   description={t("dashboard.actions.calculate.description")}
                   variant="coral"
+                  tokens={tokens}
                 />
                 {hasAlignmentAdvantage && (
                   <ToolCard
@@ -911,6 +696,7 @@ const Dashboard: React.FC = () => {
                     description="Your Structure, Timing & Wealth Strategy"
                     variant="coral"
                     premium
+                    tokens={tokens}
                   />
                 )}
 
@@ -921,6 +707,7 @@ const Dashboard: React.FC = () => {
                     title="Destiny Navigator"
                     description="Analyse life aspects across timeframes"
                     variant="coral"
+                    tokens={tokens}
                   />
                 )}
                 {hasAIAssistant && (
@@ -930,6 +717,7 @@ const Dashboard: React.FC = () => {
                     title="Destiny Wealth Navigator AI"
                     description="AI-powered astrology insights and guidance"
                     variant="coral"
+                    tokens={tokens}
                   />
                 )}
                 {hasFounderReport && (
@@ -940,6 +728,7 @@ const Dashboard: React.FC = () => {
                     description="Strategic business and wealth insights"
                     variant="coral"
                     premium
+                    tokens={tokens}
                   />
                 )}
               </div>
@@ -950,6 +739,7 @@ const Dashboard: React.FC = () => {
               <SectionHeader
                 label="Recent Profiles"
                 badge={`${profiles.length} saved`}
+                tokens={tokens}
                 right={
                   <Link
                     to="/calculate"
@@ -971,111 +761,211 @@ const Dashboard: React.FC = () => {
                   />
                 </div>
               ) : recentProfiles.length > 0 ? (
-                <div
-                  className="rounded-2xl overflow-hidden border"
-                  style={{ borderColor: C.border, background: C.white }}
-                >
-                  {/* Navy→coral gradient bar at table top */}
-                  <div
-                    className="w-full h-0.5"
-                    style={{
-                      background: `linear-gradient(90deg, ${C.navy} 0%, ${C.coral} 100%)`,
-                    }}
-                  />
-                  <table className="w-full">
-                    <thead>
-                      <tr
-                        style={{
-                          borderBottom: `1px solid ${C.border}`,
-                          background: `${C.cream}dd`,
-                        }}
+                <>
+                  {/* Mobile: card list */}
+                  <div className="md:hidden flex flex-col gap-3">
+                    {recentProfiles.map((profile) => (
+                      <article
+                        key={profile.id}
+                        className="rounded-2xl overflow-hidden border"
+                        style={{ borderColor: tokens.cardBorder, background: tokens.cardBg }}
                       >
-                        {["Name", "Date of Birth", "Gender", "Action"].map((h) => (
-                          <th
-                            key={h}
-                            scope="col"
-                            className="px-5 py-3 text-left text-[10px] font-bold uppercase tracking-[0.16em]"
-                            style={{ color: C.muted }}
-                          >
-                            {h}
-                          </th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {recentProfiles.map((profile, idx) => (
-                        <tr
-                          key={profile.id}
+                        <div
+                          className="w-full h-0.5"
                           style={{
-                            borderBottom:
-                              idx < recentProfiles.length - 1
-                                ? `1px solid ${C.border}`
-                                : "none",
+                            background: `linear-gradient(90deg, ${C.navy} 0%, ${C.coral} 100%)`,
                           }}
-                          className="transition-colors hover:bg-orange-50/40"
-                        >
-                          <td className="px-5 py-3.5">
-                            <p className="text-sm font-semibold" style={{ color: C.text }}>
-                              {profile.name}
-                            </p>
-                          </td>
-                          <td className="px-5 py-3.5">
-                            <p className="text-sm" style={{ color: C.muted }}>
-                              {new Date(profile.birthday).toLocaleDateString("en-US", {
-                                month: "short", day: "numeric", year: "numeric",
-                              })}
-                            </p>
-                          </td>
-                          <td className="px-5 py-3.5">
-                            <p className="text-sm capitalize" style={{ color: C.muted }}>
-                              {profile.gender === "male"
-                                ? t("dashboard.table.male")
-                                : t("dashboard.table.female")}
-                            </p>
-                          </td>
-                          <td className="px-5 py-3.5">
-                            <div className="flex items-center gap-3">
-                              <Link
-                                to={
-                                  tier === "tier3" && !isAdmin
-                                    ? `/tier3-result/${profile.id}`
-                                    : `/result/${profile.id}`
-                                }
-                                className="text-xs font-bold transition-colors"
-                                style={{ color: C.coral }}
-                                onMouseEnter={(e) => { e.currentTarget.style.color = C.coralDark; }}
-                                onMouseLeave={(e) => { e.currentTarget.style.color = C.coral; }}
+                        />
+                        <div className="p-4">
+                          <p className="text-base font-semibold leading-tight" style={{ color: tokens.textPrimary }}>
+                            {profile.name}
+                          </p>
+
+                          <dl className="mt-3 grid grid-cols-2 gap-3">
+                            <div>
+                              <dt
+                                className="text-[10px] font-bold uppercase tracking-[0.14em]"
+                                style={{ color: tokens.textMuted }}
                               >
-                                View
-                              </Link>
-                              <button
-                                type="button"
-                                onClick={() => { handleDeleteClick(profile.id, profile.name); }}
-                                className="transition-colors p-1 rounded"
-                                style={{ color: "#d0c8c0" }}
-                                onMouseEnter={(e) => { e.currentTarget.style.color = "#e74c3c"; }}
-                                onMouseLeave={(e) => { e.currentTarget.style.color = "#d0c8c0"; }}
-                                title={t("dashboard.table.delete")}
-                              >
-                                {IconDelete}
-                              </button>
+                                Date of Birth
+                              </dt>
+                              <dd className="mt-0.5 text-sm" style={{ color: tokens.textPrimary }}>
+                                {formatProfileDob(profile.birthday)}
+                              </dd>
                             </div>
-                          </td>
+                            <div>
+                              <dt
+                                className="text-[10px] font-bold uppercase tracking-[0.14em]"
+                                style={{ color: tokens.textMuted }}
+                              >
+                                Gender
+                              </dt>
+                              <dd className="mt-0.5 text-sm capitalize" style={{ color: tokens.textPrimary }}>
+                                {formatProfileGender(profile.gender)}
+                              </dd>
+                            </div>
+                          </dl>
+
+                          <div
+                            className="mt-4 flex items-center gap-2 pt-3"
+                            style={{ borderTop: `1px solid ${tokens.cardBorder}` }}
+                          >
+                            <Link
+                              to={getProfileResultUrl(profile.id)}
+                              className="flex-1 inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-bold transition-opacity hover:opacity-90"
+                              style={{
+                                background: `linear-gradient(135deg, ${C.coral}, ${C.coralDark})`,
+                                color: C.white,
+                              }}
+                            >
+                              View
+                              <svg
+                                className="w-3 h-3"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2.5}
+                                  d="M9 5l7 7-7 7"
+                                />
+                              </svg>
+                            </Link>
+                            <button
+                              type="button"
+                              onClick={() => { handleDeleteClick(profile.id, profile.name); }}
+                              className="inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl text-xs font-semibold transition-colors"
+                              style={{
+                                color: tokens.textMuted,
+                                background: tokens.tableHeaderBg,
+                                border: `1px solid ${tokens.cardBorder}`,
+                              }}
+                              onMouseEnter={(e) => {
+                                e.currentTarget.style.color = "#e74c3c";
+                                e.currentTarget.style.borderColor = "#e74c3c55";
+                              }}
+                              onMouseLeave={(e) => {
+                                e.currentTarget.style.color = tokens.textMuted;
+                                e.currentTarget.style.borderColor = tokens.cardBorder;
+                              }}
+                              aria-label={`${t("dashboard.table.delete")} ${profile.name}`}
+                            >
+                              {IconDelete}
+                              <span>{t("dashboard.table.delete")}</span>
+                            </button>
+                          </div>
+                        </div>
+                      </article>
+                    ))}
+                  </div>
+
+                  {/* Desktop: table */}
+                  <div
+                    className="hidden md:block rounded-2xl overflow-hidden border"
+                    style={{ borderColor: tokens.cardBorder, background: tokens.cardBg }}
+                  >
+                    <div
+                      className="w-full h-0.5"
+                      style={{
+                        background: `linear-gradient(90deg, ${C.navy} 0%, ${C.coral} 100%)`,
+                      }}
+                    />
+                    <table className="w-full">
+                      <thead>
+                        <tr
+                          style={{
+                            borderBottom: `1px solid ${tokens.cardBorder}`,
+                            background: tokens.tableHeaderBg,
+                          }}
+                        >
+                          {["Name", "Date of Birth", "Gender", "Action"].map((h) => (
+                            <th
+                              key={h}
+                              scope="col"
+                              className="px-5 py-3 text-left text-[10px] font-bold uppercase tracking-[0.16em]"
+                              style={{ color: tokens.textMuted }}
+                            >
+                              {h}
+                            </th>
+                          ))}
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                      </thead>
+                      <tbody>
+                        {recentProfiles.map((profile, idx) => (
+                          <tr
+                            key={profile.id}
+                            style={{
+                              borderBottom:
+                                idx < recentProfiles.length - 1
+                                  ? `1px solid ${tokens.cardBorder}`
+                                  : "none",
+                            }}
+                            className="transition-colors"
+                            onMouseEnter={(e) => {
+                              e.currentTarget.style.background = tokens.rowHoverBg;
+                            }}
+                            onMouseLeave={(e) => {
+                              e.currentTarget.style.background = "transparent";
+                            }}
+                          >
+                            <td className="px-5 py-3.5">
+                              <p className="text-sm font-semibold" style={{ color: tokens.textPrimary }}>
+                                {profile.name}
+                              </p>
+                            </td>
+                            <td className="px-5 py-3.5">
+                              <p className="text-sm" style={{ color: tokens.textMuted }}>
+                                {formatProfileDob(profile.birthday)}
+                              </p>
+                            </td>
+                            <td className="px-5 py-3.5">
+                              <p className="text-sm capitalize" style={{ color: tokens.textMuted }}>
+                                {formatProfileGender(profile.gender)}
+                              </p>
+                            </td>
+                            <td className="px-5 py-3.5">
+                              <div className="flex items-center gap-3">
+                                <Link
+                                  to={getProfileResultUrl(profile.id)}
+                                  className="text-xs font-bold transition-colors"
+                                  style={{ color: C.coral }}
+                                  onMouseEnter={(e) => { e.currentTarget.style.color = C.coralDark; }}
+                                  onMouseLeave={(e) => { e.currentTarget.style.color = C.coral; }}
+                                >
+                                  View
+                                </Link>
+                                <button
+                                  type="button"
+                                  onClick={() => { handleDeleteClick(profile.id, profile.name); }}
+                                  className="transition-colors p-1 rounded"
+                                  style={{ color: tokens.textMuted }}
+                                  onMouseEnter={(e) => { e.currentTarget.style.color = "#e74c3c"; }}
+                                  onMouseLeave={(e) => { e.currentTarget.style.color = tokens.textMuted; }}
+                                  title={t("dashboard.table.delete")}
+                                >
+                                  {IconDelete}
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </>
               ) : (
                 <div
                   className="rounded-2xl border flex flex-col items-center justify-center py-16 text-center"
-                  style={{ borderColor: C.border, background: C.white }}
+                  style={{ borderColor: tokens.cardBorder, background: tokens.cardBg }}
                 >
                   <Sparkle size={32} color={`${C.coral}40`} />
-                  <p className="mt-3 text-sm font-semibold" style={{ color: C.text }}>
+                  <p className="mt-3 text-sm font-semibold" style={{ color: tokens.textPrimary }}>
                     No profiles yet
                   </p>
-                  <p className="text-xs mt-1 mb-6" style={{ color: C.muted }}>
+                  <p className="text-xs mt-1 mb-6" style={{ color: tokens.textMuted }}>
                     Calculate a chart to get started
                   </p>
                   <Link
@@ -1097,8 +987,8 @@ const Dashboard: React.FC = () => {
 
             <div className="h-16" />
           </div>
-        </main>
-      </div>
+        </div>
+      </CommandCentreShell>
 
       <ConfirmationModal
         isOpen={deleteConfirmation.isOpen}

@@ -35,6 +35,7 @@ import Tier3Result from "./pages/tier3-result";
 import DestinyNavigator from "./pages/destiny-navigator";
 import FounderReport from "./pages/founder-report";
 import Profile from "./pages/profile";
+import Settings from "./pages/settings";
 import MembershipExpired from "./pages/membership-expired";
 import MembershipPaused from "./pages/membership-paused";
 import AdminDashboard from "./pages/admin/dashboard";
@@ -218,12 +219,22 @@ const App: React.FC = () => {
                         }
                       />
 
-                      {/* Profile Route */}
+                      {/* Profile Route (redirects to Settings) */}
                       <Route
                         path="/profile"
                         element={
                           <ProtectedRoute>
                             <Profile />
+                          </ProtectedRoute>
+                        }
+                      />
+
+                      {/* Settings Route */}
+                      <Route
+                        path="/settings"
+                        element={
+                          <ProtectedRoute>
+                            <Settings />
                           </ProtectedRoute>
                         }
                       />

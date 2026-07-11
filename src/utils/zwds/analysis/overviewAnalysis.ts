@@ -1,4 +1,5 @@
 import { ChartData, Palace } from "../types";
+import { OPPOSITE_PALACE_INFLUENCE } from "../constants";
 import { DATASET_1 } from "../analysis_constants";
 import {
   buildPersonalityProfiles,
@@ -94,6 +95,48 @@ const findPalaceByName = (chartData: ChartData, palaceName: string): Palace | nu
 };
 
 /**
+ * Whether a palace has any stars used for overview analysis.
+ */
+const hasOverviewStars = (palace: Palace): boolean =>
+  extractStarNamesFromPalace(palace).length > 0;
+
+/**
+ * Whether overview analysis should borrow stars from the opposite palace.
+ * Life palace with no main stars (命无正曜) uses the opposite palace per ZWDS convention.
+ */
+const shouldBorrowOppositePalaceStars = (palace: Palace): boolean =>
+  !palace.mainStar || palace.mainStar.length === 0;
+
+/**
+ * When a palace has no main stars, borrow from its opposite palace (e.g. 命宫 → 迁移).
+ * Matches OPPOSITE_PALACE_INFLUENCE used in nobleman and timing-chart analysis.
+ */
+const resolvePalaceWithOppositeFallback = (
+  chartData: ChartData,
+  palace: Palace | null
+): Palace | null => {
+  if (!palace) {
+    return null;
+  }
+
+  if (!shouldBorrowOppositePalaceStars(palace)) {
+    return palace;
+  }
+
+  const oppositePalaceName =
+    OPPOSITE_PALACE_INFLUENCE[palace.name as keyof typeof OPPOSITE_PALACE_INFLUENCE];
+
+  if (oppositePalaceName) {
+    const oppositePalace = findPalaceByName(chartData, oppositePalaceName);
+    if (oppositePalace && hasOverviewStars(oppositePalace)) {
+      return oppositePalace;
+    }
+  }
+
+  return palace;
+};
+
+/**
  * Resolve the palace used for overview personality analysis.
  */
 const getRelevantPalace = (
@@ -101,16 +144,18 @@ const getRelevantPalace = (
   palaceNumberOverride?: number
 ): Palace | null => {
   if (palaceNumberOverride !== undefined) {
-    const overridePalace = chartData.palaces.find((palace) => palace.number === palaceNumberOverride);
+    const overridePalace = chartData.palaces.find(
+      (palace) => palace.number === palaceNumberOverride
+    );
     if (overridePalace) {
-      return overridePalace;
+      return resolvePalaceWithOppositeFallback(chartData, overridePalace);
     }
     return findPalaceByName(chartData, "迁移");
   }
 
   const lifePalace = findPalaceByName(chartData, "命宫");
   if (lifePalace) {
-    return lifePalace;
+    return resolvePalaceWithOppositeFallback(chartData, lifePalace);
   }
 
   return findPalaceByName(chartData, "迁移");
@@ -199,7 +244,10 @@ const getQuotes = (chartData: ChartData): string[] => {
   const palaceTypes = ["命宫", "财帛", "官禄"];
 
   palaceTypes.forEach((palaceType) => {
-    const palace = findPalaceByName(chartData, palaceType);
+    let palace = findPalaceByName(chartData, palaceType);
+    if (palace && palaceType === "命宫" && shouldBorrowOppositePalaceStars(palace)) {
+      palace = resolvePalaceWithOppositeFallback(chartData, palace);
+    }
     if (palace) {
       const starNames = extractStarNamesFromPalace(palace);
 

@@ -1,10 +1,10 @@
-import React, { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import { Link, Navigate } from "react-router-dom";
-import {
-  BrandGradientText,
-  wrapPhraseInBrandGradient,
-} from "../components/BrandGradientText";
 import PageTransition from "../components/PageTransition";
+import ReportViewerLayout, {
+  type ReportSection,
+} from "../components/layout/ReportViewerLayout";
+import { useAppNavItems } from "../hooks/useAppNavItems";
 import ZWDSChart from "../components/ZWDSChart";
 import { ZWDSCalculator } from "../utils/zwds/calculator";
 import type { ChartData as ZWDSChartData, ChartInput } from "../utils/zwds/types";
@@ -14,18 +14,11 @@ import { useLanguage } from "../context/LanguageContext";
 import { ChartSettingsProvider } from "../context/ChartSettingsContext";
 import ChartSettingsModal from "../components/ChartSettingsModal";
 import { WealthCode } from "../components/analysis_v2";
+import { DestinyBlueprintPageHeader } from "../components/analysis_v2/shared/DestinyBlueprintPageHeader";
 import {
-  founderReportBackButtonClass,
-  founderReportBackIconWrapClass,
-  founderReportContainerClass,
-  founderReportGlowClass,
-  founderReportHeroClass,
-  founderReportHeroLabelClass,
-  founderReportHeroSubtitleClass,
-  founderReportHeroTitleClass,
-  founderReportHeroTitleIconClass,
-  founderReportPageClass,
-} from "../styles/founderReportUi";
+  chartSectionContainerClass,
+  chartSpinnerClass,
+} from "../styles/chartUi";
 
 type SectionChartProps = { chartData: ZWDSChartData };
 type BusinessCalendarSectionProps = { chartData: ZWDSChartData; reportCreatedAt: string };
@@ -58,19 +51,12 @@ const GLASS_CARD_BASE_CLASS =
   "rounded-2xl shadow-2xl overflow-hidden border border-white/10 backdrop-filter backdrop-blur-2xl bg-white/10 hover:bg-white/15 dark:bg-black/10 dark:hover:bg-black/20";
 
 /**
- * PDF export modal local state.
- */
-// NOTE: Founder report currently uses browser print (`window.print()`), not the jsPDF modal flow from `result.tsx`.
-
-/**
  * Narrow gender type used by ZWDS calculator input.
  */
 type Gender = "male" | "female";
 
 /**
  * Founder report profile/chart metadata.
- *
- * Extends `PdfChartData` so it can be used directly for PDF export.
  */
 interface FounderReportChartMeta {
   id: string;
@@ -85,25 +71,18 @@ interface FounderReportChartMeta {
 
 type CalcStatus = "idle" | "running" | "done" | "error";
 
-type SectionId =
-  | "wealth-code"
-  | "wealth-timing"
-  | "talent-strategy"
-  | "business-calendar"
-  | "income-blueprint";
-
-type SectionNavItem = {
-  id: SectionId;
-  label: string;
-  shortLabel: string;
+const CHART_SECTION: ReportSection = {
+  id: "chart",
+  label: "Chart",
+  sub: "12-palace visualization",
 };
 
-const SECTION_NAV: ReadonlyArray<SectionNavItem> = [
-  { id: "wealth-code", label: "01. Wealth Code DNA", shortLabel: "Wealth Code" },
-  { id: "wealth-timing", label: "02. Wealth Timing Cycle", shortLabel: "Timing Cycle" },
-  { id: "talent-strategy", label: "03. Talent Strategy", shortLabel: "Talent" },
-  { id: "business-calendar", label: "04. Business Calendar", shortLabel: "Calendar" },
-  { id: "income-blueprint", label: "05. Income Blueprint", shortLabel: "Income" },
+const FOUNDER_ANALYSIS_SECTIONS: ReportSection[] = [
+  { id: "wealth-code", label: "Wealth Code DNA", sub: "Natural earning style" },
+  { id: "wealth-timing", label: "Wealth Timing Cycle", sub: "Timing cycles" },
+  { id: "talent-strategy", label: "Talent Strategy", sub: "A+ talent strategy" },
+  { id: "income-blueprint", label: "Income Blueprint", sub: "Scalable income" },
+  { id: "business-calendar", label: "Business Calendar", sub: "Founder calendar" },
 ];
 
 const SECTION_DIVIDER_CLASS = "border-t border-gray-200 dark:border-gray-700 my-12";
@@ -224,15 +203,12 @@ const formatHourAsTime = (hour: number): string => {
 
 /**
  * Inner FounderReport page content.
- * Mirrors `src/pages/result.tsx` structure:
- * - Header
- * - Top grid: chart (2/3) + profile sidebar (1/3)
- * - Bottom section: analysis components shell (stack)
  */
 const FounderReportContent: React.FC = () => {
   const { t } = useLanguage();
   const { profiles, loading: profilesLoading } = useProfileContext();
   const { hasFounderReport } = useTierAccess();
+  const { items: appNavItems } = useAppNavItems({ activeKey: "founder-report" });
 
   // Data state
   const [chartMeta, setChartMeta] = useState<FounderReportChartMeta | null>(
@@ -246,30 +222,11 @@ const FounderReportContent: React.FC = () => {
   const [calculatedChartData, setCalculatedChartData] = useState<ZWDSChartData | null>(null);
   const [calcError, setCalcError] = useState<string | null>(null);
 
-  // Scrollspy / section visibility
-  const [activeSection, setActiveSection] = useState<SectionId>("wealth-code");
-  const activeSectionRef = useRef<SectionId>("wealth-code");
-  const sectionVisibilityRef = useRef<Record<SectionId, boolean>>({
-    "wealth-code": false,
-    "wealth-timing": false,
-    "talent-strategy": false,
-    "business-calendar": false,
-    "income-blueprint": false,
-  });
-  const [visibleSections, setVisibleSections] = useState<Record<SectionId, boolean>>({
-    "wealth-code": true,
-    "wealth-timing": true,
-    "talent-strategy": true,
-    "business-calendar": true,
-    "income-blueprint": true,
-  });
+  const reportSections = useMemo((): ReportSection[] => {
+    return [CHART_SECTION, ...FOUNDER_ANALYSIS_SECTIONS];
+  }, []);
 
-  /**
-   * Keep active section in a ref to avoid stale-closure issues in IntersectionObserver callback.
-   */
-  useEffect(() => {
-    activeSectionRef.current = activeSection;
-  }, [activeSection]);
+  const layoutProfileName = chartMeta?.name ?? "Founder Report";
 
   /**
    * Format date for display in UI and PDF export.
@@ -456,7 +413,6 @@ const FounderReportContent: React.FC = () => {
 
   /**
    * Precompute responsive flags for render-time layout tweaks.
-   * (Use `globalThis` to satisfy lint rules and keep DOM assumptions explicit.)
    */
   const isMobileViewport = useMemo((): boolean => {
     return typeof globalThis.innerWidth === "number" ? globalThis.innerWidth < 640 : false;
@@ -485,14 +441,7 @@ const FounderReportContent: React.FC = () => {
     if (calculatedChartData) {
       return (
         <>
-          <section
-            id="wealth-code"
-            className={[
-              "scroll-mt-24 transition-all duration-700 ease-out",
-              visibleSections["wealth-code"] ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2",
-              "print:opacity-100 print:translate-y-0",
-            ].join(" ")}
-          >
+          <section id="wealth-code" className="scroll-mt-16">
             <SectionErrorBoundary title="Wealth Code DNA">
               <MemoWealthCode
                 chartData={calculatedChartData}
@@ -508,14 +457,7 @@ const FounderReportContent: React.FC = () => {
 
           <div className={SECTION_DIVIDER_CLASS} />
 
-          <section
-            id="wealth-timing"
-            className={[
-              "scroll-mt-24 transition-all duration-700 ease-out",
-              visibleSections["wealth-timing"] ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2",
-              "print:opacity-100 print:translate-y-0",
-            ].join(" ")}
-          >
+          <section id="wealth-timing" className="scroll-mt-16">
             <SectionErrorBoundary title="Wealth Timing Cycle">
               <Suspense fallback={<SectionSkeleton title="Wealth Timing Cycle" />}>
                 <WealthTimingCycle chartData={calculatedChartData} />
@@ -525,14 +467,7 @@ const FounderReportContent: React.FC = () => {
 
           <div className={SECTION_DIVIDER_CLASS} />
 
-          <section
-            id="talent-strategy"
-            className={[
-              "scroll-mt-24 transition-all duration-700 ease-out",
-              visibleSections["talent-strategy"] ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2",
-              "print:opacity-100 print:translate-y-0",
-            ].join(" ")}
-          >
+          <section id="talent-strategy" className="scroll-mt-16">
             <SectionErrorBoundary title="A+ Talent Strategy">
               <Suspense fallback={<SectionSkeleton title="A+ Talent Strategy" />}>
                 <TalentStrategy chartData={calculatedChartData} />
@@ -542,14 +477,7 @@ const FounderReportContent: React.FC = () => {
 
           <div className={SECTION_DIVIDER_CLASS} />
 
-          <section
-            id="income-blueprint"
-            className={[
-              "scroll-mt-24 transition-all duration-700 ease-out",
-              visibleSections["income-blueprint"] ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2",
-              "print:opacity-100 print:translate-y-0",
-            ].join(" ")}
-          >
+          <section id="income-blueprint" className="scroll-mt-16">
             <SectionErrorBoundary title="Scalable Income Blueprint">
               <Suspense fallback={<SectionSkeleton title="Scalable Income Blueprint" />}>
                 <IncomeBlueprint chartData={calculatedChartData} />
@@ -559,14 +487,7 @@ const FounderReportContent: React.FC = () => {
 
           <div className={SECTION_DIVIDER_CLASS} />
 
-          <section
-            id="business-calendar"
-            className={[
-              "scroll-mt-24 transition-all duration-700 ease-out",
-              visibleSections["business-calendar"] ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2",
-              "print:opacity-100 print:translate-y-0",
-            ].join(" ")}
-          >
+          <section id="business-calendar" className="scroll-mt-16">
             <SectionErrorBoundary title="Founder Business Calendar">
               <Suspense fallback={<SectionSkeleton title="Founder Business Calendar" />}>
                 <BusinessCalendar
@@ -590,67 +511,30 @@ const FounderReportContent: React.FC = () => {
         </div>
       </div>
     );
-  }, [calcStatus, calculatedChartData, visibleSections, chartMeta]);
+  }, [calcStatus, calculatedChartData, chartMeta]);
 
-  /**
-   * Observe which section is currently in view for the desktop nav and fade-in animations.
-   */
-  useEffect(() => {
-    const ids = SECTION_NAV.map((s) => s.id);
-    const elements = ids
-      .map((id2) => document.getElementById(id2))
-      .filter((el): el is HTMLElement => el instanceof HTMLElement);
-
-    if (elements.length === 0) return () => {};
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        let didChange = false;
-
-        for (const entry of entries) {
-          const target = entry.target;
-          if (!(target instanceof HTMLElement)) continue;
-          const id2 = target.id as SectionId;
-          const isVisible = entry.isIntersecting;
-
-          if (sectionVisibilityRef.current[id2] !== isVisible) {
-            sectionVisibilityRef.current[id2] = isVisible;
-            didChange = true;
-          }
-        }
-
-        if (didChange) {
-          const nextVisible = { ...sectionVisibilityRef.current };
-          setVisibleSections(nextVisible);
-
-          // Pick the first visible section in document order as the active one.
-          const nextActive = SECTION_NAV.find((s) => nextVisible[s.id])?.id ?? activeSectionRef.current;
-          setActiveSection(nextActive);
-        }
-      },
-      {
-        root: null,
-        // Top-biased root margin so a section becomes "active" slightly before center.
-        rootMargin: "-30% 0px -60% 0px",
-        threshold: 0.01,
-      }
-    );
-
-    elements.forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const layoutShell = (
+    shellChildren: React.ReactNode
+  ): React.ReactElement => (
+    <PageTransition>
+      <ReportViewerLayout
+        profileName={layoutProfileName}
+        appNavItems={appNavItems}
+        reportSections={reportSections}
+      >
+        {shellChildren}
+      </ReportViewerLayout>
+    </PageTransition>
+  );
 
   // If loading profiles from context OR tier data, show loading spinner first
   if (profilesLoading || loading) {
-    return (
-      <PageTransition>
-        <div className="container mx-auto px-4 py-8">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
-          </div>
+    return layoutShell(
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <div className={chartSpinnerClass} />
         </div>
-      </PageTransition>
+      </div>
     );
   }
 
@@ -662,94 +546,41 @@ const FounderReportContent: React.FC = () => {
     return <Navigate to="/dashboard" replace />;
   }
 
-  return (
+  return layoutShell(
     <>
-      <div className={founderReportGlowClass} aria-hidden="true" />
-      <PageTransition>
-        <div className={founderReportPageClass}>
-          <div className={founderReportContainerClass}>
-            <header className={founderReportHeroClass}>
-              <Link to="/dashboard" className={founderReportBackButtonClass}>
-                <span className={founderReportBackIconWrapClass} aria-hidden="true">
-                  <svg
-                    className="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M15 19l-7-7 7-7"
-                    />
-                  </svg>
-                </span>
-                <span>{t("general.back") || "Back"}</span>
-              </Link>
-              <p className={founderReportHeroLabelClass}>{"Founder Edition"}</p>
-              <h1 className={founderReportHeroTitleClass}>
-                <svg
-                  className={founderReportHeroTitleIconClass}
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-                {wrapPhraseInBrandGradient(
-                  "Founder Timing Decision System Report",
-                  { phrase: "Founder Timing" }
-                )}
-              </h1>
-              {!error && chartMeta ? (
-                <p className={founderReportHeroSubtitleClass}>
-                  {"Strategic Business Intelligence for "}
-                  <BrandGradientText>{chartMeta.name}</BrandGradientText>
-                </p>
-              ) : null}
-            </header>
-
-        {error ? (
-          // Error state
-          <div className="bg-red-50 dark:bg-red-900/20 p-6 rounded-lg text-center">
-            <svg
-              className="mx-auto h-12 w-12 text-red-500 mb-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-            <h2 className="text-xl font-bold text-red-800 dark:text-red-300 mb-2">
-              {t("general.error") || "Error"}
-            </h2>
-            <p className="text-red-600 dark:text-red-400">{error}</p>
-            <Link
-              to="/dashboard"
-              className="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg inline-block"
-            >
-              {t("general.back") || "Back"}
-            </Link>
-          </div>
-        ) : (
-          chartMeta && (
-            <>
-              {/* Top section: chart + profile sidebar (matches `result.tsx` grid structure) */}
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 sm:gap-3 md:gap-6">
-                {/* Chart visualization */}
+      {error ? (
+        <div className="bg-red-50 dark:bg-red-900/20 p-6 rounded-lg text-center">
+          <svg
+            className="mx-auto h-12 w-12 text-red-500 mb-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+          <h2 className="text-xl font-bold text-red-800 dark:text-red-300 mb-2">
+            {t("general.error") || "Error"}
+          </h2>
+          <p className="text-red-600 dark:text-red-400">{error}</p>
+          <Link
+            to="/dashboard"
+            className="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg inline-block"
+          >
+            {t("general.back") || "Back"}
+          </Link>
+        </div>
+      ) : (
+        chartMeta && (
+          <>
+            <section id="chart" className={`${chartSectionContainerClass} scroll-mt-16`}>
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 sm:gap-3 md:gap-6 w-full">
                 <div className="lg:col-span-2">
                   {calcStatus === "running" || calcStatus === "idle" ? (
                     <ChartSkeleton />
@@ -761,7 +592,7 @@ const FounderReportContent: React.FC = () => {
 
                       {calculatedChartData ? (
                         <div
-                          className="flex-grow overflow-auto p-0"
+                          className="flex-grow overflow-auto p-0 w-full"
                           style={{
                             minHeight: isMobileViewport ? "calc(100vh - 150px)" : undefined,
                           }}
@@ -782,7 +613,6 @@ const FounderReportContent: React.FC = () => {
                   )}
                 </div>
 
-                {/* Profile information */}
                 <div className="lg:col-span-1">
                   <div
                     className={`${GLASS_CARD_BASE_CLASS} transition-all duration-300 p-6 mb-6`}
@@ -832,34 +662,24 @@ const FounderReportContent: React.FC = () => {
                   </div>
                 </div>
               </div>
+            </section>
 
-              {/* Bottom section: Analysis shell ONLY (no analysis components yet) */}
-              <div className="mt-8">
-                <div className="flex flex-col justify-center items-center">
-                  <h2 className="text-2xl sm:text-4xl mb-2 font-bold dark:text-white flex items-center text-center pt-4">
-                    {"FOUNDER REPORT ANALYSIS"}
-                  </h2>
-                  <p className="text-sm sm:text-lg mb-6 dark:text-white text-center italic">
-                    {"A personalized breakdown of your business DNA, timing cycles, and strategic action plans."}
-                  </p>
-                </div>
+            <div className="mt-8">
+              <DestinyBlueprintPageHeader
+                sectionTitle="FOUNDER REPORT ANALYSIS"
+                subtitle="A personalized breakdown of your business DNA, timing cycles, and strategic action plans."
+                className="mb-8"
+              />
 
-                <div className="space-y-8">
-                  {/* 01. Wealth Code DNA - first analysis section (below chart) */}
-                  {analysisBody}
-
-                  {/* Analysis components will be added here in a future iteration. */}
-                </div>
+              <div className="space-y-8">
+                {analysisBody}
               </div>
-            </>
-          )
-        )}
+            </div>
+          </>
+        )
+      )}
 
-        {/* Chart Settings Modal (kept for parity with `result.tsx`) */}
-        <ChartSettingsModal pageType="result" />
-          </div>
-        </div>
-      </PageTransition>
+      <ChartSettingsModal pageType="result" />
     </>
   );
 };
@@ -877,4 +697,3 @@ const FounderReport: React.FC = () => {
 };
 
 export default FounderReport;
-
