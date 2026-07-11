@@ -51,7 +51,7 @@ export interface DocumentChapter {
 export interface DocumentViewerLayoutProps {
   /** Profile or report subject name */
   profileName: string;
-  /** Document title shown in the session tag strip (e.g. "Alignment Advantage") */
+  /** Document title passed to the shell context header (e.g. "Alignment Advantage") */
   contextTitle: string;
   /** Small brand label in sidebar header */
   brandLabel?: string;
@@ -212,12 +212,6 @@ const DocumentViewerLayout: React.FC<DocumentViewerLayoutProps> = ({
 
   const sheetBackground = shellTokens.sheetBg;
 
-  const dateLabel = new Date().toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
-
   const chapterNavSlot = chapters.length > 0 ? (
     <>
       <nav className="px-3 py-4" aria-label="Document chapters">
@@ -366,46 +360,6 @@ const DocumentViewerLayout: React.FC<DocumentViewerLayoutProps> = ({
         mobileTopExtra={mobileTopExtra}
         onSidebarCloseRef={sidebarCloseRef}
       >
-        <div
-          className="sticky top-0 z-10 w-full px-4 sm:px-8 py-2.5 flex items-center gap-2 sm:gap-3 min-w-0"
-          style={{ background: shellTokens.sessionTagBarBg }}
-        >
-          <span className="shrink-0">
-            <Sparkle size={10} color={C.coral} />
-          </span>
-          <p
-            className="text-[9px] font-bold uppercase tracking-[0.28em] shrink-0"
-            style={{ color: C.coral }}
-          >
-            {contextTitle}
-          </p>
-          <div
-            className="flex-1 h-px mx-1 sm:mx-2 min-w-0"
-            style={{
-              background: `linear-gradient(90deg, ${C.coral}55 0%, ${C.coral}10 60%, transparent 100%)`,
-            }}
-          />
-          <p
-            className="text-[9px] font-semibold uppercase tracking-[0.14em] truncate shrink-0"
-            style={{ color: shellTokens.contextBarMuted }}
-          >
-            {profileName}
-          </p>
-          <span
-            className="text-[9px] shrink-0 hidden sm:inline"
-            style={{ color: "rgba(255,255,255,0.2)" }}
-            aria-hidden="true"
-          >
-            ·
-          </span>
-          <p
-            className="text-[9px] font-semibold uppercase tracking-[0.14em] truncate shrink-0 hidden sm:block"
-            style={{ color: shellTokens.contextBarMuted }}
-          >
-            {dateLabel}
-          </p>
-        </div>
-
         <div className="px-4 sm:px-8 py-8 max-w-4xl mx-auto w-full min-w-0 space-y-12">
           {children}
         </div>
