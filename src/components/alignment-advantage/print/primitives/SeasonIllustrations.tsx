@@ -63,7 +63,7 @@ export const CompactTimingTable: React.FC<{ rows: TimingRow[] }> = ({ rows }) =>
       Strategic Timing
     </p>
     <h2 style={{ fontSize: 24, fontWeight: 800, color: "#1a1e3f", marginBottom: 6 }}>
-      12-Month Roadmap — {CURRENT_YEAR}
+      12-Month Roadmap: {CURRENT_YEAR}
     </h2>
     <div style={{ borderTop: "1px solid rgba(107,91,149,0.14)", marginBottom: 20, marginTop: 12 }} />
     <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 11 }}>

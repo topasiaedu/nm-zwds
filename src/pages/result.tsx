@@ -838,9 +838,9 @@ const ResultContent: React.FC = () => {
                   "Sorting your chart into neat pages you can save or print..."
                 : elapsedMs < 38_000
                   ? t("pdfExport.serverPhase2") ||
-                    "Still working—full reports like yours can take a little longer..."
+                    "Still working. Full reports like yours can take a little longer..."
                   : t("pdfExport.serverPhase3") ||
-                    "Almost there—just tidying the last details...";
+                    "Almost there. Just tidying the last details...";
             setPdfExportModal((prev) => ({
               ...prev,
               progress: {

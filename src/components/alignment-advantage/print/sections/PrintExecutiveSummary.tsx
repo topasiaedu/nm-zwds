@@ -25,22 +25,22 @@ export const PrintExecutiveSummary: React.FC<PrintExecutiveSummaryProps> = ({
     {
       num: 1,
       label: "Wealth Archetype",
-      value: `${wealthAnalysis.dominantArchetype} — ${wTypeProfile.tagline}`,
+      value: `${wealthAnalysis.dominantArchetype}: ${wTypeProfile.tagline}`,
     },
     ...(dayunGuidance !== null ? [{
       num: 2,
       label: "Life Season",
-      value: `${dayunGuidance.season.charAt(0).toUpperCase()}${dayunGuidance.season.slice(1)} Season${dayunGuidance.coreMessage.length > 0 ? ` — ${dayunGuidance.coreMessage}` : ""}`,
+      value: `${dayunGuidance.season.charAt(0).toUpperCase()}${dayunGuidance.season.slice(1)} Season${dayunGuidance.coreMessage.length > 0 ? `: ${dayunGuidance.coreMessage}` : ""}`,
     }] : []),
     ...(dayunGuidance !== null ? [{
       num: 3,
       label: "Current Cycle Phase",
-      value: `${dayunGuidance.phase.charAt(0).toUpperCase()}${dayunGuidance.phase.slice(1)} Phase (${dayunGuidance.startYear}–${dayunGuidance.endYear})`,
+      value: `${dayunGuidance.phase.charAt(0).toUpperCase()}${dayunGuidance.phase.slice(1)} Phase (${dayunGuidance.startYear}-${dayunGuidance.endYear})`,
     }] : []),
     ...(currentMonthPalaceData !== null ? [{
       num: 4,
       label: "This Month",
-      value: `${currentMonthPalaceData.area} — ${currentMonthPalaceData.priority}. ${getSignalColor(currentMonthPalaceData.stars) === "green" ? "Green light — execute." : getSignalColor(currentMonthPalaceData.stars) === "yellow" ? "Yellow light — proceed with caution." : "Red light — protect your position."}`,
+      value: `${currentMonthPalaceData.area}: ${currentMonthPalaceData.priority}. ${getSignalColor(currentMonthPalaceData.stars) === "green" ? "Green light: execute." : getSignalColor(currentMonthPalaceData.stars) === "yellow" ? "Yellow light: proceed with caution." : "Red light: protect your position."}`,
     }] : []),
     ...(currentMonthPalaceData !== null ? [{
       num: 5,

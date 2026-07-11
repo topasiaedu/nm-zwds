@@ -12,7 +12,7 @@ export type PrintIdealCollaboratorProps = Pick<AlignmentAdvantageData, "wealthKe
 const COLLABORATION_RED_FLAGS: [string, string, string] = [
   "No clear ownership structure or equity agreement in writing before work begins",
   "Avoids discussing numbers, margins, or financial accountability",
-  "Confuses activity with output — busy but unable to show measurable results",
+  "Confuses activity with output: busy but unable to show measurable results",
 ];
 
 export const PrintIdealCollaborator: React.FC<PrintIdealCollaboratorProps> = ({ wealthKey }) => {

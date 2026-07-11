@@ -42,7 +42,7 @@ export const PrintRevenueStrategy: React.FC<PrintRevenueStrategyProps> = ({
           Business Domains &amp; Revenue Models
         </p>
         <p style={{ fontSize: 12, color: "#5c5c5c", marginBottom: 14, lineHeight: 1.6 }}>
-          These are the business contexts where your chart creates natural leverage — the domains where your wealth code generates disproportionate returns relative to effort.
+          These are the business contexts where your chart creates natural leverage: the domains where your wealth code generates disproportionate returns relative to effort.
         </p>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
           {wealthAnalysis.idealRoles.slice(0, 6).map((r, i) => (

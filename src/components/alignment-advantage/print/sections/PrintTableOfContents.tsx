@@ -16,7 +16,7 @@ export const PrintTableOfContents: React.FC = () => (
     <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
       {[
         { section: "Strategic Overview", items: ["Executive Summary", "Your ZWDS Chart", "Life Structure Overview", "Your Strategic Decision Filter"] },
-        { section: "Timing Intelligence", items: ["10-Year Life Cycle", "Risk Mitigation & Alternative Paths", "Phase Alignment — Season × Wealth Code"] },
+        { section: "Timing Intelligence", items: ["10-Year Life Cycle", "Risk Mitigation & Alternative Paths", "Phase Alignment: Season × Wealth Code"] },
         { section: "Wealth Strategy", items: ["Wealth Archetype Profile", "Business Domains & Revenue Strategy", "90-Day Strategic Priorities", "Ideal Collaborator Profile"] },
         { section: "People Intelligence", items: ["Siblings & Peers", "Spouse & Partner", "Friends & Allies", "Parents & Supervisors", "Children & Protégés", "Hua Lu Activation Notes"] },
         { section: "12-Month Roadmap", items: ["Month-by-Month Strategic Deep Dives (12 pages)"] },
@@ -40,7 +40,7 @@ export const PrintTableOfContents: React.FC = () => (
       <p style={{ fontSize: 12, color: "#d4b896", lineHeight: 1.7 }}>
         <strong style={{ color: "#ffffff" }}>How to use this report:</strong> Start with the Executive Summary for your strategic snapshot.
         Use the 12-Month Roadmap as your monthly reference. Apply the Decision Framework to every major
-        move in the year ahead. This report is your strategic companion — not a one-time read.
+        move in the year ahead. This report is your strategic companion, not a one-time read.
       </p>
     </div>
   </section>

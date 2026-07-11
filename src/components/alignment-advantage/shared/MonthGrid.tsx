@@ -63,7 +63,7 @@ const MonthGrid: React.FC<MonthGridProps> = ({ months, selectedMonthIndex, onSel
                 onSelect(m.monthIndex);
               }}
               aria-pressed={isSelected}
-              aria-label={`${m.shortName}: ${SIGNAL_SHORT[m.signal]} — ${m.palaceName}`}
+              aria-label={`${m.shortName}: ${SIGNAL_SHORT[m.signal]}: ${m.palaceName}`}
               className={[
                 "flex flex-col items-center gap-1.5 rounded-xl px-1 py-2.5 border transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple",
                 isSelected

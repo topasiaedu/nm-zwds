@@ -834,7 +834,7 @@ const TimingChartContent: React.FC = () => {
     return timingCycles.map((cycle, index) => ({
       id: `cycle-${index}`,
       label: `Cycle ${index + 1}`,
-      sub: `Ages ${cycle.startAge}–${cycle.endAge}`,
+      sub: `Ages ${cycle.startAge}-${cycle.endAge}`,
     }));
   }, [timingCycles]);
 

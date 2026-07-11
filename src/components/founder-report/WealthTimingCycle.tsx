@@ -79,7 +79,7 @@ const WealthTimingHeader: React.FC = () => {
             opacity: 0.95,
           }}
         >
-          Discover your 10-year life season — what to build, launch, or refine right now
+          Discover your 10-year life season: what to build, launch, or refine right now
         </p>
       </div>
     </div>

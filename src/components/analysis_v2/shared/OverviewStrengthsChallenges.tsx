@@ -1,5 +1,5 @@
 /**
- * Overview strengths & challenges — paired editorial cards (green / coral).
+ * Overview strengths & challenges: paired editorial cards (green / coral).
  */
 
 import React from "react";
@@ -69,7 +69,7 @@ type TraitCardHeaderProps = {
 };
 
 /**
- * Card header — circular icon, serif title, decorative rule + sparkle.
+ * Card header: circular icon, serif title, decorative rule + sparkle.
  */
 const TraitCardHeader: React.FC<TraitCardHeaderProps> = ({ title, icon: Icon, theme }) => (
   <div className="mb-6 flex items-center gap-4">
@@ -118,7 +118,7 @@ type TraitPanelCardProps = {
 };
 
 /**
- * One themed panel — strengths or challenges.
+ * One themed panel: strengths or challenges.
  */
 const TraitPanelCard: React.FC<TraitPanelCardProps> = ({
   title,

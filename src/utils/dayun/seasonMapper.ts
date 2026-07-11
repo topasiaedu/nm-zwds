@@ -126,7 +126,7 @@ export const PHASE_LABELS: Record<DayunSeason, string> = {
  * Season core messages
  */
 export const SEASON_MESSAGES: Record<DayunSeason, string> = {
-  spring: "You are in your Expansion phase. The doors open easier. People say yes faster. Launch, expand, and move forward with confidence — this is your green-light window.",
+  spring: "You are in your Expansion phase. The doors open easier. People say yes faster. Launch, expand, and move forward with confidence. This is your green-light window.",
   summer: "You are in your Visibility phase. Stop executing in silence and start being seen. Build authority, expand your reach, and position yourself as the expert in your space.",
   autumn: "You are in your Consolidation phase. Cut emotional noise, patch up holes, and strengthen your foundation. Protect what you have built and prepare for your next expansion.",
   winter: "You are in your Foundation phase. Quietly sharpen your skills, rebuild your systems, and prepare yourself. When your Expansion phase arrives, you will be ready to strike.",

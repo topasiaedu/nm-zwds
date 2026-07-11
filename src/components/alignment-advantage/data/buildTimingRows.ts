@@ -20,12 +20,12 @@ export function buildTimingRows(chartData: ChartData, year: number = CURRENT_YEA
     const signal = getSignalColor(stars);
     return {
       month: monthName,
-      palaceName: palace?.name ?? "—",
-      season: palaceData?.season ?? "—",
+      palaceName: palace?.name ?? "-",
+      season: palaceData?.season ?? "-",
       signal,
-      priority: palaceData?.priority ?? "—",
-      directive: palaceData?.directive ?? "—",
-      watchOut: palaceData?.watchOut ?? ["—", "—"],
+      priority: palaceData?.priority ?? "-",
+      directive: palaceData?.directive ?? "-",
+      watchOut: palaceData?.watchOut ?? ["-", "-"],
     };
   });
 }

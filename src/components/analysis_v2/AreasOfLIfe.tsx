@@ -1,5 +1,5 @@
 /**
- * AreasOfLife — Destiny Scoreboard (Section 06)
+ * AreasOfLife: Destiny Scoreboard (Section 06)
  *
  * Editorial pillar pills + radar overview + per-pillar flat reading panels.
  */
@@ -51,7 +51,7 @@ const LIFE_AREA_ICONS: Record<string, LucideIcon> = {
   "👥": Users,
 };
 
-/** Per-pillar semantic accent — card tint, bar, header gradient, and watermark. */
+/** Per-pillar semantic accent: card tint, bar, header gradient, and watermark. */
 const AREA_ACCENTS: Record<
   string,
   {
@@ -183,7 +183,7 @@ type ScorePillarPillProps = {
 };
 
 /**
- * Scrollable pillar card — white panel with themed accent, score bar, and status.
+ * Scrollable pillar card: white panel with themed accent, score bar, and status.
  */
 const ScorePillarPill: React.FC<ScorePillarPillProps> = ({
   area,
@@ -205,7 +205,7 @@ const ScorePillarPill: React.FC<ScorePillarPillProps> = ({
       onClick={onSelect}
       disabled={forPdfCapture}
       aria-selected={isActive}
-      aria-label={`${area.displayName}, ${area.score}% — ${isActive ? "currently viewing" : "tap to view reading"}`}
+      aria-label={`${area.displayName}, ${area.score}%. ${isActive ? "Currently viewing" : "Tap to view reading"}`}
       className={[
         "relative w-full max-w-[44vw] shrink-0 snap-center rounded-2xl border-2 p-2.5 text-left shadow-sm xs:max-w-none xs:w-[11.5rem] sm:min-w-0 sm:w-full sm:shrink sm:p-4",
         lightPanelClass,
@@ -329,7 +329,7 @@ type LifeAreaPanelProps = {
 };
 
 /**
- * Themed reading panel — gradient header, score bar, nested reading box.
+ * Themed reading panel: gradient header, score bar, nested reading box.
  */
 const LifeAreaPanel: React.FC<LifeAreaPanelProps> = ({
   area,
@@ -604,7 +604,7 @@ const AreasOfLife: React.FC<{
                 ].join(" ")
           }
           role="tablist"
-          aria-label="Destiny pillars — tap a card to change the reading below"
+          aria-label="Destiny pillars: tap a card to change the reading below"
         >
           {lifeAreaAnalysis.map((area) => (
             <ScorePillarPill
@@ -736,7 +736,7 @@ const AreasOfLife: React.FC<{
           sectionLabel="Life pillars"
           badgeText="06"
           title="Destiny Scoreboard"
-          subtitle="Your personal scorecard across the five destiny pillars — see the shape of your chart at a glance, then dive into each area."
+          subtitle="Your personal scorecard across the five destiny pillars. See the shape of your chart at a glance, then dive into each area."
           icon={LayoutGrid}
           backgroundImage="/images/chart/trophy.png"
           backgroundPosition="right 40%"

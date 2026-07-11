@@ -1,5 +1,5 @@
 /**
- * Wealth Code career alignment — paired list cards matching insights layout.
+ * Wealth Code career alignment: paired list cards matching insights layout.
  */
 
 import React from "react";
@@ -37,7 +37,7 @@ const formatCareerReasonLead = (reason: string): string => {
  * Formats role + reason into the legacy career copy string.
  */
 const formatCareerLine = (leadIn: string, role: string, reason: string): string =>
-  `${leadIn} ${role} — ${formatCareerReasonLead(reason)}`;
+  `${leadIn} ${role}: ${formatCareerReasonLead(reason)}`;
 
 const CAREER_CARD_SURFACE: Record<
   CareerCardVariant,

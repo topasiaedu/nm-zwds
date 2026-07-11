@@ -99,7 +99,7 @@ export const FORMATION_PROFILES: Record<FormationKey | SpecialFormationKey, Form
     englishName:    "Power Commander",
     subtitle:       "Breakthrough Warrior",
     playerType:     "speed",
-    tagline:        "You are built for disruption and bold moves. Feeling restless isn't a flaw—it's your signal to take action.",
+    tagline:        "You are built for disruption and bold moves. Feeling restless isn't a flaw; it's your signal to take action.",
     keyTraits:      [
       "Bold and action-driven: you act first and fix things later",
       "Thrives on breaking old rules and building something new",
@@ -127,7 +127,7 @@ export const FORMATION_PROFILES: Record<FormationKey | SpecialFormationKey, Form
     englishName:    "Big Landlord",
     subtitle:       "Empire Builder",
     playerType:     "speed",
-    tagline:        "You are built to own things. You shouldn't just have one job or one business—you need a portfolio of assets.",
+    tagline:        "You are built to own things. You shouldn't just have one job or one business; you need a portfolio of assets.",
     keyTraits:      [
       "Strong luck with real estate and physical assets",
       "Solid backing: you rarely run out of resources",
@@ -346,7 +346,7 @@ export const FORMATION_PROFILES: Record<FormationKey | SpecialFormationKey, Form
       "The opportunity requires projecting image and polish before substance has been proven",
       "First impressions and surface-level presentation determine outcome before depth can be demonstrated",
     ],
-    decisionRule: "Ask: will your depth, communication, and track record be visible and rewarded within the next 1–2 years? If yes, move. If the environment rewards fast optics over proven substance, wait until your window opens.",
+    decisionRule: "Ask: will your depth, communication, and track record be visible and rewarded within the next 1-2 years? If yes, move. If the environment rewards fast optics over proven substance, wait until your window opens.",
   },
 
   reversedSunMoon: {

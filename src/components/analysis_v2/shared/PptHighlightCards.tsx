@@ -8,7 +8,7 @@ export type HighlightCardTheme = {
   iconBg: string;
 };
 
-/** Rotating accent themes — coral, orange, gold. */
+/** Rotating accent themes: coral, orange, gold. */
 export const ROTATING_HIGHLIGHT_THEMES: readonly HighlightCardTheme[] = [
   { accent: "#C84C5C", accentSecondary: "#E11D48", iconBg: "rgba(200, 76, 92, 0.14)" },
   { accent: "#EA580C", accentSecondary: "#F97316", iconBg: "rgba(234, 88, 12, 0.14)" },
@@ -52,12 +52,12 @@ export type PptHighlightCardProps = {
   /** When true, shows label only in neutral text (no lead-in, trailing, or accent color). */
   plainHighlight?: boolean;
   forPdfCapture?: boolean;
-  /** `"card"` — white PPT shell (default). `"flat"` — transparent editorial row with left accent. */
+  /** `"card"`: white PPT shell (default). `"flat"`: transparent editorial row with left accent. */
   variant?: "card" | "flat";
 };
 
 /**
- * PPT-style horizontal card — left accent stripe, ringed icon, serif copy with highlight.
+ * PPT-style horizontal card: left accent stripe, ringed icon, serif copy with highlight.
  */
 export const PptHighlightCard: React.FC<PptHighlightCardProps> = ({
   theme,
@@ -200,7 +200,7 @@ export const PptHighlightGroupHeader: React.FC<PptHighlightGroupHeaderProps> = (
 };
 
 /**
- * Flat trait chip — single brand border + tint.
+ * Flat trait chip: single brand border + tint.
  */
 const PptHighlightTraitChip: React.FC<{ label: string }> = ({ label }) => (
   <span className={flatTraitChipClass}>{label}</span>

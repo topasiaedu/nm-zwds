@@ -357,7 +357,7 @@ const AlignmentAdvantage: React.FC = () => {
                     {phaseConfig.label}
                   </p>
                   <p className="text-xs leading-relaxed" style={{ color: C.muted }}>
-                    {strategicData.dayun?.startYear ?? ""}–{strategicData.dayun?.endYear ?? ""}
+                    {strategicData.dayun?.startYear ?? ""}-{strategicData.dayun?.endYear ?? ""}
                   </p>
                 </div>
               </div>

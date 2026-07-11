@@ -37,7 +37,7 @@ export const PrintReflectionQuestions: React.FC<PrintReflectionQuestionsProps> =
       <div style={{ marginTop: 28, background: "#f9f7fd", border: "1px solid rgba(107,91,149,0.14)", borderRadius: 12, padding: "16px 20px" }}>
         <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "#6b5b95", marginBottom: 8 }}>How to Use These Questions</p>
         <p style={{ fontSize: 12, color: "#5c5c5c", lineHeight: 1.7 }}>
-          Spend 20–30 minutes with these questions at the start of your season. Write your answers privately —
+          Spend 20-30 minutes with these questions at the start of your season. Write your answers privately,
           not for anyone else to read. Honest reflection at the right moment is what separates strategic action
           from reactive movement. Return to your answers at the end of the season to measure how your thinking has evolved.
         </p>

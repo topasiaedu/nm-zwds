@@ -6,7 +6,7 @@ type SubsectionSparkleDividerProps = {
 };
 
 /**
- * Gradient line + sparkle — sits below subsection titles (Wealth Code, Nobleman, etc.).
+ * Gradient line + sparkle: sits below subsection titles (Wealth Code, Nobleman, etc.).
  */
 export const SubsectionSparkleDivider: React.FC<SubsectionSparkleDividerProps> = ({
   className = "mx-auto mb-8 mt-5 flex w-full max-w-md items-center gap-3 px-2",

@@ -164,7 +164,7 @@ const PhaseAlignmentCard: React.FC<PhaseAlignmentCardProps> = ({
         )}
 
         <p className="text-xs text-gray-400 dark:text-gray-500 pt-1 border-t border-gray-100 dark:border-gray-700">
-          Current DaYun cycle: {dayunCycle.startYear}–{dayunCycle.endYear}
+          Current DaYun cycle: {dayunCycle.startYear}-{dayunCycle.endYear}
           {" "}· Phase: {phaseLabel}
         </p>
       </div>

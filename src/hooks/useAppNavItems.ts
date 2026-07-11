@@ -68,7 +68,8 @@ export function useAppNavItems(
       },
     ];
 
-    if (hasDestinyNavigatorTool) {
+    // Soft-hidden per CAE feedback; routes and tier flags remain.
+    if (false && hasDestinyNavigatorTool) {
       navItems.push({
         to: destinyNavigatorUrl,
         label: "Destiny Navigator",
@@ -77,7 +78,7 @@ export function useAppNavItems(
       });
     }
 
-    if (hasAIAssistant) {
+    if (false && hasAIAssistant) {
       navItems.push({
         to: "/destiny-wealth-navigator",
         label: "AI Wealth Assistant",

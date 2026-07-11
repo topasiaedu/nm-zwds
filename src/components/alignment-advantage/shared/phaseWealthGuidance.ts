@@ -85,7 +85,7 @@ const PHASE_WEALTH_ACTIONS: PhaseWealthActionMap = {
       "Spend one focused hour each week going deep on one market or sector. Conviction that pays off in growth season is built in quiet season.",
     ],
     brandingMagnet: [
-      "Build a backlog of your best ideas and frameworks now. When the market speeds up, you won't have time to think—you will only have time to publish.",
+      "Build a backlog of your best ideas and frameworks now. When the market speeds up, you won't have time to think; you will only have time to publish.",
       "Write one sentence describing who you help and what result they get. If it takes more than one sentence, your positioning is not sharp enough yet.",
       "Contact your past clients. Don't sell them anything, just ask what their biggest bottleneck is right now. Use their answers to build your next offer.",
     ],

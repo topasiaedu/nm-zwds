@@ -50,7 +50,7 @@ export const PrintActionPlan: React.FC<PrintActionPlanProps> = ({
         <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "#6b5b95", marginBottom: 8 }}>Why These Priorities</p>
         <p style={{ fontSize: 12, color: "#5c5c5c", lineHeight: 1.7 }}>
           These actions are aligned with both your current DaYun season and your dominant wealth archetype.
-          They represent the highest-leverage moves available to you in the next 90 days — the intersection
+          They represent the highest-leverage moves available to you in the next 90 days: the intersection
           of what your chart is structured to support and where timing is most favourable.
           Executing these in sequence minimises resistance and maximises return on effort.
         </p>

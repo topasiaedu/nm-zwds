@@ -700,7 +700,8 @@ const Dashboard: React.FC = () => {
                   />
                 )}
 
-                {hasDestinyNavigatorTool && (
+                {/* Soft-hidden per CAE feedback; routes and tier flags remain. */}
+                {false && hasDestinyNavigatorTool && (
                   <ToolCard
                     to={destinyNavigatorUrl}
                     illustration="navigator"
@@ -710,7 +711,7 @@ const Dashboard: React.FC = () => {
                     tokens={tokens}
                   />
                 )}
-                {hasAIAssistant && (
+                {false && hasAIAssistant && (
                   <ToolCard
                     to="/destiny-wealth-navigator"
                     illustration="ai"

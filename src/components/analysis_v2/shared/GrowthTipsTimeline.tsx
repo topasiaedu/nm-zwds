@@ -25,7 +25,7 @@ const GROWTH_STEP_THEMES: GrowthStepTheme[] = [
   { accent: "#2D7A4D", cardBg: "#F3FAF6" },
 ];
 
-/** Fixed chart height — all bars share this baseline. */
+/** Fixed chart height: all bars share this baseline. */
 const CHART_BAR_AREA_HEIGHT_PX = 128;
 
 const COLUMN_CLASS =
@@ -110,7 +110,7 @@ type GrowthBarChartProps = {
 };
 
 /**
- * Bar chart with a single shared baseline — cards sit in a row above the bars.
+ * Bar chart with a single shared baseline: cards sit in a row above the bars.
  */
 const GrowthBarChart: React.FC<GrowthBarChartProps> = ({ tips, forPdfCapture }) => {
   if (forPdfCapture) {
@@ -155,7 +155,7 @@ const GrowthBarChart: React.FC<GrowthBarChartProps> = ({ tips, forPdfCapture }) 
       ].join(" ")}
     >
       <div className="inline-flex min-w-full flex-col gap-4 sm:min-w-0">
-        {/* Insight cards — variable height, does not affect bar baseline */}
+        {/* Insight cards: variable height, does not affect bar baseline */}
         <div className="flex items-stretch gap-3 sm:justify-center sm:gap-4 md:gap-5">
           {tips.map((tip, index) => {
             const stepNumber = String(index + 1).padStart(2, "0");
@@ -173,7 +173,7 @@ const GrowthBarChart: React.FC<GrowthBarChartProps> = ({ tips, forPdfCapture }) 
           })}
         </div>
 
-        {/* Bars — one shared row, all anchored to the bottom edge */}
+        {/* Bars: one shared row, all anchored to the bottom edge */}
         <div
           className="flex items-end gap-3 border-b-2 border-theme-border-subtle sm:justify-center sm:gap-4 md:gap-5"
           style={{ height: `${CHART_BAR_AREA_HEIGHT_PX}px` }}
@@ -202,7 +202,7 @@ const GrowthBarChart: React.FC<GrowthBarChartProps> = ({ tips, forPdfCapture }) 
           })}
         </div>
 
-        {/* Step labels — aligned under each bar */}
+        {/* Step labels: aligned under each bar */}
         <div className="flex gap-3 sm:justify-center sm:gap-4 md:gap-5">
           {tips.map((tip, index) => {
             const stepNumber = String(index + 1).padStart(2, "0");
@@ -223,7 +223,7 @@ const GrowthBarChart: React.FC<GrowthBarChartProps> = ({ tips, forPdfCapture }) 
 };
 
 /**
- * Ascending bar chart — insight cards above, bars sharing one baseline.
+ * Ascending bar chart: insight cards above, bars sharing one baseline.
  */
 export const GrowthTipsTimeline: React.FC<GrowthTipsTimelineProps> = ({
   tips,

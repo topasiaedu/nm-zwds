@@ -107,7 +107,7 @@ export const ChapterDecisionFramework: React.FC<ChapterDecisionFrameworkProps> =
               <div className="w-3 h-3 rounded-full mt-1 shrink-0" style={{ background: phaseConfig.textColor }} />
               <div>
                 <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">02. Timing Alignment</p>
-                <p className="text-sm font-bold text-slate-800">{strategicData.phaseLabel} Phase · {strategicData.dayun?.startYear ?? ""}–{strategicData.dayun?.endYear ?? ""}</p>
+                <p className="text-sm font-bold text-slate-800">{strategicData.phaseLabel} Phase · {strategicData.dayun?.startYear ?? ""}-{strategicData.dayun?.endYear ?? ""}</p>
               </div>
             </div>
             <div className="flex items-start gap-4">

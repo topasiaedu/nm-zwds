@@ -33,7 +33,7 @@ export const PrintDayunCycle: React.FC<PrintDayunCycleProps> = ({ dayunGuidance 
         </div>
         <div style={{ textAlign: "right", flexShrink: 0, marginLeft: 24 }}>
           <p style={{ fontSize: 10, color: "#5c5c5c" }}>Cycle years</p>
-          <p style={{ fontSize: 16, fontWeight: 700, color: "#1a1e3f" }}>{dayunGuidance.startYear} – {dayunGuidance.endYear}</p>
+          <p style={{ fontSize: 16, fontWeight: 700, color: "#1a1e3f" }}>{dayunGuidance.startYear}-{dayunGuidance.endYear}</p>
         </div>
       </div>
 

@@ -212,7 +212,7 @@ export const FRAMEWORK_RECOMMENDATIONS: Record<number, FrameworkRecommendation> 
   },
   1: {
     heading: "Partial Alignment: Pause and Reassess",
-    copy:    "Only one axis is aligned. Revisit the decision in 30–60 days or adjust your approach to bring the other axes into alignment.",
+    copy:    "Only one axis is aligned. Revisit the decision in 30-60 days or adjust your approach to bring the other axes into alignment.",
     color:   "text-orange-700 dark:text-orange-300",
   },
   0: {
@@ -243,7 +243,7 @@ export const PHASE_ALIGNMENT_MATRIX: Record<PhaseAlignmentSeasonKey, Record<Phas
     collaborator:     { copy: "Spring opens doors. This is the best time to form new partnerships, sign joint ventures, and meet new people. Your network will grow fast right now.", watchOut: ["Saying yes to every meeting and spreading yourself too thin", "Starting partnerships without putting the money split in writing"] },
   },
   visibility: {
-    investmentBrain:  { copy: "Summer is harvest season. Focus on making money from the assets you already own. Don't start a bunch of new investments—cash in on the ones that are working.", watchOut: ["Buying new, risky assets when you should be collecting profits", "Underestimating how much money you can make just by holding your best assets"] },
+    investmentBrain:  { copy: "Summer is harvest season. Focus on making money from the assets you already own. Don't start a bunch of new investments. Cash in on the ones that are working.", watchOut: ["Buying new, risky assets when you should be collecting profits", "Underestimating how much money you can make just by holding your best assets"] },
     brandingMagnet:   { copy: "Summer is your most profitable season. You have the audience's attention, now it's time to get paid. Launch your most expensive offers and convert attention into cash.", watchOut: ["Creating more free content instead of selling", "Discounting your prices when people are actually willing to pay full price"] },
     strategyPlanner:  { copy: "Summer is when your systems pay off. Run the play, optimize your workflow, and extract as much money as possible from the systems you built.", watchOut: ["Starting a brand new project before you finish making money from the current one", "Tweaking the system endlessly instead of just letting it run"] },
     collaborator:     { copy: "Summer is when your network pays you back. The trust you built will turn into referrals and revenue. Lean into your closest alliances and ask for the business.", watchOut: ["Ignoring your best clients while trying to find new ones", "Doing deals on a handshake instead of formalizing the revenue share"] },
@@ -255,7 +255,7 @@ export const PHASE_ALIGNMENT_MATRIX: Record<PhaseAlignmentSeasonKey, Record<Phas
     collaborator:     { copy: "Autumn is for firing bad clients and ending bad partnerships. Keep the relationships that make you money and gracefully exit the ones that drain your energy.", watchOut: ["Avoiding a hard conversation with a bad partner just to be polite", "Signing a new partnership agreement when you should be cleaning house"] },
   },
   foundation: {
-    investmentBrain:  { copy: "Winter is for research. Study the market, find the undervalued assets, and build your thesis. Don't pull the trigger yet—just get ready for Spring.", watchOut: ["Buying the asset now instead of waiting for the Spring growth cycle", "Being lazy and not doing the research, so you miss the Spring opportunities"] },
+    investmentBrain:  { copy: "Winter is for research. Study the market, find the undervalued assets, and build your thesis. Don't pull the trigger yet. Just get ready for Spring.", watchOut: ["Buying the asset now instead of waiting for the Spring growth cycle", "Being lazy and not doing the research, so you miss the Spring opportunities"] },
     brandingMagnet:   { copy: "Winter is for building in the dark. Write the book, film the course, or rebrand your website. The work you do quietly now will explode when Spring arrives.", watchOut: ["Getting frustrated that your new content isn't making money immediately", "Ignoring your current paying clients because you are too busy building new stuff"] },
     strategyPlanner:  { copy: "Winter is your superpower. Build the systems, write the SOPs, and map out your 12-month strategy. The plans you make now will be your unfair advantage later.", watchOut: ["Using Winter as an excuse to just take a vacation and do nothing", "Making a massive plan but refusing to set a hard launch date"] },
     collaborator:     { copy: "Winter is for deepening trust. Check in on your mentors, help out your peers, and plant the seeds for deals you want to close next year.", watchOut: ["Disappearing completely and letting your network go cold", "Thinking you don't need to network just because business is slow right now"] },

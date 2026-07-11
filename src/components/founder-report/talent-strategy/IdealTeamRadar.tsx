@@ -124,7 +124,7 @@ const IdealTeamRadar: React.FC<IdealTeamRadarProps> = ({
                 <h4 className="font-bold text-gray-900 dark:text-white text-sm">{"Action Step"}</h4>
               </div>
               <p className="text-sm text-gray-800 dark:text-gray-200 leading-relaxed">
-                {"Focus on the highest-scoring roles first — they're calculated based on your Career Palace gaps. Build a balanced team across all dimensions."}
+                {"Focus on the highest-scoring roles first; they're calculated based on your Career Palace gaps. Build a balanced team across all dimensions."}
               </p>
             </div>
           </div>

@@ -59,7 +59,7 @@ const FORMATION_EXECUTIVE_BRIEFS: Partial<
     directive: "You make money by making what you already have run better, not by chasing risky new bets.",
     moves: [
       "Before launching anything new, cut waste and tighten how your current business operates",
-      "Track success by steady gains over the next 1–2 years, not by hunting for one big overnight win",
+      "Track success by steady gains over the next 1-2 years, not by hunting for one big overnight win",
     ],
   },
   steadyPillar: {

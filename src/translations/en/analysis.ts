@@ -293,9 +293,9 @@ const analysis = {
       "命宫.HuaJi.title": "🌀 Obstacle in Destiny Palace",
       // Transformation descriptions by palace
       "命宫.HuaLu.description": "You begin to possess a strong personal aura and attraction, winning attention without saying much. You'll clearly feel: people look at you differently now, you're the protagonist wherever you stand. Destiny is raising your light, the key is whether you dare to catch this spotlight.",
-      "命宫.HuaQuan.description": "You now increasingly want to 'control your own life' — in the past others helped you decide, you were afraid of saying wrong things, now you'll start to actively set rules. This feeling of wanting to win, wanting to control, wanting to decide, is not willfulness, it's awakening.",
+      "命宫.HuaQuan.description": "You now increasingly want to 'control your own life'. In the past others helped you decide, you were afraid of saying wrong things, now you'll start to actively set rules. This feeling of wanting to win, wanting to control, wanting to decide, is not willfulness, it's awakening.",
       "命宫.HuaKe.description": "Your wisdom, speech, and logical thinking will become your most shining label. Others will look at you with new eyes because of your expression, temperament, and knowledge. This is not pretending to have substance, this is you deserving to be understood.",
-      "命宫.HuaJi.description": "You tend to feel 'Am I not good enough somewhere' 'Should I work harder' — these voices are not destiny negating you, but cleaning your habit of 'pleasing the world'.",
+      "命宫.HuaJi.description": "You tend to feel 'Am I not good enough somewhere' 'Should I work harder'. These voices are not destiny negating you, but cleaning your habit of 'pleasing the world'.",
       // Transformation quotes by palace
       "命宫.HuaLu.quote": "The moment you stand out, destiny also stands by your side.",
       "命宫.HuaQuan.quote": "You're not a control freak, you're finally starting to 'take charge'.",

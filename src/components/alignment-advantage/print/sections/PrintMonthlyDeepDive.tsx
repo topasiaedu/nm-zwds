@@ -24,17 +24,17 @@ interface SignalConfig {
 const SIG_CONFIG: Record<SignalKey, SignalConfig> = {
   green: {
     bg: "#f0fdf4", text: "#166534", accent: "#16a34a",
-    label: "Green Light — Execute",
+    label: "Green Light: Execute",
     bestFor: ["Major decisions and commitments", "Signing contracts and formalising agreements", "Launching new ventures or campaigns", "High-stakes investments and capital deployment", "Raising prices, launching premium offers, or expanding scope"],
   },
   yellow: {
     bg: "#fffbeb", text: "#92400e", accent: "#d97706",
-    label: "Yellow Light — Proceed with Caution",
+    label: "Yellow Light: Proceed with Caution",
     bestFor: ["Strategic planning and preparation", "Due diligence and research", "Building and deepening relationships", "Refining systems and processes", "Preparing for future green-light execution"],
   },
   red: {
     bg: "#fff1f2", text: "#881337", accent: "#f43f5e",
-    label: "Red Light — Protect & Plan",
+    label: "Red Light: Protect & Plan",
     bestFor: ["Consolidating and protecting existing assets", "Rest, recovery, and energy management", "Reviewing and auditing current commitments", "Maintaining relationships without major asks", "Building the foundation for future cycles"],
   },
 };

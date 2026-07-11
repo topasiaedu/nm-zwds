@@ -194,7 +194,7 @@ const AlignmentAdvantageWealthPage: React.FC = () => {
               Wealth Blueprint
             </BrandGradientText>
             <p className="text-base text-gray-500 dark:text-gray-400 leading-relaxed">
-              Your wealth archetype decoded — what to focus on, what to stop doing,
+              Your wealth archetype decoded: what to focus on, what to stop doing,
               and the exact income paths your chart is designed for.
             </p>
           </header>

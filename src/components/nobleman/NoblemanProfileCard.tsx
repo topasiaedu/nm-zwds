@@ -79,7 +79,7 @@ const NOBLEMAN_PROFILE_CARD_CLASS = [
 
 /** Context copy shown above profile-specific characteristics. */
 const NOBLEMAN_KEY_PEOPLE_INTRO =
-  "Based on your chart structure, these are the people most beneficial to you — " +
+  "Based on your chart structure, these are the people most beneficial to you: " +
   "individuals who align with your strengths and can provide crucial support.";
 
 type NoblemanProfileHeroProps = {

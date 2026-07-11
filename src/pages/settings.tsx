@@ -3,7 +3,6 @@ import { Label, TextInput } from "flowbite-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useAlertContext } from "../context/AlertContext";
-import { useTierContext } from "../context/TierContext";
 import { useLanguage } from "../context/LanguageContext";
 import PageTransition from "../components/PageTransition";
 import CommandCentreShell from "../components/layout/CommandCentreShell";
@@ -23,11 +22,6 @@ import {
   profileContainerClass,
   profileFieldFullWidthClass,
   profileFormGridClass,
-  profileInfoBoxClass,
-  profileInfoBoxHintClass,
-  profileInfoBoxLabelClass,
-  profileInfoBoxValueClass,
-  profileInfoGridClass,
   profilePrimaryButtonClass,
   profilePrimaryButtonLargeClass,
   profileSecondaryButtonClass,
@@ -45,8 +39,6 @@ interface UserProfile {
   email: string;
   display_name: string;
   phone: string;
-  membership_expiration: string | null;
-  created_at: string;
 }
 
 interface PasswordChangeForm {
@@ -68,7 +60,6 @@ const settingsSignOutButtonClass = [
 const Settings: React.FC = () => {
   const { user, signOut } = useAuth();
   const { showAlert } = useAlertContext();
-  const { userDetails } = useTierContext();
   const { t } = useLanguage();
   const { isDark } = useTheme();
   const navigate = useNavigate();
@@ -81,8 +72,6 @@ const Settings: React.FC = () => {
     email: user?.email || "",
     display_name: user?.user_metadata?.display_name || "",
     phone: user?.user_metadata?.phone || "",
-    membership_expiration: null,
-    created_at: "",
   });
   const [passwordForm, setPasswordForm] = useState<PasswordChangeForm>({
     newPassword: "",
@@ -105,8 +94,6 @@ const Settings: React.FC = () => {
         email: user.email || "",
         display_name: user.user_metadata?.display_name || "",
         phone: user.user_metadata?.phone || "",
-        membership_expiration: userDetails?.membership_expiration || null,
-        created_at: user.created_at || "",
       });
     } catch (error) {
       console.error("Error loading profile:", error);
@@ -114,7 +101,7 @@ const Settings: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [showAlert, user, userDetails]);
+  }, [showAlert, user]);
 
   /**
    * Save profile changes to Supabase Auth user metadata.
@@ -392,33 +379,6 @@ const Settings: React.FC = () => {
                   >
                     {isLoading ? "Saving..." : "Save Profile"}
                   </button>
-                </div>
-              </section>
-
-              <section className={profileSectionCardClass}>
-                <h2 className={profileSectionTitleClass}>Account Information</h2>
-
-                <div className={profileInfoGridClass}>
-                  <div className={profileInfoBoxClass}>
-                    <h3 className={profileInfoBoxLabelClass}>Membership Expiration</h3>
-                    <p className={profileInfoBoxValueClass}>
-                      {profile.membership_expiration
-                        ? new Date(profile.membership_expiration).toLocaleDateString()
-                        : "Unlimited"}
-                    </p>
-                    <p className={profileInfoBoxHintClass}>
-                      Contact support to modify membership
-                    </p>
-                  </div>
-
-                  {profile.created_at ? (
-                    <div className={profileInfoBoxClass}>
-                      <h3 className={profileInfoBoxLabelClass}>Member Since</h3>
-                      <p className={profileInfoBoxValueClass}>
-                        {new Date(profile.created_at).toLocaleDateString()}
-                      </p>
-                    </div>
-                  ) : null}
                 </div>
               </section>
 

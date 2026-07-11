@@ -121,7 +121,7 @@ const PdfFourKeyPalace: React.FC<PdfFourKeyPalaceProps> = ({ chartData }) => {
           fontStyle: "italic",
           margin: "0",
         }}>
-          Where your life force is thriving — and where it&apos;s sending warning signals.
+          Where your life force is thriving, and where it&apos;s sending warning signals.
         </p>
       </div>
 

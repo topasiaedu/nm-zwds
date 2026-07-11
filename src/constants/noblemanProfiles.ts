@@ -118,7 +118,7 @@ export const NOBLEMAN_PROFILES: Record<NoblemanType, NoblemanProfile> = {
   
   same_generation: {
     type: "Same-Generation Nobleman",
-    characteristics: "Peer, colleague, grows together with you; supportive through shared goals. Someone who grows alongside you and pushes you through collaboration. Not above you, not below you — same level.",
+    characteristics: "Peer, colleague, grows together with you; supportive through shared goals. Someone who grows alongside you and pushes you through collaboration. Not above you, not below you: same level.",
     stars: "Tian Ji",
   },
   

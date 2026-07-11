@@ -132,7 +132,7 @@ export const ChapterExecutionPlaybook: React.FC<ChapterExecutionPlaybookProps> =
                 return (
                   <div
                     key={cycle.name}
-                    title={`${cycle.startYear}–${cycle.endYear}`}
+                    title={`${cycle.startYear}-${cycle.endYear}`}
                     className="relative flex flex-col justify-end pb-2 group"
                     style={{
                       width: `${widthPct}%`,
@@ -160,7 +160,7 @@ export const ChapterExecutionPlaybook: React.FC<ChapterExecutionPlaybookProps> =
       <div className="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-[#e8ddd0] pb-8">
         <div className="max-w-xl">
           <p className="text-[10px] font-bold uppercase tracking-[0.24em] mb-3" style={{ color: C.coral }}>
-            Current Strategic Phase ({currentStart}–{currentEnd})
+            Current Strategic Phase ({currentStart}-{currentEnd})
           </p>
           <p className="text-3xl font-bold mb-4" style={{ color: C.navy, fontFamily: "Georgia,'Times New Roman',serif" }}>
             {strategicData.phaseLabel} Phase

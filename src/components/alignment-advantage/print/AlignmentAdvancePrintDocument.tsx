@@ -157,7 +157,7 @@ const AlignmentAdvancePrintDocument: React.FC = () => {
           <ChapterOpener
             number="01"
             title="Founder's Blueprint"
-            subtitle="Your operating structure type, primary formation, and special formations — the blueprint for how you are naturally wired to build momentum."
+            subtitle="Your operating structure type, primary formation, and special formations: the blueprint for how you are naturally wired to build momentum."
           />
           <PrintStructureProfile structureResult={data.structureResult} />
 

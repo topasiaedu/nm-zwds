@@ -33,7 +33,7 @@ type FeaturesData = {
  */
 type OverviewProps = {
   chartData: ChartData;
-  /** Optional physical palace number (1–12) for timeframe-based analysis. */
+  /** Optional physical palace number (1-12) for timeframe-based analysis. */
   palaceOverride?: number;
   /** Static mode for PDF capture. */
   forPdfCapture?: boolean;
@@ -85,7 +85,7 @@ const Overview: React.FC<OverviewProps> = ({
         forPdfCapture={forPdfCapture}
       />
 
-      {/* Strengths & challenges — paired trait cards */}
+      {/* Strengths & challenges: paired trait cards */}
       <section
         data-pdf-break-anchor="overview-strengths-challenges"
         {...(forPdfCapture ? { "data-pdf-page-break-before": "" } : {})}
@@ -99,7 +99,7 @@ const Overview: React.FC<OverviewProps> = ({
         />
       </section>
 
-      {/* Growth tips — alternating vertical timeline on page surface */}
+      {/* Growth tips: alternating vertical timeline on page surface */}
       <section
         data-pdf-break-anchor="overview-growth-tips"
         className="mb-10"

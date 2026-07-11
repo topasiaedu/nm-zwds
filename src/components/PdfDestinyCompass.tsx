@@ -186,7 +186,7 @@ const PdfDestinyCompass: React.FC<PdfDestinyCompassProps> = ({ chartData }) => {
           fontStyle: "italic",
           marginBottom: "20px"
         }}>
-          Navigate your life path with clarity — current year insights from your chart.
+          Navigate your life path with clarity: current year insights from your chart.
         </p>
       </div>
 

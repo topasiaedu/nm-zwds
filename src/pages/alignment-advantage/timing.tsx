@@ -253,7 +253,7 @@ const AlignmentAdvantageTimingPage: React.FC = () => {
               12-Month Timing Roadmap
             </BrandGradientText>
             <p className="text-base text-gray-500 dark:text-gray-400 leading-relaxed">
-              Precision timing intelligence — green, yellow, and red-light windows for
+              Precision timing intelligence: green, yellow, and red-light windows for
               the next 12 months. No more guessing when to move.
             </p>
           </header>
@@ -330,12 +330,12 @@ const AlignmentAdvantageTimingPage: React.FC = () => {
             <div className="rounded-2xl border border-gray-200/60 dark:border-white/8 bg-white/60 dark:bg-white/[0.04] px-6 py-4 mb-10 text-sm flex items-center gap-3">
               <span className={`inline-block h-2.5 w-2.5 rounded-full shrink-0 ${activeSignalStyles.dot}`} aria-hidden="true" />
               <span className="text-gray-600 dark:text-gray-300">
-                <span className="font-semibold text-gray-900 dark:text-white">{activePalaceData.area} — </span>
+                <span className="font-semibold text-gray-900 dark:text-white">{activePalaceData.area}: </span>
                 {activePalaceData.priority}.
                 <span className={` ${activeSignalStyles.text} font-medium`}>
                   {activePill?.signal === "green"  && " Optimal window for major moves."}
                   {activePill?.signal === "yellow" && " Good for planning; risky for full execution."}
-                  {activePill?.signal === "red"    && " Avoid major commitments — protect and plan."}
+                  {activePill?.signal === "red"    && " Avoid major commitments: protect and plan."}
                 </span>
               </span>
             </div>

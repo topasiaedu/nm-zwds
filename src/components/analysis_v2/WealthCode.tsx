@@ -53,7 +53,7 @@ interface WealthCodeProps {
    */
   showTopDivider?: boolean;
   /**
-   * Optional physical palace number override (1–12).
+   * Optional physical palace number override (1-12).
    * When provided, analyses this palace instead of the natal Wealth Palace (财帛).
    * Used for timeframe-based analysis (Liu Nian, Liu Month, Da Yun).
    */
@@ -129,7 +129,7 @@ const WEALTH_CODE_ICONS: Record<WealthCodeKey, LucideIcon> = {
   collaborator: Handshake,
 };
 
-/** Fixed slide order numbers (01–04) per archetype — matches CAE deck layout. */
+/** Fixed slide order numbers (01-04) per archetype: matches CAE deck layout. */
 const WEALTH_CODE_DISPLAY_NUMBERS: Record<WealthCodeKey, string> = {
   investmentBrain: "01",
   brandingMagnet: "02",
@@ -165,7 +165,7 @@ type WealthCodeScoreCardProps = {
 };
 
 /**
- * Single wealth-code score card — PPT-inspired layout with score data retained.
+ * Single wealth-code score card: PPT-inspired layout with score data retained.
  */
 const WealthCodeScoreCard: React.FC<WealthCodeScoreCardProps> = ({
   code,
@@ -360,7 +360,7 @@ type WealthCodeDominantHeroProps = {
 };
 
 /**
- * Combined dominant archetype hero — badge, title, insight copy, and primary score.
+ * Combined dominant archetype hero: badge, title, insight copy, and primary score.
  */
 const WealthCodeDominantHero: React.FC<WealthCodeDominantHeroProps> = ({
   profile,
@@ -454,7 +454,7 @@ const WealthCodeDominantHero: React.FC<WealthCodeDominantHeroProps> = ({
 };
 
 /**
- * Scoreboard grid for wealth codes — layout refresh; archetype colors unchanged.
+ * Scoreboard grid for wealth codes: layout refresh; archetype colors unchanged.
  */
 const ModernBarChart: React.FC<{
   codes: WealthCodeScore[];
@@ -496,7 +496,7 @@ const ModernBarChart: React.FC<{
 };
 
 /**
- * Core strengths + watch patterns — white list cards.
+ * Core strengths + watch patterns: white list cards.
  */
 const ModernInsights: React.FC<{
   strengths: string[];
@@ -528,7 +528,7 @@ const ModernInsights: React.FC<{
 };
 
 /**
- * Career alignment — white list cards matching wealth insights layout.
+ * Career alignment: white list cards matching wealth insights layout.
  */
 const ModernCareerPaths: React.FC<{
   idealRoles: CareerRecommendation[];

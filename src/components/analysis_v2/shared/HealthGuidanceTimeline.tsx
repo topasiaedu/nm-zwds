@@ -38,7 +38,7 @@ type HealthTimelineItemProps = {
 };
 
 /**
- * Single health guidance card — cream panel, icon badge, watermark, see-more CTA.
+ * Single health guidance card: cream panel, icon badge, watermark, see-more CTA.
  */
 const HealthTimelineItem: React.FC<HealthTimelineItemProps> = ({
   tip,
@@ -196,7 +196,7 @@ const HealthTimelineColumn: React.FC<HealthTimelineColumnProps> = ({
 };
 
 /**
- * Vertical stack of health guidance cards — single column for scrollable panels.
+ * Vertical stack of health guidance cards: single column for scrollable panels.
  */
 export const HealthGuidanceTimeline: React.FC<HealthGuidanceTimelineProps> = ({
   tips,
