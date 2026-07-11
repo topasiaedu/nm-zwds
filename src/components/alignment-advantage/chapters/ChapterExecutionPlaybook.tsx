@@ -7,8 +7,8 @@ import {
   PALACE_GUIDANCE_DATA,
   SEASON_STYLES,
 } from "../../../utils/forecast/alignmentAdvantage/executionPlaybookData";
-import MonthGrid from "../MonthGrid";
-import type { MonthPillData } from "../MonthGrid";
+import MonthGrid from "../shared/MonthGrid";
+import type { MonthPillData } from "../shared/MonthGrid";
 import { C } from "../shared/constants";
 import { SectionWatermark } from "../shared/SectionWatermark";
 import { SectionHeader } from "../shared/SectionHeader";

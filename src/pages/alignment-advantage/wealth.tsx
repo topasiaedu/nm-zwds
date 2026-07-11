@@ -21,7 +21,7 @@ import { analyzeWealthCode } from "../../utils/zwds/analysis/wealthCodeAnalysis"
 import { calculateCurrentDayunCycle } from "../../utils/dayun/calculator";
 import { generateDayunGuidance } from "../../utils/dayun/guidanceGenerator";
 import { WealthCode } from "../../components/analysis_v2";
-import PhaseAlignmentCard from "../../components/alignment-advantage/PhaseAlignmentCard";
+import PhaseAlignmentCard from "../../components/alignment-advantage/shared/PhaseAlignmentCard";
 import {
   WEALTH_TYPE,
   STOP_DOING,

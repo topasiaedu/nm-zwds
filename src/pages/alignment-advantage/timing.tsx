@@ -16,7 +16,7 @@ import { ZWDSCalculator } from "../../utils/zwds/calculator";
 import type { ChartData, ChartInput } from "../../utils/zwds/types";
 import { getPalaceForAspectLiuMonth } from "../../utils/destiny-navigator/palace-resolver";
 import { LiuMonthCard } from "../../components/liumonth/LiuMonthCard";
-import MonthGrid, { type MonthPillData } from "../../components/alignment-advantage/MonthGrid";
+import MonthGrid, { type MonthPillData } from "../../components/alignment-advantage/shared/MonthGrid";
 import {
   PALACE_DATA,
   getSignalColor,
