@@ -10,17 +10,68 @@ import {
   BRANCH_TO_AREA,
 } from "./constants";
 
+const CHINESE_ZODIAC_EMOJI = [
+  "🐭", "🐂", "🐯", "🐰", "🐲", "🐍", "🐴", "🐑", "🐵", "🐔", "🐶", "🐷",
+] as const;
+
+const CHINESE_ZODIAC_NAMES = [
+  "Rat", "Ox", "Tiger", "Rabbit", "Dragon", "Snake",
+  "Horse", "Sheep", "Monkey", "Rooster", "Dog", "Pig",
+] as const;
+
+/**
+ * Resolve western zodiac display label from solar month/day.
+ */
+function getWesternZodiacLabel(month: number, day: number): string {
+  if ((month === 3 && day >= 21) || (month === 4 && day <= 19)) return "♈ Aries";
+  if ((month === 4 && day >= 20) || (month === 5 && day <= 20)) return "♉ Taurus";
+  if ((month === 5 && day >= 21) || (month === 6 && day <= 21)) return "♊ Gemini";
+  if ((month === 6 && day >= 22) || (month === 7 && day <= 22)) return "♋ Cancer";
+  if ((month === 7 && day >= 23) || (month === 8 && day <= 22)) return "♌ Leo";
+  if ((month === 8 && day >= 23) || (month === 9 && day <= 22)) return "♍ Virgo";
+  if ((month === 9 && day >= 23) || (month === 10 && day <= 23)) return "♎ Libra";
+  if ((month === 10 && day >= 24) || (month === 11 && day <= 22)) return "♏ Scorpio";
+  if ((month === 11 && day >= 23) || (month === 12 && day <= 21)) return "♐ Sagittarius";
+  if ((month === 12 && day >= 22) || (month === 1 && day <= 19)) return "♑ Capricorn";
+  if ((month === 1 && day >= 20) || (month === 2 && day <= 18)) return "♒ Aquarius";
+  return "♓ Pisces";
+}
+
+interface CenterInfoRowProps {
+  label: string;
+  children: React.ReactNode;
+}
+
+/**
+ * Center field — always label-above-value (AA center cell is a narrow 2×2 grid area).
+ */
+const CenterInfoRow: React.FC<CenterInfoRowProps> = ({ label, children }) => (
+  <div className="flex min-w-0 flex-col gap-0.5">
+    <span
+      className="shrink-0 text-[8px] font-semibold uppercase tracking-wide sm:text-[9px]"
+      style={{ color: C.muted }}
+    >
+      {label}
+    </span>
+    <span className="min-w-0 break-words whitespace-normal leading-snug">
+      {children}
+    </span>
+  </div>
+);
+
 export const TwelvePalaceMiniGrid: React.FC<{ chartData: ChartData; highlightPalaces?: string[] }> = ({ chartData, highlightPalaces }) => {
   const { t } = useLanguage();
   const lifePalaceNum = chartData.lifePalace;
+  const chineseZodiacIndex = (chartData.lunarDate.year - 4) % 12;
+  const age = new Date().getFullYear() - chartData.lunarDate.year + 1;
 
   /** Single cell: either a palace or the center */
   const Cell: React.FC<{ palace: Palace }> = ({ palace }) => {
     const isLife  = palace.number === lifePalaceNum;
     const isHighlighted = highlightPalaces ? highlightPalaces.includes(palace.name) : isLife;
     const isBody  = palace.name === chartData.palaces[chartData.bodyPalace - 1]?.name;
-    let mainStars = palace.mainStar ?? [];
-    let minorStars = palace.minorStars ?? [];
+    const mainStars = palace.mainStar ?? [];
+    const minorStars = palace.minorStars ?? [];
 
     const englishName = PALACE_ENGLISH[palace.name] ?? "Palace";
 
@@ -155,60 +206,32 @@ export const TwelvePalaceMiniGrid: React.FC<{ chartData: ChartData; highlightPal
           </p>
         </div>
         
-        {/* Body */}
-        <div className="flex flex-col gap-1.5 p-3 text-[9px] flex-1 overflow-y-auto hide-scrollbar" style={{ color: C.navy }}>
-          <div className="flex">
-            <span className="w-20 font-semibold shrink-0" style={{ color: C.muted }}>Solar Date:</span>
-            <span>
-              {chartData.input.year} Year {chartData.input.month} Month {chartData.input.day} Day {chartData.input.hour} Hour
-            </span>
-          </div>
-          <div className="flex">
-            <span className="w-20 font-semibold shrink-0" style={{ color: C.muted }}>Lunar Date:</span>
-            <span>
-              {t(`zwds.stems.${chartData.heavenlyStem}`)} {t(`zwds.branches.${chartData.earthlyBranch}`)}{chartData.lunarDate.year} Year {chartData.lunarDate.month} Month {chartData.lunarDate.day} Day {chartData.input.hour} Hour
-            </span>
-          </div>
-          <div className="flex">
-            <span className="w-20 font-semibold shrink-0" style={{ color: C.muted }}>Five Element:</span>
-            <span>{t(`zwds.fiveElements.${chartData.fiveElements}`)}</span>
-          </div>
-          <div className="flex">
-            <span className="w-20 font-semibold shrink-0" style={{ color: C.muted }}>Gender:</span>
-            <span>{chartData.input.gender === "male" ? "Male" : "Female"}</span>
-          </div>
-          <div className="flex">
-            <span className="w-20 font-semibold shrink-0" style={{ color: C.muted }}>Age:</span>
-            <span>{new Date().getFullYear() - chartData.lunarDate.year + 1}</span>
-          </div>
-          <div className="flex">
-            <span className="w-20 font-semibold shrink-0" style={{ color: C.muted }}>Chinese Zodiac:</span>
-            <span>
-              {["🐭", "🐂", "🐯", "🐰", "🐲", "🐍", "🐴", "🐑", "🐵", "🐔", "🐶", "🐷"][(chartData.lunarDate.year - 4) % 12]}{" "}
-              {["Rat", "Ox", "Tiger", "Rabbit", "Dragon", "Snake", "Horse", "Sheep", "Monkey", "Rooster", "Dog", "Pig"][(chartData.lunarDate.year - 4) % 12]}
-            </span>
-          </div>
-          <div className="flex">
-            <span className="w-20 font-semibold shrink-0" style={{ color: C.muted }}>Western Zodiac:</span>
-            <span>
-              {(() => {
-                const month = chartData.input.month;
-                const day = chartData.input.day;
-                if ((month === 3 && day >= 21) || (month === 4 && day <= 19)) return "♈ Aries";
-                if ((month === 4 && day >= 20) || (month === 5 && day <= 20)) return "♉ Taurus";
-                if ((month === 5 && day >= 21) || (month === 6 && day <= 21)) return "♊ Gemini";
-                if ((month === 6 && day >= 22) || (month === 7 && day <= 22)) return "♋ Cancer";
-                if ((month === 7 && day >= 23) || (month === 8 && day <= 22)) return "♌ Leo";
-                if ((month === 8 && day >= 23) || (month === 9 && day <= 22)) return "♍ Virgo";
-                if ((month === 9 && day >= 23) || (month === 10 && day <= 23)) return "♎ Libra";
-                if ((month === 10 && day >= 24) || (month === 11 && day <= 22)) return "♏ Scorpio";
-                if ((month === 11 && day >= 23) || (month === 12 && day <= 21)) return "♐ Sagittarius";
-                if ((month === 12 && day >= 22) || (month === 1 && day <= 19)) return "♑ Capricorn";
-                if ((month === 1 && day >= 20) || (month === 2 && day <= 18)) return "♒ Aquarius";
-                return "♓ Pisces";
-              })()}
-            </span>
-          </div>
+        {/* Body — stacked label-above-value (center cell is always narrow) */}
+        <div
+          className="flex flex-1 flex-col gap-1.5 overflow-y-auto p-1.5 text-[9px] hide-scrollbar sm:p-3"
+          style={{ color: C.navy }}
+          data-aa-center-info="true"
+        >
+          <CenterInfoRow label="Solar Date:">
+            {chartData.input.year} Year {chartData.input.month} Month {chartData.input.day} Day {chartData.input.hour} Hour
+          </CenterInfoRow>
+          <CenterInfoRow label="Lunar Date:">
+            {t(`zwds.stems.${chartData.heavenlyStem}`)} {t(`zwds.branches.${chartData.earthlyBranch}`)}
+            {chartData.lunarDate.year} Year {chartData.lunarDate.month} Month {chartData.lunarDate.day} Day {chartData.input.hour} Hour
+          </CenterInfoRow>
+          <CenterInfoRow label="Five Element:">
+            {t(`zwds.fiveElements.${chartData.fiveElements}`)}
+          </CenterInfoRow>
+          <CenterInfoRow label="Gender:">
+            {chartData.input.gender === "male" ? "Male" : "Female"}
+          </CenterInfoRow>
+          <CenterInfoRow label="Age:">{age}</CenterInfoRow>
+          <CenterInfoRow label="Chinese Zodiac:">
+            {CHINESE_ZODIAC_EMOJI[chineseZodiacIndex]} {CHINESE_ZODIAC_NAMES[chineseZodiacIndex]}
+          </CenterInfoRow>
+          <CenterInfoRow label="Western Zodiac:">
+            {getWesternZodiacLabel(chartData.input.month, chartData.input.day)}
+          </CenterInfoRow>
         </div>
       </div>
     </div>
