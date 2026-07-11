@@ -235,10 +235,13 @@ export const chartCanvasOuterClass = [
   "lg:min-h-[34rem]",
 ].join(" ");
 
-/** Inner 4×4 palace grid — equal 1fr tracks so every cell and the 2×2 center are the same unit size. */
+/**
+ * Inner 4×4 palace grid — equal minmax(0,1fr) tracks (see .zwds-chart-grid in index.css)
+ * so every palace cell matches and CenterInfo cannot stretch the middle rows.
+ */
 export const chartGridClass = [
   "zwds-chart-grid relative z-0 grid h-full w-full min-h-0",
-  "grid-cols-4 grid-rows-4",
+  "grid-cols-4 grid-rows-[repeat(4,minmax(0,1fr))]",
   "max-sm:min-h-[40rem]",
   "gap-1 p-0.5",
   "xs:gap-1.5 xs:p-1",
@@ -256,12 +259,14 @@ export const chartCenterSlotClass = [
 export const chartTransformationOverlayClass =
   "pointer-events-none absolute inset-0 z-40";
 
-/** Palace shell — taller minimum on mobile for portrait cards. */
+/**
+ * Palace shell — mobile keeps a readable min-height; sm+ fills the equal grid
+ * track (no fixed min-height, which previously fought equal row sizing).
+ */
 export const chartPalaceShellClass = [
   "relative h-full min-h-0",
   "p-1 xs:p-1.5 sm:p-3 md:p-3.5",
   "max-sm:min-h-[9rem]",
-  "sm:min-h-[145px] md:min-h-[168px]",
   "flex flex-col cursor-pointer overflow-hidden",
 ].join(" ");
 

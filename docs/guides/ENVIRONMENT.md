@@ -44,6 +44,20 @@ REACT_APP_FREE_TEST_ENABLED=true
 - **Usage**: Set to `false` or `0` to disable free test
 - **Note**: Date restrictions have been removed - the feature is always available when enabled
 
+### AI Wealth Assistant (chat widget)
+
+```env
+# Optional — only when running chatbot-gen-client locally alongside this app
+# REACT_APP_CHAT_WIDGET_ORIGIN=http://localhost:3001
+```
+
+#### `REACT_APP_CHAT_WIDGET_ORIGIN`
+- **Purpose**: Origin of the embedded Destiny Wealth Navigator chat widget (`/caegpt`)
+- **Required**: No
+- **Default**: `https://chatbot-gen-client.vercel.app` (production chatbot)
+- **Usage**: Leave unset for normal local work on nm-zwds alone. Set to `http://localhost:3001` (or your local chatbot port) only when testing against a local `chatbot-gen-client` checkout
+- **Note**: Restart the CRA dev server after changing this value
+
 ## Setup Instructions
 
 ### 1. Create `.env.local` File

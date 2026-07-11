@@ -7,15 +7,26 @@ import { C } from "../components/alignment-advantage/shared/constants";
 import { Sparkle } from "../components/alignment-advantage/shared/Sparkle";
 
 /**
- * Chat-widget host.
- * Prefer REACT_APP_CHAT_WIDGET_ORIGIN; in local dev default to sibling chatbot-gen-client (:3001)
- * so full-bleed layout fixes are visible without a Vercel deploy.
+ * Production chatbot host used when the sibling chatbot-gen-client is not running.
+ * Override with REACT_APP_CHAT_WIDGET_ORIGIN (e.g. "http://localhost:3001") only
+ * when you intentionally run both projects locally.
  */
-const CHAT_WIDGET_ORIGIN =
-  process.env.REACT_APP_CHAT_WIDGET_ORIGIN ??
-  (process.env.NODE_ENV === "development"
-    ? "http://localhost:3001"
-    : "https://chatbot-gen-client.vercel.app");
+const DEFAULT_CHAT_WIDGET_ORIGIN = "https://chatbot-gen-client.vercel.app";
+
+/**
+ * Resolves the chat-widget origin.
+ * Empty / whitespace env values fall back to production so local dual-project
+ * setup is opt-in, not required for AI Wealth Assistant to load.
+ */
+const resolveChatWidgetOrigin = (): string => {
+  const fromEnv = process.env.REACT_APP_CHAT_WIDGET_ORIGIN?.trim();
+  if (fromEnv !== undefined && fromEnv.length > 0) {
+    return fromEnv;
+  }
+  return DEFAULT_CHAT_WIDGET_ORIGIN;
+};
+
+const CHAT_WIDGET_ORIGIN = resolveChatWidgetOrigin();
 
 const CHAT_WIDGET_BOT_ID = "3ce543bc-8767-4a05-9836-d1f21e2749c1";
 
