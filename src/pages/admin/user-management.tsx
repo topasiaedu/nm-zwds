@@ -32,7 +32,7 @@ const UserManagement: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [updating, setUpdating] = useState<string | null>(null);
   const [filter, setFilter] = useState<
-    "all" | "tier1" | "tier2" | "founder" | "beta" | "admin" | "paused"
+    "all" | "tier1" | "tier2" | "founder" | "alignment" | "beta" | "admin" | "paused"
   >("all");
   const [selectedUsers, setSelectedUsers] = useState<Set<string>>(new Set());
   const [batchUpdating, setBatchUpdating] = useState<boolean>(false);
@@ -252,6 +252,8 @@ const UserManagement: React.FC = () => {
         return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300";
       case "beta":
         return "bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-300";
+      case "alignment":
+        return "bg-teal-100 text-teal-800 dark:bg-teal-900 dark:text-teal-300";
       case "founder":
         return "bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-300";
       case "tier2":
@@ -550,6 +552,16 @@ const UserManagement: React.FC = () => {
                 Founder ({users.filter(u => u.tier === "founder").length})
               </button>
               <button
+                onClick={() => setFilter("alignment")}
+                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                  filter === "alignment"
+                    ? "bg-indigo-600 text-white"
+                    : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+                }`}
+              >
+                Alignment ({users.filter(u => u.tier === "alignment").length})
+              </button>
+              <button
                 onClick={() => setFilter("beta")}
                 className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                   filter === "beta"
@@ -604,6 +616,13 @@ const UserManagement: React.FC = () => {
                       className="px-3 py-1 bg-purple-100 text-purple-800 rounded hover:bg-purple-200 disabled:opacity-50 text-sm"
                     >
                       → Tier 2
+                    </button>
+                    <button
+                      onClick={() => handleBatchTierUpdate("alignment")}
+                      disabled={batchUpdating}
+                      className="px-3 py-1 bg-teal-100 text-teal-800 rounded hover:bg-teal-200 disabled:opacity-50 text-sm"
+                    >
+                      → Alignment
                     </button>
                     <button
                       onClick={() => handleBatchTierUpdate("admin")}
@@ -818,6 +837,14 @@ const UserManagement: React.FC = () => {
                                   className="w-full text-left px-4 py-2 text-sm text-emerald-700 dark:text-emerald-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors disabled:opacity-50"
                                 >
                                   Apply Founder
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => handleQuickProgramSet(user, "alignment")}
+                                  disabled={updating === user.user_id}
+                                  className="w-full text-left px-4 py-2 text-sm text-teal-700 dark:text-teal-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors disabled:opacity-50"
+                                >
+                                  Apply Alignment
                                 </button>
                                 <button
                                   type="button"

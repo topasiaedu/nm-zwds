@@ -26,7 +26,7 @@ type ScriptOptions = {
   verbose: boolean;
 };
 
-type MappedTier = "tier1" | "tier2" | "admin" | "beta" | "founder";
+type MappedTier = "tier1" | "tier2" | "admin" | "beta" | "founder" | "alignment";
 
 type TierMappingResult = {
   mappedTier: MappedTier;
@@ -100,6 +100,8 @@ const resolveTierTemplate = (tier: string): TierMappingResult | null => {
       return { mappedTier: "beta", template: PROGRAM_TEMPLATES.beta };
     case "founder":
       return { mappedTier: "founder", template: PROGRAM_TEMPLATES.founder };
+    case "alignment":
+      return { mappedTier: "alignment", template: PROGRAM_TEMPLATES.alignment };
     default:
       return null;
   }
