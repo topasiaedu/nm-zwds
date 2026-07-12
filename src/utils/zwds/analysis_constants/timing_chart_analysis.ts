@@ -21,7 +21,7 @@ export const TIMING_CHART_ANALYSIS_CONSTANTS = {
   },
   "交友": {
     name: "Friends Palace",
-    description: "In this 10-year cycle, your Friends Palace is activated, putting emphasis on your wider social network, teamwork, and collaborations. This is a time to expand your connections, work with new groups, and learn the value of cooperation. Friendships and alliances—whether personal or professional—may present both opportunities and challenges, shaping your progress and opening doors to new experiences.",
+    description: "In this 10-year cycle, your Friends Palace is activated, putting emphasis on your wider social network, teamwork, and collaborations. This is a time to expand your connections, work with new groups, and learn the value of cooperation. Friendships and alliances, whether personal or professional, may present both opportunities and challenges, shaping your progress and opening doors to new experiences.",
     quote: "Your network becomes your net worth in unexpected ways."
   },
   "父母": {

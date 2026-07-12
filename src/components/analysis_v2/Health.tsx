@@ -32,7 +32,7 @@ import { HealthGuidanceTimeline } from "./shared/HealthGuidanceTimeline";
  */
 interface HealthAnalysisProps {
   chartData: ChartData;
-  /** Optional physical palace number (1–12) for timeframe-based analysis. */
+  /** Optional physical palace number (1-12) for timeframe-based analysis. */
   palaceOverride?: number;
   /** When true, skip motion wrappers and expand all tips for PDF/html2canvas capture. */
   forPdfCapture?: boolean;
@@ -98,7 +98,7 @@ type HealthBodyMapBlockProps = {
 };
 
 /**
- * Flat body map — no card shell; pills for highlighted zones.
+ * Flat body map: no card shell; pills for highlighted zones.
  */
 const HealthBodyMapBlock: React.FC<HealthBodyMapBlockProps> = ({
   affectedParts,
@@ -405,8 +405,6 @@ const Health: React.FC<HealthAnalysisProps> = ({
     return matchingTip?.englishName ?? part;
   };
 
-  const guidanceLayoutVersion = JSON.stringify(expandedTips);
-
   const guidanceTimeline = forPdfCapture ? (
     <HealthGuidanceTimeline
       tips={guidanceTips}
@@ -425,7 +423,6 @@ const Health: React.FC<HealthAnalysisProps> = ({
       tipExceedsPreviewLimit={tipExceedsPreviewLimit}
       isTipExpanded={tipIsExpanded}
       onToggleTip={toggleTip}
-      layoutVersion={guidanceLayoutVersion}
     />
   );
 
@@ -493,7 +490,7 @@ const Health: React.FC<HealthAnalysisProps> = ({
           sectionLabel="Vitality profile"
           badgeText="04"
           title="Health Code Scan"
-          subtitle="Decode your body's energetic blueprint — where vitality flows and where it breaks down."
+          subtitle="Decode your body's energetic blueprint: where vitality flows and where it breaks down."
           icon={Heart}
           backgroundImage="/images/chart/men.png"
           backgroundPosition="right 40%"

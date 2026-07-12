@@ -14,10 +14,9 @@ export const chartPageClass = "relative z-[1]";
 export const chartContainerClass =
   "max-w-7xl mx-auto px-0 xs:px-1 sm:px-2 md:px-4 py-2 sm:py-4 md:py-8";
 
-/** Wider row for chart + profile sidebar; breaks out of max-w-7xl while hero/analysis stay narrow. */
+/** Chart + profile sidebar row; stays within the report viewer main column. */
 export const chartSectionContainerClass = [
-  "relative left-1/2 w-screen max-w-screen-2xl -translate-x-1/2",
-  "box-border px-4 sm:px-6 md:px-8",
+  "w-full max-w-none box-border",
   "pb-2 sm:pb-4 md:pb-8",
 ].join(" ");
 
@@ -229,17 +228,20 @@ export const chartScrollWrapperClass = [
 
 /** Outer chart canvas — tall portrait grid on mobile, square from sm upward. */
 export const chartCanvasOuterClass = [
-  "relative mx-auto w-full max-w-full",
+  "relative isolate mx-auto w-full max-w-full",
   "min-h-0",
   "max-sm:h-auto max-sm:min-h-[40rem] max-sm:w-full max-sm:max-w-full",
   "sm:aspect-square sm:min-h-[30rem]",
   "lg:min-h-[34rem]",
 ].join(" ");
 
-/** Inner 4×4 palace grid — equal 1fr tracks so every cell and the 2×2 center are the same unit size. */
+/**
+ * Inner 4×4 palace grid — equal minmax(0,1fr) tracks (see .zwds-chart-grid in index.css)
+ * so every palace cell matches and CenterInfo cannot stretch the middle rows.
+ */
 export const chartGridClass = [
   "zwds-chart-grid relative z-0 grid h-full w-full min-h-0",
-  "grid-cols-4 grid-rows-4",
+  "grid-cols-4 grid-rows-[repeat(4,minmax(0,1fr))]",
   "max-sm:min-h-[40rem]",
   "gap-1 p-0.5",
   "xs:gap-1.5 xs:p-1",
@@ -253,16 +255,18 @@ export const chartCenterSlotClass = [
   "h-full min-h-0 w-full",
 ].join(" ");
 
-/** SVG overlay for 四化 arrows — above palace and center layers. */
+/** SVG overlay for 四化 arrows — above palace/center layers, contained within chart isolate. */
 export const chartTransformationOverlayClass =
-  "pointer-events-none absolute inset-0 z-[100]";
+  "pointer-events-none absolute inset-0 z-40";
 
-/** Palace shell — taller minimum on mobile for portrait cards. */
+/**
+ * Palace shell — mobile keeps a readable min-height; sm+ fills the equal grid
+ * track (no fixed min-height, which previously fought equal row sizing).
+ */
 export const chartPalaceShellClass = [
   "relative h-full min-h-0",
   "p-1 xs:p-1.5 sm:p-3 md:p-3.5",
   "max-sm:min-h-[9rem]",
-  "sm:min-h-[145px] md:min-h-[168px]",
   "flex flex-col cursor-pointer overflow-hidden",
 ].join(" ");
 
@@ -496,44 +500,45 @@ export const chartCenterPanelClass = [
   "border border-[#E5DDD0] dark:border-gray-600",
   "bg-[#FDFBF7] dark:bg-surface-darkElevated",
   "shadow-sm",
-  "px-3 py-4",
-  "xs:px-3.5 xs:py-4",
-  "sm:px-4 sm:py-5",
-  "md:py-5",
+  "px-1.5 py-2.5",
+  "xs:px-2 xs:py-3",
+  "sm:px-2 sm:py-3",
+  "md:px-3 md:py-3",
 ].join(" ");
 
-/** Center panel inner — fixed to grid cell height; no scroll. */
+/**
+ * Center panel inner — scrolls when blueprint cards exceed the 2×2 cell.
+ * Card groups use shrink-0 so flex never collapses them into each other.
+ */
 export const chartCenterContentClass = [
   "relative z-0 flex h-full min-h-0 w-full flex-col",
-  "items-center justify-center overflow-hidden",
-  "px-0.5",
-  "xs:px-1",
-  "sm:px-1.5",
+  "items-center justify-start overflow-x-hidden overflow-y-auto",
+  "px-0",
+  "sm:px-0.5",
 ].join(" ");
 
 export const chartCenterHeroWrapClass = [
-  "flex h-full w-full min-h-0 flex-col items-center justify-center overflow-hidden",
+  "flex w-full min-h-min flex-col items-center justify-start",
 ].join(" ");
 
 export const chartCenterHeroClass = [
-  "flex max-h-full min-h-0 w-[90%] xs:w-[72%] sm:w-[68%] md:w-[80%] mx-auto",
-  "flex-col items-center justify-center text-center",
-  "overflow-hidden",
-  "px-1 pt-0 pb-1",
-  "xs:px-1.5",
-  "sm:px-2",
+  "flex w-full xs:w-[88%] sm:w-[84%] md:w-[90%] mx-auto",
+  "flex-col items-center justify-start text-center",
+  "px-0.5 pt-0 pb-1",
+  "xs:px-1",
+  "sm:px-1",
 ].join(" ");
 
 export const chartCenterEmblemRingClass = [
   "relative mx-auto flex h-9 w-9 xs:h-10 xs:w-10",
-  "sm:h-14 sm:w-14 md:h-16 md:w-16",
+  "sm:h-12 sm:w-12 md:h-14 md:w-14",
   "items-center justify-center overflow-hidden rounded-full",
   "border-2 border-[#C5A059]/45 bg-[#FAF9F6] dark:bg-gray-800",
   "p-0.5 shadow-sm",
 ].join(" ");
 
 export const chartCenterNameClass = [
-  "mt-0.5 font-serif text-[10px] font-bold xs:text-xs sm:text-sm md:text-base",
+  "mt-0.5 font-serif text-[10px] font-bold xs:text-xs sm:text-sm md:text-sm",
   "text-[#1A2B48] dark:text-white",
   "break-words whitespace-normal max-w-full px-1",
 ].join(" ");
@@ -552,12 +557,12 @@ export const chartCenterDemographicsClass = [
   "mt-0.5 sm:mt-2 font-serif text-[10px] text-[#1A2B48] dark:text-cream xs:text-xs sm:text-base",
 ].join(" ");
 
-/** Solar / lunar dates panel — desktop center only (hidden on mobile). */
+/** Solar / lunar dates panel — shown in center on all breakpoints. */
 export const chartCenterDatesPanelClass = [
-  "w-full max-w-[92%] flex-col gap-1.5 mt-1.5",
-  "rounded-lg border border-[#E5DDD0] bg-white/75 p-1.5 shadow-sm",
+  "flex w-full max-w-full shrink-0 flex-col gap-1 mt-1",
+  "rounded-lg border border-[#E5DDD0] bg-white/75 p-1 shadow-sm",
   "dark:border-gray-600 dark:bg-gray-800/55",
-  "sm:p-2",
+  "sm:gap-1 sm:p-1",
 ].join(" ");
 
 export const chartCenterDatesClass = [
@@ -565,8 +570,12 @@ export const chartCenterDatesClass = [
   chartCenterDatesPanelClass,
 ].join(" ");
 
-export const chartCenterDateRowClass =
-  "flex min-w-0 items-start gap-2 text-left";
+/** Center info row — mobile: label then full-width value; sm+: icon beside stacked label/value. */
+export const chartCenterDateRowClass = [
+  "grid w-full min-w-0 gap-x-1.5 gap-y-0.5 text-left",
+  "grid-cols-1",
+  "sm:grid-cols-[auto_minmax(0,1fr)]",
+].join(" ");
 
 export const chartCenterDateIconWrapClass = [
   "flex h-5 w-5 shrink-0 items-center justify-center rounded-full",
@@ -574,18 +583,27 @@ export const chartCenterDateIconWrapClass = [
   "sm:h-6 sm:w-6",
 ].join(" ");
 
+export const chartCenterDateRowIconWrapClass = [
+  chartCenterDateIconWrapClass,
+  "hidden",
+  "sm:col-start-1 sm:row-start-1 sm:flex sm:self-start sm:row-span-2 sm:self-center",
+].join(" ");
+
 export const chartCenterDateIconClass =
   "h-2.5 w-2.5 text-[#C5A059] sm:h-3 sm:w-3";
 
 export const chartCenterDateLabelClass = [
+  "col-start-1 row-start-1 min-w-0 w-full",
   "text-[8px] font-semibold uppercase tracking-wide text-[#6B7280] dark:text-gray-400",
-  "sm:text-[9px]",
+  "sm:col-start-2 sm:text-[9px]",
 ].join(" ");
 
 export const chartCenterDateValueClass = [
   "zwds-center-date-value",
-  "mt-0.5 text-[10px] leading-snug text-[#1A2B48] dark:text-white",
-  "sm:text-xs break-words whitespace-normal",
+  "col-start-1 row-start-2 min-w-0 w-full",
+  "text-[10px] leading-snug text-[#1A2B48] dark:text-white",
+  "break-words whitespace-normal",
+  "sm:col-start-2 sm:row-start-2 sm:mt-0 sm:text-[11px]",
 ].join(" ");
 
 export const chartCenterDividerClass =
@@ -605,27 +623,33 @@ export const chartCenterDetailValueClass = [
 ].join(" ");
 
 export const chartCenterZodiacGridClass = [
-  "grid w-full max-w-[92%] grid-cols-1 gap-1 mt-1",
-  "min-h-0",
+  "grid w-full max-w-full shrink-0 grid-cols-1 gap-1 mt-1",
   "xs:gap-1",
-  "sm:grid-cols-2 sm:gap-1.5",
+  "sm:grid-cols-2 sm:gap-1",
 ].join(" ");
 
 export const chartCenterZodiacCardClass = [
-  "flex min-w-0 items-center gap-1 rounded-md p-1",
-  "max-sm:flex-row max-sm:gap-1.5 max-sm:p-1",
+  "grid min-w-0 w-full gap-x-1 gap-y-0.5 rounded-md p-1",
+  "grid-cols-1",
   "border border-[#E5DDD0] bg-white/75 shadow-sm",
   "dark:border-gray-600 dark:bg-gray-800/55",
-  "sm:gap-1.5 sm:p-1.5",
+  "sm:grid-cols-[auto_minmax(0,1fr)] sm:p-1",
+].join(" ");
+
+export const chartCenterZodiacCardIconSlotClass = [
+  "hidden shrink-0 items-center justify-center",
+  "sm:col-start-1 sm:row-start-1 sm:flex sm:h-6 sm:w-6 sm:row-span-2 sm:self-center",
 ].join(" ");
 
 export const chartCenterZodiacCardLabelClass = [
+  "col-start-1 row-start-1 min-w-0 w-full",
   "text-[7px] font-semibold uppercase tracking-wide text-[#6B7280] dark:text-gray-400",
-  "max-sm:leading-tight sm:text-[8px]",
+  "leading-tight sm:col-start-2 sm:text-[8px]",
 ].join(" ");
 
 export const chartCenterZodiacCardValueClass = [
-  "font-serif text-[10px] font-bold leading-tight text-[#1A2B48] dark:text-cream",
+  "col-start-1 row-start-2 min-w-0 w-full",
+  "font-serif text-[10px] font-bold leading-snug text-[#1A2B48] dark:text-cream",
   "break-words whitespace-normal",
-  "sm:text-xs sm:truncate",
+  "sm:col-start-2 sm:row-start-2 sm:text-xs",
 ].join(" ");

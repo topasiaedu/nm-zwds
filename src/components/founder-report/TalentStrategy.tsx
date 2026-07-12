@@ -140,7 +140,7 @@ export const TalentStrategy: React.FC<TalentStrategyProps> = ({ chartData }) => 
                     <span className="text-xl flex-shrink-0">{"⚖️"}</span>
                     <div className="text-sm text-amber-900 dark:text-amber-200">
                       <span className="font-bold">{"Balanced Leadership: "}</span>
-                      {`You have equal representation across your ${sortedGroups.length} detected archetypes. No single style dominates — hire based on your business needs rather than personal gaps.`}
+                      {`You have equal representation across your ${sortedGroups.length} detected archetypes. No single style dominates; hire based on your business needs rather than personal gaps.`}
                     </div>
                   </div>
                 </div>

@@ -5,6 +5,11 @@ import { Tilt } from "react-tilt";
 import { useProfileContext } from "../context/ProfileContext";
 import { ChartSettingsProvider } from "../context/ChartSettingsContext";
 import PageTransition from "../components/PageTransition";
+import ReportViewerLayout, {
+  type ReportSection,
+} from "../components/layout/ReportViewerLayout";
+import { useAppNavItems } from "../hooks/useAppNavItems";
+import { chartSpinnerClass } from "../styles/chartUi";
 import ZWDSChart from "../components/zwds/ZWDSChart";
 import { ZWDSCalculator } from "../utils/zwds/calculator";
 import { ChartData } from "../utils/zwds/types";
@@ -314,6 +319,7 @@ const TimingChartContent: React.FC = () => {
   // const { t } = useLanguage();
   const { id } = useParams<{ id: string }>();
   const { profiles } = useProfileContext();
+  const { items: appNavItems } = useAppNavItems();
   const [loading, setLoading] = useState<boolean>(true);
   const [profile, setProfile] = useState<any>(null);
   const [chartData, setChartData] = useState<ChartData | null>(null);
@@ -450,7 +456,7 @@ const TimingChartContent: React.FC = () => {
     const isExpanded = expandedCycles.has(index);
 
     return (
-      <div key={`timing-${index}`} id={`cycle-${index}`} className="mb-8">
+      <div key={`timing-${index}`} id={`cycle-${index}`} className="mb-8 scroll-mt-16">
         
         {/* Collapsible Header */}
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
@@ -819,163 +825,117 @@ const TimingChartContent: React.FC = () => {
     const date = new Date(dateString);
     return date.toLocaleDateString(undefined, {
       year: "numeric",
-      month: "long", 
-      day: "numeric"
+      month: "long",
+      day: "numeric",
     });
   };
 
+  const reportSections = useMemo((): ReportSection[] => {
+    return timingCycles.map((cycle, index) => ({
+      id: `cycle-${index}`,
+      label: `Cycle ${index + 1}`,
+      sub: `Ages ${cycle.startAge}-${cycle.endAge}`,
+    }));
+  }, [timingCycles]);
+
+  const layoutProfileName = profile?.name ?? "Timing Chart";
+
+  const layoutShell = (
+    shellChildren: React.ReactNode
+  ): React.ReactElement => (
+    <PageTransition>
+      <ReportViewerLayout
+        profileName={layoutProfileName}
+        appNavItems={appNavItems}
+        reportSections={reportSections}
+      >
+        {shellChildren}
+      </ReportViewerLayout>
+    </PageTransition>
+  );
+
   if (loading) {
-    return (
-      <PageTransition>
-        <div className="flex items-center justify-center min-h-screen">
-          <div className="text-center">
-            <div className="w-16 h-16 border-t-4 border-b-4 border-purple-500 rounded-full animate-spin mx-auto mb-4"></div>
-            <p className="text-gray-600 dark:text-gray-400">Loading timing charts...</p>
-          </div>
+    return layoutShell(
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <div className={`${chartSpinnerClass} mb-4`} />
+          <p className="text-gray-600 dark:text-gray-400">Loading timing charts...</p>
         </div>
-      </PageTransition>
+      </div>
     );
   }
 
   if (!profile) {
-    return (
-      <PageTransition>
-        <div className="p-6">
-          <div className="max-w-4xl mx-auto text-center">
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
-              Profile Not Found
-            </h1>
-            <p className="text-gray-600 dark:text-gray-400 mb-6">
-              The requested profile could not be found.
-            </p>
-            <Link
-              to="/dashboard"
-              className="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
-            >
-              Return to Dashboard
-            </Link>
-          </div>
-        </div>
-      </PageTransition>
+    return layoutShell(
+      <div className="px-4 sm:px-6 md:px-10 py-8 text-center">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+          Profile Not Found
+        </h1>
+        <p className="text-gray-600 dark:text-gray-400 mb-6">
+          The requested profile could not be found.
+        </p>
+        <Link
+          to="/dashboard"
+          className="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+        >
+          Return to Dashboard
+        </Link>
+      </div>
     );
   }
 
   if (!chartData || timingCycles.length === 0) {
-    return (
-      <PageTransition>
-        <div className="p-6">
-          <div className="max-w-4xl mx-auto text-center">
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
-              Unable to Calculate Timing Charts
-            </h1>
-            <p className="text-gray-600 dark:text-gray-400 mb-6">
-              There was an error calculating the timing analysis for this profile.
-            </p>
-            <Link
-              to={`/result/${profile.id}`}
-              className="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
-            >
-              View Main Chart
-            </Link>
-          </div>
-        </div>
-      </PageTransition>
+    return layoutShell(
+      <div className="px-4 sm:px-6 md:px-10 py-8 text-center">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+          Unable to Calculate Timing Charts
+        </h1>
+        <p className="text-gray-600 dark:text-gray-400 mb-6">
+          There was an error calculating the timing analysis for this profile.
+        </p>
+        <Link
+          to={`/result/${profile.id}`}
+          className="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+        >
+          View Main Chart
+        </Link>
+      </div>
     );
   }
 
-  return (
-    <PageTransition>
-      <div className="p-2 sm:p-6">
-        <div className="max-w-7xl mx-auto">
-          {/* Navigation Breadcrumb */}
-          <div className="mb-6">
-            <nav className="flex" aria-label="Breadcrumb">
-              <ol className="inline-flex items-center space-x-1 md:space-x-3">
-                <li className="inline-flex items-center">
-                  <Link
-                    to="/dashboard"
-                    className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-                  >
-                    Dashboard
-                  </Link>
-                </li>
-                <li>
-                  <div className="flex items-center">
-                    <span className="mx-2 text-gray-400">/</span>
-                    <Link
-                      to={`/result/${profile.id}`}
-                      className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-                    >
-                      Chart Result
-                    </Link>
-                  </div>
-                </li>
-                <li aria-current="page">
-                  <div className="flex items-center">
-                    <span className="mx-2 text-gray-400">/</span>
-                    <span className="text-gray-700 dark:text-gray-300">Timing Chart</span>
-                  </div>
-                </li>
-              </ol>
-            </nav>
-          </div>
+  return layoutShell(
+    <div className="relative px-4 sm:px-6 md:px-10 py-6 md:py-8 min-w-0">
+      <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
+        Explore the 10-year cycles (大限) that shape your destiny. Each chart represents a different life phase.
+      </p>
 
-          {/* Page Header */}
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-              Timing Chart Analysis - {profile.name}
-            </h1>
-            <p className="text-gray-600 dark:text-gray-400 mb-4">
-              Explore the 10-year cycles (大限) that shape your destiny. Each chart represents a different life phase.
-            </p>
-            
-            {/* Profile Summary */}
-            <div className="bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20 rounded-lg p-4">
-              <div className="flex flex-wrap items-center gap-4 text-sm">
-                <div>
-                  <span className="text-gray-600 dark:text-gray-400">Born:</span>
-                  <span className="ml-2 font-medium text-gray-900 dark:text-white">
-                    {formatDate(profile.birthday)}
-                  </span>
-                </div>
-                <div>
-                  <span className="text-gray-600 dark:text-gray-400">Gender:</span>
-                  <span className="ml-2 font-medium text-gray-900 dark:text-white">
-                    {profile.gender === "male" ? "Male" : "Female"}
-                  </span>
-                </div>
-                <div>
-                  <span className="text-gray-600 dark:text-gray-400">Total Cycles:</span>
-                  <span className="ml-2 font-medium text-gray-900 dark:text-white">
-                    {timingCycles.length}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-
-
-          {/* Timing Charts */}
+      <div className="bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20 rounded-lg p-4 mb-8">
+        <div className="flex flex-wrap items-center gap-4 text-sm">
           <div>
-            {timingCycles.map((cycle, index) => renderTimingChart(cycle, index))}
+            <span className="text-gray-600 dark:text-gray-400">Born:</span>
+            <span className="ml-2 font-medium text-gray-900 dark:text-white">
+              {formatDate(profile.birthday)}
+            </span>
           </div>
-
-          {/* Back to Chart Link */}
-          <div className="text-center">
-            <Link
-              to={`/result/${profile.id}`}
-              className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg hover:from-purple-700 hover:to-indigo-700 transition-all duration-200 shadow-lg hover:shadow-xl"
-            >
-              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-              </svg>
-              Back to Main Chart
-            </Link>
+          <div>
+            <span className="text-gray-600 dark:text-gray-400">Gender:</span>
+            <span className="ml-2 font-medium text-gray-900 dark:text-white">
+              {profile.gender === "male" ? "Male" : "Female"}
+            </span>
+          </div>
+          <div>
+            <span className="text-gray-600 dark:text-gray-400">Total Cycles:</span>
+            <span className="ml-2 font-medium text-gray-900 dark:text-white">
+              {timingCycles.length}
+            </span>
           </div>
         </div>
       </div>
-    </PageTransition>
+
+      <div>
+        {timingCycles.map((cycle, index) => renderTimingChart(cycle, index))}
+      </div>
+    </div>
   );
 };
 

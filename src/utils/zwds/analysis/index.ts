@@ -75,4 +75,15 @@ export { analyzeSummary } from "./summaryAnalysis";
 export type { SummaryAnalysisResult } from "./summaryAnalysis";
 
 // Export watchout analysis
-export { analyzeWatchouts } from "./watchoutAnalysis"; 
+export { analyzeWatchouts } from "./watchoutAnalysis";
+
+// Export Structure analysis (Speed/Endurance Player + formations)
+export { detectStructure } from "./structureAnalysis";
+export type {
+  StructureType,
+  SpeedFormationKey,
+  EnduranceFormationKey,
+  SpecialFormationKey,
+  FormationKey,
+  StructureAnalysisResult,
+} from "./structureAnalysis";

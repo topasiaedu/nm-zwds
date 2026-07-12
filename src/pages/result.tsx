@@ -1,7 +1,11 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { useLanguage } from "../context/LanguageContext";
-import { Link, useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import PageTransition from "../components/PageTransition";
+import ReportViewerLayout, {
+  type ReportSection,
+} from "../components/layout/ReportViewerLayout";
+import { useAppNavItems } from "../hooks/useAppNavItems";
 import { useProfileContext } from "../context/ProfileContext";
 import ProfileForm from "../components/ProfileForm";
 import ZWDSChart from "../components/ZWDSChart";
@@ -31,10 +35,6 @@ import {
 } from "../utils/pdfServerExportProgressTicker";
 import { supabase } from "../utils/supabase-client";
 import {
-  renderChartTitleWithNameGradient,
-  renderTitleWithZiWeiDouShuGradient,
-} from "../components/BrandGradientText";
-import {
   Overview,
   Health,
   AreasOfLife,
@@ -46,8 +46,6 @@ import { ChartSettingsProvider, useChartSettings } from "../context/ChartSetting
 import ChartSettingsModal from "../components/ChartSettingsModal";
 import {
   chartAnalysisDividerClass,
-  chartBackButtonClass,
-  chartBackIconWrapClass,
   chartCardAccentBarClass,
   chartCardBlueprintToolbarClass,
   chartCardBodyClass,
@@ -62,14 +60,7 @@ import {
   chartErrorRetryClass,
   chartErrorTextClass,
   chartErrorTitleClass,
-  chartGlowClass,
-  chartHeroClass,
-  chartHeroLabelClass,
-  chartHeroSubtitleClass,
-  chartHeroTitleClass,
-  chartHeroTitleIconClass,
   chartLoadingTextClass,
-  chartPageClass,
   chartSpinnerClass,
   chartSpinnerSmallClass,
 } from "../styles/chartUi";
@@ -82,6 +73,33 @@ import type { LifeAspect } from "../types/destiny-navigator";
 // import { FourKeyPalaceAnalysis, LifeAreasExplanation } from "../components/analysis";
 
 const ENABLE_PDF_EXPORT = true;
+
+/** Base report section anchors */
+const CHART_SECTION: ReportSection = {
+  id: "chart",
+  label: "Chart",
+  sub: "12-palace visualization",
+};
+
+const ANALYSIS_SECTIONS: ReportSection[] = [
+  { id: "overview", label: "Overview", sub: "Life palace summary" },
+  { id: "wealth-code", label: "Wealth Code", sub: "Earning style analysis" },
+  { id: "health", label: "Health", sub: "Wellness patterns" },
+  { id: "four-key-palace", label: "Destiny Alert Map", sub: "Four key palaces" },
+  { id: "areas-of-life", label: "Areas of Life", sub: "All palace areas" },
+];
+
+const DAYUN_SECTION: ReportSection = {
+  id: "dayun",
+  label: "Da Yun",
+  sub: "10-year cycle analysis",
+};
+
+const LIU_MONTH_SECTION: ReportSection = {
+  id: "liu-month",
+  label: "Liu Month",
+  sub: "Monthly briefing",
+};
 
 /**
  * Chinese Earthly Branches for time periods (地支)
@@ -386,6 +404,12 @@ const ResultContent: React.FC = () => {
     ? selfProfile
     : profiles.find((profile) => String(profile.id) === String(id));
 
+  const { items: appNavItems } = useAppNavItems({
+    activeKey: isSelfProfile ? "my-chart" : undefined,
+  });
+
+  const layoutProfileName = profileToShow?.name ?? chartData?.name ?? "My Chart";
+
   // Add debug logs to help identify issues
   useEffect(() => {
     // Add debug logs only in development for missing profiles
@@ -590,6 +614,24 @@ const ResultContent: React.FC = () => {
       return null;
     }
   }, [chartData, branchOffset]);
+
+  const reportSections = useMemo((): ReportSection[] => {
+    const sections: ReportSection[] = [CHART_SECTION];
+
+    if (!hasFullAnalysis || !calculatedChartData) {
+      return sections;
+    }
+
+    if (blueprintMode === "dayun") {
+      sections.push(DAYUN_SECTION);
+    } else if (blueprintMode === "liumonth") {
+      sections.push(LIU_MONTH_SECTION);
+    } else if (blueprintMode === "dna" || blueprintMode === "liunian") {
+      sections.push(...ANALYSIS_SECTIONS);
+    }
+
+    return sections;
+  }, [blueprintMode, calculatedChartData, hasFullAnalysis]);
 
   /**
    * Get current Liu Nian palace for month display and secondary names in LiuNian mode
@@ -796,9 +838,9 @@ const ResultContent: React.FC = () => {
                   "Sorting your chart into neat pages you can save or print..."
                 : elapsedMs < 38_000
                   ? t("pdfExport.serverPhase2") ||
-                    "Still working—full reports like yours can take a little longer..."
+                    "Still working. Full reports like yours can take a little longer..."
                   : t("pdfExport.serverPhase3") ||
-                    "Almost there—just tidying the last details...";
+                    "Almost there. Just tidying the last details...";
             setPdfExportModal((prev) => ({
               ...prev,
               progress: {
@@ -930,401 +972,279 @@ const ResultContent: React.FC = () => {
     t,
   ]);
 
+  const layoutShell = (
+    shellChildren: React.ReactNode
+  ): React.ReactElement => (
+    <PageTransition>
+      <ReportViewerLayout
+        profileName={layoutProfileName}
+        appNavItems={appNavItems}
+        reportSections={reportSections}
+      >
+        {shellChildren}
+      </ReportViewerLayout>
+    </PageTransition>
+  );
+
   // If loading profiles from context
   if (profilesLoading) {
-    return (
-      <>
-        <div className={chartGlowClass} aria-hidden="true" />
-        <PageTransition>
-          <div className={chartPageClass}>
-            <div className={chartContainerClass}>
-              <div className="text-center py-12">
-                <div className={chartSpinnerClass} />
-              </div>
-            </div>
-          </div>
-        </PageTransition>
-      </>
+    return layoutShell(
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <div className={chartSpinnerClass} />
+        </div>
+      </div>
     );
   }
 
   // If viewing self profile but none exists, show profile form
   if (isSelfProfile && !selfProfile) {
-    return (
-      <>
-        <div className={chartGlowClass} aria-hidden="true" />
-        <PageTransition>
-          <div className={chartPageClass}>
-            <div className={chartContainerClass}>
-              <header className={chartHeroClass}>
-                <Link to="/dashboard" className={chartBackButtonClass}>
-                  <span className={chartBackIconWrapClass} aria-hidden="true">
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                    </svg>
-                  </span>
-                  <span>{t("general.back") || "Back"}</span>
-                </Link>
-                <p className={chartHeroLabelClass}>{t("myChart.title") || "My Chart"}</p>
-                <h1 className={chartHeroTitleClass}>
-                  <svg className={chartHeroTitleIconClass} fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                  </svg>
-                  {renderTitleWithZiWeiDouShuGradient(
-                    t("myChart.title") || "My 紫微斗数 Chart"
-                  )}
-                </h1>
-                <p className={chartHeroSubtitleClass}>
-                  {t("myChart.subtitle") ||
-                    "View your personal Zi Wei Dou Shu chart and analysis"}
-                </p>
-              </header>
-
-              <ProfileForm isSelfProfile={true} onSuccess={() => navigate("/chart")} />
-            </div>
-          </div>
-        </PageTransition>
-      </>
+    return layoutShell(
+      <div className={chartContainerClass}>
+        <ProfileForm isSelfProfile={true} onSuccess={() => navigate("/chart")} />
+      </div>
     );
   }
 
-  return (
+  return layoutShell(
     <>
-      <div className={chartGlowClass} aria-hidden="true" />
-      <PageTransition>
-        <div className={chartPageClass}>
-          <div className={`${chartContainerClass} pb-0`}>
-            <header className={chartHeroClass}>
-              <Link to="/dashboard" className={chartBackButtonClass}>
-                <span className={chartBackIconWrapClass} aria-hidden="true">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                  </svg>
-                </span>
-                <span>{t("general.back") || "Back"}</span>
-              </Link>
-              <p className={chartHeroLabelClass}>
-                {isSelfProfile
-                  ? t("myChart.title") || "My Chart"
-                  : t("result.chart") || "Chart"}
-              </p>
-              <h1 className={chartHeroTitleClass}>
-                {loading ? (
-                  t("result.loading") || "Loading Chart..."
-                ) : (
-                  <>
-                    <svg
-                      className={chartHeroTitleIconClass}
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      aria-hidden="true"
-                    >
-                      {isSelfProfile ? (
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                        />
-                      ) : (
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-                        />
-                      )}
-                    </svg>
-                    {isSelfProfile
-                      ? renderTitleWithZiWeiDouShuGradient(
-                          t("myChart.title") || "My 紫微斗数 Chart"
-                        )
-                      : chartData?.name
-                        ? renderChartTitleWithNameGradient(
-                            chartData.name,
-                            t("result.chart") || "Chart"
-                          )
-                        : t("result.chart") || "Chart"}
-                  </>
-                )}
-              </h1>
-              {!loading && chartData && (
-                <p className={chartHeroSubtitleClass}>
-                  {isSelfProfile
-                    ? t("myChart.subtitle") ||
-                      "View your personal Zi Wei Dou Shu chart and analysis"
-                    : t("result.subtitle") ||
-                      `紫微斗数 (Zi Wei Dou Shu) chart analysis for ${chartData.name}`}
-                </p>
-              )}
-            </header>
+      {loading ? (
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-center">
+            <div className={`${chartSpinnerClass} mb-4`} />
+            <p className={chartLoadingTextClass}>
+              {t("general.loadingText") || "Loading chart data..."}
+            </p>
           </div>
+        </div>
+      ) : error ? (
+        <div className={chartErrorPanelClass}>
+          <svg
+            className="mx-auto h-12 w-12 text-theme-danger mb-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+          <h2 className={chartErrorTitleClass}>
+            {t("general.error") || "Error"}
+          </h2>
+          <p className={chartErrorTextClass}>{error}</p>
+          <button
+            type="button"
+            className={chartErrorRetryClass}
+            onClick={() => window.location.reload()}
+          >
+            {t("general.retry") || "Retry"}
+          </button>
+        </div>
+      ) : (
+        chartData && (
+          <>
+            <section id="chart" className={`${chartSectionContainerClass} scroll-mt-16`}>
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 sm:gap-3 md:gap-6">
+                <div className="lg:col-span-2">
+                  <div className={chartCardClass}>
+                    <div className={chartCardAccentBarClass} aria-hidden="true" />
+                    <div className={chartCardToolbarClass}>
+                      <h2 className={chartCardTitleClass}>
+                        {t("result.chartVisualization") || "Chart Visualization"}
+                      </h2>
+                    </div>
 
-        {loading ? (
-          <div className={chartContainerClass}>
-            <div className="flex items-center justify-center min-h-[400px]">
-              <div className="text-center">
-                <div className={`${chartSpinnerClass} mb-4`} />
-                <p className={chartLoadingTextClass}>
-                  {t("general.loadingText") || "Loading chart data..."}
-                </p>
-              </div>
-            </div>
-          </div>
-        ) : error ? (
-          <div className={chartContainerClass}>
-          <div className={chartErrorPanelClass}>
-            <svg
-              className="mx-auto h-12 w-12 text-theme-danger mb-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              aria-hidden="true"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-            <h2 className={chartErrorTitleClass}>
-              {t("general.error") || "Error"}
-            </h2>
-            <p className={chartErrorTextClass}>{error}</p>
-            <button
-              type="button"
-              className={chartErrorRetryClass}
-              onClick={() => window.location.reload()}
-            >
-              {t("general.retry") || "Retry"}
-            </button>
-          </div>
-          </div>
-        ) : (
-          chartData && (
-            <div className={chartSectionContainerClass}>
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 sm:gap-3 md:gap-6">
-              {/* Chart visualization */}
-              <div className="lg:col-span-2">
-                <div className={chartCardClass}>
-                  <div className={chartCardAccentBarClass} aria-hidden="true" />
-                  <div className={chartCardToolbarClass}>
-                    <h2 className={chartCardTitleClass}>
-                      {t("result.chartVisualization") || "Chart Visualization"}
-                    </h2>
-                  </div>
-
-                  {/* Blueprint Mode Switcher — branded tab strip */}
-                  <div className={chartCardBlueprintToolbarClass}>
-                    <ChartBlueprintSwitcher
-                      value={blueprintMode}
-                      onChange={handleBlueprintChange}
-                    />
-                  </div>
-
-                  <div className={chartCardBodyClass}>
-                  {calculatedChartData ? (
-                    <div className={chartScrollWrapperClass}>
-                      <ZWDSChart
-                        chartData={calculatedChartData}
-                        blueprintMode={blueprintMode}
-                        targetYear={
-                          blueprintMode === "liumonth" ? liuMonthSolarYear : undefined
-                        }
-                        isPdfExport={isCapturingForPdf}
-                        // DaYun: drive with current dayun palace
-                        // DNA: restore saved DNA selection (null clears on first render)
-                        // LiuNian: pass null to clear any stale Da Xian value
-                        selectedDaXianControlled={
-                          blueprintMode === "dayun"
-                            ? currentDayunPalace
-                            : blueprintMode === "dna"
-                              ? dnaDaXianSelection
-                              : null
-                        }
-                        // LiuNian: drive with current liunian palace for secondary names
-                        // LiuMonth: drive with the current month palace for secondary names
-                        // DNA: restore saved DNA selection (null clears on first render)
-                        // DaYun: pass null to clear any stale palace name value
-                        selectedPalaceNameControlled={
-                          blueprintMode === "liunian"
-                            ? currentLiuNianPalace
-                            : blueprintMode === "liumonth"
-                              ? currentLiuMonthPalace
-                              : blueprintMode === "dna"
-                                ? dnaPalaceNameSelection
-                                : null
-                        }
-                        // LiuMonth: auto-show months for the current year's annual flow palace,
-                        // mimicking the user clicking on that palace's year/age label.
-                        // Other modes: clear any stale months display.
-                        showMonthsControlled={
-                          blueprintMode === "liumonth" ? currentLiuMonthYearPalace : null
-                        }
-                        uniformAnnualYearForMonths={blueprintMode === "liumonth"}
-                        highlightLifePalaceLikeDayun={
-                          blueprintMode === "liumonth" || blueprintMode === "liunian"
-                        }
-                        liuMonthLifeHighlightPalaceNumber={
-                          blueprintMode === "liumonth"
-                            ? currentLiuMonthLifePalace
-                            : blueprintMode === "liunian"
-                              ? currentLiuNianLifePalace
-                              : null
-                        }
-                        // Persist palace name clicks only while in DNA mode
-                        onPalaceNameChange={(palace) => {
-                          if (blueprintMode === "dna") {
-                            setDnaPalaceNameSelection(palace);
-                          }
-                        }}
-                        // Persist Da Xian clicks only while in DNA mode
-                        onDaXianChange={(palace) => {
-                          if (blueprintMode === "dna") {
-                            setDnaDaXianSelection(palace);
-                          }
-                        }}
+                    <div className={chartCardBlueprintToolbarClass}>
+                      <ChartBlueprintSwitcher
+                        value={blueprintMode}
+                        onChange={handleBlueprintChange}
                       />
                     </div>
-                  ) : (
-                    <div className={chartChartLoadingOverlayClass}>
-                      <div className="text-center">
-                        <div className={`${chartSpinnerSmallClass} mb-4`} />
-                        <p className={chartLoadingTextClass}>
-                          {t("general.loadingText") ||
-                            "Calculating chart data..."}
-                        </p>
-                      </div>
+
+                    <div className={chartCardBodyClass}>
+                      {calculatedChartData ? (
+                        <div className={chartScrollWrapperClass}>
+                          <ZWDSChart
+                            chartData={calculatedChartData}
+                            blueprintMode={blueprintMode}
+                            targetYear={
+                              blueprintMode === "liumonth" ? liuMonthSolarYear : undefined
+                            }
+                            isPdfExport={isCapturingForPdf}
+                            selectedDaXianControlled={
+                              blueprintMode === "dayun"
+                                ? currentDayunPalace
+                                : blueprintMode === "dna"
+                                  ? dnaDaXianSelection
+                                  : null
+                            }
+                            selectedPalaceNameControlled={
+                              blueprintMode === "liunian"
+                                ? currentLiuNianPalace
+                                : blueprintMode === "liumonth"
+                                  ? currentLiuMonthPalace
+                                  : blueprintMode === "dna"
+                                    ? dnaPalaceNameSelection
+                                    : null
+                            }
+                            showMonthsControlled={
+                              blueprintMode === "liumonth" ? currentLiuMonthYearPalace : null
+                            }
+                            uniformAnnualYearForMonths={blueprintMode === "liumonth"}
+                            highlightLifePalaceLikeDayun={
+                              blueprintMode === "liumonth" || blueprintMode === "liunian"
+                            }
+                            liuMonthLifeHighlightPalaceNumber={
+                              blueprintMode === "liumonth"
+                                ? currentLiuMonthLifePalace
+                                : blueprintMode === "liunian"
+                                  ? currentLiuNianLifePalace
+                                  : null
+                            }
+                            onPalaceNameChange={(palace) => {
+                              if (blueprintMode === "dna") {
+                                setDnaPalaceNameSelection(palace);
+                              }
+                            }}
+                            onDaXianChange={(palace) => {
+                              if (blueprintMode === "dna") {
+                                setDnaDaXianSelection(palace);
+                              }
+                            }}
+                          />
+                        </div>
+                      ) : (
+                        <div className={chartChartLoadingOverlayClass}>
+                          <div className="text-center">
+                            <div className={`${chartSpinnerSmallClass} mb-4`} />
+                            <p className={chartLoadingTextClass}>
+                              {t("general.loadingText") ||
+                                "Calculating chart data..."}
+                            </p>
+                          </div>
+                        </div>
+                      )}
                     </div>
-                  )}
                   </div>
                 </div>
-              </div>
 
-              {/* Profile information */}
-              <div className="lg:col-span-1">
-                <ChartProfileSidebar
-                  chartData={chartData}
-                  calculatedChartData={calculatedChartData}
-                  isSelfProfile={isSelfProfile}
-                  isAdmin={isAdmin}
-                  branchOffset={branchOffset}
-                  enablePdfExport={ENABLE_PDF_EXPORT}
-                  onBranchOffsetChange={setBranchOffset}
-                  onBranchReset={() => setBranchOffset(0)}
-                  onPdfExport={handlePdfExport}
-                  getCurrentBranchInfo={getCurrentBranchInfo}
-                  formatDate={formatDate}
-                  t={t}
-                />
-              </div>
-            </div>
-            </div>
-          )
-        )}
-
-        <div className={`${chartContainerClass} pt-0`}>
-        {/* Analysis Section - Always show Overview, but other components require Tier 2+ */}
-        {calculatedChartData && !loading && !error && hasFullAnalysis && (
-          <div className={chartAnalysisDividerClass}>
-
-            {/* ── Title block — only for DNA and Liu Nian modes ── */}
-            {(blueprintMode === "dna" || blueprintMode === "liunian") && (
-              <DestinyBlueprintPageHeader
-                sectionTitle={t("analysis.title") || "PERSONALIZED LIFE REPORT"}
-                subtitle={
-                  t("analysis.subtitle") ||
-                  "A custom breakdown of your chart's strengths, patterns, and strategic focus areas."
-                }
-                className="mb-8"
-              />
-            )}
-
-            <div className="space-y-8">
-
-              {/* ── Da Yun Mode: only DayunSection, no numbered header ── */}
-              {blueprintMode === "dayun" && (
-                <DayunSection chartData={calculatedChartData} showHeader={false} />
-              )}
-
-              {/* ── Liu Month Mode: monthly briefing card only ── */}
-              {blueprintMode === "liumonth" && currentLiuMonthPalace !== null ? (
-                <LiuMonthCard
-                  selectedMonth={selectedLiuMonth}
-                  solarYear={liuMonthSolarYear}
-                  palaceNumber={currentLiuMonthPalace}
-                  palaceName={calculatedChartData.palaces[currentLiuMonthPalace - 1]?.name ?? ""}
-                />
-              ) : (blueprintMode === "dna" || blueprintMode === "liunian") ? (
-                <>
-                  {/* ── Full analysis suite — DNA and Liu Nian modes only ── */}
-
-                  {/* Overview — uses Life Palace (命宫) */}
-                  <Overview
-                    chartData={calculatedChartData}
-                    palaceOverride={getPalaceOverride("life") ?? undefined}
+                <div className="lg:col-span-1">
+                  <ChartProfileSidebar
+                    chartData={chartData}
+                    calculatedChartData={calculatedChartData}
+                    isSelfProfile={isSelfProfile}
+                    isAdmin={isAdmin}
+                    branchOffset={branchOffset}
+                    enablePdfExport={ENABLE_PDF_EXPORT}
+                    onBranchOffsetChange={setBranchOffset}
+                    onBranchReset={() => setBranchOffset(0)}
+                    onPdfExport={handlePdfExport}
+                    getCurrentBranchInfo={getCurrentBranchInfo}
+                    formatDate={formatDate}
+                    t={t}
                   />
+                </div>
+              </div>
+            </section>
 
-                  {hasFullAnalysis && (
-                    <>
-                      {/* Wealth Code — uses Wealth Palace (财帛) */}
-                      <WealthCode
-                        chartData={calculatedChartData}
-                        showTopDivider={true}
-                        header={{
-                          badgeText: "02",
-                          title: "WEALTH CODE ANALYSIS",
-                          subtitle:
-                            "Decode your natural earning style and ideal business model aligned to your energy.",
-                        }}
-                        palaceOverride={getPalaceOverride("wealth") ?? undefined}
+            {calculatedChartData && hasFullAnalysis && (
+              <div className={chartAnalysisDividerClass}>
+                {(blueprintMode === "dna" || blueprintMode === "liunian") && (
+                  <DestinyBlueprintPageHeader
+                    sectionTitle={t("analysis.title") || "PERSONALIZED LIFE REPORT"}
+                    subtitle={
+                      t("analysis.subtitle") ||
+                      "A custom breakdown of your chart's strengths, patterns, and strategic focus areas."
+                    }
+                    className="mb-8"
+                  />
+                )}
+
+                <div className="space-y-8">
+                  {blueprintMode === "dayun" && (
+                    <section id="dayun" className="scroll-mt-16">
+                      <DayunSection chartData={calculatedChartData} showHeader={false} />
+                    </section>
+                  )}
+
+                  {blueprintMode === "liumonth" && currentLiuMonthPalace !== null ? (
+                    <section id="liu-month" className="scroll-mt-16">
+                      <LiuMonthCard
+                        selectedMonth={selectedLiuMonth}
+                        solarYear={liuMonthSolarYear}
+                        palaceNumber={currentLiuMonthPalace}
+                        palaceName={calculatedChartData.palaces[currentLiuMonthPalace - 1]?.name ?? ""}
                       />
+                    </section>
+                  ) : (blueprintMode === "dna" || blueprintMode === "liunian") ? (
+                    <>
+                      <section id="overview" className="scroll-mt-16">
+                        <Overview
+                          chartData={calculatedChartData}
+                          palaceOverride={getPalaceOverride("life") ?? undefined}
+                        />
+                      </section>
+
+                      <section id="wealth-code" className="scroll-mt-16">
+                        <WealthCode
+                          chartData={calculatedChartData}
+                          showTopDivider={true}
+                          header={{
+                            badgeText: "02",
+                            title: "WEALTH CODE ANALYSIS",
+                            subtitle:
+                              "Decode your natural earning style and ideal business model aligned to your energy.",
+                          }}
+                          palaceOverride={getPalaceOverride("wealth") ?? undefined}
+                        />
+                      </section>
 
                       <NoblemanSection chartData={calculatedChartData} />
 
-                      {/* Health — uses Health Palace (疾厄) */}
-                      <Health
-                        chartData={calculatedChartData}
-                        palaceOverride={getPalaceOverride("health") ?? undefined}
-                      />
+                      <section id="health" className="scroll-mt-16">
+                        <Health
+                          chartData={calculatedChartData}
+                          palaceOverride={getPalaceOverride("health") ?? undefined}
+                        />
+                      </section>
 
-                      {/* Destiny Alert Map — palace names update with active timeframe */}
-                      <FourKeyPalace
-                        chartData={calculatedChartData}
-                        resolvePalaceName={resolvePalaceName}
-                      />
+                      <section id="four-key-palace" className="scroll-mt-16">
+                        <FourKeyPalace
+                          chartData={calculatedChartData}
+                          resolvePalaceName={resolvePalaceName}
+                        />
+                      </section>
+
+                      <section id="areas-of-life" className="scroll-mt-16">
+                        <AreasOfLife
+                          chartData={calculatedChartData}
+                          palaceOverride={getPalaceOverride("life") ?? undefined}
+                        />
+                      </section>
                     </>
-                  )}
+                  ) : null}
+                </div>
+              </div>
+            )}
+          </>
+        )
+      )}
 
-                  {/* Areas of Life — uses all palace areas */}
-                  <AreasOfLife
-                    chartData={calculatedChartData}
-                    palaceOverride={getPalaceOverride("life") ?? undefined}
-                  />
-                </>
-              ) : null}
+      {ENABLE_PDF_EXPORT ? (
+        <PdfExportModal
+          isOpen={pdfExportModal.isOpen}
+          onClose={closePdfExportModal}
+          progress={pdfExportModal.progress}
+          chartName={chartData?.name || ""}
+        />
+      ) : null}
 
-            </div>
-          </div>
-        )}
-
-        {/* PDF Export Modal */}
-        {ENABLE_PDF_EXPORT ? (
-          <PdfExportModal
-            isOpen={pdfExportModal.isOpen}
-            onClose={closePdfExportModal}
-            progress={pdfExportModal.progress}
-            chartName={chartData?.name || ""}
-          />
-        ) : null}
-
-        {/* Chart Settings Modal */}
-        <ChartSettingsModal pageType="result" />
-        </div>
-        </div>
-      </PageTransition>
+      <ChartSettingsModal pageType="result" />
     </>
   );
 };

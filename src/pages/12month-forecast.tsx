@@ -15,6 +15,7 @@ import { ChartInput } from "../utils/zwds/types";
 import { getPalaceForAspectLiuMonth } from "../utils/destiny-navigator/palace-resolver";
 
 import ForecastForm from "../components/ForecastForm";
+import { PALACE_DATA } from "../utils/forecast/alignmentTimingData";
 
 interface GenerationProgress {
   step: string;
@@ -515,21 +516,7 @@ async function embedYearlyTable(pdfDoc: PDFDocument, monthToPalaceMap: any[], ye
     return;
   }
 
-  // Static Palace Data from User Reference (Screenshot 43.png)
-  const PALACE_DATA: Record<string, { season: string; stars: number; area: string; priority: string }> = {
-    "官禄": { season: "Spring", stars: 5, area: "Professional", priority: "Launch Initiatives" },       // Career
-    "迁移": { season: "Spring", stars: 5, area: "Expansion", priority: "Step Beyond Comfort Zone" },    // Travel
-    "交友": { season: "Spring", stars: 5, area: "Network", priority: "Launch Initiatives" },            // Friends
-    "财帛": { season: "Summer", stars: 5, area: "Financial", priority: "Monetize Resources" },          // Wealth
-    "田宅": { season: "Summer", stars: 4, area: "Assets", priority: "Optimize Foundations" },           // Property
-    "福德": { season: "Summer", stars: 5, area: "Inner Power", priority: "Align Inner State" },         // Fortune/Wellbeing
-    "夫妻": { season: "Autumn", stars: 3, area: "Partnership", priority: "Clear Emotional Clutter" },   // Spouse
-    "兄弟": { season: "Autumn", stars: 4, area: "Circle", priority: "Purge Connections" },              // Siblings
-    "子女": { season: "Autumn", stars: 3, area: "Legacy", priority: "Structure Your Plans" },           // Children
-    "父母": { season: "Autumn", stars: 3, area: "Patterns", priority: "Break Old Loops" },              // Parents
-    "命宫": { season: "Winter", stars: 4, area: "Self", priority: "Invest in Yourself" },               // Life
-    "疾厄": { season: "Winter", stars: 3, area: "Body", priority: "Restore Strength" },                 // Health
-  };
+  // Palace timing data imported from shared utility (src/utils/forecast/alignmentTimingData.ts)
 
 
 

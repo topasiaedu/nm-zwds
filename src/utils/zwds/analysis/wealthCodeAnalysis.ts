@@ -61,11 +61,11 @@ const ARCHETYPE_SUMMARIES: Record<WealthCodeKey, string> = {
   strategyPlanner:
     "Natural ability to see the big picture and build systematic frameworks for long-term success. Strong at identifying patterns, anticipating challenges, and creating actionable roadmaps. Excel in roles requiring vision, structure, and strategic planning.",
   investmentBrain:
-    "Win through logic, long-term planning, and capital efficiency. Don't chase money randomly — you want structure, clarity, and control. Build wealth through disciplined decisions, asset accumulation, and proven systems that last.",
+    "Win through logic, long-term planning, and capital efficiency. Don't chase money randomly; you want structure, clarity, and control. Build wealth through disciplined decisions, asset accumulation, and proven systems that last.",
   brandingMagnet:
-    "Monetize visibility, charisma, and social attention. Your brand is your power — the world pays those who are seen and remembered. Natural ability to attract opportunities through presence, influence, and magnetic personality.",
+    "Monetize visibility, charisma, and social attention. Your brand is your power; the world pays those who are seen and remembered. Natural ability to attract opportunities through presence, influence, and magnetic personality.",
   collaborator:
-    "Win through deep trust and team power. Not here to do it alone — you shine in partnerships, service-based roles, and people-oriented paths. Loyal, emotionally intelligent, and relationship-driven wealth builder.",
+    "Win through deep trust and team power. Not here to do it alone; you shine in partnerships, service-based roles, and people-oriented paths. Loyal, emotionally intelligent, and relationship-driven wealth builder.",
 };
 
 /**
@@ -249,7 +249,7 @@ function aggregateCareers(
 /**
  * Main analysis function: Analyze Wealth Code from chart data
  * @param chartData - Calculated ZWDS chart data
- * @param palaceNumberOverride - Optional physical palace number (1–12) to analyse
+ * @param palaceNumberOverride - Optional physical palace number (1-12) to analyse
  *   instead of the natal Wealth Palace (财帛). Used for timeframe-based analysis.
  */
 export function analyzeWealthCode(chartData: ChartData, palaceNumberOverride?: number): WealthProfile {

@@ -29,7 +29,7 @@ const fourKeyPalace = {
       },
       HuaQuan: {
         title: "⚡ Power in Destiny Palace",
-        description: "You now increasingly want to 'control your own life' — in the past others helped you decide, you were afraid of saying wrong things, now you'll start to actively set rules. This feeling of wanting to win, wanting to control, wanting to decide, is not willfulness, it's awakening.",
+        description: "You now increasingly want to 'control your own life'. In the past others helped you decide, you were afraid of saying wrong things, now you'll start to actively set rules. This feeling of wanting to win, wanting to control, wanting to decide, is not willfulness, it's awakening.",
         quote: "You're not a control freak, you're finally starting to 'take charge'."
       },
       HuaKe: {
@@ -39,7 +39,7 @@ const fourKeyPalace = {
       },
       HuaJi: {
         title: "🌀 Obstacle in Destiny Palace",
-        description: "You tend to feel 'Am I not good enough somewhere' 'Should I work harder' — these voices are not destiny negating you, but cleaning your habit of 'pleasing the world'.",
+        description: "You tend to feel 'Am I not good enough somewhere' 'Should I work harder'. These voices are not destiny negating you, but cleaning your habit of 'pleasing the world'.",
         quote: "You're not broken, you've just been living for others too long."
       }
     },
@@ -49,7 +49,7 @@ const fourKeyPalace = {
       meaning: "Partnership relationships, friend circles, brotherhood, peer influence",
       HuaLu: {
         title: "☀️ Prosperity in Siblings Palace",
-        description: "You begin to establish a high-quality network system — siblings, friend circles, and partners can all bring wealth. Those who strive together, fly together; benefactors will approach you through friends.",
+        description: "You begin to establish a high-quality network system: siblings, friend circles, and partners can all bring wealth. Those who strive together, fly together; benefactors will approach you through friends.",
         quote: "Your circle determines how much money you will make in the future."
       },
       HuaQuan: {
@@ -124,12 +124,12 @@ const fourKeyPalace = {
       meaning: "Income source, financial system, money flow structure",
       HuaLu: {
         title: "☀️ Prosperity in Wealth Palace",
-        description: "You now begin to have the ability to master your own money flow. These years you'll easily have extra income, clients, additional revenues, and even your investment vision starts to become 'sharp'. You'll find: as long as you dare to set prices, push yourself, play with resources, money will start moving. More importantly — your 'long-term asset system' is beginning to build, not just quick money, but the kind that accumulates.",
+        description: "You now begin to have the ability to master your own money flow. These years you'll easily have extra income, clients, additional revenues, and even your investment vision starts to become 'sharp'. You'll find: as long as you dare to set prices, push yourself, play with resources, money will start moving. More importantly, your 'long-term asset system' is beginning to build, not just quick money, but the kind that accumulates.",
         quote: "You're not here to work for money, you're here to build assets."
       },
       HuaQuan: {
         title: "⚡ Power in Wealth Palace",
-        description: "You begin to desire control over money, rather than waiting for money to dictate your pace. During this time, you'll want to invest, learn financial intelligence, create passive income, open new accounts, play with new business models. These impulses aren't greed, it's your destiny chart telling you: it's time for you to be the boss of money. You'll change from 'afraid to spend' to 'daring to move money' — this is a sign of financial control returning to you.",
+        description: "You begin to desire control over money, rather than waiting for money to dictate your pace. During this time, you'll want to invest, learn financial intelligence, create passive income, open new accounts, play with new business models. These impulses aren't greed, it's your destiny chart telling you: it's time for you to be the boss of money. You'll change from 'afraid to spend' to 'daring to move money'. This is a sign of financial control returning to you.",
         quote: "You're not just an earner, you're the operator of money flow."
       },
       HuaKe: {
@@ -234,7 +234,7 @@ const fourKeyPalace = {
       },
       HuaKe: {
         title: "💫 Achievement in Career Palace",
-        description: "Your career professionalism, levels, brand sense will all be amplified. People will begin to say 'they're very capable', 'they're very stable', 'they have vision' — and these are energy labels you've set for yourself. No matter how you present your career, you'll begin to 'be remembered, be spoken about'.",
+        description: "Your career professionalism, levels, brand sense will all be amplified. People will begin to say 'they're very capable', 'they're very stable', 'they have vision', and these are energy labels you've set for yourself. No matter how you present your career, you'll begin to 'be remembered, be spoken about'.",
         quote: "The professional aura you establish now determines how high you can stand in the next few years."
       },
       HuaJi: {
@@ -249,12 +249,12 @@ const fourKeyPalace = {
       meaning: "Real estate properties, living environment, inner sense of security",
       HuaLu: {
         title: "☀️ Prosperity in Property Palace",
-        description: "You begin to have the ability to create your own energy field and dwelling — whether buying a house, moving, or arranging space, it will drive overall energy flow. These years your 'family stability' will determine the direction of your overall fortune.",
+        description: "You begin to have the ability to create your own energy field and dwelling, whether buying a house, moving, or arranging space, it will drive overall energy flow. These years your 'family stability' will determine the direction of your overall fortune.",
         quote: "When home is stable, your wealth has a place to land."
       },
       HuaQuan: {
         title: "⚡ Power in Property Palace",
-        description: "You increasingly want to 'control your own territory' — maybe moving, living alone, buying a house, changing offices... It doesn't mean you love to fuss, but your destiny chart grants you a right: you have the right to choose your base.",
+        description: "You increasingly want to 'control your own territory': maybe moving, living alone, buying a house, changing offices... It doesn't mean you love to fuss, but your destiny chart grants you a right: you have the right to choose your base.",
         quote: "You shouldn't adapt to the environment, you should create the environment."
       },
       HuaKe: {
@@ -264,7 +264,7 @@ const fourKeyPalace = {
       },
       HuaJi: {
         title: "🌀 Obstacle in Property Palace",
-        description: "In these years, you're prone to feeling imbalanced about 'home' — insecurity, arguments, moving around, loss of control... Don't think it's an environmental problem, it's that your energy field hasn't stabilized.",
+        description: "In these years, you're prone to feeling imbalanced about 'home': insecurity, arguments, moving around, loss of control... Don't think it's an environmental problem, it's that your energy field hasn't stabilized.",
         quote: "When space is in chaos, it's the soul reminding you: the root system needs to be organized."
       }
     },
@@ -279,7 +279,7 @@ const fourKeyPalace = {
       },
       HuaQuan: {
         title: "⚡ Power in Happiness Palace",
-        description: "You begin to desire control over your emotions, spirit and mental state. You're no longer content to be someone pushed around by emotions, but want to learn to master your energy flow. This is the stage of your spiritual power activation — the more you can lead internally, the more destiny listens to you.",
+        description: "You begin to desire control over your emotions, spirit and mental state. You're no longer content to be someone pushed around by emotions, but want to learn to master your energy flow. This is the stage of your spiritual power activation: the more you can lead internally, the more destiny listens to you.",
         quote: "True strength isn't being outwardly tough, it's being inwardly stable."
       },
       HuaKe: {

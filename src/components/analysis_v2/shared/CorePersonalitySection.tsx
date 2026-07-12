@@ -1,5 +1,5 @@
 /**
- * Core personality block — editorial left copy + archetype card over compass artwork.
+ * Core personality block: editorial left copy + archetype card over compass artwork.
  */
 
 import React from "react";
@@ -30,7 +30,7 @@ const MAX_ARCHETYPE_TRAITS = 4;
 const TRAIT_ICONS: LucideIcon[] = [Leaf, Eye, ArrowUpRight, Star];
 
 /**
- * Right-panel artwork — light PNG only; hidden in dark mode (PNG has baked-in cream bg).
+ * Right-panel artwork: light PNG only; hidden in dark mode (PNG has baked-in cream bg).
  */
 const PersonalitySectionBackground: React.FC = () => (
   <div

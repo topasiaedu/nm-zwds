@@ -168,7 +168,7 @@ const extractListStyleHighlightPhrases = (text: string): string[] => {
 };
 
 /**
- * Pulls 1–3 editorial highlight phrases from growth-tip copy.
+ * Pulls 1-3 editorial highlight phrases from growth-tip copy.
  * Targets reframes, contrasts, core insights, and trailing action clauses.
  */
 export const extractGrowthTipHighlightPhrases = (text: string): string[] => {

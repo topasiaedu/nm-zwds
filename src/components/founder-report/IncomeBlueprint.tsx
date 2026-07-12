@@ -139,10 +139,10 @@ function getCodeScore(profileCodes: ReadonlyArray<{ key: WealthCodeKey; score: n
  * Convert a Dayun season to a founder-friendly timing label.
  */
 function getSeasonCue(season: DayunSeason | null): { title: string; action: string } {
-  if (season === "spring") return { title: "Spring", action: "Launch" };
-  if (season === "summer") return { title: "Summer", action: "Scale" };
-  if (season === "autumn") return { title: "Autumn", action: "Refine" };
-  if (season === "winter") return { title: "Winter", action: "Build" };
+  if (season === "spring") return { title: "Expansion",     action: "Launch" };
+  if (season === "summer") return { title: "Visibility",    action: "Scale" };
+  if (season === "autumn") return { title: "Consolidation", action: "Refine" };
+  if (season === "winter") return { title: "Foundation",    action: "Build" };
   return { title: "Unknown", action: "Align" };
 }
 
@@ -262,9 +262,9 @@ const WEALTH_CODE_IDEAS: ReadonlyArray<WealthCodeIdea> = [
     id: "sp_coaching",
     code: "strategyPlanner",
     title: "Coaching / Service Business",
-    oneLine: "Guide people step-by-step with a clear A–Z plan.",
+    oneLine: "Guide people step-by-step with a clear A to Z plan.",
     details:
-      "Your natural path is structure. People pay for clarity — you turn messy problems into a clean roadmap, then lead them through it.",
+      "Your natural path is structure. People pay for clarity: you turn messy problems into a clean roadmap, then lead them through it.",
     capital: "low",
     effort: "high",
     bestSeasons: ["spring", "summer"],
@@ -277,9 +277,9 @@ const WEALTH_CODE_IDEAS: ReadonlyArray<WealthCodeIdea> = [
     id: "sp_templates",
     code: "strategyPlanner",
     title: "Templates / Toolkits",
-    oneLine: "Sell SOPs, checklists, org charts — build once, sell repeatedly.",
+    oneLine: "Sell SOPs, checklists, org charts: build once, sell repeatedly.",
     details:
-      "Alignment looks like packaging your systems. You don’t need hype — your framework becomes the product, and auto-delivery does the work.",
+      "Alignment looks like packaging your systems. You don’t need hype; your framework becomes the product, and auto-delivery does the work.",
     capital: "low",
     effort: "medium",
     bestSeasons: ["autumn", "winter"],
@@ -294,7 +294,7 @@ const WEALTH_CODE_IDEAS: ReadonlyArray<WealthCodeIdea> = [
     title: "HR & Operations Services",
     oneLine: "Help businesses restructure teams and workflows for clarity.",
     details:
-      "Founder-friendly, high trust. You walk into chaos and leave behind a system people can actually run — that’s your natural lane.",
+      "Founder-friendly, high trust. You walk into chaos and leave behind a system people can actually run. That’s your natural lane.",
     capital: "low",
     effort: "high",
     bestSeasons: ["autumn", "winter"],
@@ -309,7 +309,7 @@ const WEALTH_CODE_IDEAS: ReadonlyArray<WealthCodeIdea> = [
     title: "Build Productivity Systems (Notion/ClickUp/Airtable)",
     oneLine: "One-time system build; get paid per setup.",
     details:
-      "This is alignment: you build the machine. Clients don’t pay for your time — they pay for the system that makes them faster.",
+      "This is alignment: you build the machine. Clients don’t pay for your time; they pay for the system that makes them faster.",
     capital: "low",
     effort: "medium",
     bestSeasons: ["spring", "autumn"],
@@ -341,7 +341,7 @@ const WEALTH_CODE_IDEAS: ReadonlyArray<WealthCodeIdea> = [
     title: "Rental Property",
     oneLine: "Buy an asset that pays you every month.",
     details:
-      "Your natural path is compounding. You’re not chasing hype — you’re stacking assets that keep working even when you’re busy.",
+      "Your natural path is compounding. You’re not chasing hype; you’re stacking assets that keep working even when you’re busy.",
     capital: "high",
     effort: "medium",
     bestSeasons: ["winter", "autumn"],
@@ -401,7 +401,7 @@ const WEALTH_CODE_IDEAS: ReadonlyArray<WealthCodeIdea> = [
     title: "E-Commerce Store (With an Agent)",
     oneLine: "Fund setup, monitor numbers, delegate operations.",
     details:
-      "If you do this aligned, you treat the store like an asset. You focus on products, margins, and systems — not packing boxes all day.",
+      "If you do this aligned, you treat the store like an asset. You focus on products, margins, and systems, not packing boxes all day.",
     capital: "medium",
     effort: "medium",
     bestSeasons: ["spring", "summer"],
@@ -433,7 +433,7 @@ const WEALTH_CODE_IDEAS: ReadonlyArray<WealthCodeIdea> = [
     title: "Brand Ambassador / Brand Deals",
     oneLine: "Turn trust into commission or retainers.",
     details:
-      "Alignment is leverage: your presence becomes a distribution channel. The right brand fit makes it feel natural — not forced.",
+      "Alignment is leverage: your presence becomes a distribution channel. The right brand fit makes it feel natural, not forced.",
     capital: "low",
     effort: "medium",
     bestSeasons: ["summer"],
@@ -448,7 +448,7 @@ const WEALTH_CODE_IDEAS: ReadonlyArray<WealthCodeIdea> = [
     title: "Live Events / Webinars",
     oneLine: "Host a room; monetize your presence and offers.",
     details:
-      "You don’t need to be ‘big’ to start. Your voice and energy are the asset — run a small room, then scale what works.",
+      "You don’t need to be ‘big’ to start. Your voice and energy are the asset: run a small room, then scale what works.",
     capital: "medium",
     effort: "high",
     bestSeasons: ["summer", "spring"],
@@ -525,7 +525,7 @@ const WEALTH_CODE_IDEAS: ReadonlyArray<WealthCodeIdea> = [
     title: "Referral / Affiliate Income",
     oneLine: "Connect people to value; earn commission.",
     details:
-      "You don’t have to create everything. Your gift is trust — when you connect the right people, money follows naturally.",
+      "You don’t have to create everything. Your gift is trust: when you connect the right people, money follows naturally.",
     capital: "low",
     effort: "medium",
     bestSeasons: ["autumn", "summer"],
@@ -555,7 +555,7 @@ const WEALTH_CODE_IDEAS: ReadonlyArray<WealthCodeIdea> = [
     title: "Bundled Services",
     oneLine: "Partner to sell complete packages (each earns more).",
     details:
-      "This is alignment for founders: you don’t just sell your piece — you bundle into a full solution that closes easier.",
+      "This is alignment for founders: you don’t just sell your piece; you bundle into a full solution that closes easier.",
     capital: "low",
     effort: "medium",
     bestSeasons: ["autumn", "winter"],
@@ -741,7 +741,7 @@ export const IncomeBlueprint: React.FC<IncomeBlueprintProps> = ({ chartData }) =
           <div className="mt-4 flex flex-wrap items-center gap-2 text-xs">
             <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/20 backdrop-blur-sm border border-white/30">
               <span className="font-bold text-white">{"Timing"}</span>
-              <span className="text-white/90">{`${seasonCue.title} · ${seasonCue.action} season`}</span>
+              <span className="text-white/90">{`${seasonCue.title} · ${seasonCue.action} phase`}</span>
             </span>
             {hasWealthCode ? (
               <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/20 backdrop-blur-sm border border-white/30">

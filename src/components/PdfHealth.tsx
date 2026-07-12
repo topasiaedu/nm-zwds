@@ -268,7 +268,7 @@ const PdfHealth: React.FC<PdfHealthProps> = ({ chartData }) => {
           fontStyle: "italic",
           margin: "0",
         }}>
-          Decode your body&apos;s energetic blueprint — where vitality flows and where it breaks down.
+          Decode your body&apos;s energetic blueprint: where vitality flows and where it breaks down.
         </p>
       </div>
 

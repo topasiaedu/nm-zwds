@@ -13,6 +13,22 @@ import { brandGradientTextClass } from "../styles/typographyUi";
  */
 const FREE_TEST_ROUTE_PREFIXES = ["/free-test", "/free-result", "/free-test-ended"];
 
+/** Routes that render their own full-screen layout and don't need the navbar. */
+const NAVBAR_HIDDEN_ROUTES = [
+  "/dashboard",
+  "/calculate",
+  "/alignment-advantage",
+  "/chart",
+  "/result",
+  "/tier3-result",
+  "/founder-report",
+  "/timing-chart",
+  "/destiny-navigator",
+  "/destiny-wealth-navigator",
+  "/profile",
+  "/settings",
+];
+
 const Navbar: React.FC = () => {
   const { user, signOut } = useAuth();
   const { t } = useLanguage();
@@ -24,6 +40,11 @@ const Navbar: React.FC = () => {
 
   const isFreeTestRoute = FREE_TEST_ROUTE_PREFIXES.some((prefix) =>
     location.pathname.startsWith(prefix)
+  );
+
+  /** Hide navbar on pages that manage their own full-screen layout. */
+  const isNavbarHidden = NAVBAR_HIDDEN_ROUTES.some((route) =>
+    location.pathname === route || location.pathname.startsWith(`${route}/`)
   );
 
   /**
@@ -56,6 +77,9 @@ const Navbar: React.FC = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  /** All hooks have been called — safe to conditionally return here. */
+  if (isNavbarHidden) return null;
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 h-14 bg-surface-elevated/80 dark:bg-surface-darkSecondary/80 px-2 sm:px-4 border-b border-accent-gold/30 dark:border-brand-purpleDeep backdrop-blur-md">
@@ -111,14 +135,6 @@ const Navbar: React.FC = () => {
                     </div>
                   </div>
                   <ul className="py-2 text-sm">
-                    <li>
-                      <Link
-                        to="/profile"
-                        className="block px-4 py-2 text-navy dark:text-cream hover:bg-surface-warm dark:hover:bg-brand-purpleDeep/50 transition-all duration-200"
-                        onClick={() => setDropdownOpen(false)}>
-                        {t("navbar.profile")}
-                      </Link>
-                    </li>
                     <li>
                       <Link
                         to="/settings"

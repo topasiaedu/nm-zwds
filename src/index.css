@@ -506,16 +506,20 @@
   height: 100%;
 }
 
-/* Equal 4×4 grid — every palace cell and the 2×2 center are the same unit size */
+/*
+ * Equal 4×4 grid — minmax(0, 1fr) (not bare 1fr) so CenterInfo content
+ * cannot inflate the middle two rows and squash the top/bottom palace rows.
+ */
 .zwds-chart-grid {
-  grid-template-columns: repeat(4, 1fr);
-  grid-template-rows: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-rows: repeat(4, minmax(0, 1fr));
 }
 
 @media (max-width: 639px) {
   .zwds-chart-grid {
     touch-action: manipulation;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    /* Floor each row so portrait mobile cards stay readable */
     grid-template-rows: repeat(4, minmax(9.5rem, 1fr));
   }
 

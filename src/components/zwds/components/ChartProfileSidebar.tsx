@@ -306,7 +306,8 @@ const ChartProfileSidebar: React.FC<ChartProfileSidebarProps> = ({
           {"View Timing Analysis"}
         </Link>
 
-        {isAdmin ? (
+        {/* Soft-hidden per CAE feedback; route remains reachable via deep link. */}
+        {false && isAdmin ? (
           <Link
             to={`/destiny-navigator/${chartData.id}`}
             className={chartPrimaryButtonClass}

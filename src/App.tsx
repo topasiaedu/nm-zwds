@@ -35,6 +35,7 @@ import Tier3Result from "./pages/tier3-result";
 import DestinyNavigator from "./pages/destiny-navigator";
 import FounderReport from "./pages/founder-report";
 import Profile from "./pages/profile";
+import Settings from "./pages/settings";
 import MembershipExpired from "./pages/membership-expired";
 import MembershipPaused from "./pages/membership-paused";
 import AdminDashboard from "./pages/admin/dashboard";
@@ -47,6 +48,11 @@ import WealthCodePreviewPage from "./pages/dev/wealth-code-preview";
 // Import 12-month forecast
 import TwelveMonthForecast from "./pages/12month-forecast";
 import PrintResult from "./pages/PrintResult";
+// Import Alignment Advantage pages
+import AlignmentAdvantage from "./pages/alignment-advantage/index";
+import AlignmentAdvantageTimingPage from "./pages/alignment-advantage/timing";
+import AlignmentAdvantageWealthPage from "./pages/alignment-advantage/wealth";
+import AlignmentAdvancePrint from "./pages/print/AlignmentAdvancePrint";
 // Import centralized config
 import FREE_TEST_CONFIG from "./config/freeTestConfig";
 import { Analytics } from "@vercel/analytics/react"
@@ -134,6 +140,7 @@ const App: React.FC = () => {
                     <Route path="/chart-only" element={<ChartOnly />} />
                     <Route path="/chart-test" element={<ChartTest />} />
                     <Route path="/print/result/:id" element={<PrintResult />} />
+                    <Route path="/print/alignment-advantage" element={<AlignmentAdvancePrint />} />
                     <Route path="/membership-expired" element={<MembershipExpired />} />
                     <Route path="/membership-paused" element={<MembershipPaused />} />
                     <Route path="/12month-forecast" element={<TwelveMonthForecast />} />
@@ -212,12 +219,22 @@ const App: React.FC = () => {
                         }
                       />
 
-                      {/* Profile Route */}
+                      {/* Profile Route (redirects to Settings) */}
                       <Route
                         path="/profile"
                         element={
                           <ProtectedRoute>
                             <Profile />
+                          </ProtectedRoute>
+                        }
+                      />
+
+                      {/* Settings Route */}
+                      <Route
+                        path="/settings"
+                        element={
+                          <ProtectedRoute>
+                            <Settings />
                           </ProtectedRoute>
                         }
                       />
@@ -292,6 +309,30 @@ const App: React.FC = () => {
                         element={
                           <ProtectedRoute>
                             <FounderReport />
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="/alignment-advantage"
+                        element={
+                          <ProtectedRoute>
+                            <AlignmentAdvantage />
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="/alignment-advantage/timing"
+                        element={
+                          <ProtectedRoute>
+                            <AlignmentAdvantageTimingPage />
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="/alignment-advantage/wealth"
+                        element={
+                          <ProtectedRoute>
+                            <AlignmentAdvantageWealthPage />
                           </ProtectedRoute>
                         }
                       />

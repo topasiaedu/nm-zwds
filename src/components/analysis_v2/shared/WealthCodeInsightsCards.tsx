@@ -1,5 +1,5 @@
 /**
- * Wealth Code insights — Core Strengths & Areas to Watch list cards.
+ * Wealth Code insights: Core Strengths & Areas to Watch list cards.
  */
 
 import React from "react";

@@ -1,7 +1,7 @@
 /**
- * FourKeyPalace — Destiny Alert Map (Section 05)
+ * FourKeyPalace: Destiny Alert Map (Section 05)
  *
- * 2×2 grid of natal transformations (祿 / 權 / 科 / 忌) — themed signal cards.
+ * 2×2 grid of natal transformations (祿 / 權 / 科 / 忌): themed signal cards.
  */
 
 import React from "react";
@@ -199,7 +199,7 @@ type DestinyAlertCardProps = {
 };
 
 /**
- * Single destiny alert signal card — hero question, metrics, insight copy.
+ * Single destiny alert signal card: hero question, metrics, insight copy.
  */
 const DestinyAlertCard: React.FC<DestinyAlertCardProps> = ({
   alert,
@@ -318,7 +318,7 @@ const FourKeyPalace: React.FC<FourKeyPalaceProps> = ({
           sectionLabel="Transformation signals"
           badgeText="05"
           title="Destiny Alert Map"
-          subtitle="Four signals showing where your life force is most activated — wealth, power, fame, and friction."
+          subtitle="Four signals showing where your life force is most activated: wealth, power, fame, and friction."
           icon={Compass}
           pdfBreakAnchor="destiny-alert-hero"
           forPdfCapture={forPdfCapture}

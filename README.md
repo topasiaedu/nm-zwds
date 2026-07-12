@@ -64,6 +64,9 @@ REACT_APP_SUPABASE_ANON_KEY=your_supabase_anon_key_here
 
 # Optional: Free Test Feature
 REACT_APP_FREE_TEST_ENABLED=true
+
+# Optional: local chatbot-gen-client only (defaults to production Vercel chatbot)
+# REACT_APP_CHAT_WIDGET_ORIGIN=http://localhost:3001
 ```
 
 See [Environment Variables Guide](./docs/guides/ENVIRONMENT.md) for details.

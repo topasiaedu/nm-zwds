@@ -19,6 +19,7 @@ import {
   chartCenterDateIconWrapClass,
   chartCenterDateLabelClass,
   chartCenterDateRowClass,
+  chartCenterDateRowIconWrapClass,
   chartCenterDateValueClass,
   chartCenterDatesPanelClass,
   chartCenterDividerClass,
@@ -29,6 +30,7 @@ import {
   chartCenterNameClass,
   chartCenterPanelClass,
   chartCenterZodiacCardClass,
+  chartCenterZodiacCardIconSlotClass,
   chartCenterZodiacCardLabelClass,
   chartCenterZodiacCardValueClass,
   chartCenterZodiacGridClass,
@@ -187,7 +189,7 @@ const CenterInfo: React.FC<CenterInfoProps> = ({ chartData, isPdfExport = false 
       animate={isPdfExport ? false : "visible"}
     >
       <div className={chartCenterContentClass}>
-        {/* Hero — vertically centered on mobile, top-aligned from sm */}
+        {/* Hero — top-aligned stack; parent scrolls if cards exceed the cell */}
         <div className={chartCenterHeroWrapClass}>
           <div className={chartCenterHeroClass}>
           <div className="relative">
@@ -248,7 +250,7 @@ const CenterInfo: React.FC<CenterInfoProps> = ({ chartData, isPdfExport = false 
 
           <div className={chartCenterZodiacGridClass}>
             <div className={chartCenterZodiacCardClass}>
-              <div className="flex h-5 w-5 shrink-0 items-center justify-center xs:h-6 xs:w-6 sm:h-7 sm:w-7">
+              <div className={chartCenterZodiacCardIconSlotClass}>
                 <div className={`${chartCenterDateIconWrapClass} h-5 w-5 xs:h-6 xs:w-6 sm:h-7 sm:w-7`}>
                   <User
                     className={chartCenterDateIconClass}
@@ -257,16 +259,14 @@ const CenterInfo: React.FC<CenterInfoProps> = ({ chartData, isPdfExport = false 
                   />
                 </div>
               </div>
-              <div className="min-w-0 flex-1 max-sm:w-full max-sm:flex-none">
-                <div className={chartCenterZodiacCardLabelClass}>
-                  {t("chartInfo.gender") || t("myChart.fields.gender") || "Gender"}
-                </div>
-                <div className={chartCenterZodiacCardValueClass}>{genderLabel}</div>
+              <div className={chartCenterZodiacCardLabelClass}>
+                {t("chartInfo.gender") || t("myChart.fields.gender") || "Gender"}
               </div>
+              <div className={chartCenterZodiacCardValueClass}>{genderLabel}</div>
             </div>
 
             <div className={chartCenterZodiacCardClass}>
-              <div className="flex h-5 w-5 shrink-0 items-center justify-center xs:h-6 xs:w-6 sm:h-7 sm:w-7">
+              <div className={chartCenterZodiacCardIconSlotClass}>
                 <div className={`${chartCenterDateIconWrapClass} h-5 w-5 xs:h-6 xs:w-6 sm:h-7 sm:w-7`}>
                   <CalendarDays
                     className={chartCenterDateIconClass}
@@ -275,103 +275,89 @@ const CenterInfo: React.FC<CenterInfoProps> = ({ chartData, isPdfExport = false 
                   />
                 </div>
               </div>
-              <div className="min-w-0 flex-1 max-sm:w-full max-sm:flex-none">
-                <div className={chartCenterZodiacCardLabelClass}>{ageLabel}</div>
-                <div className={chartCenterZodiacCardValueClass}>{ageValue}</div>
-              </div>
+              <div className={chartCenterZodiacCardLabelClass}>{ageLabel}</div>
+              <div className={chartCenterZodiacCardValueClass}>{ageValue}</div>
             </div>
           </div>
 
-          <div
-            className={`${chartCenterDatesPanelClass} ${
-              isPdfExport ? "flex" : "hidden sm:flex"
-            }`}
-          >
+          <div className={chartCenterDatesPanelClass}>
             <div className={chartCenterDateRowClass}>
-              <div className={chartCenterDateIconWrapClass}>
+              <div className={chartCenterDateRowIconWrapClass}>
                 <Sun
                   className={chartCenterDateIconClass}
                   strokeWidth={1.75}
                   aria-hidden="true"
                 />
               </div>
-              <div className="min-w-0 flex-1">
-                <div className={chartCenterDateLabelClass}>
-                  {t("chartInfo.solarDate")}
-                </div>
-                <p className={chartCenterDateValueClass}>
-                  {formatChartSolarDate(chartData, t, language)}
-                </p>
+              <div className={chartCenterDateLabelClass}>
+                {t("chartInfo.solarDate")}
               </div>
+              <p className={chartCenterDateValueClass}>
+                {formatChartSolarDate(chartData, t, language)}
+              </p>
             </div>
 
             <div
-              className={`${chartCenterDateRowClass} border-t border-[#E5DDD0]/80 pt-1.5 dark:border-gray-600/80`}
+              className={`${chartCenterDateRowClass} border-t border-[#E5DDD0]/80 pt-1 dark:border-gray-600/80`}
             >
-              <div className={chartCenterDateIconWrapClass}>
+              <div className={chartCenterDateRowIconWrapClass}>
                 <Moon
                   className={chartCenterDateIconClass}
                   strokeWidth={1.75}
                   aria-hidden="true"
                 />
               </div>
-              <div className="min-w-0 flex-1">
-                <div className={chartCenterDateLabelClass}>
-                  {t("chartInfo.lunarDate") || t("zwds.chart.阴历")}
-                </div>
-                <p className={chartCenterDateValueClass}>
-                  {formatChartLunarDate(chartData, t, language)}
-                </p>
+              <div className={chartCenterDateLabelClass}>
+                {t("chartInfo.lunarDate") || t("zwds.chart.阴历")}
               </div>
+              <p className={chartCenterDateValueClass}>
+                {formatChartLunarDate(chartData, t, language)}
+              </p>
             </div>
           </div>
 
           <div className={chartCenterZodiacGridClass}>
             <div className={chartCenterZodiacCardClass}>
-              <div className="flex h-5 w-5 shrink-0 items-center justify-center xs:h-6 xs:w-6 sm:h-7 sm:w-7">
+              <div className={chartCenterZodiacCardIconSlotClass}>
                 <ZodiacIconWrapper
                   Icon={ChineseZodiacIcon}
                   invertToGold
                   className="h-full w-full"
                 />
               </div>
-              <div className="min-w-0 flex-1 max-sm:w-full max-sm:flex-none">
-                <div className={chartCenterZodiacCardLabelClass}>
-                  <span className="sm:hidden">
-                    {language === "en"
-                      ? "Chinese"
-                      : t("zwds.chart.生肖") || "生肖"}
-                  </span>
-                  <span className="hidden sm:inline">
-                    {t("chartInfo.shengXiao") || t("zwds.chart.生肖")}
-                  </span>
-                </div>
-                <div className={chartCenterZodiacCardValueClass}>{chineseZodiacLabel}</div>
+              <div className={chartCenterZodiacCardLabelClass}>
+                <span className="sm:hidden">
+                  {language === "en"
+                    ? "Chinese"
+                    : t("zwds.chart.生肖") || "生肖"}
+                </span>
+                <span className="hidden sm:inline">
+                  {t("chartInfo.shengXiao") || t("zwds.chart.生肖")}
+                </span>
               </div>
+              <div className={chartCenterZodiacCardValueClass}>{chineseZodiacLabel}</div>
             </div>
 
             <div className={chartCenterZodiacCardClass}>
-              <div className="flex h-5 w-5 shrink-0 items-center justify-center xs:h-6 xs:w-6 sm:h-7 sm:w-7">
+              <div className={chartCenterZodiacCardIconSlotClass}>
                 <ZodiacIconWrapper
                   Icon={WesternZodiacIcon}
                   invertToGoldSoft
                   className="h-full w-full"
                 />
               </div>
-              <div className="min-w-0 flex-1 max-sm:w-full max-sm:flex-none">
-                <div className={chartCenterZodiacCardLabelClass}>
-                  <span className="sm:hidden">
-                    {language === "en"
-                      ? "Western"
-                      : t("zwds.chart.westernZodiacShort") || "星座"}
-                  </span>
-                  <span className="hidden sm:inline">
-                    {t("zwds.chart.westernZodiac") ||
-                      (language === "en" ? "Western Zodiac" : "星座")}
-                  </span>
-                </div>
-                <div className={chartCenterZodiacCardValueClass}>{westernZodiacLabel}</div>
+              <div className={chartCenterZodiacCardLabelClass}>
+                <span className="sm:hidden">
+                  {language === "en"
+                    ? "Western"
+                    : t("zwds.chart.westernZodiacShort") || "星座"}
+                </span>
+                <span className="hidden sm:inline">
+                  {t("zwds.chart.westernZodiac") ||
+                    (language === "en" ? "Western Zodiac" : "星座")}
+                </span>
               </div>
+              <div className={chartCenterZodiacCardValueClass}>{westernZodiacLabel}</div>
             </div>
           </div>
           </div>

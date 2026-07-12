@@ -280,7 +280,7 @@ const DestinyCompass: React.FC<DestinyCompassProps> = ({ chartData }) => {
 
       {/* Subtitle */}
       <p className="text-lg mb-6 dark:text-white text-center italic">
-        Navigate your life path with clarity — see how your chart shifts across
+        Navigate your life path with clarity. See how your chart shifts across
         different years.
       </p>
 

@@ -274,7 +274,7 @@ const MOCK_DAYUN: DayunCycleExtended = {
   palaceChinese: "夫妻宮",
   season: "autumn",
   seasonTitle: "Cut, Secure, Protect",
-  coreMessage: "This palace isn't only about your romantic partner—it's about partnerships and the people closest to you that affect your direction, including at work. Spouse Palace sits directly opposite Career Palace, so they're always connected. Autumn here is about cutting emotional noise and realigning strategy.",
+  coreMessage: "This palace isn't only about your romantic partner. It's about partnerships and the people closest to you that affect your direction, including at work. Spouse Palace sits directly opposite Career Palace, so they're always connected. Autumn here is about cutting emotional noise and realigning strategy.",
   keyActions: [
     "Cut unnecessary drama and bring issues to light",
     "Realign key partnerships or make tough calls if needed",

@@ -1,5 +1,5 @@
 /**
- * Analysis section header — orange gradient banner with background artwork.
+ * Analysis section header: orange gradient banner with background artwork.
  */
 
 import React from "react";
@@ -19,7 +19,7 @@ export type AnalysisSectionHeaderProps = {
   sectionLabel: string;
   /** Large numeric badge on the left (e.g. "01"). */
   badgeText: string;
-  /** Main section title — rendered as h2. */
+  /** Main section title: rendered as h2. */
   title: string;
   /** Supporting description below the title. */
   subtitle: string;
