@@ -161,6 +161,12 @@ const FeatureFlagsManager: React.FC<FeatureFlagsManagerProps> = ({
       template: PROGRAM_TEMPLATES.founder,
     },
     {
+      id: "alignment",
+      label: "Alignment",
+      info: PROGRAM_INFO.alignment,
+      template: PROGRAM_TEMPLATES.alignment,
+    },
+    {
       id: "beta",
       label: "Beta",
       info: PROGRAM_INFO.beta,
@@ -189,6 +195,12 @@ const FeatureFlagsManager: React.FC<FeatureFlagsManagerProps> = ({
       label: "Apply Founder Program",
       info: PROGRAM_INFO.founder,
       template: PROGRAM_TEMPLATES.founder,
+    },
+    {
+      id: "quick-alignment",
+      label: "Apply Alignment Program",
+      info: PROGRAM_INFO.alignment,
+      template: PROGRAM_TEMPLATES.alignment,
     },
     {
       id: "quick-beta",

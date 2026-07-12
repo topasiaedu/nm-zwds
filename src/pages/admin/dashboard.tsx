@@ -8,6 +8,7 @@ type AdminStats = {
   tier1Users: number;
   tier2Users: number;
   founderUsers: number;
+  alignmentUsers: number;
   betaUsers: number;
   adminUsers: number;
   pausedUsers: number;
@@ -75,6 +76,7 @@ const AdminDashboard: React.FC = () => {
       tier1Users: getTierCount(["tier1"]),
       tier2Users: getTierCount(["tier2"]),
       founderUsers: getTierCount(["founder"]),
+      alignmentUsers: getTierCount(["alignment"]),
       betaUsers: getTierCount(["beta"]),
       adminUsers: getTierCount(["admin"]),
       pausedUsers: users.filter((user) => user.is_paused === true).length,
@@ -276,6 +278,12 @@ const AdminDashboard: React.FC = () => {
               <div className="text-sm text-gray-500 dark:text-gray-400">Founder Users</div>
               <div className="mt-2 text-3xl font-bold text-emerald-600 dark:text-emerald-400">
                 {stats.founderUsers}
+              </div>
+            </div>
+            <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm">
+              <div className="text-sm text-gray-500 dark:text-gray-400">Alignment Users</div>
+              <div className="mt-2 text-3xl font-bold text-teal-600 dark:text-teal-400">
+                {stats.alignmentUsers}
               </div>
             </div>
             <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm">

@@ -8,7 +8,7 @@
  *    printed pages in a browser-based PDF reader.
  *
  * Chapters:
- *  Cover  : Client name, at-a-glance summary chips, PDF download
+ *  Cover  : Client name, at-a-glance summary chips
  *  Filter : Strategic decision filter (right after overview)
  *  Ch 01  : Structure: Speed/Endurance Player + Formation Profile
  *  Ch 02  : Wealth: Archetype profile + Phase × Wealth intersection
@@ -24,16 +24,10 @@ import { Link } from "react-router-dom";
 import PageTransition from "../../components/PageTransition";
 import { useProfileContext } from "../../context/ProfileContext";
 import { useTierAccess } from "../../context/TierContext";
-import { useAlertContext } from "../../context/AlertContext";
 import {
   STRUCTURE_LABELS,
   FORMATION_PROFILES,
 } from "../../utils/forecast/structureContentData";
-import { supabase } from "../../utils/supabase-client";
-import {
-  exportPdfViaServer,
-  resolvePrintPageOrigin,
-} from "../../utils/pdfExportServer";
 import { useAlignmentAdvantageData } from "../../components/alignment-advantage/data/useAlignmentAdvantageData";
 
 import DocumentViewerLayout from "../../components/layout/DocumentViewerLayout";
@@ -132,7 +126,6 @@ const AccessDeniedView: React.FC = () => (
 const AlignmentAdvantage: React.FC = () => {
   const { profiles }              = useProfileContext();
   const { hasAlignmentAdvantage } = useTierAccess();
-  const { showAlert }             = useAlertContext();
   const { items: appNavItems }    = useAppNavItems({ activeKey: "alignment-advantage" });
 
   const profile = profiles.find((p) => p.is_self) ?? null;
@@ -142,7 +135,6 @@ const AlignmentAdvantage: React.FC = () => {
   const strategicData = aaData?.strategicData ?? null;
   const structureResult = aaData?.structureResult ?? null;
 
-  const [pdfLoading, setPdfLoading] = useState<boolean>(false);
   const [activeChapter, setActiveChapter] = useState<ChapterId>("cover");
 
   // Active chapter detection
@@ -171,36 +163,6 @@ const AlignmentAdvantage: React.FC = () => {
   const scrollTo = useCallback((id: string): void => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
   }, []);
-
-  const handleDownloadPlaybook = async (): Promise<void> => {
-    if (pdfLoading) return;
-    setPdfLoading(true);
-    try {
-      const { data } = await supabase.auth.getSession();
-      const token = data.session?.access_token;
-      if (!token) { showAlert("Please sign in first.", "error"); return; }
-      const url = new URL(`${resolvePrintPageOrigin()}/print/alignment-advantage`);
-      url.searchParams.set("pdfToken", token);
-      await exportPdfViaServer(url.toString(), async () => `Bearer ${token}`, `Alignment-Advantage-${profile?.name ?? "report"}.pdf`);
-    } catch (err) {
-      showAlert(err instanceof Error ? err.message : "PDF generation failed.", "error");
-    } finally {
-      setPdfLoading(false);
-    }
-  };
-
-  const handlePrintPreview = async (): Promise<void> => {
-    try {
-      const { data } = await supabase.auth.getSession();
-      const token = data.session?.access_token;
-      if (!token) { showAlert("Please sign in first.", "error"); return; }
-      const url = new URL(`${resolvePrintPageOrigin()}/print/alignment-advantage`);
-      url.searchParams.set("pdfToken", token);
-      window.open(url.toString(), "_blank", "noopener,noreferrer");
-    } catch (err) {
-      showAlert("Could not open print preview.", "error");
-    }
-  };
 
   if (!hasAlignmentAdvantage) return <AccessDeniedView />;
 
@@ -233,38 +195,6 @@ const AlignmentAdvantage: React.FC = () => {
   const signalHex = strategicData.signal === "green" ? "#16a34a"
     : strategicData.signal === "red" ? C.coral : C.gold;
 
-  const footerActions = (
-    <>
-      <button
-        type="button"
-        onClick={() => { void handleDownloadPlaybook(); }}
-        disabled={pdfLoading}
-        className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold transition-all disabled:opacity-60"
-        style={{ background: `linear-gradient(135deg, ${C.coralDark}, ${C.coral})`, color: C.white }}
-      >
-        {pdfLoading ? (
-          <svg className="w-3.5 h-3.5 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
-          </svg>
-        ) : (
-          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-          </svg>
-        )}
-        {pdfLoading ? "Generating…" : "Download Playbook"}
-      </button>
-      <button
-        type="button"
-        onClick={() => { void handlePrintPreview(); }}
-        className="w-full py-2 rounded-xl text-xs font-medium transition-all"
-        style={{ border: "1px solid rgba(255,255,255,0.15)", color: "rgba(255,255,255,0.5)" }}
-      >
-        Print Preview
-      </button>
-    </>
-  );
-
   return (
     <PageTransition>
       <DocumentViewerLayout
@@ -274,7 +204,6 @@ const AlignmentAdvantage: React.FC = () => {
         chapters={CHAPTERS}
         activeChapter={activeChapter}
         onChapterClick={scrollTo}
-        footerActions={footerActions}
       >
           {/* ══════════════════════════════════════
               SECTION 1: OVERVIEW / COVER

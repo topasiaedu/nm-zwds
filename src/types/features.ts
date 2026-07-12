@@ -36,7 +36,7 @@ export type FeatureFlags = Partial<Record<FeatureKey, boolean>>
  * Feature flag presets for each tier and program.
  */
 export const PROGRAM_TEMPLATES: Record<
-  "tier1" | "tier2" | "tier3" | "founder" | "beta" | "admin",
+  "tier1" | "tier2" | "tier3" | "founder" | "alignment" | "beta" | "admin",
   FeatureFlags
 > = {
   tier1: {
@@ -80,6 +80,23 @@ export const PROGRAM_TEMPLATES: Record<
     hasDestinyNavigatorTool: false,
     hasFounderReport: true,
     hasAlignmentAdvantage: false,
+    hasExperimentalCharts: false,
+    hasHourAdjustment: false,
+    hasUnlimitedProfiles: true,
+    hasUserManagement: false,
+    hasNumerologyAnalytics: false,
+    hasSystemSettings: false,
+    canManageUserTiers: false,
+    canManageFeatureFlags: false,
+    canPauseUsers: false,
+  },
+  alignment: {
+    hasFullAnalysis: true,
+    hasPDFWithAnalysis: true,
+    hasAIAssistant: true,
+    hasDestinyNavigatorTool: false,
+    hasFounderReport: false,
+    hasAlignmentAdvantage: true,
     hasExperimentalCharts: false,
     hasHourAdjustment: false,
     hasUnlimitedProfiles: true,
@@ -171,7 +188,7 @@ export const FEATURE_DESCRIPTIONS: Record<FeatureKey, string> = {
  * Display metadata for program tiers used in the UI.
  */
 export const PROGRAM_INFO: Record<
-  "tier1" | "tier2" | "founder" | "beta" | "admin",
+  "tier1" | "tier2" | "founder" | "alignment" | "beta" | "admin",
   {
     name: string
     description: string
@@ -196,6 +213,12 @@ export const PROGRAM_INFO: Record<
     description: "Adds Destiny Navigator and Founder Report access.",
     color: "emerald",
     icon: "crown",
+  },
+  alignment: {
+    name: "Alignment Advantage",
+    description: "DYD features plus Alignment Advantage strategic report access.",
+    color: "teal",
+    icon: "star",
   },
   beta: {
     name: "Beta Program",

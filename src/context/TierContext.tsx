@@ -30,7 +30,7 @@ export type UserDetailsWithEmail = UserDetails & {
  * User tier identifiers used throughout the app.
  * Includes "tier3" temporarily to keep legacy checks compiling.
  */
-export type UserTier = "tier1" | "tier2" | "tier3" | "founder" | "beta" | "admin";
+export type UserTier = "tier1" | "tier2" | "tier3" | "founder" | "alignment" | "beta" | "admin";
 
 interface TierContextProps {
   loading: boolean;
