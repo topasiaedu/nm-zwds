@@ -711,7 +711,7 @@ const Dashboard: React.FC = () => {
                     tokens={tokens}
                   />
                 )}
-                {false && hasAIAssistant && (
+                {hasAIAssistant && (
                   <ToolCard
                     to="/destiny-wealth-navigator"
                     illustration="ai"

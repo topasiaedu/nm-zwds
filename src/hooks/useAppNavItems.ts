@@ -78,7 +78,7 @@ export function useAppNavItems(
       });
     }
 
-    if (false && hasAIAssistant) {
+    if (hasAIAssistant) {
       navItems.push({
         to: "/destiny-wealth-navigator",
         label: "AI Wealth Assistant",
