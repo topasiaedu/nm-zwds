@@ -878,7 +878,7 @@ const Palace: React.FC<PalaceProps> = ({
       key={`palace-${palaceNumber}-${selectedPalace}`}
       className={`relative border ${hasYellowGlow ? "pulse-button" : ""} border-gray-100 dark:border-gray-700 p-0.5 xs:p-1 sm:p-2 md:p-3 h-full overflow-hidden min-h-[140px] xs:min-h-[180px] sm:min-h-[130px] md:min-h-[150px] ${
         isSelected
-          ? "bg-indigo-50/80 dark:bg-indigo-900/30 text-white"
+          ? "zwds-palace-selected bg-indigo-50/80 dark:bg-indigo-900/30 text-white"
           : hasYellowGlow
           ? "bg-gradient-to-br from-yellow-100 to-amber-300 dark:from-yellow-400/70 dark:to-amber-400/60"
           : chartPalaceCardClass

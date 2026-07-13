@@ -1,36 +1,37 @@
 /**
- * Alignment Advantage print document — auth, data loading, and section composition.
+ * Alignment Advantage print document — auth, data loading, and chapter composition.
  * Rendered by Puppeteer / PDF microservice and browser print preview.
+ *
+ * Option A parity: composes the same shared chapter components as the in-app
+ * viewer (minus DocumentViewerLayout chrome). Old Print* sections are unused here.
  */
 
 import React, { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { supabase } from "../../../utils/supabase-client";
 import type { Profile } from "../../../context/ProfileContext";
+import {
+  STRUCTURE_LABELS,
+  FORMATION_PROFILES,
+} from "../../../utils/forecast/structureContentData";
 import { fetchPrintProfile } from "../data/fetchPrintProfile";
 import { useAlignmentAdvantageData } from "../data/useAlignmentAdvantageData";
+import { C } from "../shared/constants";
+import { ChapterOverview } from "../chapters/ChapterOverview";
+import { ChapterDecisionFramework } from "../chapters/ChapterDecisionFramework";
+import { ChapterCoreDesign } from "../chapters/ChapterCoreDesign";
+import { ChapterWealthAcceleration } from "../chapters/ChapterWealthAcceleration";
+import { ChapterStakeholderIntelligence } from "../chapters/ChapterStakeholderIntelligence";
+import { ChapterExecutionPlaybook } from "../chapters/ChapterExecutionPlaybook";
 import { PRINT_STYLES } from "./printStyles";
-import { ChapterOpener } from "./primitives/ChapterOpener";
-import { CompactTimingTable } from "./primitives/SeasonIllustrations";
-import { PrintGlobalFooter } from "./primitives/PrintGlobalFooter";
-import {
-  PrintCoverPage,
-  PrintTableOfContents,
-  PrintExecutiveSummary,
-  PrintDecisionFramework,
-  PrintStructureProfile,
-  PrintWealthBlueprint,
-  PrintRevenueStrategy,
-  PrintPhaseAlignment,
-  PrintActionPlan,
-  PrintIdealCollaborator,
-  PrintStakeholderIntel,
-  PrintDayunCycle,
-  PrintRiskMitigation,
-  PrintMonthlyDeepDive,
-  PrintReflectionQuestions,
-  PrintAppendixChart,
-} from "./sections";
+
+/** Same phase display map as the in-app Alignment Advantage page. */
+const PHASE_DISPLAY: Record<string, { label: string; bgColor: string; textColor: string }> = {
+  spring: { label: "Expansion",     bgColor: `linear-gradient(135deg, #16a34a, #15803d)`, textColor: "#15803d" },
+  summer: { label: "Visibility",    bgColor: `linear-gradient(135deg, ${C.coral}, ${C.coralDark})`,  textColor: C.coral },
+  autumn: { label: "Consolidation", bgColor: `linear-gradient(135deg, #d97706, #b45309)`,            textColor: "#d97706" },
+  winter: { label: "Foundation",    bgColor: `linear-gradient(135deg, #2563eb, #1d4ed8)`,            textColor: "#2563eb" },
+};
 
 const AlignmentAdvancePrintDocument: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -43,13 +44,39 @@ const AlignmentAdvancePrintDocument: React.FC = () => {
 
   const data = useAlignmentAdvantageData(profile);
 
+  /**
+   * Best-effort session sync for any client hooks that read auth.
+   * Profile data itself is loaded via `fetchPrintProfile(pdfToken)` with an
+   * explicit user_id filter — do not rely on setSession for identity.
+   * Using the access token as refresh_token is invalid; omit refresh when
+   * only pdfToken (access JWT) is available.
+   */
   useEffect(() => {
-    if (pdfToken === null || pdfToken === "") return;
+    if (pdfToken === null || pdfToken === "") {
+      return;
+    }
     void (async () => {
-      await supabase.auth.setSession({
-        access_token: pdfToken,
-        refresh_token: pdfToken,
-      });
+      const { data: userData, error: userError } = await supabase.auth.getUser(pdfToken);
+      if (userError !== null || userData.user === null) {
+        if (process.env.NODE_ENV !== "production") {
+          console.warn(
+            "AA print: pdfToken getUser failed:",
+            userError?.message ?? "no user"
+          );
+        }
+        return;
+      }
+      const existing = await supabase.auth.getSession();
+      const refreshToken = existing.data.session?.refresh_token;
+      if (refreshToken !== undefined && refreshToken !== "") {
+        const { error } = await supabase.auth.setSession({
+          access_token: pdfToken,
+          refresh_token: refreshToken,
+        });
+        if (error !== null && process.env.NODE_ENV !== "production") {
+          console.warn("AA print: setSession did not fully apply:", error.message);
+        }
+      }
     })();
   }, [pdfToken]);
 
@@ -105,13 +132,44 @@ const AlignmentAdvancePrintDocument: React.FC = () => {
     return undefined;
   }, [loading, error, profile, data, searchParams]);
 
+  /** Derive chapter props the same way as the in-app page when data is loaded. */
+  const reportBody = (() => {
+    if (loading || error !== null || profile === null || data === null) {
+      return null;
+    }
+
+    const { chartData, strategicData, structureResult } = data;
+    const springPhase = {
+      label: "Expansion",
+      bgColor: "linear-gradient(135deg, #16a34a, #15803d)",
+      textColor: "#15803d",
+    };
+    const phaseConfig = PHASE_DISPLAY[strategicData.season ?? "spring"] ?? springPhase;
+    const strLabel = STRUCTURE_LABELS[structureResult.structureType];
+    const formation = FORMATION_PROFILES[structureResult.formation];
+    const signalHex = strategicData.signal === "green" ? "#16a34a"
+      : strategicData.signal === "red" ? C.coral : C.gold;
+
+    return {
+      chartData,
+      strategicData,
+      structureResult,
+      phaseConfig,
+      strLabel,
+      formation,
+      signalHex,
+      profileName: profile.name,
+      profile,
+    };
+  })();
+
   return (
     <div
       className="print-root"
       style={{
-        background: "#faf0e6",
-        color: "#1a1e3f",
-        fontFamily: "'Inter', 'Helvetica Neue', Arial, sans-serif",
+        background: C.cream,
+        color: C.navy,
+        fontFamily: "Georgia, 'Times New Roman', serif",
       }}
     >
       <style>{PRINT_STYLES}</style>
@@ -121,9 +179,9 @@ const AlignmentAdvancePrintDocument: React.FC = () => {
           <div style={{ textAlign: "center" }}>
             <div
               className="inline-block h-10 w-10 animate-spin rounded-full"
-              style={{ border: "3px solid #6b5b95", borderTopColor: "transparent" }}
+              style={{ border: `3px solid ${C.coral}`, borderTopColor: "transparent" }}
             />
-            <p style={{ marginTop: 16, color: "#6b5b95", fontSize: 14 }}>Preparing your playbook…</p>
+            <p style={{ marginTop: 16, color: C.coral, fontSize: 14 }}>Preparing your playbook…</p>
           </div>
         </div>
       )}
@@ -138,80 +196,53 @@ const AlignmentAdvancePrintDocument: React.FC = () => {
         </div>
       )}
 
-      {!loading && error === null && profile !== null && data !== null && (
-        <div data-pdf-render-ready="true" style={{ display: "flex", flexDirection: "column", gap: 0, padding: "0 24px" }}>
-          <PrintCoverPage profile={profile} />
-          <PrintTableOfContents />
-          <PrintExecutiveSummary
-            wealthAnalysis={data.wealthAnalysis}
-            wealthKey={data.wealthKey}
-            dayunGuidance={data.dayunGuidance}
-            currentMonthPalaceData={data.currentMonthPalaceData}
-          />
-          <PrintDecisionFramework
-            wealthAnalysis={data.wealthAnalysis}
-            wealthKey={data.wealthKey}
-            dayunGuidance={data.dayunGuidance}
+      {reportBody !== null && (
+        <div
+          data-pdf-render-ready="true"
+          data-aa-print-body=""
+          style={{ display: "flex", flexDirection: "column", gap: 0, padding: 0 }}
+        >
+          <ChapterOverview
+            profileName={reportBody.profileName}
+            chartData={reportBody.chartData}
+            strategicData={reportBody.strategicData}
+            strLabel={reportBody.strLabel}
+            formation={reportBody.formation}
+            phaseConfig={reportBody.phaseConfig}
+            signalHex={reportBody.signalHex}
           />
 
-          <ChapterOpener
-            number="01"
-            title="Founder's Blueprint"
-            subtitle="Your operating structure type, primary formation, and special formations: the blueprint for how you are naturally wired to build momentum."
+          <ChapterDecisionFramework
+            strategicData={reportBody.strategicData}
+            strLabel={reportBody.strLabel}
+            formation={reportBody.formation}
+            phaseConfig={reportBody.phaseConfig}
+            signalHex={reportBody.signalHex}
           />
-          <PrintStructureProfile structureResult={data.structureResult} />
 
-          <ChapterOpener
-            number="02"
-            title="Wealth Acceleration"
-            subtitle="Your wealth archetype, income blueprint, 90-day priorities, and ideal collaborator profile."
+          <ChapterCoreDesign
+            chartData={reportBody.chartData}
+            structureResult={reportBody.structureResult}
+            strLabel={reportBody.strLabel}
+            formation={reportBody.formation}
           />
-          <PrintWealthBlueprint
-            chartData={data.chartData}
-            wealthAnalysis={data.wealthAnalysis}
-            wealthKey={data.wealthKey}
-          />
-          <PrintRevenueStrategy
-            wealthAnalysis={data.wealthAnalysis}
-            wealthKey={data.wealthKey}
-          />
-          <PrintPhaseAlignment
-            dayunGuidance={data.dayunGuidance}
-            wealthAnalysis={data.wealthAnalysis}
-            wealthKey={data.wealthKey}
-          />
-          <PrintActionPlan
-            dayunGuidance={data.dayunGuidance}
-            wealthAnalysis={data.wealthAnalysis}
-            wealthKey={data.wealthKey}
-          />
-          <PrintIdealCollaborator wealthKey={data.wealthKey} />
 
-          <ChapterOpener
-            number="03"
-            title="People Intelligence"
-            subtitle="Priority scoring, cross-palace strategy, and operational briefings for peers, partner, allies, sponsors, and successors."
+          <ChapterWealthAcceleration
+            chartData={reportBody.chartData}
+            strategicData={reportBody.strategicData}
           />
-          <PrintStakeholderIntel chartData={data.chartData} strategicData={data.strategicData} />
 
-          <ChapterOpener
-            number="04"
-            title="Execution Playbook"
-            subtitle="Your 10-year cycle, risk mitigation, and month-by-month strategic roadmap."
+          <ChapterStakeholderIntelligence
+            chartData={reportBody.chartData}
+            strategicData={reportBody.strategicData}
           />
-          <PrintDayunCycle dayunGuidance={data.dayunGuidance} />
-          <PrintRiskMitigation dayunGuidance={data.dayunGuidance} />
 
-          {data.timingRows.map((row, idx) => (
-            <PrintMonthlyDeepDive key={row.month} row={row} monthIndex={idx} />
-          ))}
-
-          <PrintReflectionQuestions dayunGuidance={data.dayunGuidance} />
-
-          {data.timingRows.length > 0 && <CompactTimingTable rows={data.timingRows} />}
-
-          <PrintAppendixChart chartData={data.chartData} />
-          <PrintGlobalFooter profileName={profile.name} />
+          <ChapterExecutionPlaybook
+            strategicData={reportBody.strategicData}
+            chartData={reportBody.chartData}
+            profile={reportBody.profile}
+            mode="print"
+          />
         </div>
       )}
     </div>

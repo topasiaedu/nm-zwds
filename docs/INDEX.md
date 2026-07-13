@@ -224,6 +224,8 @@ docs/
 
 **PDF Export:**
 - [Component Reorganization](./refactoring/COMPONENTS.md) - PDF section
+- [AA PDF Export Parity Brief](./AA_PDF_EXPORT_PARITY_BRIEF.md) - Alignment Advantage web/print parity plan
+- [AA PDF Export Parity Agent Prompts](./AA_PDF_EXPORT_PARITY_AGENT_PROMPTS.md) - Implementation prompts (Agents 1–4)
 
 **Testing:**
 - [Testing Strategy](./performance/TESTING_STRATEGY.md)

@@ -77,6 +77,7 @@ export const TwelvePalaceMiniGrid: React.FC<{ chartData: ChartData; highlightPal
 
     return (
       <div
+        data-aa-palace-cell=""
         style={{
           gridArea: BRANCH_TO_AREA[palace.earthlyBranch] ?? "p_yin",
           background: isHighlighted ? C.cream : C.white,
@@ -166,6 +167,7 @@ export const TwelvePalaceMiniGrid: React.FC<{ chartData: ChartData; highlightPal
 
   return (
     <div
+      data-aa-mini-grid=""
       style={{
         display: "grid",
         gridTemplateAreas: `
@@ -189,6 +191,7 @@ export const TwelvePalaceMiniGrid: React.FC<{ chartData: ChartData; highlightPal
 
       {/* Center: person info */}
       <div
+        data-aa-mini-grid-center=""
         style={{
           gridArea: "center",
           background: C.white,
@@ -200,7 +203,10 @@ export const TwelvePalaceMiniGrid: React.FC<{ chartData: ChartData; highlightPal
         }}
       >
         {/* Header */}
-        <div style={{ background: C.navy, padding: "8px 0", textAlign: "center" }}>
+        <div
+          data-aa-mini-grid-center-header=""
+          style={{ background: C.navy, padding: "8px 0", textAlign: "center" }}
+        >
           <p className="text-sm font-bold tracking-wider" style={{ color: C.cream, textTransform: "uppercase" }}>
             {chartData.input.name}
           </p>

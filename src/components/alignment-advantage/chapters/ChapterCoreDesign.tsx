@@ -70,7 +70,7 @@ export const ChapterCoreDesign: React.FC<{
 
       {/* 1-5-9 Palace Triangle: visual context showing the three palaces that
           determine the Speed/Endurance classification */}
-        <div className="mb-12">
+        <div className="mb-12" data-aa-chart-block="">
           <div className="flex items-center gap-3 mb-8">
             <span className="w-8 h-px" style={{ background: C.coral }} />
             <p className="text-[10px] font-bold uppercase tracking-[0.3em]" style={{ color: C.coral }}>
@@ -81,7 +81,7 @@ export const ChapterCoreDesign: React.FC<{
         </div>
 
       {frameworkData && (
-        <div>
+        <div data-aa-operating-engine="">
           <div className="flex items-center gap-3 mb-8">
             <span className="w-8 h-px" style={{ background: C.coral }} />
             <p className="text-[10px] font-bold uppercase tracking-[0.3em]" style={{ color: C.coral }}>

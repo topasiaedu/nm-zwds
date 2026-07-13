@@ -125,7 +125,7 @@ export const PhaseWealthAlignmentSheet: React.FC<PhaseWealthAlignmentSheetProps>
       </div>
 
       {/* Action plan — two equal columns */}
-      <div className="pt-8" style={{ borderTop: `1px solid ${C.border}60` }}>
+      <div className="pt-8" style={{ borderTop: `1px solid ${C.border}60` }} data-aa-action-plan="">
         <div className="mb-8 text-center">
           <p className="text-[10px] font-bold uppercase tracking-[0.2em] mb-2" style={{ color: C.coral }}>
             The Intersection
@@ -136,22 +136,28 @@ export const PhaseWealthAlignmentSheet: React.FC<PhaseWealthAlignmentSheetProps>
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {actions.length > 0 && (
-            <div>
+            <div data-aa-action-column="">
               <SectionLabel index="01" title="What To Do Now" />
               <WhatToDoNowList actions={actions} />
             </div>
           )}
 
           {alignEntry !== null && alignEntry.watchOut.length > 0 && (
-            <div>
+            <div data-aa-action-column="">
               <SectionLabel index="02" title="What To Watch During This Period" />
               <div
                 className="rounded-3xl p-6 min-h-[220px]"
                 style={{ background: `${C.coral}08`, border: `1px solid ${C.coral}35` }}
+                data-aa-watch-card=""
               >
                 <div className="space-y-4 pt-2">
                   {alignEntry.watchOut.map((item) => (
-                    <p key={item} className="text-sm leading-snug pl-4 relative" style={{ color: C.navy }}>
+                    <p
+                      key={item}
+                      className="text-sm leading-snug pl-4 relative"
+                      style={{ color: C.navy }}
+                      data-aa-numbered-list-row=""
+                    >
                       <span
                         className="absolute left-0 top-[0.5em] w-1.5 h-1.5 rounded-full"
                         style={{ background: C.coral }}

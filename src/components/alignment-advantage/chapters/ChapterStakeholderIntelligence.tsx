@@ -52,14 +52,14 @@ export const ChapterStakeholderIntelligence: React.FC<{
           subtitle="Ranked view of peers, partner, friends, mentors, and people you develop."
         />
 
-        <div className="mb-10">
+        <div className="mb-10" data-aa-chart-block="">
           <p className="text-[10px] font-bold uppercase tracking-[0.2em] mb-6 text-center" style={{ color: C.muted }}>
             Structural Indicators: Siblings, Spouse, Friends, Parents, Children
           </p>
           <TwelvePalaceMiniGrid chartData={chartData} highlightPalaces={PEOPLE_HIGHLIGHTS} />
         </div>
 
-        <div className="mb-12">
+        <div className="mb-12" data-aa-people-priority="">
           <p className="text-[10px] font-bold uppercase tracking-[0.2em] mb-6" style={{ color: C.muted }}>
             Relationship Priority Distribution
           </p>

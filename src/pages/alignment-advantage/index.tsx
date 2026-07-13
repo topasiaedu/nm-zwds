@@ -8,7 +8,7 @@
  *    printed pages in a browser-based PDF reader.
  *
  * Chapters:
- *  Cover  : Client name, at-a-glance summary chips
+ *  Cover  : Client name, at-a-glance summary chips, PDF download
  *  Filter : Strategic decision filter (right after overview)
  *  Ch 01  : Structure: Speed/Endurance Player + Formation Profile
  *  Ch 02  : Wealth: Archetype profile + Phase × Wealth intersection
@@ -24,19 +24,23 @@ import { Link } from "react-router-dom";
 import PageTransition from "../../components/PageTransition";
 import { useProfileContext } from "../../context/ProfileContext";
 import { useTierAccess } from "../../context/TierContext";
+import { useAlertContext } from "../../context/AlertContext";
+import { selectAccountOwnerProfile } from "../../components/alignment-advantage/data/selectAccountOwnerProfile";
 import {
   STRUCTURE_LABELS,
   FORMATION_PROFILES,
 } from "../../utils/forecast/structureContentData";
+import { supabase } from "../../utils/supabase-client";
+import {
+  exportPdfViaServer,
+  resolvePrintPageOrigin,
+} from "../../utils/pdfExportServer";
 import { useAlignmentAdvantageData } from "../../components/alignment-advantage/data/useAlignmentAdvantageData";
 
 import DocumentViewerLayout from "../../components/layout/DocumentViewerLayout";
 import { useAppNavItems } from "../../hooks/useAppNavItems";
 import { C } from "../../components/alignment-advantage/shared/constants";
-import { PageContextStrip } from "../../components/alignment-advantage/shared/PageContextStrip";
-import { SectionWatermark } from "../../components/alignment-advantage/shared/SectionWatermark";
-import { firstSentences } from "../../components/alignment-advantage/shared/textHelpers";
-import { TwelvePalaceMiniGrid } from "../../components/alignment-advantage/shared/TwelvePalaceMiniGrid";
+import { ChapterOverview } from "../../components/alignment-advantage/chapters/ChapterOverview";
 import { ChapterCoreDesign } from "../../components/alignment-advantage/chapters/ChapterCoreDesign";
 import { ChapterExecutionPlaybook } from "../../components/alignment-advantage/chapters/ChapterExecutionPlaybook";
 import { ChapterWealthAcceleration } from "../../components/alignment-advantage/chapters/ChapterWealthAcceleration";
@@ -126,15 +130,17 @@ const AccessDeniedView: React.FC = () => (
 const AlignmentAdvantage: React.FC = () => {
   const { profiles }              = useProfileContext();
   const { hasAlignmentAdvantage } = useTierAccess();
+  const { showAlert }             = useAlertContext();
   const { items: appNavItems }    = useAppNavItems({ activeKey: "alignment-advantage" });
 
-  const profile = profiles.find((p) => p.is_self) ?? null;
+  const profile = selectAccountOwnerProfile(profiles);
   const aaData = useAlignmentAdvantageData(profile);
 
   const chartData = aaData?.chartData ?? null;
   const strategicData = aaData?.strategicData ?? null;
   const structureResult = aaData?.structureResult ?? null;
 
+  const [pdfLoading, setPdfLoading] = useState<boolean>(false);
   const [activeChapter, setActiveChapter] = useState<ChapterId>("cover");
 
   // Active chapter detection
@@ -163,6 +169,78 @@ const AlignmentAdvantage: React.FC = () => {
   const scrollTo = useCallback((id: string): void => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
   }, []);
+
+  /**
+   * Downloads the Alignment Advantage playbook PDF via the Puppeteer microservice.
+   * Requires REACT_APP_PDF_SERVICE_URL (handled inside exportPdfViaServer).
+   */
+  const handleDownloadPlaybook = async (): Promise<void> => {
+    if (pdfLoading) {
+      return;
+    }
+    setPdfLoading(true);
+    try {
+      // Prefer `|| ""` over `?.trim()` so CRA DefinePlugin + Babel optional-chaining
+      // does not leave an ambiguous empty check after env inlining.
+      const pdfServiceUrl = (process.env.REACT_APP_PDF_SERVICE_URL || "").trim();
+      if (pdfServiceUrl.length === 0) {
+        showAlert(
+          "PDF download is not configured. Set REACT_APP_PDF_SERVICE_URL in .env.local and restart the app (npm start).",
+          "error"
+        );
+        return;
+      }
+
+      const { data } = await supabase.auth.getSession();
+      const token = data.session?.access_token;
+      if (token === undefined || token.length === 0) {
+        showAlert("Please sign in first.", "error");
+        return;
+      }
+
+      const printOrigin = resolvePrintPageOrigin();
+      if (printOrigin.length === 0) {
+        showAlert("Could not resolve the print page origin for PDF generation.", "error");
+        return;
+      }
+
+      const url = new URL(`${printOrigin}/print/alignment-advantage`);
+      url.searchParams.set("pdfToken", token);
+      await exportPdfViaServer(
+        url.toString(),
+        async () => `Bearer ${token}`,
+        `Alignment-Advantage-${profile?.name ?? "report"}.pdf`
+      );
+      showAlert("Playbook downloaded.", "success");
+    } catch (err) {
+      const message =
+        err instanceof TypeError
+          ? "Could not reach the PDF service. Is it running on port 8787?"
+          : err instanceof Error
+            ? err.message
+            : "PDF generation failed.";
+      showAlert(message, "error");
+    } finally {
+      setPdfLoading(false);
+    }
+  };
+
+  /** Opens the print route in a new tab for browser print preview. */
+  const handlePrintPreview = async (): Promise<void> => {
+    try {
+      const { data } = await supabase.auth.getSession();
+      const token = data.session?.access_token;
+      if (!token) {
+        showAlert("Please sign in first.", "error");
+        return;
+      }
+      const url = new URL(`${resolvePrintPageOrigin()}/print/alignment-advantage`);
+      url.searchParams.set("pdfToken", token);
+      window.open(url.toString(), "_blank", "noopener,noreferrer");
+    } catch {
+      showAlert("Could not open print preview.", "error");
+    }
+  };
 
   if (!hasAlignmentAdvantage) return <AccessDeniedView />;
 
@@ -195,6 +273,38 @@ const AlignmentAdvantage: React.FC = () => {
   const signalHex = strategicData.signal === "green" ? "#16a34a"
     : strategicData.signal === "red" ? C.coral : C.gold;
 
+  const footerActions = (
+    <>
+      <button
+        type="button"
+        onClick={() => { void handleDownloadPlaybook(); }}
+        disabled={pdfLoading}
+        className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold transition-all disabled:opacity-60"
+        style={{ background: `linear-gradient(135deg, ${C.coralDark}, ${C.coral})`, color: C.white }}
+      >
+        {pdfLoading ? (
+          <svg className="w-3.5 h-3.5 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+          </svg>
+        ) : (
+          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+          </svg>
+        )}
+        {pdfLoading ? "Generating…" : "Download Playbook"}
+      </button>
+      <button
+        type="button"
+        onClick={() => { void handlePrintPreview(); }}
+        className="w-full py-2 rounded-xl text-xs font-medium transition-all"
+        style={{ border: "1px solid rgba(255,255,255,0.15)", color: "rgba(255,255,255,0.5)" }}
+      >
+        Print Preview
+      </button>
+    </>
+  );
+
   return (
     <PageTransition>
       <DocumentViewerLayout
@@ -204,157 +314,20 @@ const AlignmentAdvantage: React.FC = () => {
         chapters={CHAPTERS}
         activeChapter={activeChapter}
         onChapterClick={scrollTo}
+        footerActions={footerActions}
       >
           {/* ══════════════════════════════════════
               SECTION 1: OVERVIEW / COVER
               ══════════════════════════════════════ */}
-          <section id="cover" className="scroll-mt-16 mb-32 pt-16 relative overflow-x-hidden bg-white rounded-[40px] p-6 sm:p-8 md:p-10 lg:p-16 shadow-[0_8px_32px_rgba(0,0,0,0.03)] border border-[#e8ddd0]/50">
-            <SectionWatermark type="compass" />
-            <PageContextStrip label="Overview · Your Profile at a Glance" />
-            
-            {/* Hero */}
-            <div className="mb-16 relative z-10 min-w-0 max-w-full">
-              <div className="absolute -top-10 -right-10 w-64 h-64 opacity-10 pointer-events-none">
-                <svg viewBox="0 0 100 100" fill="none" stroke="#e8642d" strokeWidth="0.5">
-                  <circle cx="50" cy="50" r="45" strokeDasharray="2 4" />
-                  <circle cx="50" cy="50" r="35" />
-                  <path d="M50 5 L50 95 M5 50 L95 50" />
-                  <circle cx="50" cy="50" r="10" fill="#e8642d" fillOpacity="0.2" />
-                </svg>
-              </div>
-              <p className="text-[10px] font-bold uppercase tracking-[0.28em] mb-4" style={{ color: C.coral }}>
-                Strategic Playbook · {profile.name}
-              </p>
-              <h1
-                className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6 max-w-full break-words"
-                style={{
-                  fontFamily: "Georgia,'Times New Roman',serif",
-                  letterSpacing: "-0.03em",
-                  background: `linear-gradient(135deg, ${C.navy} 0%, ${C.coralDark} 55%, ${C.coral} 100%)`,
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                  backgroundClip: "text",
-                }}
-              >
-                Your Alignment<br />Advantage
-              </h1>
-              <p className="text-lg leading-relaxed mt-3 max-w-lg" style={{ color: C.muted }}>
-                {firstSentences(
-                  "A personalised strategic playbook built from your Purple Star Astrology chart - giving you clarity on how you are wired, when to move, and how to build wealth on your terms.",
-                  2
-                )}
-              </p>
-            </div>
-
-
-            {/* 3-stat summary cards: cream with coral left-border accent */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full min-w-0">
-              {/* Stat 1: Structure */}
-              <div
-                className="rounded-2xl p-5 flex flex-col gap-3 w-full min-w-0"
-                style={{
-                  background: C.cream,
-                  border: `1px solid ${C.border}60`, boxShadow: "0 4px 24px rgba(0,0,0,0.02)",
-                  borderLeft: `3px solid ${C.coral}`,
-                }}
-              >
-                <p className="text-[8px] font-bold uppercase tracking-[0.24em]" style={{ color: C.coral }}>
-                  Operating Structure
-                </p>
-                <div>
-                  <p className="text-lg font-bold leading-tight mb-1" style={{ color: C.navy, fontFamily: "Georgia,'Times New Roman',serif" }}>
-                    {strLabel.label}
-                  </p>
-                  <p className="text-xs leading-relaxed" style={{ color: C.muted }}>{formation.englishName}</p>
-                </div>
-              </div>
-
-              {/* Stat 2: Timing Phase */}
-              <div
-                className="rounded-2xl p-5 flex flex-col gap-3 w-full min-w-0"
-                style={{
-                  background: C.cream,
-                  border: `1px solid ${C.border}60`, boxShadow: "0 4px 24px rgba(0,0,0,0.02)",
-                  borderLeft: `3px solid ${C.navy}`,
-                }}
-              >
-                <p className="text-[8px] font-bold uppercase tracking-[0.24em]" style={{ color: C.navy }}>
-                  Timing Phase
-                </p>
-                <div>
-                  <p className="text-lg font-bold leading-tight mb-1" style={{ color: C.navy, fontFamily: "Georgia,'Times New Roman',serif" }}>
-                    {phaseConfig.label}
-                  </p>
-                  <p className="text-xs leading-relaxed" style={{ color: C.muted }}>
-                    {strategicData.dayun?.startYear ?? ""}-{strategicData.dayun?.endYear ?? ""}
-                  </p>
-                </div>
-              </div>
-
-              {/* Stat 3: Monthly Signal */}
-              <div
-                className="rounded-2xl p-5 flex flex-col gap-3 w-full min-w-0"
-                style={{
-                  background: C.cream,
-                  border: `1px solid ${C.border}60`, boxShadow: "0 4px 24px rgba(0,0,0,0.02)",
-                  borderLeft: `3px solid ${signalHex}`,
-                }}
-              >
-                <p className="text-[8px] font-bold uppercase tracking-[0.24em]" style={{ color: signalHex }}>
-                  {strategicData.monthName} Signal
-                </p>
-                <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ background: signalHex }} />
-                    <p className="text-lg font-bold leading-tight" style={{ color: C.navy, fontFamily: "Georgia,'Times New Roman',serif" }}>
-                      {strategicData.signal === "green" ? "Green Light"
-                        : strategicData.signal === "yellow" ? "Yellow Light" : "Red Light"}
-                    </p>
-                  </div>
-                  <p className="text-xs leading-relaxed" style={{ color: C.muted }}>
-                    {strategicData.palaceArea}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Wealth archetype highlight */}
-            <div
-              className="mt-4 rounded-2xl px-6 py-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4 w-full min-w-0"
-              style={{
-                background: `linear-gradient(135deg, ${C.navy}ee, ${C.navyMid}ee)`,
-                border: `1px solid ${C.coral}15`, boxShadow: "0 4px 24px rgba(232,100,45,0.03)",
-              }}
-            >
-              <div className="w-full min-w-0">
-                <p className="text-[9px] font-bold uppercase tracking-[0.22em] mb-1.5" style={{ color: C.coral }}>
-                  Dominant Wealth Archetype
-                </p>
-                <p
-                  className="text-lg font-bold"
-                  style={{ color: C.white, fontFamily: "Georgia,'Times New Roman',serif" }}
-                >
-                  {strategicData.wealthArchetype}
-                </p>
-              </div>
-              <p
-                className="text-xs leading-relaxed w-full min-w-0 md:max-w-xs md:text-right"
-                style={{ color: "rgba(255,255,255,0.45)" }}
-              >
-                {strategicData.dayun?.coreMessage ?? ""}
-              </p>
-            </div>
-            {/* 12-Palace Mini Grid: full chart at a glance */}
-            <div className="mt-6">
-              <p
-                className="text-[8px] font-bold uppercase tracking-[0.24em] mb-3 text-center"
-                style={{ color: C.muted }}
-              >
-                Your Full 12-Palace Chart · Each chapter below unpacks one zone
-              </p>
-              <TwelvePalaceMiniGrid chartData={chartData} />
-            </div>
-          </section>
+          <ChapterOverview
+            profileName={profile.name}
+            chartData={chartData}
+            strategicData={strategicData}
+            strLabel={strLabel}
+            formation={formation}
+            phaseConfig={phaseConfig}
+            signalHex={signalHex}
+          />
 
           <ChapterDecisionFramework
             strategicData={strategicData}

@@ -15,6 +15,7 @@ import { Link } from "react-router-dom";
 import PageTransition from "../../components/PageTransition";
 import { useProfileContext } from "../../context/ProfileContext";
 import { useTierAccess } from "../../context/TierContext";
+import { selectAccountOwnerProfile } from "../../components/alignment-advantage/data/selectAccountOwnerProfile";
 import { ZWDSCalculator } from "../../utils/zwds/calculator";
 import type { ChartData, ChartInput } from "../../utils/zwds/types";
 import { analyzeWealthCode } from "../../utils/zwds/analysis/wealthCodeAnalysis";
@@ -117,7 +118,7 @@ const AlignmentAdvantageWealthPage: React.FC = () => {
   const { hasAlignmentAdvantage } = useTierAccess();
 
   const profile = useMemo(
-    () => profiles.find((p) => p.is_self) ?? null,
+    () => selectAccountOwnerProfile(profiles),
     [profiles]
   );
 
