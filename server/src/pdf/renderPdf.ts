@@ -65,10 +65,14 @@ export async function renderPdfFromUrl(url: string): Promise<Buffer> {
   const target = new URL(url);
   const redactedTarget = `${target.origin}${target.pathname}`;
   const executablePathRaw = process.env.PUPPETEER_EXECUTABLE_PATH;
+  const macChrome =
+    "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
   const executablePath =
     executablePathRaw !== undefined && executablePathRaw !== ""
       ? executablePathRaw
-      : undefined;
+      : process.platform === "darwin"
+        ? macChrome
+        : undefined;
 
   let browser: Awaited<ReturnType<typeof puppeteer.launch>> | undefined;
   try {
@@ -88,6 +92,8 @@ export async function renderPdfFromUrl(url: string): Promise<Buffer> {
     return await withTimeout(
       (async () => {
         const page = await launched.newPage();
+        await page.setViewport({ width: 794, height: 1123, deviceScaleFactor: 1 });
+        await page.emulateMediaType("print");
         page.on("console", (msg) => {
           const text = msg.text();
           if (msg.type() === "error") {
@@ -161,16 +167,29 @@ export async function renderPdfFromUrl(url: string): Promise<Buffer> {
         await new Promise<void>((resolve) => {
           setTimeout(resolve, PDF_SETTLE_AFTER_READY_MS);
         });
+        /*
+         * Force print media before page.pdf() so @media print rules (overflow,
+         * keep-together, md: grid restores) apply to layout — not only to the
+         * print stylesheet snapshot. Without this, screen `overflow-hidden` on
+         * chapter shells can clip the playbook year-legend from the PDF.
+         */
+        await page.emulateMediaType("print");
         console.info(`pdf-server: generating PDF bytes for ${redactedTarget}`);
+        /**
+         * Full-bleed pages: Chromium pdf margins create a white printer ring
+         * around the cream background. Keep margins at 0 and rely on print CSS
+         * internal padding so content stays readable without clipping.
+         */
         const pdf = await page.pdf({
           format: "A4",
           printBackground: true,
+          preferCSSPageSize: true,
           timeout: PAGE_PDF_CDPTIMEOUT_MS,
           margin: {
-            top: "12mm",
-            bottom: "12mm",
-            left: "10mm",
-            right: "10mm",
+            top: "0",
+            bottom: "0",
+            left: "0",
+            right: "0",
           },
         });
         console.info(`pdf-server: PDF generated for ${redactedTarget}`);

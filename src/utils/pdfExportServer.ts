@@ -11,7 +11,8 @@
  * `REACT_APP_PDF_PRINT_ORIGIN` to your publicly reachable app URL (e.g. production).
  */
 export function resolvePrintPageOrigin(): string {
-  const fromEnv = process.env.REACT_APP_PDF_PRINT_ORIGIN?.trim() ?? "";
+  // Avoid `?.trim()` so CRA DefinePlugin inlining stays unambiguous after Babel.
+  const fromEnv = (process.env.REACT_APP_PDF_PRINT_ORIGIN || "").trim();
   if (fromEnv.length > 0) {
     return fromEnv.replace(/\/$/, "");
   }
@@ -48,8 +49,8 @@ export async function exportPdfViaServer(
   filename = "report.pdf"
 ): Promise<void> {
   const SERVER_REQUEST_TIMEOUT_MS = 120_000;
-  const baseRaw = process.env.REACT_APP_PDF_SERVICE_URL;
-  if (baseRaw === undefined || baseRaw === "") {
+  const baseRaw = (process.env.REACT_APP_PDF_SERVICE_URL || "").trim();
+  if (baseRaw.length === 0) {
     throw new Error("REACT_APP_PDF_SERVICE_URL is not configured.");
   }
 
@@ -84,6 +85,12 @@ export async function exportPdfViaServer(
   } catch (error) {
     if (error instanceof DOMException && error.name === "AbortError") {
       throw new Error("PDF export timed out. Please try again in a moment.");
+    }
+    if (error instanceof TypeError) {
+      // Browsers surface both "server down" and CORS blocks as TypeError: Failed to fetch.
+      throw new Error(
+        `Could not reach the PDF service at ${base}. Check that server/ is running on :8787, open the app at http://localhost:3000 (not a LAN IP unless CORS allows it), and hard-refresh so REACT_APP_PDF_SERVICE_URL is current.`
+      );
     }
     throw error;
   } finally {

@@ -26,6 +26,7 @@ export const AxisCard: React.FC<{
 
   return (
     <div
+      {...(isChecklist ? { "data-aa-checklist-row": "" } : {})}
       className={`p-5 transition-all duration-300 ${isChecklist ? "flex flex-col md:flex-row gap-6 items-start md:items-center rounded-none border-b" : "flex flex-col gap-4 rounded-2xl border"}`}
       style={isChecklist
         ? { borderBottom: `1px solid ${borderColor}`, background: bgColor }

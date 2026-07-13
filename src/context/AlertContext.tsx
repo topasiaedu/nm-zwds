@@ -86,9 +86,43 @@ export const AlertProvider: React.FC<{ children: ReactNode }> = ({
     [message, type, showAlert, hideAlert, visible]
   );
 
+  const alertBackground =
+    type === "error"
+      ? "#b91c1c"
+      : type === "warning"
+        ? "#b45309"
+        : type === "info"
+          ? "#1e3a5f"
+          : "#15803d";
+
   return (
     <AlertContext.Provider value={contextValue}>
       {children}
+      {visible && message.length > 0 ? (
+        <div
+          role="alert"
+          aria-live="assertive"
+          className="fixed top-4 right-4 z-[9999] max-w-sm rounded-xl px-4 py-3 text-sm font-medium shadow-lg"
+          style={{
+            background: alertBackground,
+            color: "#ffffff",
+            boxShadow: "0 8px 24px rgba(0,0,0,0.18)",
+          }}
+        >
+          <div className="flex items-start gap-3">
+            <p className="flex-1 leading-snug">{message}</p>
+            <button
+              type="button"
+              onClick={hideAlert}
+              aria-label="Dismiss alert"
+              className="shrink-0 rounded-md px-1.5 py-0.5 text-xs opacity-80 transition-opacity hover:opacity-100"
+              style={{ background: "rgba(255,255,255,0.15)" }}
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+      ) : null}
     </AlertContext.Provider>
   );
 };

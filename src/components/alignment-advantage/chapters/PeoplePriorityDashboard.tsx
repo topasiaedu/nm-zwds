@@ -28,7 +28,7 @@ export const PeoplePriorityDashboard: React.FC<PeoplePriorityDashboardProps> = (
 
     <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">
       {priorityBars.map((row) => (
-        <div key={row.palaceKey}>
+        <div key={row.palaceKey} data-aa-score-bar="">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-3 min-w-0">
               {row.isPrimary && (

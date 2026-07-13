@@ -142,7 +142,7 @@ export const PeoplePalaceBriefingBody: React.FC<PeoplePalaceBriefingBodyProps> =
       <PeoplePalaceActivationGrid tiles={activationTiles} hint={activationHint} />
 
       {starRoster.length > 0 && (
-        <div>
+        <div data-aa-palace-stars="">
           <p className="text-[10px] font-bold uppercase tracking-[0.24em] mb-3" style={{ color: C.navy }}>
             Stars In This Palace
           </p>
@@ -186,23 +186,33 @@ export const PeoplePalaceBriefingBody: React.FC<PeoplePalaceBriefingBodyProps> =
         </div>
       )}
 
-      <div className="pt-8" style={{ borderTop: `1px solid ${C.border}60` }}>
+      {/*
+        Print: break before this whole block if needed — never mid-card.
+        Column wrappers keep label + card together.
+      */}
+      <div className="pt-8" style={{ borderTop: `1px solid ${C.border}60` }} data-aa-action-plan="">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div>
+          <div data-aa-action-column="">
             <SectionLabel index="01" title="What To Do Now" />
             <WhatToDoNowList actions={actions} />
           </div>
 
           {risks.length > 0 && (
-            <div>
+            <div data-aa-action-column="">
               <SectionLabel index="02" title="What To Watch" />
               <div
                 className="rounded-3xl p-6 min-h-[220px]"
                 style={{ background: `${C.coral}08`, border: `1px solid ${C.coral}35` }}
+                data-aa-watch-card=""
               >
                 <div className="space-y-4 pt-2">
                   {risks.map((item) => (
-                    <p key={item} className="text-sm leading-snug pl-4 relative" style={{ color: C.navy }}>
+                    <p
+                      key={item}
+                      className="text-sm leading-snug pl-4 relative"
+                      style={{ color: C.navy }}
+                      data-aa-numbered-list-row=""
+                    >
                       <span
                         className="absolute left-0 top-[0.5em] w-1.5 h-1.5 rounded-full"
                         style={{ background: C.coral }}

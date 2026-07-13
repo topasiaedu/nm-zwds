@@ -12,7 +12,10 @@ export interface WhatToDoNowListProps {
  * Desktop: compact row layout inside the white bordered card.
  */
 export const WhatToDoNowList: React.FC<WhatToDoNowListProps> = ({ actions }) => (
-  <div className="md:rounded-3xl md:overflow-hidden md:relative md:min-h-[220px] md:bg-white md:border md:border-[#1a1e3f35]">
+  <div
+    className="md:rounded-3xl md:overflow-hidden md:relative md:min-h-[220px] md:bg-white md:border md:border-[#1a1e3f35]"
+    data-aa-what-to-do-list=""
+  >
     <div className="hidden md:block absolute right-5 top-5 w-20 h-20 opacity-5 pointer-events-none">
       <PhaseActionsSvg />
     </div>
@@ -22,6 +25,7 @@ export const WhatToDoNowList: React.FC<WhatToDoNowListProps> = ({ actions }) => 
         return (
           <div
             key={`action-${idx}-${action.slice(0, 24)}`}
+            data-aa-numbered-list-row=""
             className={[
               "py-5 md:py-0",
               !isLast ? "border-b md:border-b-0" : "",

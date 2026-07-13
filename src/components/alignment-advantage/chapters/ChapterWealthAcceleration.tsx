@@ -47,7 +47,7 @@ export const ChapterWealthAcceleration: React.FC<ChapterWealthAccelerationProps>
       />
 
       {/* ── 1. Chart: wealth-relevant palace snapshot ── */}
-      <div className="mb-12">
+      <div className="mb-12" data-aa-chart-block="">
         <p className="text-[10px] font-bold uppercase tracking-[0.2em] mb-6 text-center" style={{ color: C.muted }}>
           Structural Indicators: Wealth, Property, and Career Palaces
         </p>
@@ -55,7 +55,7 @@ export const ChapterWealthAcceleration: React.FC<ChapterWealthAccelerationProps>
       </div>
 
       {/* ── 2. Stats: wealth code score bars ── */}
-      <div className="mb-16">
+      <div className="mb-16" data-aa-wealth-scores="">
         <p className="text-[10px] font-bold uppercase tracking-[0.2em] mb-6" style={{ color: C.muted }}>
           Wealth Code Distribution
         </p>
@@ -64,7 +64,7 @@ export const ChapterWealthAcceleration: React.FC<ChapterWealthAccelerationProps>
             const pct = Math.round((code.score / 10) * 100);
             const isDominant = i === 0;
             return (
-              <div key={code.key}>
+              <div key={code.key} data-aa-score-bar="">
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-3">
                     {isDominant && (
@@ -95,7 +95,7 @@ export const ChapterWealthAcceleration: React.FC<ChapterWealthAccelerationProps>
 
       {/* ── 3. Explanation: revenue engine map & archetype profile ── */}
       {wtProfile && (
-        <div className="mb-12">
+        <div className="mb-12" data-aa-wealth-engine="">
           <div className="flex items-center gap-3 mb-6">
             <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ background: `${C.coral}15`, border: `1px solid ${C.coral}30` }}>
               {getCategoryIcon(wtProfile.category)}
@@ -110,7 +110,11 @@ export const ChapterWealthAcceleration: React.FC<ChapterWealthAccelerationProps>
             </div>
           </div>
 
-          <div className="p-5 sm:p-8 rounded-3xl" style={{ background: C.white, border: `1px solid ${C.border}60`, boxShadow: "0 4px 24px rgba(0,0,0,0.02)" }}>
+          <div
+            className="p-5 sm:p-8 rounded-3xl"
+            data-aa-wealth-archetype-card=""
+            style={{ background: C.white, border: `1px solid ${C.border}60`, boxShadow: "0 4px 24px rgba(0,0,0,0.02)" }}
+          >
             <p className="text-[10px] font-bold uppercase tracking-[0.24em] mb-3" style={{ color: C.muted }}>
               Dominant Wealth Archetype
             </p>

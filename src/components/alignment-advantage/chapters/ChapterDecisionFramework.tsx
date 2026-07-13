@@ -36,7 +36,7 @@ export const ChapterDecisionFramework: React.FC<ChapterDecisionFrameworkProps> =
   signalHex,
 }) => {
   return (
-    <section id="decision" className="scroll-mt-16 mb-32 pt-16 relative overflow-hidden bg-white rounded-[40px] p-10 md:p-16 shadow-[0_8px_32px_rgba(0,0,0,0.03)] border border-[#e8ddd0]/50">
+    <section id="decision" className="scroll-mt-16 mb-32 pt-16 relative overflow-visible bg-white rounded-[40px] p-10 md:p-16 shadow-[0_8px_32px_rgba(0,0,0,0.03)] border border-[#e8ddd0]/50">
       <SectionWatermark type="target" />
       <SectionHeader
         graphicType="decision"
@@ -46,8 +46,11 @@ export const ChapterDecisionFramework: React.FC<ChapterDecisionFrameworkProps> =
       />
 
       {/* ── Visual: Strategic Convergence Venn Diagram ── */}
-      <div className="rounded-3xl overflow-hidden mb-12 border border-[#e8ddd0]/60 shadow-[0_8px_32px_rgba(0,0,0,0.02)]">
-        <div className="px-8 py-6 bg-[#1a1e3f]">
+      <div
+        className="rounded-3xl overflow-hidden mb-12 border border-[#e8ddd0]/60 shadow-[0_8px_32px_rgba(0,0,0,0.02)]"
+        data-aa-convergence=""
+      >
+        <div className="px-8 py-6 bg-[#1a1e3f]" data-aa-convergence-header="">
           <p className="text-[10px] font-bold uppercase tracking-[0.24em] mb-1.5 text-white/40">
             Strategic Convergence
           </p>
@@ -56,9 +59,12 @@ export const ChapterDecisionFramework: React.FC<ChapterDecisionFrameworkProps> =
           </p>
         </div>
         
-        <div className="bg-[#fdf6ee] p-8 md:p-12 relative flex flex-col md:flex-row items-center justify-center gap-12">
+        <div
+          className="bg-[#fdf6ee] p-8 md:p-12 relative flex flex-col md:flex-row items-center justify-center gap-12"
+          data-aa-convergence-body=""
+        >
           {/* Venn Diagram SVG */}
-          <div className="relative w-64 h-64 shrink-0">
+          <div className="relative w-64 h-64 shrink-0" data-aa-convergence-venn="">
             <svg viewBox="0 0 200 200" className="w-full h-full drop-shadow-xl">
               <defs>
                 <linearGradient id="grad-struct" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -132,7 +138,7 @@ export const ChapterDecisionFramework: React.FC<ChapterDecisionFrameworkProps> =
       </div>
 
       {/* ── The Playbook: Deal-Flow Checklist ── */}
-      <div className="mb-10">
+      <div className="mb-10" data-aa-deal-flow="">
         <p className="text-[10px] font-bold uppercase tracking-[0.2em] mb-4 text-slate-400">
           Deal-Flow Checklist
         </p>

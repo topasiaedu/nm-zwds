@@ -6,20 +6,62 @@ import {
   PALACE_MONTH_DATA,
   PALACE_GUIDANCE_DATA,
   SEASON_STYLES,
+  type LiuMonthSeason,
+  type PalaceGuidanceData,
+  type PalaceMonthData,
 } from "../../../utils/forecast/alignmentAdvantage/executionPlaybookData";
 import MonthGrid from "../shared/MonthGrid";
 import type { MonthPillData } from "../shared/MonthGrid";
 import { C } from "../shared/constants";
 import { SectionWatermark } from "../shared/SectionWatermark";
 import { SectionHeader } from "../shared/SectionHeader";
+import type { StrategicData } from "../data/types";
+import type { Profile } from "../../../context/ProfileContext";
 
 const CURRENT_YEAR = new Date().getFullYear();
 const CURRENT_MONTH_INDEX = new Date().getMonth();
+
+/** Cap lengths matching the interactive web briefing card. */
+const EXECUTIVE_ACTION_CAP = 3;
+const RISK_MITIGATION_CAP = 3;
+const STRATEGIC_REFLECTION_CAP = 2;
 
 const MONTH_NAMES_SHORT = [
   "Jan", "Feb", "Mar", "Apr", "May", "Jun",
   "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
 ];
+
+/**
+ * Render mode for the Execution Playbook chapter.
+ *
+ * - `"interactive"` (default): month grid selects a single briefing (in-app report).
+ * - `"print"`: month grid is a display-only legend; all 12 monthly briefings render
+ *   in calendar order for PDF / print parity.
+ */
+export type ExecutionPlaybookMode = "interactive" | "print";
+
+function isLiuMonthSeason(value: string): value is LiuMonthSeason {
+  return (
+    value === "Expansion" ||
+    value === "Visibility" ||
+    value === "Consolidation" ||
+    value === "Foundation"
+  );
+}
+
+function resolveSeasonStyle(label: string) {
+  if (!isLiuMonthSeason(label)) {
+    return undefined;
+  }
+  return SEASON_STYLES[label];
+}
+
+function narrowStars(stars: number): 3 | 4 | 5 {
+  if (stars === 3 || stars === 4 || stars === 5) {
+    return stars;
+  }
+  return 4;
+}
 
 function buildMonthPills(chartData: ChartData): MonthPillData[] {
   return Array.from({ length: 12 }, (_, i) => {
@@ -33,7 +75,7 @@ function buildMonthPills(chartData: ChartData): MonthPillData[] {
       shortName: MONTH_NAMES_SHORT[i] ?? String(m),
       palaceName: palace?.name ?? "-",
       signal,
-      stars: (pData?.stars ?? 4) as 3 | 4 | 5,
+      stars: narrowStars(pData?.stars ?? 4),
     };
   });
 }
@@ -45,17 +87,184 @@ const Shimmer: React.FC<{ className: string }> = ({ className }) => (
   />
 );
 
+interface MonthlyBriefingBlockProps {
+  /** Solar month index 0–11. */
+  monthIndex: number;
+  /** Palace name used to look up static month / guidance data. */
+  palaceName: string;
+  /**
+   * When set, wraps the block for print page-break hooks
+   * (Agent 3: `[data-aa-print-month]`).
+   */
+  printMonthAttr?: number;
+}
+
+/**
+ * Single-month briefing card — shared by interactive (one selected month)
+ * and print (all 12 months) modes. Visual structure must stay in parity.
+ */
+const MonthlyBriefingBlock: React.FC<MonthlyBriefingBlockProps> = ({
+  monthIndex,
+  palaceName,
+  printMonthAttr,
+}) => {
+  const mData: PalaceMonthData | undefined = PALACE_MONTH_DATA[palaceName];
+  const gData: PalaceGuidanceData | undefined = PALACE_GUIDANCE_DATA[palaceName];
+  const monthNum = monthIndex + 1;
+  const mName = new Date(CURRENT_YEAR, monthNum - 1).toLocaleString("default", { month: "long" });
+
+  const wrapperProps =
+    printMonthAttr !== undefined
+      ? { "data-aa-print-month": String(printMonthAttr) }
+      : {};
+
+  if (mData === undefined || gData === undefined) {
+    return (
+      <div className="py-8 text-center" {...wrapperProps}>
+        <p className="text-sm text-gray-400">Briefing unavailable for this period.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-10" {...wrapperProps}>
+      {/* Header */}
+      <div data-aa-month-header="">
+        <p className="text-[10px] font-bold uppercase tracking-[0.24em] mb-2" style={{ color: C.coral }}>
+          {`Monthly Briefing · ${mName} ${CURRENT_YEAR}`}
+        </p>
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <p className="text-2xl font-bold" style={{ color: C.navy, fontFamily: "Georgia,'Times New Roman',serif" }}>
+            {`${mData.area} Focus`}
+          </p>
+          <div className="px-4 py-2 border border-[#e8ddd0] rounded-full max-w-full shrink" data-aa-month-theme-pill="">
+            <span className="text-[9px] font-bold uppercase tracking-widest text-gray-500">Theme: </span>
+            <span className="text-[9px] font-bold uppercase tracking-widest" style={{ color: C.navy }}>
+              {SEASON_STYLES[mData.season]?.tagline ?? ""}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Dimension bars (print CSS forces 2×2 so Health is not a lonely full-width bar) */}
+      <div data-aa-month-capacity="">
+        <p className="text-[10px] font-bold uppercase tracking-[0.2em] mb-4 border-b border-[#e8ddd0] pb-2" style={{ color: C.navy }}>
+          Capacity Allocation
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6" data-aa-month-capacity-grid="">
+          {mData.dimensionBars.map((bar) => (
+            <div key={bar.label} data-aa-month-capacity-bar="">
+              <div className="flex justify-between items-center mb-2">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm">{bar.icon}</span>
+                  <span className="text-[11px] font-bold uppercase tracking-wider" style={{ color: C.navy }}>
+                    {bar.label}
+                  </span>
+                </div>
+                <span className="text-[10px] font-bold" style={{ color: C.navy }}>{`${bar.pct}%`}</span>
+              </div>
+              <div className="h-[2px] w-full bg-[#f0e8e0]">
+                <div
+                  className="h-full"
+                  style={{
+                    width: `${bar.pct}%`,
+                    background: bar.pct >= 70 ? C.coral : C.navy,
+                  }}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Playbook Lists */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-12" data-aa-month-actions="">
+        {/* Executive Action */}
+        <div>
+          <div className="flex items-center gap-2 mb-4">
+            <div className="w-6 h-6 rounded-full flex items-center justify-center" style={{ background: C.navy }}>
+              <span className="text-white text-xs">▸</span>
+            </div>
+            <p className="text-[11px] font-bold uppercase tracking-[0.15em]" style={{ color: C.navy }}>
+              Executive Action
+            </p>
+          </div>
+          <div className="space-y-4">
+            {gData.keyActions.slice(0, EXECUTIVE_ACTION_CAP).map((action, idx) => (
+              <div key={idx} className="pb-3 border-b border-[#e8ddd0]/50 last:border-0" data-aa-month-action-row="">
+                <p className="text-sm leading-relaxed" style={{ color: C.navy }}>{action}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Risk Mitigation */}
+        <div>
+          <div className="flex items-center gap-2 mb-4">
+            <div className="w-6 h-6 rounded-full flex items-center justify-center border" style={{ borderColor: C.coral, color: C.coral }}>
+              <span className="text-xs font-bold">!</span>
+            </div>
+            <p className="text-[11px] font-bold uppercase tracking-[0.15em]" style={{ color: C.coral }}>
+              Risk Mitigation
+            </p>
+          </div>
+          <div className="space-y-4">
+            {gData.watchOut.slice(0, RISK_MITIGATION_CAP).map((warning, idx) => (
+              <div key={idx} className="pb-3 border-b border-[#e8ddd0]/50 last:border-0" data-aa-month-action-row="">
+                <p className="text-sm leading-relaxed text-gray-600">{warning}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Strategic Reflection */}
+      <div className="pt-8 border-t border-[#e8ddd0]" data-aa-month-reflection="">
+        <p className="text-[10px] font-bold uppercase tracking-[0.2em] mb-4" style={{ color: C.navy }}>
+          Strategic Reflection
+        </p>
+        <div className="space-y-4">
+          {gData.reflectionQuestions.slice(0, STRATEGIC_REFLECTION_CAP).map((q, idx) => (
+            <p
+              key={idx}
+              className="text-sm italic text-gray-600 pl-4 py-1"
+              style={{ borderLeft: `2px solid ${C.coral}` }}
+              data-aa-month-reflection-row=""
+            >
+              &quot;{q}&quot;
+            </p>
+          ))}
+        </div>
+      </div>
+
+      {printMonthAttr !== undefined ? (
+        <p data-aa-month-footer="">
+          {`Alignment Advantage · ${mName} ${CURRENT_YEAR}`}
+        </p>
+      ) : null}
+    </div>
+  );
+};
+
 interface ChapterExecutionPlaybookProps {
-  strategicData: any;
+  strategicData: StrategicData;
   chartData: ChartData;
-  profile: any;
+  profile: Profile;
+  /**
+   * Chapter render mode.
+   * Defaults to `"interactive"` so `/alignment-advantage` is unchanged.
+   * Pass `"print"` from the PDF document to expand all 12 monthly briefings.
+   */
+  mode?: ExecutionPlaybookMode;
 }
 
 export const ChapterExecutionPlaybook: React.FC<ChapterExecutionPlaybookProps> = ({
   strategicData,
   chartData,
   profile,
+  mode = "interactive",
 }) => {
+  const isPrint = mode === "print";
   const [selectedMonthIndex, setSelectedMonthIndex] = useState<number>(CURRENT_MONTH_INDEX);
 
   const monthPills = useMemo(() => (chartData ? buildMonthPills(chartData) : []), [chartData]);
@@ -89,22 +298,37 @@ export const ChapterExecutionPlaybook: React.FC<ChapterExecutionPlaybookProps> =
       endYear: birthYear + (p.majorLimit?.endAge ?? 0),
     }));
 
+  const subtitle = isPrint
+    ? `You are in your ${strategicData.phaseLabel} Phase. Monthly briefings for ${CURRENT_YEAR} follow below.`
+    : `You are in your ${strategicData.phaseLabel} Phase. Select any month to see its strategic briefing.`;
+
+  const phaseCoreMessage =
+    resolveSeasonStyle(strategicData.phaseLabel)?.coreMessage ??
+    strategicData.dayun?.coreMessage ??
+    "";
+
   return (
     <section
       id="timing"
-      className="scroll-mt-16 mb-32 pt-16 relative overflow-hidden bg-white rounded-[40px] p-10 md:p-16 shadow-[0_8px_32px_rgba(0,0,0,0.03)] border border-[#e8ddd0]/50"
+      className={`scroll-mt-16 mb-32 pt-16 relative ${isPrint ? "overflow-visible" : "overflow-hidden"} bg-white rounded-[40px] p-10 md:p-16 shadow-[0_8px_32px_rgba(0,0,0,0.03)] border border-[#e8ddd0]/50`}
     >
       <SectionWatermark type="timeline" />
       <SectionHeader
         graphicType="timing"
         chapter="Chapter 04 · Execution Playbook"
         title="Your 12-Month Roadmap"
-        subtitle={`You are in your ${strategicData.phaseLabel} Phase. Select any month to see its strategic briefing.`}
+        subtitle={subtitle}
       />
 
+      {/*
+        Keep timeline + phase + year legend in one print fragment. A free-floating
+        MonthGrid immediately before [data-aa-print-month]{break-before:page} can
+        be dropped by Chromium during PDF fragmentation.
+      */}
+      <div data-aa-playbook-opener="">
       {/* DaYun All-Cycles Timeline (Product Roadmap Style) */}
       {cycles.length > 0 && (
-        <div className="mb-12">
+        <div className="mb-12" data-aa-playbook-timeline="">
           <div className="flex items-center justify-between mb-4">
             <p className="text-[10px] font-bold uppercase tracking-[0.24em]" style={{ color: C.navy }}>
               Macro Trajectory
@@ -120,12 +344,14 @@ export const ChapterExecutionPlaybook: React.FC<ChapterExecutionPlaybookProps> =
           {/* Timeline Bar */}
           <div className="relative h-12 flex items-stretch gap-[1px]">
             {(() => {
-              const timelineStart = cycles[0].startYear;
-              const timelineEnd = cycles[cycles.length - 1].endYear;
+              const timelineStart = cycles[0]?.startYear ?? CURRENT_YEAR;
+              const timelineEnd = cycles[cycles.length - 1]?.endYear ?? CURRENT_YEAR;
               const totalSpan = timelineEnd - timelineStart;
 
               return cycles.map((cycle) => {
-                const widthPct = ((cycle.endYear - cycle.startYear) / totalSpan) * 100;
+                const widthPct = totalSpan > 0
+                  ? ((cycle.endYear - cycle.startYear) / totalSpan) * 100
+                  : 0;
                 const isCurrent = cycle.startYear === currentStart;
                 const isPast = cycle.endYear <= CURRENT_YEAR;
 
@@ -157,159 +383,77 @@ export const ChapterExecutionPlaybook: React.FC<ChapterExecutionPlaybookProps> =
       )}
 
       {/* Phase Banner */}
-      <div className="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-[#e8ddd0] pb-8">
+      <div
+        className="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-[#e8ddd0] pb-8"
+        data-aa-playbook-phase=""
+      >
         <div className="max-w-xl">
           <p className="text-[10px] font-bold uppercase tracking-[0.24em] mb-3" style={{ color: C.coral }}>
-            Current Strategic Phase ({currentStart}-{currentEnd})
+            {`Current Strategic Phase (${currentStart}-${currentEnd})`}
           </p>
           <p className="text-3xl font-bold mb-4" style={{ color: C.navy, fontFamily: "Georgia,'Times New Roman',serif" }}>
-            {strategicData.phaseLabel} Phase
+            {`${strategicData.phaseLabel} Phase`}
           </p>
           {strategicData.dayun !== null && (
             <p className="text-sm leading-relaxed" style={{ color: C.navy, opacity: 0.8 }}>
-              {SEASON_STYLES[strategicData.phaseLabel as keyof typeof SEASON_STYLES]?.coreMessage ?? strategicData.dayun.coreMessage}
+              {phaseCoreMessage}
             </p>
           )}
         </div>
       </div>
 
-      {/* Month grid */}
-      <div className="mb-12">
+      {/* Month grid — interactive picker or print-only year legend */}
+      <div className="mb-12" data-aa-playbook-month-grid="">
         <MonthGrid
           months={monthPills}
-          selectedMonthIndex={selectedMonthIndex}
-          onSelect={setSelectedMonthIndex}
+          selectedMonthIndex={isPrint ? undefined : selectedMonthIndex}
+          onSelect={isPrint ? undefined : setSelectedMonthIndex}
+          interactive={!isPrint}
         />
       </div>
+      </div>
 
-      {/* Month detail: Strategic Briefing */}
-      {selectedPalaceNum !== null && selectedPalace !== null ? (() => {
-        const mData = PALACE_MONTH_DATA[selectedPalace.name];
-        const gData = PALACE_GUIDANCE_DATA[selectedPalace.name];
-        const monthNum = selectedMonthIndex + 1;
-        const mName = new Date(CURRENT_YEAR, monthNum - 1).toLocaleString("default", { month: "long" });
+      {/* Month detail(s) */}
+      {isPrint ? (
+        <div className="space-y-16">
+          {Array.from({ length: 12 }, (_, monthIndex) => {
+            const palaceNum = getPalaceForAspectLiuMonth(
+              "life",
+              chartData,
+              monthIndex + 1,
+              CURRENT_YEAR
+            );
+            const palace =
+              palaceNum !== null ? chartData.palaces[palaceNum - 1] ?? null : null;
 
-        if (!mData || !gData) {
-          return (
-            <div className="py-8 text-center">
-              <p className="text-sm text-gray-400">Briefing unavailable for this period.</p>
-            </div>
-          );
-        }
-
-        return (
-          <div className="space-y-10">
-            {/* Header */}
-            <div>
-              <p className="text-[10px] font-bold uppercase tracking-[0.24em] mb-2" style={{ color: C.coral }}>
-                Monthly Briefing · {mName} {CURRENT_YEAR}
-              </p>
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <p className="text-2xl font-bold" style={{ color: C.navy, fontFamily: "Georgia,'Times New Roman',serif" }}>
-                  {mData.area} Focus
-                </p>
-                <div className="px-4 py-2 border border-[#e8ddd0] rounded-full">
-                  <span className="text-[9px] font-bold uppercase tracking-widest text-gray-500">Theme: </span>
-                  <span className="text-[9px] font-bold uppercase tracking-widest" style={{ color: C.navy }}>
-                    {SEASON_STYLES[mData.season]?.tagline ?? ""}
-                  </span>
+            if (palace === null) {
+              return (
+                <div
+                  key={monthIndex}
+                  className="py-8 text-center"
+                  data-aa-print-month={String(monthIndex)}
+                >
+                  <p className="text-sm text-gray-400">Briefing unavailable for this period.</p>
                 </div>
-              </div>
-            </div>
+              );
+            }
 
-            {/* Dimension bars */}
-            <div>
-              <p className="text-[10px] font-bold uppercase tracking-[0.2em] mb-4 border-b border-[#e8ddd0] pb-2" style={{ color: C.navy }}>
-                Capacity Allocation
-              </p>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {mData.dimensionBars.map((bar) => (
-                  <div key={bar.label}>
-                    <div className="flex justify-between items-center mb-2">
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm">{bar.icon}</span>
-                        <span className="text-[11px] font-bold uppercase tracking-wider" style={{ color: C.navy }}>
-                          {bar.label}
-                        </span>
-                      </div>
-                      <span className="text-[10px] font-bold" style={{ color: C.navy }}>{bar.pct}%</span>
-                    </div>
-                    <div className="h-[2px] w-full bg-[#f0e8e0]">
-                      <div
-                        className="h-full"
-                        style={{
-                          width: `${bar.pct}%`,
-                          background: bar.pct >= 70 ? C.coral : C.navy,
-                        }}
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Playbook Lists */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-              {/* Executive Action */}
-              <div>
-                <div className="flex items-center gap-2 mb-4">
-                  <div className="w-6 h-6 rounded-full flex items-center justify-center" style={{ background: C.navy }}>
-                    <span className="text-white text-xs">▸</span>
-                  </div>
-                  <p className="text-[11px] font-bold uppercase tracking-[0.15em]" style={{ color: C.navy }}>
-                    Executive Action
-                  </p>
-                </div>
-                <div className="space-y-4">
-                  {gData.keyActions.slice(0, 3).map((action, idx) => (
-                    <div key={idx} className="pb-3 border-b border-[#e8ddd0]/50 last:border-0">
-                      <p className="text-sm leading-relaxed" style={{ color: C.navy }}>{action}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Risk Mitigation */}
-              <div>
-                <div className="flex items-center gap-2 mb-4">
-                  <div className="w-6 h-6 rounded-full flex items-center justify-center border" style={{ borderColor: C.coral, color: C.coral }}>
-                    <span className="text-xs font-bold">!</span>
-                  </div>
-                  <p className="text-[11px] font-bold uppercase tracking-[0.15em]" style={{ color: C.coral }}>
-                    Risk Mitigation
-                  </p>
-                </div>
-                <div className="space-y-4">
-                  {gData.watchOut.slice(0, 3).map((warning, idx) => (
-                    <div key={idx} className="pb-3 border-b border-[#e8ddd0]/50 last:border-0">
-                      <p className="text-sm leading-relaxed text-gray-600">{warning}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Strategic Reflection */}
-            <div className="pt-8 border-t border-[#e8ddd0]">
-              <p className="text-[10px] font-bold uppercase tracking-[0.2em] mb-4" style={{ color: C.navy }}>
-                Strategic Reflection
-              </p>
-              <div className="space-y-4">
-                {gData.reflectionQuestions.slice(0, 2).map((q, idx) => (
-                  <p
-                    key={idx}
-                    className="text-sm italic text-gray-600 pl-4 py-1"
-                    style={{ borderLeft: `2px solid ${C.coral}` }}
-                  >
-                    &quot;{q}&quot;
-                  </p>
-                ))}
-              </div>
-            </div>
-
-          </div>
-        );
-      })() : (
+            return (
+              <MonthlyBriefingBlock
+                key={monthIndex}
+                monthIndex={monthIndex}
+                palaceName={palace.name}
+                printMonthAttr={monthIndex}
+              />
+            );
+          })}
+        </div>
+      ) : selectedPalaceNum !== null && selectedPalace !== null ? (
+        <MonthlyBriefingBlock
+          monthIndex={selectedMonthIndex}
+          palaceName={selectedPalace.name}
+        />
+      ) : (
         <Shimmer className="h-64 w-full" />
       )}
     </section>
