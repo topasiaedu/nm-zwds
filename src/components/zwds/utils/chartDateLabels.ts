@@ -92,5 +92,5 @@ export function formatChartLunarDate(
 
   const dayBranch = t(`zwds.dayBranches.${hourBranch}`);
 
-  return `${stemBranch}${chartData.lunarDate.year} ${yearLabel} ${monthStem}${monthBranch} ${monthLabel} ${lunarDayLabel} ${dayLabel} ${dayBranch} ${hourLabel}`;
+  return `${stemBranch} ${chartData.lunarDate.year} ${yearLabel} ${monthStem}${monthBranch} ${monthLabel} ${lunarDayLabel} ${dayLabel} ${dayBranch} ${hourLabel}`;
 }

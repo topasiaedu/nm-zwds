@@ -47,6 +47,7 @@ import {
   chartPalaceTitleClass,
   chartPalaceTitleRowClass,
   chartPalaceSecondaryNameClass,
+  chartPalaceFlowTagClass,
   chartPalaceTransformationTagClass,
   chartPalaceWatermarkClass,
   chartPalaceZodiacBadgeClass,
@@ -795,7 +796,7 @@ const Palace: React.FC<PalaceProps> = ({
     <>
       {showAnnualFlow && chartSettings.liuNianTag && (
         <div
-          className={`rounded-md px-1 py-0.5 text-[8px] font-semibold leading-tight xs:text-2xs sm:px-1.5 sm:text-xs ${
+          className={`${chartPalaceFlowTagClass} ${
             isSelected
               ? "bg-orange-400/25 text-orange-100"
               : "bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-200"
@@ -806,7 +807,7 @@ const Palace: React.FC<PalaceProps> = ({
       )}
       {isCurrentDaXian && (
         <div
-          className={`rounded-md px-1 py-0.5 text-[8px] font-semibold leading-tight xs:text-2xs sm:px-1.5 sm:text-xs ${
+          className={`${chartPalaceFlowTagClass} ${
             isSelected
               ? "bg-orange-400/20 text-amber-200"
               : "bg-orange-100 text-amber-600 dark:bg-orange-900/40 dark:text-amber-300"
