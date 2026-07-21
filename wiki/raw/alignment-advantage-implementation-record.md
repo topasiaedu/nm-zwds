@@ -83,6 +83,20 @@ You have more pull in how this collaboration runs right now. Agree who decides, 
 
 ---
 
+## Follow-up change: Dayun Season chapter added
+
+**Placement (original):** After People Intel (`#people`), before Execution Playbook (`#timing`).
+
+**Placement (current):** After Wealth Acceleration (`#wealth`), before People Intel (`#people`).
+
+- New chapter: `chapters/ChapterDayunSeason.tsx` (`#dayun`) — full 10-year Dayun season stack in AA visual language
+- Wired into web (`pages/alignment-advantage/index.tsx`) and print (`print/AlignmentAdvancePrintDocument.tsx`)
+- Chapter numbers: Dayun **03**, People **04**, Execution Playbook **05**
+- Founder report Wealth Timing Cycle / `DayunSection` unchanged
+- Spec: `raw/alignment-advantage-dayun-season-spec.md`
+
+---
+
 ## Out of scope (unchanged)
 
 - `PrintIdealCollaborator.tsx` standalone print page

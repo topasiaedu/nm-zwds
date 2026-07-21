@@ -291,7 +291,7 @@ function buildPeoplePalaceReading(
 }
 
 /**
- * Analyses all five relationship palaces for Chapter 03.
+ * Analyses all five relationship palaces for Chapter 04.
  */
 export function analyzePeoplePalaces(chartData: ChartData): PeoplePalaceReading[] {
   const luTarget = findNatalLuTarget(chartData);
@@ -653,7 +653,7 @@ export interface PeopleRiskEntry {
   mitigation: string;
 }
 
-/** Cross-palace strategic bundle for Chapter 03. */
+/** Cross-palace strategic bundle for Chapter 04. */
 export interface PeopleCrossPalaceStrategy {
   idealCollaborator: string;
   cyclePriority: { palaceLabel: string; headline: string; action: string } | null;

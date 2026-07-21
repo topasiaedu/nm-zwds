@@ -47,7 +47,7 @@ export const ChapterStakeholderIntelligence: React.FC<{
       <ReportSheet watermark="network">
         <SectionHeader
           graphicType="people"
-          chapter="Chapter 03 · People Intelligence"
+          chapter="Chapter 04 · People Intelligence"
           title="Your Five Relationship Palaces"
           subtitle="Ranked view of peers, partner, friends, mentors, and people you develop."
         />
@@ -83,7 +83,7 @@ export const ChapterStakeholderIntelligence: React.FC<{
               score={priority.score}
               isPrimary={priority.isPrimary}
               focusLabel={priority.focusLabel}
-              pageLabel={`Chapter 03 · People Intelligence · Page ${idx + 2} of 6 · ${PALACE_PAGE_LABELS[priority.palaceKey]}`}
+              pageLabel={`Chapter 04 · People Intelligence · Page ${idx + 2} of 6 · ${PALACE_PAGE_LABELS[priority.palaceKey]}`}
             />
           </ReportSheet>
         );

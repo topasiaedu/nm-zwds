@@ -33,9 +33,11 @@
 
 | Chapter | Component | Section id |
 |---------|-----------|------------|
+| Overview | `chapters/ChapterOverview.tsx` | `#cover` |
 | Strategic Filter | `chapters/ChapterDecisionFramework.tsx` | `#decision` |
-| Core Design | `chapters/ChapterCoreDesign.tsx` | — |
+| Core Design | `chapters/ChapterCoreDesign.tsx` | `#design` |
 | Wealth | `chapters/ChapterWealthAcceleration.tsx` | `#wealth` |
+| Dayun Season | `chapters/ChapterDayunSeason.tsx` | `#dayun` |
 | People | `chapters/ChapterStakeholderIntelligence.tsx` | `#people` |
 | Execution Playbook | `chapters/ChapterExecutionPlaybook.tsx` | `#timing` |
 

@@ -29,7 +29,7 @@ export const PALACE_ENGLISH: Record<string, string> = {
   "父母": "Parents Palace",
 };
 
-/** Plain-English labels for who each relationship palace covers (Ch 03 stats). */
+/** Plain-English labels for who each relationship palace covers (Ch 04 stats). */
 export const PEOPLE_PALACE_COVERS: Record<string, string> = {
   "兄弟": "Peers & siblings",
   "夫妻": "Spouse & partner",

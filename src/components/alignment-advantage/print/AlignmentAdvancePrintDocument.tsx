@@ -22,6 +22,7 @@ import { ChapterDecisionFramework } from "../chapters/ChapterDecisionFramework";
 import { ChapterCoreDesign } from "../chapters/ChapterCoreDesign";
 import { ChapterWealthAcceleration } from "../chapters/ChapterWealthAcceleration";
 import { ChapterStakeholderIntelligence } from "../chapters/ChapterStakeholderIntelligence";
+import { ChapterDayunSeason } from "../chapters/ChapterDayunSeason";
 import { ChapterExecutionPlaybook } from "../chapters/ChapterExecutionPlaybook";
 import { PRINT_STYLES } from "./printStyles";
 
@@ -231,6 +232,8 @@ const AlignmentAdvancePrintDocument: React.FC = () => {
             chartData={reportBody.chartData}
             strategicData={reportBody.strategicData}
           />
+
+          <ChapterDayunSeason strategicData={reportBody.strategicData} />
 
           <ChapterStakeholderIntelligence
             chartData={reportBody.chartData}
