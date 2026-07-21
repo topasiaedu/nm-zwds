@@ -56,6 +56,7 @@ import {
   chartScrollWrapperClass,
   chartContainerClass,
   chartSectionContainerClass,
+  chartSectionLayoutClass,
   chartErrorPanelClass,
   chartErrorRetryClass,
   chartErrorTextClass,
@@ -244,13 +245,14 @@ const ResultContent: React.FC = () => {
       updateSetting("daXianClickInteraction", true);
       updateSetting("palaceNameClickInteraction", true);
     } else if (mode === "dayun") {
-      // Dayun mode - matches Destiny Navigator getDayunConfig
+      // Dayun mode: remapped decade roles as English DNA names (Da Ming → Life, etc.).
+      // Anchor secondary names on the current Da Yun palace so that palace reads as Life.
       updateSetting("palaceClickInteraction", true);
       updateSetting("liuNianTag", false);
       updateSetting("showDaYunHighlight", true);
       updateSetting("showDaMingCornerTag", false);
-      updateSetting("showDaMingBottomLabel", true);
-      updateSetting("showSecondaryBottomLabel", false);
+      updateSetting("showDaMingBottomLabel", false);
+      updateSetting("showSecondaryBottomLabel", true);
       updateSetting("showSecondaryOverlayName", false);
       updateSetting("yearAgeClickInteraction", false);
       updateSetting("daXianClickInteraction", false);
@@ -1049,8 +1051,8 @@ const ResultContent: React.FC = () => {
         chartData && (
           <>
             <section id="chart" className={`${chartSectionContainerClass} scroll-mt-16`}>
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 sm:gap-3 md:gap-6">
-                <div className="lg:col-span-2">
+              <div className={chartSectionLayoutClass}>
+                <div className="min-w-0">
                   <div className={chartCardClass}>
                     <div className={chartCardAccentBarClass} aria-hidden="true" />
                     <div className={chartCardToolbarClass}>
@@ -1084,13 +1086,15 @@ const ResultContent: React.FC = () => {
                                   : null
                             }
                             selectedPalaceNameControlled={
-                              blueprintMode === "liunian"
-                                ? currentLiuNianPalace
-                                : blueprintMode === "liumonth"
-                                  ? currentLiuMonthPalace
-                                  : blueprintMode === "dna"
-                                    ? dnaPalaceNameSelection
-                                    : null
+                              blueprintMode === "dayun"
+                                ? currentDayunPalace
+                                : blueprintMode === "liunian"
+                                  ? currentLiuNianPalace
+                                  : blueprintMode === "liumonth"
+                                    ? currentLiuMonthPalace
+                                    : blueprintMode === "dna"
+                                      ? dnaPalaceNameSelection
+                                      : null
                             }
                             showMonthsControlled={
                               blueprintMode === "liumonth" ? currentLiuMonthYearPalace : null
@@ -1133,7 +1137,7 @@ const ResultContent: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="lg:col-span-1">
+                <div className="min-w-0">
                   <ChartProfileSidebar
                     chartData={chartData}
                     calculatedChartData={calculatedChartData}
