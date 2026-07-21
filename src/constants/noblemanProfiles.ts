@@ -31,7 +31,46 @@ export const NOBLEMAN_TYPE_TO_IMAGE: Record<NoblemanType, string> = {
  */
 export function getNoblemanImage(noblemanType: NoblemanType): string {
   const filename = NOBLEMAN_TYPE_TO_IMAGE[noblemanType];
-  return `/assets/nobleman/${filename}`;
+  return `/assets/nobleman/${encodeURIComponent(filename)}`;
+}
+
+/**
+ * Resolve a display profile label (e.g. "Authority / High-Status Nobleman") to a type key.
+ */
+export function resolveNoblemanTypeFromLabel(profileType: string): NoblemanType {
+  const typeMap: Array<{ match: string; type: NoblemanType }> = [
+    { match: "Older Female", type: "older_female" },
+    { match: "Male", type: "male" },
+    { match: "Stable & Resource", type: "stable_resource" },
+    { match: "Stable &amp; Resource", type: "stable_resource" },
+    { match: "Younger / Junior", type: "younger_junior" },
+    { match: "Younger", type: "younger_junior" },
+    { match: "Same-Generation", type: "same_generation" },
+    { match: "Authority / High-Status", type: "authority_high_status" },
+    { match: "Authority", type: "authority_high_status" },
+    { match: "Practical Leader", type: "practical_leader" },
+    { match: "Bold & Aggressive", type: "bold_aggressive" },
+    { match: "Bold &amp; Aggressive", type: "bold_aggressive" },
+    { match: "Charismatic & Expressive", type: "charismatic_expressive" },
+    { match: "Charismatic &amp; Expressive", type: "charismatic_expressive" },
+    { match: "Refined & Educated", type: "refined_educated" },
+    { match: "Refined &amp; Educated", type: "refined_educated" },
+  ];
+
+  for (const entry of typeMap) {
+    if (profileType.includes(entry.match)) {
+      return entry.type;
+    }
+  }
+
+  return "authority_high_status";
+}
+
+/**
+ * Image path for a matched nobleman profile label.
+ */
+export function getNoblemanImageForProfileType(profileType: string): string {
+  return getNoblemanImage(resolveNoblemanTypeFromLabel(profileType));
 }
 
 /**

@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 import type { NoblemanData, NoblemanProfile, NoblemanType, OtherAreaData } from "../../types/nobleman";
 import { renderNoblemanTextWithHighlights } from "../analysis_v2/shared/personalityTextHighlight";
-import { NOBLEMAN_TYPE_TO_IMAGE } from "../../constants/noblemanProfiles";
+import { getNoblemanImageForProfileType } from "../../constants/noblemanProfiles";
 import { lightPanelClass } from "../../styles/chartUi";
 
 interface NoblemanProfileCardProps extends NoblemanData {
@@ -36,39 +36,8 @@ const tiltOptions = {
   "max-glare": 0,
 };
 
-const getNoblemanTypeKey = (profileType: string): NoblemanType => {
-  const typeMap: Record<string, NoblemanType> = {
-    "Older Female": "older_female",
-    Male: "male",
-    "Stable & Resource": "stable_resource",
-    "Stable &amp; Resource": "stable_resource",
-    "Younger / Junior": "younger_junior",
-    Younger: "younger_junior",
-    "Same-Generation": "same_generation",
-    "Authority / High-Status": "authority_high_status",
-    Authority: "authority_high_status",
-    "Practical Leader": "practical_leader",
-    "Bold & Aggressive": "bold_aggressive",
-    "Bold &amp; Aggressive": "bold_aggressive",
-    "Charismatic & Expressive": "charismatic_expressive",
-    "Charismatic &amp; Expressive": "charismatic_expressive",
-    "Refined & Educated": "refined_educated",
-    "Refined &amp; Educated": "refined_educated",
-  };
-
-  for (const [key, value] of Object.entries(typeMap)) {
-    if (profileType.includes(key)) {
-      return value;
-    }
-  }
-
-  return "authority_high_status";
-};
-
 const getProfileImage = (profile: NoblemanProfile): string => {
-  const typeKey = getNoblemanTypeKey(profile.type);
-  const filename = NOBLEMAN_TYPE_TO_IMAGE[typeKey];
-  return `/assets/nobleman/${filename}`;
+  return getNoblemanImageForProfileType(profile.type);
 };
 
 const NOBLEMAN_PROFILE_CARD_CLASS = [

@@ -591,9 +591,9 @@ export const PALACE_GUIDANCE_DATA: Record<string, PalaceGuidanceData> = {
       "Operating from fear instead of clarity and responsibility",
     ],
     successMetrics: [
-      "Old patterns identified and actively breaking free from them",
-      "Taking full ownership without blaming the past",
-      "Fear-based thinking replaced with clarity-based decisions",
+      "One authority conversation completed with a written next step",
+      "One fear-based reaction skipped on purpose this month",
+      "One outdated family or boss rule replaced with a clearer personal rule",
       "Relationships with authority figures improved or boundaries set",
       "Personal responsibility increased with reduced blame",
     ],

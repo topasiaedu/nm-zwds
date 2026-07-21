@@ -923,4 +923,26 @@ export const PRINT_STYLES = `
   .pp-dot-green  { background: #16a34a; }
   .pp-dot-yellow { background: #c9873a; }
   .pp-dot-red    { background: #e8642d; }
+
+  /*
+   * Monthly Consultation PDF: chapters are sibling <section data-mc-chapter>,
+   * not sibling sheets (sheet lives inside section). Break on sections.
+   */
+  @media print {
+    .print-root [data-mc-print-body] > [data-mc-chapter] ~ [data-mc-chapter] {
+      break-before: page;
+      page-break-before: always;
+    }
+    .print-root [data-mc-print-body] [data-aa-report-sheet] {
+      margin-bottom: 0 !important;
+      padding: 3.5rem 3rem !important;
+      box-shadow: none !important;
+    }
+    .print-root [data-mc-print-body] .gap-7 {
+      gap: 1.75rem !important;
+    }
+    .print-root [data-mc-print-body] .mb-12 {
+      margin-bottom: 3rem !important;
+    }
+  }
 `;

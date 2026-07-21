@@ -5,6 +5,7 @@ import {
   IconCalc,
   IconChart,
   IconDashboard,
+  IconMonth,
   IconNav,
   IconReport,
   IconSettings,
@@ -30,6 +31,7 @@ export function useAppNavItems(
     hasAIAssistant,
     hasFounderReport,
     hasAlignmentAdvantage,
+    hasMonthlyConsultation,
     hasDestinyNavigatorTool,
     isAdmin,
     tier,
@@ -105,6 +107,15 @@ export function useAppNavItems(
       });
     }
 
+    if (hasMonthlyConsultation) {
+      navItems.push({
+        to: "/monthly-consultation",
+        label: "Monthly Consultation",
+        icon: IconMonth,
+        active: activeKey === "monthly-consultation",
+      });
+    }
+
     navItems.push({
       to: "/settings",
       label: "Settings",
@@ -119,6 +130,7 @@ export function useAppNavItems(
     destinyNavigatorUrl,
     hasAIAssistant,
     hasAlignmentAdvantage,
+    hasMonthlyConsultation,
     hasDestinyNavigatorTool,
     hasFounderReport,
     profiles.length,

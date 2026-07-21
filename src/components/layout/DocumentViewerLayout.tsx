@@ -74,12 +74,17 @@ const ChapterNavButton: React.FC<{
   chapter: DocumentChapter;
   isActive: boolean;
   onSelect: (id: string) => void;
-}> = ({ chapter, isActive, onSelect }) => (
+  /** Dense rows so long Contents lists fit better */
+  compact?: boolean;
+}> = ({ chapter, isActive, onSelect, compact = false }) => (
   <li>
     <button
       type="button"
       onClick={() => { onSelect(chapter.id); }}
-      className="w-full text-left flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-150"
+      className={[
+        "w-full text-left flex items-center gap-2.5 rounded-lg transition-all duration-150",
+        compact ? "px-2.5 py-1.5" : "px-3 py-2.5",
+      ].join(" ")}
       style={{
         background: isActive ? `${C.coral}22` : "transparent",
         borderLeft: isActive ? `2px solid ${C.coral}` : "2px solid transparent",
@@ -88,21 +93,23 @@ const ChapterNavButton: React.FC<{
     >
       <div className="min-w-0 flex-1">
         <p
-          className="text-xs font-semibold truncate"
+          className={["font-semibold truncate", compact ? "text-[11px] leading-snug" : "text-xs"].join(" ")}
           style={{ color: isActive ? C.white : "rgba(255,255,255,0.5)" }}
         >
           {chapter.label}
         </p>
-        <p
-          className="text-[9px] truncate"
-          style={{ color: "rgba(255,255,255,0.28)" }}
-        >
-          {chapter.sub}
-        </p>
+        {chapter.sub.length > 0 && (
+          <p
+            className={["truncate", compact ? "text-[9px] leading-tight" : "text-[9px]"].join(" ")}
+            style={{ color: "rgba(255,255,255,0.28)" }}
+          >
+            {chapter.sub}
+          </p>
+        )}
       </div>
       {isActive && (
         <div
-          className="shrink-0 w-1 h-5 rounded-full"
+          className="shrink-0 w-1 h-4 rounded-full"
           style={{ background: `linear-gradient(180deg, ${C.coral}, ${C.gold})` }}
         />
       )}
@@ -214,20 +221,21 @@ const DocumentViewerLayout: React.FC<DocumentViewerLayoutProps> = ({
 
   const chapterNavSlot = chapters.length > 0 ? (
     <>
-      <nav className="px-3 py-4" aria-label="Document chapters">
+      <nav className="px-2.5 py-3" aria-label="Document chapters">
         <p
-          className="text-[8px] font-bold uppercase tracking-[0.2em] px-2 mb-3"
+          className="text-[8px] font-bold uppercase tracking-[0.2em] px-2 mb-2"
           style={{ color: "rgba(255,255,255,0.3)" }}
         >
           Contents
         </p>
-        <ul className="space-y-0.5">
+        <ul className="space-y-0">
           {chapters.map((chapter) => (
             <ChapterNavButton
               key={chapter.id}
               chapter={chapter}
               isActive={activeChapter === chapter.id}
               onSelect={handleChapterSelect}
+              compact={chapters.length > 12}
             />
           ))}
         </ul>
@@ -239,18 +247,18 @@ const DocumentViewerLayout: React.FC<DocumentViewerLayoutProps> = ({
     <>
       {footerActions !== undefined && (
         <div
-          className="px-4 py-4 space-y-2"
+          className="px-3 py-3 space-y-1.5"
           style={{ borderTop: "1px solid rgba(255,255,255,0.07)" }}
         >
           {footerActions}
         </div>
       )}
       <div
-        className="px-4 py-3 flex items-center gap-3"
+        className="px-3 py-2.5 flex items-center gap-2.5"
         style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}
       >
         <div
-          className="w-7 h-7 rounded-full flex items-center justify-center shrink-0 text-xs font-bold"
+          className="w-6 h-6 rounded-full flex items-center justify-center shrink-0 text-[10px] font-bold"
           style={{
             background: `linear-gradient(135deg, ${C.coral}, ${C.coralDark})`,
             color: C.white,
@@ -449,13 +457,14 @@ const DocumentViewerLayout: React.FC<DocumentViewerLayoutProps> = ({
                 className="relative z-10 flex-1 overflow-y-auto px-3 py-3 [-webkit-overflow-scrolling:touch]"
                 aria-label="Document chapters"
               >
-                <ul className="space-y-0.5 pb-6">
+                <ul className="space-y-0 pb-6">
                   {chapters.map((chapter) => (
                     <ChapterNavButton
                       key={chapter.id}
                       chapter={chapter}
                       isActive={activeChapter === chapter.id}
                       onSelect={handleChapterSelect}
+                      compact={chapters.length > 12}
                     />
                   ))}
                 </ul>

@@ -53,6 +53,8 @@ import AlignmentAdvantage from "./pages/alignment-advantage/index";
 import AlignmentAdvantageTimingPage from "./pages/alignment-advantage/timing";
 import AlignmentAdvantageWealthPage from "./pages/alignment-advantage/wealth";
 import AlignmentAdvancePrint from "./pages/print/AlignmentAdvancePrint";
+import MonthlyConsultation from "./pages/monthly-consultation/index";
+import MonthlyConsultationPrint from "./pages/print/MonthlyConsultationPrint";
 // Import centralized config
 import FREE_TEST_CONFIG from "./config/freeTestConfig";
 import { Analytics } from "@vercel/analytics/react"
@@ -141,6 +143,7 @@ const App: React.FC = () => {
                     <Route path="/chart-test" element={<ChartTest />} />
                     <Route path="/print/result/:id" element={<PrintResult />} />
                     <Route path="/print/alignment-advantage" element={<AlignmentAdvancePrint />} />
+                    <Route path="/print/monthly-consultation" element={<MonthlyConsultationPrint />} />
                     <Route path="/membership-expired" element={<MembershipExpired />} />
                     <Route path="/membership-paused" element={<MembershipPaused />} />
                     <Route path="/12month-forecast" element={<TwelveMonthForecast />} />
@@ -333,6 +336,14 @@ const App: React.FC = () => {
                         element={
                           <ProtectedRoute>
                             <AlignmentAdvantageWealthPage />
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="/monthly-consultation"
+                        element={
+                          <ProtectedRoute>
+                            <MonthlyConsultation />
                           </ProtectedRoute>
                         }
                       />
