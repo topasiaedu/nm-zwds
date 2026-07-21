@@ -11,7 +11,7 @@
  *  Cover  : Client name, at-a-glance summary chips, PDF download
  *  Filter : Strategic decision filter (right after overview)
  *  Ch 01  : Structure: Speed/Endurance Player + Formation Profile
- *  Ch 02  : Wealth: Archetype profile + Phase × Wealth intersection
+ *  Ch 02  : Wealth: Archetype profile + revenue engine map
  *  Ch 03  : Stakeholder Intelligence
  *  Ch 04  : Dayun Season: 10-year phase analysis
  *  Ch 05  : Timing: DaYun phase summary + 12-month roadmap grid
