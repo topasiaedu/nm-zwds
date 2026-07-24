@@ -1,6 +1,7 @@
 /**
  * Monthly Consultation: 15-chapter Document Viewer + PDF download.
  * Gated by hasMonthlyConsultation. Uses account-owner (is_self) profile.
+ * Month/year picker is admin-only (developer accounts); normal users always see the current Liu Month.
  */
 
 import React, { useCallback, useEffect, useState } from "react";
@@ -66,7 +67,7 @@ const AccessDeniedView: React.FC = () => (
 
 const MonthlyConsultationPage: React.FC = () => {
   const { profiles } = useProfileContext();
-  const { hasMonthlyConsultation } = useTierAccess();
+  const { hasMonthlyConsultation, isAdmin } = useTierAccess();
   const { showAlert } = useAlertContext();
   const { items: appNavItems } = useAppNavItems({ activeKey: "monthly-consultation" });
 
@@ -301,7 +302,10 @@ const MonthlyConsultationPage: React.FC = () => {
         onChapterClick={scrollTo}
         footerActions={footerActions}
       >
-        <MonthlyConsultationBody bundle={bundle} monthSelector={monthSelector} />
+        <MonthlyConsultationBody
+          bundle={bundle}
+          monthSelector={isAdmin ? monthSelector : undefined}
+        />
       </DocumentViewerLayout>
     </PageTransition>
   );
