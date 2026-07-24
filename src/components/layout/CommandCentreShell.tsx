@@ -1,7 +1,7 @@
 /**
  * CommandCentreShell — shared full-viewport layout for authenticated product pages.
  *
- * Dark sidebar (~230px), mobile drawer, cream main area.
+ * Dark sidebar (~230px, ~270px with document Contents), mobile drawer, cream main area.
  * Mobile: sticky context header (hamburger + page title or section picker).
  * Desktop: no sticky context bar — sidebar only; appearance/sign-out on /settings.
  * Report-specific scroll-spy and section sheets live in ReportViewerLayout.
@@ -34,18 +34,22 @@ const IconClose = (
   </svg>
 );
 
-const SidebarNavLink: React.FC<AppNavItem & { onNavigate?: () => void }> = ({
+const SidebarNavLink: React.FC<AppNavItem & { onNavigate?: () => void; compact?: boolean }> = ({
   to,
   label,
   icon,
   active = false,
   badge,
   onNavigate,
+  compact = false,
 }) => (
   <Link
     to={to}
     onClick={onNavigate}
-    className="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-150"
+    className={[
+      "flex items-center gap-3 rounded-xl transition-all duration-150",
+      compact ? "px-2.5 py-1.5" : "px-3 py-2.5",
+    ].join(" ")}
     style={{
       background: active
         ? `linear-gradient(90deg, ${C.coral}33, ${C.coral}11)`
@@ -67,7 +71,9 @@ const SidebarNavLink: React.FC<AppNavItem & { onNavigate?: () => void }> = ({
     }}
   >
     <span className="w-4 h-4 shrink-0">{icon}</span>
-    <span className="text-xs font-semibold truncate flex-1">{label}</span>
+    <span className={["font-semibold truncate flex-1", compact ? "text-[11px]" : "text-xs"].join(" ")}>
+      {label}
+    </span>
     {badge !== undefined && (
       <span
         className="shrink-0 rounded-full px-1.5 py-0.5 text-[9px] font-bold"
@@ -187,7 +193,10 @@ const CommandCentreShell: React.FC<CommandCentreShellProps> = ({
         className={[
           "shrink-0 flex flex-col overflow-hidden",
           "fixed md:relative inset-y-0 left-0 z-50 md:z-auto",
-          "w-[min(280px,85vw)] md:w-[230px]",
+          // Wider when a document Contents slot is present (many chapters).
+          navSlot !== undefined
+            ? "w-[min(300px,88vw)] md:w-[270px]"
+            : "w-[min(280px,85vw)] md:w-[230px]",
           "transition-transform duration-300 ease-out",
           sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0",
         ].join(" ")}
@@ -208,7 +217,10 @@ const CommandCentreShell: React.FC<CommandCentreShellProps> = ({
         />
 
         <div
-          className="relative z-10 px-5 pt-7 pb-5"
+          className={[
+            "relative z-10 px-5",
+            navSlot !== undefined ? "pt-5 pb-3" : "pt-7 pb-5",
+          ].join(" ")}
           style={{ borderBottom: "1px solid rgba(255,255,255,0.07)" }}
         >
           <button
@@ -244,20 +256,27 @@ const CommandCentreShell: React.FC<CommandCentreShellProps> = ({
         </div>
 
         <nav
-          className="relative z-10 px-3 py-4"
+          className={[
+            "relative z-10 px-3",
+            navSlot !== undefined ? "py-2.5 shrink-0" : "py-4",
+          ].join(" ")}
           style={{ borderBottom: navSlot !== undefined ? "1px solid rgba(255,255,255,0.07)" : undefined }}
           aria-label="App navigation"
         >
           <p
-            className="text-[8px] font-bold uppercase tracking-[0.2em] px-2 mb-2.5"
+            className="text-[8px] font-bold uppercase tracking-[0.2em] px-2 mb-2"
             style={{ color: "rgba(255,255,255,0.3)" }}
           >
             Navigation
           </p>
-          <ul className="space-y-0.5">
+          <ul className={navSlot !== undefined ? "space-y-0" : "space-y-0.5"}>
             {appNavItems.map((item) => (
               <li key={item.to}>
-                <SidebarNavLink {...item} onNavigate={closeSidebar} />
+                <SidebarNavLink
+                  {...item}
+                  onNavigate={closeSidebar}
+                  compact={navSlot !== undefined}
+                />
               </li>
             ))}
           </ul>

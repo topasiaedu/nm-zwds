@@ -18,6 +18,7 @@ export type AppNavItemKey =
   | "ai-wealth-assistant"
   | "founder-report"
   | "alignment-advantage"
+  | "monthly-consultation"
   | "settings";
 
 export interface UseAppNavItemsOptions {

@@ -18,6 +18,7 @@ const NAVBAR_HIDDEN_ROUTES = [
   "/dashboard",
   "/calculate",
   "/alignment-advantage",
+  "/monthly-consultation",
   "/chart",
   "/result",
   "/tier3-result",
