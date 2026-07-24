@@ -4,7 +4,7 @@
 
 import type { DayunSeason } from "../../../types/dayun";
 import type { LiuMonthSeason } from "../timing/liuMonthGuidance";
-import type { SiHuaKind } from "./types";
+import type { SiHuaKind, StemSiHuaActivation } from "./types";
 import { getEnglishStarName } from "../../zwds/decade_cycle_analysis/daming_utils";
 import { getEnglishPalaceName } from "../../dayun/seasonMapper";
 
@@ -123,7 +123,25 @@ export const liuSeasonShort = (season: LiuMonthSeason): string => {
 };
 
 /**
+ * English Liu Month chart label for where a stem activation lands.
+ * Falls back to natal palace English when the chart label is missing.
+ */
+export const activationLandingEnglish = (
+  activation: Pick<
+    StemSiHuaActivation,
+    "landingPalaceName" | "landingChartPalaceNameEnglish"
+  >
+): string => {
+  const chartLabel = activation.landingChartPalaceNameEnglish?.trim();
+  if (chartLabel !== undefined && chartLabel.length > 0) {
+    return chartLabel;
+  }
+  return palaceToEnglish(activation.landingPalaceName);
+};
+
+/**
  * Compact activation line for the report (star, signal, life area).
+ * `landingPalaceName` may be Chinese natal or already-English Liu Month chart label.
  */
 export const formatActivationPlain = (
   starName: string,
@@ -132,7 +150,12 @@ export const formatActivationPlain = (
 ): string => {
   const star = starToEnglish(starName);
   const label = SI_HUA_LABEL[kind];
-  const area = palaceToEnglish(landingPalaceName);
+  const trimmed = landingPalaceName.trim();
+  const area = /[\u4e00-\u9fff]/.test(trimmed)
+    ? palaceToEnglish(trimmed)
+    : trimmed.length > 0
+      ? trimmed
+      : "Life Area";
   return `${star}, ${label}, in ${area}`;
 };
 

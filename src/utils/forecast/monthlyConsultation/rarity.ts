@@ -5,10 +5,9 @@
 
 import type { ChartData } from "../../zwds/types";
 import {
+  activationLandingEnglish,
   fingerprintDisplayLabel,
-  palaceToEnglish,
   SI_HUA_LABEL,
-  SI_HUA_PLAIN,
   starToEnglish,
 } from "./englishLabels";
 import type {
@@ -184,6 +183,7 @@ const guidanceForPalace = (
  */
 const buildActionableGuidance = (
   monthPalaceEnglish: string,
+  chartPalaceEnglish: string,
   activations: StemSiHuaActivation[],
   priorCount: number,
   dateList: string
@@ -211,8 +211,8 @@ const buildActionableGuidance = (
 
   const landing =
     primary !== undefined
-      ? palaceToEnglish(primary.landingPalaceName)
-      : monthPalaceEnglish;
+      ? activationLandingEnglish(primary).replace(/ Palace$/i, "")
+      : chartPalaceEnglish.replace(/ Palace$/i, "");
 
   const shortPalace = landing.replace(/ Palace$/i, "");
   const whatItMeans = [
@@ -240,19 +240,19 @@ const buildActionableGuidance = (
       usualAskLines,
       actionSteps,
       historyCoach:
-        "First time this exact mix has shown up for you. Treat the month as one clean experiment and write down what worked.",
+        "First time this exact mix has shown up in your whole life. Treat the month as one clean experiment and write down what worked.",
       historyTips: [
-        "This exact mix has not shown up for you before, so treat the month as one clean experiment.",
+        "This exact mix has not shown up anywhere in your life so far, so treat the month as one clean experiment.",
         "It is personal because it combines your longer life chapter, this month's spotlight, and where the strongest push lands.",
-        "Write one short mid-month note. Next time a similar month returns, you already know what helped.",
+        "Write one short mid-month note. Next time a similar month returns in your life, you already know what helped.",
       ],
     };
   }
 
   const seenLine =
     dateList.length > 0
-      ? `You have been in a similar month before (${dateList}).`
-      : "You have been in a similar month before in your chart history.";
+      ? `Across your whole life, you have had similar months before (recent examples: ${dateList}).`
+      : "Across your whole life, you have had similar months before in your chart history.";
 
   return {
     whatItMeans,
@@ -266,7 +266,7 @@ const buildActionableGuidance = (
     ].join(" "),
     historyTips: [
       seenLine,
-      "Repeat what helped in those earlier months. Skip what drained you or scattered your focus.",
+      "Repeat what helped in those earlier months across your life. Skip what drained you or scattered your focus.",
       `These months tend to reopen themes around ${palace.theme}.`,
       `Keep the next step simple: ${act.step}`,
     ],
@@ -283,25 +283,23 @@ const buildStackSummary = (
   const decadeRaw =
     stack.daXian?.palaceNameEnglish ?? "your current life chapter";
   const decade = decadeRaw.replace(/ Palace$/i, "");
-  const monthFocus = stack.liuYueLifePalaceNameEnglish.replace(/ Palace$/i, "");
-  const palaceTheme = guidanceForPalace(stack.liuYueLifePalaceNameEnglish).theme;
+  const monthFocus = stack.liuYueLifeChartPalaceNameEnglish.replace(/ Palace$/i, "");
   const primary = getPrimaryActivation(activations, "Expansion");
 
   if (primary === undefined) {
     return [
       `Longer chapter you are in: ${decade}`,
-      `This month's spotlight: ${monthFocus} (${palaceTheme})`,
-      "Strongest push this month: no single star is loudly activated, so follow the month spotlight above",
+      `This month's spotlight: ${monthFocus}`,
+      "Strongest push this month: follow the month spotlight",
     ];
   }
 
-  const landing = palaceToEnglish(primary.landingPalaceName).replace(/ Palace$/i, "");
+  const landing = activationLandingEnglish(primary).replace(/ Palace$/i, "");
   const kindLabel = SI_HUA_LABEL[primary.kind];
-  const kindPlain = SI_HUA_PLAIN[primary.kind];
   return [
     `Longer chapter you are in: ${decade}`,
-    `This month's spotlight: ${monthFocus} (${palaceTheme})`,
-    `Strongest push: ${starToEnglish(primary.starName)} brings a ${kindLabel} signal in ${landing} (${kindPlain})`,
+    `This month's spotlight: ${monthFocus}`,
+    `Strongest push: ${starToEnglish(primary.starName)} ${kindLabel} in ${landing}`,
   ];
 };
 
@@ -360,14 +358,14 @@ export const buildRarityFingerprint = (
     primary !== undefined
       ? fingerprintDisplayLabel(
         stack.daXian?.palaceNameEnglish ?? "Unknown decade area",
-        stack.liuYueLifePalaceNameEnglish,
+        stack.liuYueLifeChartPalaceNameEnglish,
         primary.starName,
         primary.kind,
-        palaceToEnglish(primary.landingPalaceName)
+        activationLandingEnglish(primary)
       )
       : [
         `Decade: ${stack.daXian?.palaceNameEnglish ?? "Unknown"}`,
-        `Month focus: ${stack.liuYueLifePalaceNameEnglish}`,
+        `Month focus: ${stack.liuYueLifeChartPalaceNameEnglish}`,
       ].join(", ");
 
   const activationHint =
@@ -377,8 +375,8 @@ export const buildRarityFingerprint = (
 
   const narrative =
     priorCount === 0
-      ? `First time this mix has lined up for you (${stack.liuYueLifePalaceNameEnglish.replace(/ Palace$/i, "")}, ${activationHint}).`
-      : `This same mix showed up in ${String(priorCount)} earlier month${priorCount === 1 ? "" : "s"} in your life.`;
+      ? `First time this mix has shown up in your whole life (${stack.liuYueLifeChartPalaceNameEnglish.replace(/ Palace$/i, "")}, ${activationHint}).`
+      : `This same mix has shown up ${String(priorCount)} time${priorCount === 1 ? "" : "s"} throughout your whole life.`;
 
   const stackSummary = buildStackSummary(stack, activations);
 
@@ -390,6 +388,7 @@ export const buildRarityFingerprint = (
 
   const guidance = buildActionableGuidance(
     stack.liuYueLifePalaceNameEnglish,
+    stack.liuYueLifeChartPalaceNameEnglish,
     activations,
     priorCount,
     dateList

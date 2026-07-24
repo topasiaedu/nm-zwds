@@ -8,6 +8,7 @@ import {
   getPalaceForAspectLiuMonth,
   getMonthPalaceForLiuMonth,
   getYearPalaceForLiuMonth,
+  getPalaceEnglishNameForTimeframe,
 } from "../../destiny-navigator/palace-resolver";
 import {
   calculateCurrentDayunCycle,
@@ -35,11 +36,41 @@ export const safePalaceToSeason = (palaceName: string): DayunSeason => {
 };
 
 /**
+ * Resolve the Liu Month chart English label for a physical palace.
+ * Falls back to natal English when the timeframe label cannot be resolved.
+ */
+export const resolveLiuMonthChartPalaceEnglish = (
+  chartData: ChartData,
+  palaceNumber: number,
+  lunarMonth: number,
+  solarYear: number
+): string => {
+  const chartLabel = getPalaceEnglishNameForTimeframe(
+    palaceNumber,
+    chartData,
+    "liumonth",
+    lunarMonth,
+    solarYear
+  );
+  if (chartLabel !== null && chartLabel.trim().length > 0) {
+    return chartLabel;
+  }
+  const palace = chartData.palaces[palaceNumber - 1];
+  if (palace === undefined) {
+    return "Life Area";
+  }
+  return getEnglishPalaceName(palace.name);
+};
+
+/**
  * Snapshot natal stars and natal transformations for a palace number.
+ *
+ * @param chartPalaceNameEnglish - Liu Month chart label when known (matches My Charts)
  */
 export const snapshotPalaceStars = (
   chartData: ChartData,
-  palaceNumber: number
+  palaceNumber: number,
+  chartPalaceNameEnglish?: string
 ): MonthlyStarSnapshot | null => {
   if (!Number.isFinite(palaceNumber) || palaceNumber < 1 || palaceNumber > 12) {
     return null;
@@ -51,6 +82,7 @@ export const snapshotPalaceStars = (
 
   const mainStars = (palace.mainStar ?? []).map((s) => s.name);
   const natalTransforms: Array<{ starName: string; kind: SiHuaKind }> = [];
+  const natalEnglish = getEnglishPalaceName(palace.name);
 
   const allStars = [
     ...(palace.mainStar ?? []),
@@ -80,24 +112,30 @@ export const snapshotPalaceStars = (
   return {
     palaceNumber,
     palaceName: palace.name,
-    palaceNameEnglish: getEnglishPalaceName(palace.name),
+    palaceNameEnglish: natalEnglish,
+    chartPalaceNameEnglish:
+      typeof chartPalaceNameEnglish === "string" && chartPalaceNameEnglish.trim().length > 0
+        ? chartPalaceNameEnglish.trim()
+        : natalEnglish,
     mainStars,
     natalTransforms,
   };
 };
 
 /**
- * Resolve stars for the month focus spotlight (Part 4 / Your chart only).
- * When the Liu Yue Life palace has no natal main stars (空宫), borrow main stars
- * from the opposite palace (借星安宫 / 对宫) per Zi Wei Dou Shu convention.
- * Scope: Life-focus chapter only. Aspect Scorecard / Work / Money / People use
- * open-stage + month activations when empty (they do not borrow opposite stars).
+ * Resolve stars for a palace spotlight when the palace may be empty (空宫).
+ * When there are no natal main stars, borrow main stars from the opposite palace
+ * (借星安宫 / 对宫) per Zi Wei Dou Shu convention.
+ * Used by Life-focus Stars and Career / Wealth / Relationship aspect chapters.
+ *
+ * Display names prefer Liu Month chart labels so they match My Charts > Liu Month.
  */
 export const resolveFocusStarsWithOppositeBorrow = (
   chartData: ChartData,
-  focusSnapshot: MonthlyStarSnapshot
+  focusSnapshot: MonthlyStarSnapshot,
+  oppositeChartPalaceNameEnglish?: string
 ): FocusStarSource => {
-  const focusPalaceNameEnglish = focusSnapshot.palaceNameEnglish;
+  const focusPalaceNameEnglish = focusSnapshot.chartPalaceNameEnglish;
 
   if (focusSnapshot.mainStars.length > 0) {
     return {
@@ -109,13 +147,17 @@ export const resolveFocusStarsWithOppositeBorrow = (
   }
 
   const oppositeNumber = oppositePalace(focusSnapshot.palaceNumber);
-  const oppositeSnapshot = snapshotPalaceStars(chartData, oppositeNumber);
+  const oppositeSnapshot = snapshotPalaceStars(
+    chartData,
+    oppositeNumber,
+    oppositeChartPalaceNameEnglish
+  );
   if (oppositeSnapshot !== null && oppositeSnapshot.mainStars.length > 0) {
     return {
       mode: "borrowed",
       displayMainStars: oppositeSnapshot.mainStars,
       focusPalaceNameEnglish,
-      borrowedFromPalaceNameEnglish: oppositeSnapshot.palaceNameEnglish,
+      borrowedFromPalaceNameEnglish: oppositeSnapshot.chartPalaceNameEnglish,
     };
   }
 
@@ -164,12 +206,20 @@ export const resolveMonthlyTimingStack = (
       ? chartData.palaces.find((p) => p.name === dayun.palaceChinese)?.number ?? null
       : null;
 
+  const lifeChartEnglish = resolveLiuMonthChartPalaceEnglish(
+    chartData,
+    lifeNum,
+    lunarMonth,
+    solarYear
+  );
+
   return {
     solarYear,
     lunarMonth,
     liuYueLifePalaceNumber: lifeNum,
     liuYueLifePalaceName: lifePalace.name,
     liuYueLifePalaceNameEnglish: getEnglishPalaceName(lifePalace.name),
+    liuYueLifeChartPalaceNameEnglish: lifeChartEnglish,
     liuYueMonthPalaceNumber: monthPalaceNum,
     liuNianPalaceNumber: yearPalaceNum,
     liuNianPalaceName: liuNianPalace?.name ?? null,
@@ -196,6 +246,7 @@ export const resolveMonthlyTimingStack = (
 
 /**
  * Resolve Si Hua from the heavenly stem of the Liu Yue life-palace physical palace.
+ * Landing palace labels use the Liu Month chart (My Charts > Liu Month), not natal names.
  */
 export const resolveLiuYueStemSiHua = (
   chartData: ChartData,
@@ -205,5 +256,13 @@ export const resolveLiuYueStemSiHua = (
   if (palace === undefined || typeof palace.heavenlyStem !== "string") {
     return [];
   }
-  return resolveStemSiHua(chartData, palace.heavenlyStem);
+  return resolveStemSiHua(chartData, palace.heavenlyStem).map((activation) => ({
+    ...activation,
+    landingChartPalaceNameEnglish: resolveLiuMonthChartPalaceEnglish(
+      chartData,
+      activation.landingPalaceNumber,
+      stack.lunarMonth,
+      stack.solarYear
+    ),
+  }));
 };

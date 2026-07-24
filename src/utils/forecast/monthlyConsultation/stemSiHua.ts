@@ -14,6 +14,7 @@ const findStarByName = (
   chartData: ChartData,
   starName: string
 ): { star: Star; palace: Palace } | null => {
+  // Si Hua land on natal main/minor stars only — not flowing month/day overlays.
   for (const palace of chartData.palaces) {
     if (palace.mainStar) {
       for (const s of palace.mainStar) {
@@ -27,20 +28,6 @@ const findStarByName = (
         if (s.name === starName) {
           return { star: s, palace };
         }
-      }
-    }
-  }
-  for (const palace of chartData.palaces) {
-    const others: Star[] = [
-      ...(palace.auxiliaryStars || []),
-      ...(palace.yearStars || []),
-      ...(palace.monthStars || []),
-      ...(palace.dayStars || []),
-      ...(palace.hourStars || []),
-    ];
-    for (const s of others) {
-      if (s.name === starName) {
-        return { star: s, palace };
       }
     }
   }

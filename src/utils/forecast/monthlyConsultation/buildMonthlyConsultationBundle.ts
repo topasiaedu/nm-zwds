@@ -9,6 +9,7 @@ import {
 } from "../../destiny-navigator/palace-resolver";
 import { getEnglishPalaceName } from "../../dayun/seasonMapper";
 import { calculateNoblemanForPalace } from "../../nobleman/calculator";
+import { oppositePalace } from "../../zwds/utils";
 import {
   PALACE_MONTH_DATA,
   PALACE_GUIDANCE_DATA,
@@ -23,6 +24,7 @@ import {
 } from "./signalPriority";
 import {
   resolveFocusStarsWithOppositeBorrow,
+  resolveLiuMonthChartPalaceEnglish,
   resolveLiuYueStemSiHua,
   resolveMonthlyTimingStack,
   snapshotPalaceStars,
@@ -171,7 +173,12 @@ const resolveNextMonthFocus = (
   return {
     lunarMonth: next.lunarMonth,
     solarYear: next.solarYear,
-    palaceNameEnglish: getEnglishPalaceName(palace.name),
+    palaceNameEnglish: resolveLiuMonthChartPalaceEnglish(
+      chartData,
+      lifeNum,
+      next.lunarMonth,
+      next.solarYear
+    ),
     season: meta?.season ?? "Foundation",
     priority: meta?.priority ?? "Align",
   };
@@ -304,12 +311,24 @@ const buildBundleCore = (
     return null;
   }
 
+  const chartLabelFor = (palaceNumber: number): string =>
+    resolveLiuMonthChartPalaceEnglish(chartData, palaceNumber, lunarMonth, solarYear);
+
   const stemActivations = resolveLiuYueStemSiHua(chartData, stack);
-  const lifePalaceStars = snapshotPalaceStars(chartData, stack.liuYueLifePalaceNumber);
+  const lifePalaceStars = snapshotPalaceStars(
+    chartData,
+    stack.liuYueLifePalaceNumber,
+    stack.liuYueLifeChartPalaceNameEnglish
+  );
   if (lifePalaceStars === null) {
     return null;
   }
-  const focusStarSource = resolveFocusStarsWithOppositeBorrow(chartData, lifePalaceStars);
+  const oppositeLifeNum = oppositePalace(stack.liuYueLifePalaceNumber);
+  const focusStarSource = resolveFocusStarsWithOppositeBorrow(
+    chartData,
+    lifePalaceStars,
+    chartLabelFor(oppositeLifeNum)
+  );
 
   const careerNum = getPalaceForAspectLiuMonth("career", chartData, lunarMonth, solarYear);
   const wealthNum = getPalaceForAspectLiuMonth("wealth", chartData, lunarMonth, solarYear);
@@ -321,7 +340,7 @@ const buildBundleCore = (
   const briefingBase = loadBriefing(stack.liuYueLifePalaceName);
   const failureMode = buildFailureMode(
     stack.liuYueLifePalaceName,
-    stack.liuYueLifePalaceNameEnglish,
+    stack.liuYueLifeChartPalaceNameEnglish,
     stemActivations,
     briefingBase.season
   );
@@ -343,7 +362,7 @@ const buildBundleCore = (
   };
   const archetype = buildArchetype(
     stack.liuYueLifePalaceName,
-    stack.liuYueLifePalaceNameEnglish,
+    stack.liuYueLifeChartPalaceNameEnglish,
     briefing.season,
     stemActivations
   );
@@ -385,18 +404,26 @@ const buildBundleCore = (
   ].join(", ");
 
   const headline = [
-    stack.liuYueLifePalaceNameEnglish,
+    stack.liuYueLifeChartPalaceNameEnglish,
     liuSeasonShort(briefing.season),
   ].join(", ");
 
   const careerSnap =
-    careerNum !== null ? snapshotPalaceStars(chartData, careerNum) : null;
+    careerNum !== null
+      ? snapshotPalaceStars(chartData, careerNum, chartLabelFor(careerNum))
+      : null;
   const wealthSnap =
-    wealthNum !== null ? snapshotPalaceStars(chartData, wealthNum) : null;
+    wealthNum !== null
+      ? snapshotPalaceStars(chartData, wealthNum, chartLabelFor(wealthNum))
+      : null;
   const relSnap =
-    relNum !== null ? snapshotPalaceStars(chartData, relNum) : null;
+    relNum !== null
+      ? snapshotPalaceStars(chartData, relNum, chartLabelFor(relNum))
+      : null;
   const healthSnap =
-    healthNum !== null ? snapshotPalaceStars(chartData, healthNum) : null;
+    healthNum !== null
+      ? snapshotPalaceStars(chartData, healthNum, chartLabelFor(healthNum))
+      : null;
 
   const aspectPalaces = {
     career: careerSnap,
@@ -404,6 +431,24 @@ const buildBundleCore = (
     relationships: relSnap,
     health: healthSnap,
   };
+
+  const resolveAspectStarSource = (
+    snap: MonthlyStarSnapshot | null
+  ): ReturnType<typeof resolveFocusStarsWithOppositeBorrow> | null => {
+    if (snap === null) {
+      return null;
+    }
+    const oppositeNum = oppositePalace(snap.palaceNumber);
+    return resolveFocusStarsWithOppositeBorrow(
+      chartData,
+      snap,
+      chartLabelFor(oppositeNum)
+    );
+  };
+
+  const careerStarSource = resolveAspectStarSource(careerSnap);
+  const wealthStarSource = resolveAspectStarSource(wealthSnap);
+  const relStarSource = resolveAspectStarSource(relSnap);
 
   const activationCards = buildActivationCards({
     activations: stemActivations,
@@ -420,7 +465,7 @@ const buildBundleCore = (
     aspectPalaces,
     stemActivations,
     briefing.season,
-    stack.liuYueLifePalaceNameEnglish
+    stack.liuYueLifeChartPalaceNameEnglish
   );
   const yearClimate = buildYearClimate(chartData, solarYear, lunarMonth);
   const nextFocus = resolveNextMonthFocus(
@@ -446,21 +491,24 @@ const buildBundleCore = (
         careerSnap,
         briefing.season,
         stemActivations,
-        actionStance
+        actionStance,
+        careerStarSource
       ),
       wealth: buildAspectPlaybook(
         "wealth",
         wealthSnap,
         briefing.season,
         stemActivations,
-        actionStance
+        actionStance,
+        wealthStarSource
       ),
       relationships: buildAspectPlaybook(
         "relationships",
         relSnap,
         briefing.season,
         stemActivations,
-        actionStance
+        actionStance,
+        relStarSource
       ),
     },
     stemActivations,
@@ -473,13 +521,13 @@ const buildBundleCore = (
       borrowedFromPalaceNameEnglish: focusStarSource.borrowedFromPalaceNameEnglish,
     }),
     scripts: buildMonthScripts(
-      stack.liuYueLifePalaceNameEnglish,
+      stack.liuYueLifeChartPalaceNameEnglish,
       failureMode.exitMove,
       briefing.priority
     ),
     cautionList: buildCautionList(
       stemActivations,
-      stack.liuYueLifePalaceNameEnglish
+      stack.liuYueLifeChartPalaceNameEnglish
     ),
     weekPlan: buildWeekPlan(weekWindows),
     convergence,
@@ -496,7 +544,7 @@ const buildBundleCore = (
     decisions: buildDecisions({
       season: briefing.season,
       activations: stemActivations,
-      palaceNameEnglish: stack.liuYueLifePalaceNameEnglish,
+      palaceNameEnglish: stack.liuYueLifeChartPalaceNameEnglish,
       priority: briefing.priority,
       primaryMove: monthContract.primaryMove,
       convergenceBand: convergence.band,
@@ -506,7 +554,7 @@ const buildBundleCore = (
     letter: buildPersonalLetter({
       profileName,
       palaceName: stack.liuYueLifePalaceName,
-      palaceNameEnglish: stack.liuYueLifePalaceNameEnglish,
+      palaceNameEnglish: stack.liuYueLifeChartPalaceNameEnglish,
       season: briefing.season,
       activations: stemActivations,
       monthContract,
@@ -539,7 +587,7 @@ export const buildPriorMonthBriefing = (
   return {
     solarYear: prior.solarYear,
     lunarMonth: prior.lunarMonth,
-    palaceNameEnglish: priorBundle.stack.liuYueLifePalaceNameEnglish,
+    palaceNameEnglish: priorBundle.stack.liuYueLifeChartPalaceNameEnglish,
     season: priorBundle.briefing.season,
     priority: priorBundle.briefing.priority,
     primaryGoal: priorBundle.briefing.primaryGoal,
@@ -579,7 +627,7 @@ export const buildMonthlyConsultationBundle = (
     letter: buildPersonalLetter({
       profileName: profile.name,
       palaceName: core.stack.liuYueLifePalaceName,
-      palaceNameEnglish: core.stack.liuYueLifePalaceNameEnglish,
+      palaceNameEnglish: core.stack.liuYueLifeChartPalaceNameEnglish,
       season: core.briefing.season,
       activations: core.stemActivations,
       monthContract: core.monthContract,

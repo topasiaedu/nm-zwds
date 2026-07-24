@@ -27,6 +27,9 @@ import DocumentViewerLayout from "../../components/layout/DocumentViewerLayout";
 import { useAppNavItems } from "../../hooks/useAppNavItems";
 import { C } from "../../components/alignment-advantage/shared/constants";
 
+/** Temporary: hide Download PDF / Print Preview while report copy is still being tuned. */
+const SHOW_PDF_ACTIONS = false;
+
 const AccessDeniedView: React.FC = () => (
   <PageTransition>
     <div
@@ -229,7 +232,7 @@ const MonthlyConsultationPage: React.FC = () => {
       style={{ background: `${C.navy}06`, border: `1px solid ${C.border}` }}
     >
       <label className="flex flex-col gap-1 text-xs" style={{ color: C.muted }}>
-        Report month
+        Lunar month (matches Liu Month chart)
         <select
           className="rounded-lg px-3 py-2 text-sm"
           style={{ border: `1px solid ${C.border}`, color: C.navy, background: C.cream }}
@@ -242,7 +245,7 @@ const MonthlyConsultationPage: React.FC = () => {
           }}
         >
           {Array.from({ length: 12 }, (_u, i) => i + 1).map((m) => (
-            <option key={m} value={m}>{`Month ${String(m)}`}</option>
+            <option key={m} value={m}>{`Lunar month ${String(m)}`}</option>
           ))}
         </select>
       </label>
@@ -264,7 +267,7 @@ const MonthlyConsultationPage: React.FC = () => {
     </div>
   );
 
-  const footerActions = (
+  const footerActions = SHOW_PDF_ACTIONS ? (
     <>
       <button
         type="button"
@@ -284,7 +287,7 @@ const MonthlyConsultationPage: React.FC = () => {
         Print Preview
       </button>
     </>
-  );
+  ) : undefined;
 
   return (
     <PageTransition>

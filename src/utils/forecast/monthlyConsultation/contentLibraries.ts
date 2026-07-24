@@ -6,9 +6,9 @@
 
 import type { LiuMonthSeason } from "../timing/liuMonthGuidance";
 import {
+  activationLandingEnglish,
   formatActivationPlain,
   liuSeasonShort,
-  palaceToEnglish,
   SI_HUA_LABEL,
   SI_HUA_PLAIN,
   starToEnglish,
@@ -28,6 +28,7 @@ import type {
   DecisionVerdict,
   DimensionScorecard,
   FailureMode,
+  FocusStarSource,
   MonthArchetype,
   MonthContract,
   MonthScript,
@@ -99,7 +100,7 @@ const BASE: Record<PalaceKey, PalaceContent> = {
         "You delay the update or deliverable that would show your progress",
       ],
       exitMoveTemplate:
-        "Before mid-month, finish one visible deliverable or ask for one clearer responsibility in writing.",
+        "Before mid-month, send one finished work sample to a decision-maker, or ask in writing for one clearer responsibility.",
     },
     somatic: {
       elementPressure:
@@ -148,7 +149,7 @@ const BASE: Record<PalaceKey, PalaceContent> = {
         "You wait for perfect timing that never arrives",
       ],
       exitMoveTemplate:
-        "Before week 3, make one real shift: book, apply, visit, or change where you work for a day.",
+        "Before week 3, pick one new place, role, or market and take one real step: book, apply, or work there for a day.",
     },
     somatic: {
       elementPressure:
@@ -196,7 +197,7 @@ const BASE: Record<PalaceKey, PalaceContent> = {
         "You stay socially busy with no clear ask or offer",
       ],
       exitMoveTemplate:
-        "Reconnect with three quiet contacts and turn one into a concrete next step before month-end.",
+        "Message three quiet contacts. With one, book a call or send one clear ask before month-end.",
     },
     somatic: {
       elementPressure:
@@ -244,7 +245,7 @@ const BASE: Record<PalaceKey, PalaceContent> = {
         "You follow old money advice that no longer fits you",
       ],
       exitMoveTemplate:
-        "Do one money review and turn one underused skill into income before the last week.",
+        "List this month's income, costs, and unpaid invoices on one page. Then raise a price, send an invoice, or list one skill for sale.",
     },
     somatic: {
       elementPressure:
@@ -292,7 +293,7 @@ const BASE: Record<PalaceKey, PalaceContent> = {
         "You ignore home or family tension that weakens your base",
       ],
       exitMoveTemplate:
-        "Research one improvement and make one upgrade to an asset or home system.",
+        "Pick one home, tool, or asset that wastes time weekly. Get a quote, book a repair, or finish one upgrade.",
     },
     somatic: {
       elementPressure:
@@ -340,7 +341,7 @@ const BASE: Record<PalaceKey, PalaceContent> = {
         "You say yes to draining noise while postponing the real choice",
       ],
       exitMoveTemplate:
-        "Decide one yes or one no in writing, then protect it with a calendar block or a declined invite.",
+        "Write one pending choice as a yes or no. Then block time for the yes, or decline one conflicting invite.",
     },
     somatic: {
       elementPressure:
@@ -388,7 +389,7 @@ const BASE: Record<PalaceKey, PalaceContent> = {
         "You avoid the one clear conversation that would fix the leak",
       ],
       exitMoveTemplate:
-        "Before day 12, book one 20-minute clarity talk and write down the outcome.",
+        "Before day 12, have a 20-minute clarity talk. Write what you agreed, what stays open, and the next check-in.",
     },
     somatic: {
       elementPressure:
@@ -437,7 +438,7 @@ const BASE: Record<PalaceKey, PalaceContent> = {
         "You give equal energy to unequal relationships",
       ],
       exitMoveTemplate:
-        "Set one clear boundary with an energy drain, and strengthen two real alliances.",
+        "Name one drain. Say or send one stop sentence once. Then book two check-ins with people who help you.",
     },
     somatic: {
       elementPressure:
@@ -485,7 +486,7 @@ const BASE: Record<PalaceKey, PalaceContent> = {
         "You put off the real plan because it feels emotional",
       ],
       exitMoveTemplate:
-        "Write one clear plan for what you are building, with a next-action date.",
+        "Write a one-page plan: goal, next action, date. Do the next action on that date.",
     },
     somatic: {
       elementPressure:
@@ -533,7 +534,7 @@ const BASE: Record<PalaceKey, PalaceContent> = {
         "You react from an old fear script with bosses or mentors",
       ],
       exitMoveTemplate:
-        "Write the outdated rule you still obey from family or old bosses, then take one opposite action with a current boss, parent, or mentor: say the limit once, ask in writing, or stop apologizing for a finished choice.",
+        "Write one old rule in one sentence. Then do the opposite once: ask in writing, say no, or stop apologizing.",
     },
     somatic: {
       elementPressure:
@@ -554,7 +555,7 @@ const BASE: Record<PalaceKey, PalaceContent> = {
       body: [
         "{{name}}, this month asks for ownership without self-punishment. {{star}}'s {{transformation}} signal is a chance to update the script.",
       ],
-      closing: "Own the story. Then write the next page.",
+      closing: "",
     },
   },
   "命宫": {
@@ -581,7 +582,7 @@ const BASE: Record<PalaceKey, PalaceContent> = {
         "You hit the same ceiling without changing a skill",
       ],
       exitMoveTemplate:
-        "Enroll in one course or complete five practice sessions of one skill you will keep before month-end.",
+        "Choose one skill. Enroll in one course, or complete five practice sessions before month-end.",
     },
     somatic: {
       elementPressure:
@@ -629,7 +630,7 @@ const BASE: Record<PalaceKey, PalaceContent> = {
         "You cover tiredness with caffeine and force",
       ],
       exitMoveTemplate:
-        "Book one checkup or lock in one sustainable recovery routine this month.",
+        "Book the delayed checkup, or put three fixed sleep or rest blocks on your calendar and keep them.",
     },
     somatic: {
       elementPressure:
@@ -1292,9 +1293,9 @@ export const buildPrimaryGoal = (priority: string, primaryMove: string): string 
 };
 
 /**
- * Simple week windows derived from season + shared action stance.
- * Action calendar only. Body feelings live in the Body chapter.
- * When launches are withheld, Expansion weeks prepare instead of "start or launch".
+ * Week windows derived from season + shared action stance.
+ * Each useFor line is a concrete action people can do this week.
+ * When launches are withheld, Expansion weeks prepare instead of launching.
  */
 export const buildWeekWindows = (
   season: LiuMonthSeason,
@@ -1302,10 +1303,10 @@ export const buildWeekWindows = (
   stance?: ExpansionStance
 ): Array<{ window: string; quality: string; useFor: string }> => {
   const focus = sanitizeReportCopy(priority).trim();
-  const focusClause =
+  const focusTag =
     focus.length > 0
-      ? `tied to your month focus (${focus.charAt(0).toLowerCase()}${focus.slice(1)})`
-      : "tied to your month focus";
+      ? ` for ${focus.charAt(0).toLowerCase()}${focus.slice(1)}`
+      : "";
   const allowLaunch = stance === undefined ? true : stance.allowNewLaunch;
 
   if (season === "Consolidation" || season === "Foundation") {
@@ -1313,25 +1314,25 @@ export const buildWeekWindows = (
       {
         window: "Week 1 (days 1 to 7)",
         quality: "Best to push",
-        useFor: `Have one clarity conversation ${focusClause}. Renegotiate scope early while people are still open.`,
+        useFor: `Book a 20-minute call with one key person${focusTag}. Write down what is in scope and what is out.`,
       },
       {
         window: "Week 2 (days 8 to 14)",
         quality: "Go careful",
         useFor:
-          "Emotions run higher here. Keep talks short and specific. Avoid ultimatums or big new commitments.",
+          "Limit hard talks to one topic and 15 minutes. Do not sign or start a new project this week.",
       },
       {
         window: "Week 3 (days 15 to 21)",
         quality: "Steady work",
         useFor:
-          "Write agreements down. Protect sleep so decisions stay clean. Finish paperwork and follow-ups.",
+          "Email a short summary of what you both agreed. Send any pending form, invoice, or follow-up message.",
       },
       {
         window: "Week 4 (days 22 to end)",
         quality: "Best to push",
         useFor:
-          "Lock revised terms, close open admin loops, and leave next month with one clear decision.",
+          "Confirm the final terms in writing. Tick off one open admin task (file, payment, or calendar invite).",
       },
     ];
   }
@@ -1342,27 +1343,27 @@ export const buildWeekWindows = (
         window: "Week 1 (days 1 to 7)",
         quality: allowLaunch ? "Best to push" : "Go careful",
         useFor: allowLaunch
-          ? `Make one visible ask or show one finished result ${focusClause}.`
-          : `Show one finished result ${focusClause}, without announcing a brand-new bet.`,
+          ? `Send one finished sample or ask to the person who decides next steps${focusTag}.`
+          : `Send one finished sample to the person who decides next steps${focusTag}. Do not pitch a new offer yet.`,
       },
       {
         window: "Week 2 (days 8 to 14)",
         quality: allowLaunch ? "Best to push" : "Steady work",
         useFor: allowLaunch
-          ? "Follow up with the people who saw your work. Turn attention into one concrete next step."
-          : "Follow up quietly. Convert attention into a dated repair or proof, not a new launch.",
+          ? "Message everyone who saw your work. Book one call or set one dated next step."
+          : "Message everyone who saw your work. Ask for one dated reply or small proof step, not a launch.",
       },
       {
         window: "Week 3 (days 15 to 21)",
         quality: "Go careful",
         useFor:
-          "Do not overpromise. Keep quality high and say no to extra exposure that dilutes the main win.",
+          "Say no to one extra presentation or side ask. Protect the main deliverable you already started.",
       },
       {
         window: "Week 4 (days 22 to end)",
         quality: "Wrap and prepare",
         useFor:
-          "Collect the win, thank key people, and write one note on what to carry into next month.",
+          "Save one win in writing (what worked). Send a thank-you note to one helper. List one task for next month.",
       },
     ];
   }
@@ -1373,27 +1374,27 @@ export const buildWeekWindows = (
       window: "Week 1 (days 1 to 7)",
       quality: allowLaunch ? "Best to push" : "Prepare, do not launch",
       useFor: allowLaunch
-        ? `Start or launch one scoped move ${focusClause}. Date the first checkpoint.`
-        : `Draft one scoped move ${focusClause}. Date a later checkpoint; do not launch yet.`,
+        ? `Start one small project or outreach${focusTag}. Put the first checkpoint date on your calendar.`
+        : `Write a one-page draft plan${focusTag}. Put a later start date on your calendar; do not go public yet.`,
     },
     {
       window: "Week 2 (days 8 to 14)",
       quality: allowLaunch ? "Best to push" : "Steady work",
       useFor: allowLaunch
-        ? "Follow through on outreach and alliances. Convert interest into a calendar date or written next step."
-        : "Follow through on repair and outreach. Convert interest into a written next step, not a public launch.",
+        ? "Send two follow-up messages to people who can help. Book one meeting this week or next."
+        : "Send one repair or clarification message. Write the next step on paper; do not announce a launch.",
     },
     {
       window: "Week 3 (days 15 to 21)",
       quality: "Go careful",
       useFor:
-        "Watch overextension. Keep quality high and drop side quests that steal focus from the main move.",
+        "Cancel or postpone one side task that is not on your main plan. Finish the one move you started in week 1.",
     },
     {
       window: "Week 4 (days 22 to end)",
       quality: "Wrap and prepare",
       useFor:
-        "Consolidate wins, close loose ends, and prepare one clean handoff for next month.",
+        "Close one unfinished email, payment, or file. Hand off or note one open item so next month starts clean.",
     },
   ];
 };
@@ -1431,7 +1432,7 @@ const ASPECT_FALLBACK: Record<
       Foundation: "In a Rebuild season for work: rest the pipeline and prep one skill that unlocks the next role",
     },
     avoidPalace: "Filling {{palace}} with busy tasks that never reach a decision-maker",
-    avoidEmpty: "Assuming an open Career palace means nothing to do. Drift fills the stage when you wait",
+    avoidEmpty: "Waiting and assuming an open Career stage needs no action",
     coachWithStars:
       "Make one {{star}}-shaped win visible before mid-month. Quiet overtime without an audience rarely pays this timing",
     coachEmpty:
@@ -1449,7 +1450,7 @@ const ASPECT_FALLBACK: Record<
       Foundation: "In a Rebuild season for money: review accounts quietly and cut one leak before expanding",
     },
     avoidPalace: "Using {{palace}} energy for comfort spending that replaces a real money decision",
-    avoidEmpty: "Treating an open Wealth palace as permission to improvise large bets when you feel pressured",
+    avoidEmpty: "Waiting and assuming an open Wealth stage needs no money move",
     coachWithStars:
       "Prefer clean {{star}} structure over new risk. Close open money loops in {{palace}} before expanding",
     coachEmpty:
@@ -1468,7 +1469,7 @@ const ASPECT_FALLBACK: Record<
       Foundation: "In a Rebuild season for people: rest social load and repair one quiet rupture with precise words",
     },
     avoidPalace: "Keeping false peace in {{palace}} when your body already knows the talk is due",
-    avoidEmpty: "Filling an open People palace with everyone else's urgencies instead of one honest sentence",
+    avoidEmpty: "Filling the month with everyone else's urgencies instead of one honest talk",
     coachWithStars:
       "One {{star}}-honest sentence early in {{palace}} is cheaper than a week of soft quiet. Use Scripts when stuck",
     coachEmpty:
@@ -1497,7 +1498,7 @@ const withActivationAnchor = (
   }
   const star = starToEnglish(topActivation.starName);
   const kind = SI_HUA_LABEL[topActivation.kind];
-  const landing = shortPalaceLabel(palaceToEnglish(topActivation.landingPalaceName));
+  const landing = shortPalaceLabel(activationLandingEnglish(topActivation));
   const alreadyAnchored =
     cleaned.toLowerCase().includes(star.toLowerCase()) ||
     cleaned.toLowerCase().includes(landing.toLowerCase());
@@ -1550,180 +1551,241 @@ const findAspectActivation = (
   const matches = stemActivations.filter(
     (a) =>
       a.landingPalaceNumber === snapshot.palaceNumber ||
-      palaceToEnglish(a.landingPalaceName) === snapshot.palaceNameEnglish
+      activationLandingEnglish(a) === snapshot.chartPalaceNameEnglish
   );
   return getPrimaryActivation(matches, season);
 };
 
 /**
- * Star-flavored Do line for one aspect (rank label applied by caller).
+ * Star-flavored Do line for one aspect.
+ * Star identity is shown separately in the UI, so keep this to the action only.
  */
 const starDoForAspect = (
   aspect: AspectKey,
   star: string,
-  palaceShort: string
+  _palaceShort: string
 ): string => {
   const cue = STAR_CUES[star];
+  if (cue !== undefined) {
+    // Prefer the first clause of the cue as a short instruction.
+    const firstClause = cue.split(";")[0]?.trim();
+    if (firstClause !== undefined && firstClause.length > 0) {
+      return firstClause;
+    }
+  }
   if (aspect === "career") {
-    return cue !== undefined
-      ? `With ${star} in ${palaceShort}: ${cue}. Turn that into one visible work outcome`
-      : `With ${star} in ${palaceShort}: make one work outcome visible to a decision-maker`;
+    return "Make one work outcome visible to a decision-maker";
   }
   if (aspect === "wealth") {
-    return cue !== undefined
-      ? `With ${star} in ${palaceShort}: ${cue}. Apply it to one money loop you can close`
-      : `With ${star} in ${palaceShort}: close one money loop you can explain on paper`;
+    return "Close one money loop you can explain on paper";
   }
-  return cue !== undefined
-    ? `With ${star} in ${palaceShort}: ${cue}. Use it in one clear conversation`
-    : `With ${star} in ${palaceShort}: have one clear conversation about expectations`;
+  return "Have one clear conversation about expectations";
 };
 
 /**
- * Activation-flavored Do line for one aspect.
+ * Activation-flavored Do line for one aspect (action only; star shown separately).
  */
 const activationDoForAspect = (
   aspect: AspectKey,
   activation: StemSiHuaActivation,
-  palaceShort: string
+  _palaceShort: string
 ): string => {
-  const plain = formatActivationPlain(
-    activation.starName,
-    activation.kind,
-    activation.landingPalaceName
-  );
-  const move = ACTIVATION_MOVE[activation.kind];
+  if (activation.kind === "化禄") {
+    if (aspect === "career") {
+      return "Open one door for work support or a clearer role";
+    }
+    if (aspect === "wealth") {
+      return "Open one door for income or payment";
+    }
+    return "Open one door for real help from someone nearby";
+  }
+  if (activation.kind === "化权") {
+    if (aspect === "career") {
+      return "Make one firm work decision others have been waiting on";
+    }
+    if (aspect === "wealth") {
+      return "Make one firm money decision and date it";
+    }
+    return "Make one firm people decision and say it once";
+  }
+  if (activation.kind === "化科") {
+    if (aspect === "career") {
+      return "Show one clean work result to the right people";
+    }
+    if (aspect === "wealth") {
+      return "Show one clean money result you can prove on paper";
+    }
+    return "Show one clear, fair update in a key relationship";
+  }
   if (aspect === "career") {
-    return `Activation ${plain}: ${move}. Aim it at a work decision in ${palaceShort}`;
+    return "Name the work friction in one sentence, then take the smallest repair";
   }
   if (aspect === "wealth") {
-    return `Activation ${plain}: ${move}. Aim it at a money decision in ${palaceShort}`;
+    return "Name the money friction in one sentence, then take the smallest repair";
   }
-  return `Activation ${plain}: ${move}. Aim it at a people decision in ${palaceShort}`;
+  return "Name the people friction in one sentence, then take the smallest repair";
 };
 
 /**
- * Star or palace flavored Avoid line.
+ * Short Avoid lines for one aspect (2–3 sharp directives).
+ * `hasDisplayStars` is true for natal or opposite-borrow stars.
  */
 const chartTiedAvoid = (
   aspect: AspectKey,
-  snapshot: MonthlyStarSnapshot | null,
+  hasDisplayStars: boolean,
   stemActivations: StemSiHuaActivation[]
 ): string[] => {
-  const fallback = ASPECT_FALLBACK[aspect];
-  const palace =
-    snapshot !== null ? shortPalaceLabel(snapshot.palaceNameEnglish) : "this area";
-  const starsEn = (snapshot?.mainStars ?? []).map(starToEnglish);
   const avoids: string[] = [];
 
-  if (starsEn[0] !== undefined) {
-    if (aspect === "career") {
-      avoids.push(
-        `Letting ${starsEn[0]} in ${palace} drive unpaid overtime nobody sees`
-      );
-    } else if (aspect === "wealth") {
-      avoids.push(
-        `Letting ${starsEn[0]} in ${palace} justify a spend you cannot explain on paper`
-      );
-    } else {
-      avoids.push(
-        `Letting ${starsEn[0]} in ${palace} keep false peace when a clear talk is due`
-      );
-    }
+  if (aspect === "career") {
+    avoids.push(hasDisplayStars ? "Unpaid overtime nobody sees" : "Waiting for work to notice you");
+    avoids.push("Starting three threads and finishing none");
+  } else if (aspect === "wealth") {
+    avoids.push(hasDisplayStars ? "A spend you cannot explain on paper" : "Improvised money bets under pressure");
+    avoids.push("Chasing tips instead of closing open loops");
   } else {
-    avoids.push(injectVars(fallback.avoidEmpty, { palace }));
+    avoids.push(hasDisplayStars ? "False peace when a clear talk is due" : "Everyone else's urgencies over one honest talk");
+    avoids.push("Busy social time that never gets specific");
   }
-
-  avoids.push(injectVars(fallback.avoidPalace, { palace }));
 
   const challenge = stemActivations.find((a) => a.kind === "化忌");
   if (challenge !== undefined) {
-    const plain = formatActivationPlain(
-      challenge.starName,
-      challenge.kind,
-      challenge.landingPalaceName
-    );
     if (aspect === "career") {
-      avoids.push(`Ignoring Ji (${plain}) until a work conflict goes public`);
+      avoids.push("Ignoring Ji until conflict goes public");
     } else if (aspect === "wealth") {
-      avoids.push(`Ignoring Ji (${plain}) until a money leak becomes a crisis`);
+      avoids.push("Ignoring Ji until a money leak becomes a crisis");
     } else {
-      avoids.push(`Ignoring Ji (${plain}) until resentment replaces a needed talk`);
+      avoids.push("Ignoring Ji until resentment replaces the talk");
     }
   } else if (aspect === "career") {
-    avoids.push("Starting three new work threads and finishing none");
+    avoids.push("Saying yes to scope that dilutes your main win");
   } else if (aspect === "wealth") {
-    avoids.push("Chasing tips instead of reviewing what you already own");
+    avoids.push("Expanding before you review what you already own");
   } else {
-    avoids.push("Confusing busyness with people for real closeness");
+    avoids.push("Keeping people from habit, not fit");
   }
 
   return avoids.slice(0, 3);
 };
 
 /**
+ * Short season-tied Do line for one aspect.
+ */
+const seasonDoShort = (
+  aspect: AspectKey,
+  season: LiuMonthSeason,
+  stance: ExpansionStance | undefined
+): string => {
+  if (stance !== undefined && !stance.allowNewLaunch && season === "Expansion") {
+    if (aspect === "career") {
+      return "Draft one scoped work move; do not launch yet";
+    }
+    if (aspect === "wealth") {
+      return "Price one offer on paper; hold the public launch";
+    }
+    return "Invite support into a repair talk, not a new bond";
+  }
+  if (aspect === "career") {
+    if (season === "Expansion") {
+      return "Start one scoped initiative with a dated checkpoint";
+    }
+    if (season === "Visibility") {
+      return "Surface one finished result to decision-makers";
+    }
+    if (season === "Consolidation") {
+      return "Lock scope; refuse three diluting new threads";
+    }
+    return "Prep one skill that unlocks the next role";
+  }
+  if (aspect === "wealth") {
+    if (season === "Expansion") {
+      return "Open one priced offer and track the first payment";
+    }
+    if (season === "Visibility") {
+      return "Collect what is owed before any new bet";
+    }
+    if (season === "Consolidation") {
+      return "Write one spending rule and keep the buffer";
+    }
+    return "Cut one money leak before expanding";
+  }
+  if (season === "Expansion") {
+    return "Make one clear invite or ask with a real person";
+  }
+  if (season === "Visibility") {
+    return "Name one relationship win out loud to the right person";
+  }
+  if (season === "Consolidation") {
+    return "Have the overdue clarity talk this week";
+  }
+  return "Repair one bond before adding new people";
+};
+
+/**
+ * Display palace label for aspect copy: prefer Liu Month chart name.
+ */
+const aspectPalaceLabel = (snapshot: MonthlyStarSnapshot | null): string => {
+  if (snapshot === null) {
+    return "this month's focus";
+  }
+  return snapshot.chartPalaceNameEnglish;
+};
+
+/**
  * Build distinct, chart-tied career / wealth / relationships playbooks.
- * Aspect Do uses ranked (Ji-first) activations for that palace when present.
- * Empty aspect palaces use month activations; opposite-palace borrow is Life-focus only.
+ * Stars are shown separately in UI (natal or opposite borrow); Do / Avoid stay short (2–3).
  */
 export const buildAspectPlaybook = (
   aspect: AspectKey,
   snapshot: MonthlyStarSnapshot | null,
   season: LiuMonthSeason,
   stemActivations: StemSiHuaActivation[],
-  stance?: ExpansionStance
+  stance?: ExpansionStance,
+  starSource: FocusStarSource | null = null
 ): AspectLifePlaybook => {
   const seed = ASPECT_FALLBACK[aspect];
-  const palaceFull =
-    snapshot !== null ? snapshot.palaceNameEnglish : "this month's focus";
+  const palaceFull = aspectPalaceLabel(snapshot);
   const palaceShort = shortPalaceLabel(palaceFull);
-  const starsEn = (snapshot?.mainStars ?? []).map(starToEnglish);
+  const displayStarsZh = starSource?.displayMainStars ?? snapshot?.mainStars ?? [];
+  const starsEn = displayStarsZh.map(starToEnglish);
+  const hasDisplayStars = starsEn.length > 0;
   const stars =
     starsEn.length > 0
       ? `, with ${starsEn.slice(0, 2).join(" and ")} active`
       : "";
   const primaryStar = starsEn[0];
   const matchedActivation = findAspectActivation(snapshot, stemActivations, season);
-  const doCandidates: string[] = [];
 
-  // Ranked activation leads when present so Do cannot contradict Ji-first Avoid / Signals.
+  const doThis: string[] = [];
+
   if (matchedActivation !== undefined) {
-    doCandidates.push(activationDoForAspect(aspect, matchedActivation, palaceShort));
+    doThis.push(activationDoForAspect(aspect, matchedActivation, palaceShort));
   } else if (primaryStar !== undefined) {
-    doCandidates.push(starDoForAspect(aspect, primaryStar, palaceShort));
+    doThis.push(starDoForAspect(aspect, primaryStar, palaceShort));
+  } else if (aspect === "career") {
+    doThis.push("Land one visible work win this month");
+  } else if (aspect === "wealth") {
+    doThis.push("Make one clean money move this month");
   } else {
-    doCandidates.push(injectVars(seed.emptyPalaceDo, { palace: palaceShort }));
+    doThis.push("Have one clear people conversation this month");
   }
 
-  doCandidates.push(injectVars(seed.palaceDo, { palace: palaceShort }));
+  // Palace-stage action (short), without repeating the lead line.
+  if (aspect === "career") {
+    doThis.push("Ask for clearer ownership on one project you already carry");
+  } else if (aspect === "wealth") {
+    doThis.push("Close one invoice or income loop on paper");
+  } else {
+    doThis.push("State one expectation clearly with a key person");
+  }
 
-  const seasonLine = (() => {
-    if (stance !== undefined && !stance.allowNewLaunch && season === "Expansion") {
-      if (aspect === "career") {
-        return "Growing season under wait rules: draft one scoped work move, do not launch yet";
-      }
-      if (aspect === "wealth") {
-        return "Growing season under wait rules: price one offer on paper, hold the public launch";
-      }
-      return "Growing season under wait rules: invite support into a repair talk, not a new bond";
-    }
-    return seed.seasonDo[season];
-  })();
-  doCandidates.push(seasonLine);
-
-  if (
-    matchedActivation !== undefined &&
-    primaryStar !== undefined &&
-    doCandidates.length < 4
-  ) {
-    const starLine = starDoForAspect(aspect, primaryStar, palaceShort);
-    if (!doCandidates.includes(starLine)) {
-      doCandidates.splice(1, 0, starLine);
-    }
+  const seasonLine = seasonDoShort(aspect, season, stance);
+  if (!doThis.includes(seasonLine)) {
+    doThis.push(seasonLine);
   }
 
   const uniqueDo: string[] = [];
-  for (const line of doCandidates) {
+  for (const line of doThis) {
     if (!uniqueDo.includes(line)) {
       uniqueDo.push(line);
     }
@@ -1732,16 +1794,12 @@ export const buildAspectPlaybook = (
     }
   }
 
-  const coachTip =
-    primaryStar !== undefined
-      ? injectVars(seed.coachWithStars, { star: primaryStar, palace: palaceShort })
-      : injectVars(seed.coachEmpty, { palace: palaceShort });
-
   return {
     context: injectVars(seed.contextTemplate, { palace: palaceFull, stars }),
     doThis: uniqueDo,
-    watchOut: chartTiedAvoid(aspect, snapshot, stemActivations),
-    coachTip,
+    watchOut: chartTiedAvoid(aspect, hasDisplayStars, stemActivations),
+    coachTip: "",
+    starSource,
   };
 };
 
@@ -1769,9 +1827,10 @@ export const buildActivationCards = (
   });
   return stance.ranked.map((activation, index) => {
     const urgencyRank = index + 1;
+    const landingEnglish = activationLandingEnglish(activation);
     return {
       title: `${starToEnglish(activation.starName)}, ${SI_HUA_LABEL[activation.kind]}`,
-      landing: palaceToEnglish(activation.landingPalaceName),
+      landing: landingEnglish,
       meaning: SI_HUA_PLAIN[activation.kind],
       move: ACTIVATION_MOVE[activation.kind],
       urgencyRank,
@@ -1927,7 +1986,7 @@ export const buildDimensionMechanism = (
       secondaryRaw !== undefined
         ? `${primary} and ${starToEnglish(secondaryRaw)}`
         : primary;
-    return `${starsPhrase} in ${snap.palaceNameEnglish} set the ${label} pace`;
+    return `${starsPhrase} in ${snap.chartPalaceNameEnglish} set the ${label} pace`;
   }
 
   if (snap !== null) {
@@ -1937,13 +1996,13 @@ export const buildDimensionMechanism = (
         formatActivationPlain(
           matched.starName,
           matched.kind,
-          matched.landingPalaceName
+          activationLandingEnglish(matched)
         ),
         `shapes ${label}`,
       ].join(" ");
     }
     return [
-      `Open ${snap.palaceNameEnglish} stage for ${label}.`,
+      `Open ${snap.chartPalaceNameEnglish} stage for ${label}.`,
       `Follow month activations in a ${seasonWord} season`,
       `(opposite-palace borrow is Life-focus only)`,
     ].join(" ");
@@ -2097,22 +2156,22 @@ export const buildCautionList = (
   const hasChallenge = activations.some((a) => a.kind === "化忌");
   const items: CautionItem[] = [
     {
-      label: "Guilt language",
-      why: "Anyone who needs you to say yes without a clear ask is not your ally this month",
+      label: "People who make you feel bad for saying no",
+      why: "If someone pushes you to agree before they say what they actually need, pause. Ask for a clear request first.",
     },
     {
-      label: "Urgency without a date",
-      why: "False emergencies steal the focus your chart is trying to protect",
+      label: "Rush requests with no real deadline",
+      why: "If they cannot name a date, it is usually not urgent. Protect your main focus this month.",
     },
     {
-      label: "Vague loyalty tests",
-      why: `"If you trusted me you would…" usually blocks the ${palaceNameEnglish} work`,
+      label: "People who test your loyalty with vague pressure",
+      why: `Lines like "If you trusted me, you would…" often pull you off your ${palaceNameEnglish} work. Ask what they want in plain words.`,
     },
   ];
   if (hasChallenge) {
     items.unshift({
-      label: "Comfort that papers over friction",
-      why: "Ji energy rewards naming the stuck point early, not soothing it for a week",
+      label: "People who only cheer you up and skip the real problem",
+      why: "This month, say the stuck point out loud early. Soft talk that avoids it wastes the week.",
     });
   }
   return items.slice(0, 4);

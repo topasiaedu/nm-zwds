@@ -4,13 +4,16 @@
 
 import React from "react";
 import type {
+  FocusStarSource,
   MonthlyConsultationBundle,
+  MonthlyStarSnapshot,
   SiHuaKind,
 } from "../../../utils/forecast/monthlyConsultation";
 import {
+  activationLandingEnglish,
   dayunSeasonPlain,
   liuSeasonShort,
-  palaceToEnglish,
+  SI_HUA_LABEL,
   starToEnglish,
 } from "../../../utils/forecast/monthlyConsultation/englishLabels";
 import { getNoblemanImageForProfileType } from "../../../constants/noblemanProfiles";
@@ -20,18 +23,18 @@ import {
   ChapterIllustration,
   InlineSvgFlag,
   InlineSvgWarning,
-  TipBullet,
   type AreaIconKind,
 } from "../shared/chapterIcons";
 import { ChapterShell, SectionHeading, WarmCard } from "../shared/ChapterShell";
 import { ActionTileList } from "../shared/ActionTile";
 import { AlignmentBands } from "../shared/AlignmentBands";
 import { BarGroup } from "../shared/BarGroup";
+import { BodyProtocolStrip } from "../shared/BodyProtocolStrip";
+import { BodySignalTimeline } from "../shared/BodySignalTimeline";
 import { ContractCard } from "../shared/ContractCard";
 import { RarityLayers } from "../shared/RarityLayers";
 import {
   kindFromActivationTitle,
-  SiHuaChip,
   SiHuaGlyph,
   SI_HUA_COLOR,
 } from "../shared/SiHuaChip";
@@ -41,7 +44,6 @@ import {
   starFamilyColor as starFamilyAccent,
 } from "../shared/StarFamilyGlyph";
 import { StepFlow } from "../shared/StepFlow";
-import { VerdictCard, VerdictSummary } from "../shared/VerdictCard";
 import { WeekTileRow } from "../shared/WeekTile";
 import { YearRadialMap } from "../shared/YearRadialMap";
 
@@ -158,7 +160,13 @@ export const ChapterCover: React.FC<ChapterProps> = ({ bundle, monthSelector }) 
     </p>
     <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
       {[
-        { label: "Focus", value: bundle.stack.liuYueLifePalaceNameEnglish },
+        {
+          label: "Focus",
+          value: [
+            bundle.stack.liuYueLifeChartPalaceNameEnglish.replace(/ Palace$/i, ""),
+            `(natal ${bundle.stack.liuYueLifePalaceNameEnglish.replace(/ Palace$/i, "")})`,
+          ].join(" "),
+        },
         { label: "Season", value: liuSeasonShort(bundle.briefing.season), pill: true },
         { label: "Priority", value: bundle.briefing.priority },
         {
@@ -199,15 +207,55 @@ export const ChapterCover: React.FC<ChapterProps> = ({ bundle, monthSelector }) 
     {bundle.stemActivations.length > 0 && (
       <div>
         <SectionHeading color={C.gold}>Active this month</SectionHeading>
-        <div className="flex flex-wrap gap-2">
-          {bundle.stemActivations.map((a) => (
-            <SiHuaChip
-              key={`${a.kind}-${a.starName}-${String(a.landingPalaceNumber)}`}
-              kind={a.kind}
-              label={`${starToEnglish(a.starName)} · ${palaceToEnglish(a.landingPalaceName)}`}
-              size="md"
-            />
-          ))}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+          {bundle.stemActivations.map((a) => {
+            const color = SI_HUA_COLOR[a.kind];
+            const kindLabel = SI_HUA_LABEL[a.kind];
+            const kindHint = a.kind === "化禄"
+              ? "Openings"
+              : a.kind === "化权"
+                ? "Authority"
+                : a.kind === "化科"
+                  ? "Recognition"
+                  : "Repair";
+            return (
+              <div
+                key={`${a.kind}-${a.starName}-${String(a.landingPalaceNumber)}`}
+                className="rounded-2xl p-3.5 flex gap-3 items-center"
+                style={{
+                  background: "rgba(255,255,255,0.8)",
+                  border: `1px solid ${C.border}`,
+                  borderLeft: `4px solid ${color}`,
+                }}
+              >
+                <span
+                  className="shrink-0 w-11 h-11 rounded-xl flex items-center justify-center"
+                  style={{ background: `${color}16` }}
+                  aria-hidden="true"
+                >
+                  <SiHuaGlyph kind={a.kind} size={22} />
+                </span>
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <p className="text-sm font-bold" style={{ color: C.navy }}>
+                      {starToEnglish(a.starName)}
+                    </p>
+                    <span
+                      className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full"
+                      style={{ background: `${color}18`, color }}
+                    >
+                      {kindLabel}
+                    </span>
+                  </div>
+                  <p className="text-xs mt-0.5" style={{ color: C.muted }}>
+                    {kindHint}
+                    {" · lands in "}
+                    {activationLandingEnglish(a).replace(/ Palace$/i, "")}
+                  </p>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
     )}
@@ -234,24 +282,35 @@ export const ChapterRarity: React.FC<ChapterProps> = ({ bundle }) => {
       icon="rarity"
       eyebrow="This month"
       title="Why this month is about you"
-      subtitle={bundle.rarity.whatItMeans}
     >
-      <RarityLayers layers={layers} priorCount={bundle.rarity.priorCount} />
+      <RarityLayers
+        layers={layers}
+        priorCount={bundle.rarity.priorCount}
+        priorOccurrences={bundle.rarity.priorOccurrences}
+      />
       <div>
         <SectionHeading color={C.coral}>What to focus on</SectionHeading>
-        <div className="flex flex-wrap gap-2">
-          {bundle.rarity.usualAskLines.map((line) => (
-            <span
+        <div className="space-y-2">
+          {bundle.rarity.usualAskLines.map((line, index) => (
+            <div
               key={line}
-              className="text-xs font-medium px-3 py-1.5 rounded-full"
+              className="rounded-2xl px-4 py-3 flex gap-3 items-start"
               style={{
-                background: `${C.coral}14`,
+                background: "rgba(255,255,255,0.78)",
                 border: `1px solid ${C.border}`,
-                color: C.navy,
               }}
             >
-              {line}
-            </span>
+              <span
+                className="shrink-0 w-7 h-7 rounded-lg flex items-center justify-center text-[11px] font-bold"
+                style={{ background: `${C.coral}16`, color: C.coral }}
+                aria-hidden="true"
+              >
+                {String(index + 1)}
+              </span>
+              <p className="text-sm font-medium leading-snug pt-0.5" style={{ color: C.navy }}>
+                {line}
+              </p>
+            </div>
           ))}
         </div>
       </div>
@@ -262,23 +321,6 @@ export const ChapterRarity: React.FC<ChapterProps> = ({ bundle }) => {
           steps={bundle.rarity.actionSteps.slice(0, 3).map((text) => ({ text }))}
         />
       </div>
-      <WarmCard
-        title={
-          bundle.rarity.priorCount > 0
-            ? "You have been here before"
-            : "First time for this mix"
-        }
-        tone="coral"
-      >
-        <ul className="space-y-2">
-          {bundle.rarity.historyTips.slice(0, 2).map((tip) => (
-            <li key={tip} className="text-sm flex gap-2.5 leading-snug" style={{ color: C.navy }}>
-              <TipBullet />
-              <span>{tip}</span>
-            </li>
-          ))}
-        </ul>
-      </WarmCard>
     </ChapterShell>
   );
 };
@@ -286,7 +328,6 @@ export const ChapterRarity: React.FC<ChapterProps> = ({ bundle }) => {
 /** Stem activations as supporting signal cards. */
 export const ChapterActivations: React.FC<ChapterProps> = ({ bundle }) => {
   const cards = bundle.activationCards;
-  const contractMove = bundle.monthContract.primaryMove;
 
   return (
     <ChapterShell
@@ -294,22 +335,7 @@ export const ChapterActivations: React.FC<ChapterProps> = ({ bundle }) => {
       icon="activations"
       eyebrow="Signals"
       title="This month's activations"
-      subtitle="Signal stack. Support the month contract."
     >
-      <div
-        className="rounded-2xl px-4 py-3 flex flex-wrap items-center gap-2 text-xs font-semibold"
-        style={{ background: `${C.coral}12`, border: `1px solid ${C.border}`, color: C.navy }}
-      >
-        <span style={{ color: C.coral }}>Contract</span>
-        <span aria-hidden="true">→</span>
-        <span style={{ color: C.gold }}>Lead signal</span>
-        <span aria-hidden="true">→</span>
-        <span style={{ color: C.muted }}>Support</span>
-        <span className="w-full sm:w-auto sm:ml-auto text-[11px] font-medium" style={{ color: C.muted }}>
-          #1 move: {contractMove}
-        </span>
-      </div>
-
       {cards.length === 0 ? (
         <p className="text-sm" style={{ color: C.muted }}>
           No stem activations resolved for this month.
@@ -376,7 +402,7 @@ export const ChapterStars: React.FC<ChapterProps> = ({ bundle }) => {
   const isOpenPalace = sourceMode === "open";
   const isBorrowed = sourceMode === "borrowed";
   const oppositeEnglish = bundle.focusStarSource.borrowedFromPalaceNameEnglish;
-  const focusEnglish = bundle.stack.liuYueLifePalaceNameEnglish;
+  const focusEnglish = bundle.focusStarSource.focusPalaceNameEnglish;
 
   const title = (() => {
     if (isBorrowed && oppositeEnglish !== null) {
@@ -519,27 +545,29 @@ export const ChapterConvergence: React.FC<ChapterProps> = ({ bundle }) => (
           yearLabel={dayunSeasonPlain(bundle.convergence.liuNianSeason)}
           monthLabel={dayunSeasonPlain(bundle.convergence.liuYueSeason)}
         />
-        <p
-          className="text-xs leading-snug px-3 py-2 rounded-xl"
-          style={{
-            background: `${C.navy}0a`,
-            border: `1px solid ${C.border}`,
-            color: C.muted,
-          }}
-        >
-          {bundle.convergence.scoreExplainer}
-        </p>
       </div>
     </div>
-    <div className="flex flex-wrap gap-2">
-      {bundle.convergence.tips.map((tip) => (
-        <span
+    <div className="space-y-2">
+      {bundle.convergence.tips.map((tip, index) => (
+        <div
           key={tip}
-          className="text-xs font-medium px-3 py-1.5 rounded-full"
-          style={{ background: `${C.gold}18`, color: C.navy, border: `1px solid ${C.border}` }}
+          className="rounded-2xl px-4 py-3 flex gap-3 items-start"
+          style={{
+            background: "rgba(255,255,255,0.78)",
+            border: `1px solid ${C.border}`,
+          }}
         >
-          {tip}
-        </span>
+          <span
+            className="shrink-0 w-7 h-7 rounded-lg flex items-center justify-center text-[11px] font-bold"
+            style={{ background: `${C.gold}22`, color: C.coralDark }}
+            aria-hidden="true"
+          >
+            {String(index + 1)}
+          </span>
+          <p className="text-sm font-medium leading-snug pt-0.5" style={{ color: C.navy }}>
+            {tip}
+          </p>
+        </div>
       ))}
     </div>
   </ChapterShell>
@@ -648,76 +676,131 @@ export const ChapterScorecard: React.FC<ChapterProps> = ({ bundle }) => (
 );
 
 /**
- * Shared deep-dive layout for life areas with action tiles.
+ * Shared deep-dive layout for Career / Wealth / Relationship:
+ * stars first (natal or opposite borrow), then short Do / Avoid.
  */
 const AspectDeepDive: React.FC<{
   id: "career" | "wealth" | "relationships";
   title: string;
-  context: string;
+  snapshot: MonthlyStarSnapshot | null;
+  starSource: FocusStarSource | null;
   actions: string[];
   watch: string[];
-  tip: string;
-}> = ({ id, title, context, actions, watch, tip }) => (
-  <ChapterShell id={id} icon={id} eyebrow={title} title={title} subtitle={context}>
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+}> = ({ id, title, snapshot, starSource, actions, watch }) => {
+  const starsEn = (starSource?.displayMainStars ?? []).map(starToEnglish);
+  const focusLabel =
+    starSource?.focusPalaceNameEnglish.replace(/ Palace$/i, "")
+    ?? snapshot?.chartPalaceNameEnglish.replace(/ Palace$/i, "")
+    ?? title;
+  const borrowedLabel =
+    starSource?.mode === "borrowed" && starSource.borrowedFromPalaceNameEnglish !== null
+      ? starSource.borrowedFromPalaceNameEnglish.replace(/ Palace$/i, "")
+      : null;
+
+  return (
+    <ChapterShell id={id} icon={id} eyebrow={title} title={title}>
       <div>
-        <SectionHeading color="#047857">Do</SectionHeading>
-        <ActionTileList items={actions} tone="do" />
+        <SectionHeading color={C.gold}>Stars</SectionHeading>
+        {starsEn.length > 0 ? (
+          <>
+            {borrowedLabel !== null && (
+              <p className="text-xs mb-2" style={{ color: C.muted }}>
+                {focusLabel} is open — showing stars from opposite {borrowedLabel}
+              </p>
+            )}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              {starsEn.map((star) => {
+                const accent = starFamilyAccent(star);
+                return (
+                  <div
+                    key={star}
+                    className="rounded-2xl px-3.5 py-3 flex gap-3 items-center"
+                    style={{
+                      background: "rgba(255,255,255,0.78)",
+                      border: `1px solid ${C.border}`,
+                      borderLeft: `4px solid ${accent}`,
+                    }}
+                  >
+                    <span
+                      className="shrink-0 w-10 h-10 rounded-xl flex items-center justify-center"
+                      style={{ background: `${accent}16` }}
+                      aria-hidden="true"
+                    >
+                      <StarFamilyGlyph starName={star} size={22} />
+                    </span>
+                    <div className="min-w-0">
+                      <p className="text-sm font-bold" style={{ color: C.navy }}>
+                        {star}
+                      </p>
+                      <p className="text-xs mt-0.5" style={{ color: C.muted }}>
+                        {borrowedLabel !== null
+                          ? `from ${borrowedLabel}`
+                          : `in ${focusLabel}`}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </>
+        ) : (
+          <div
+            className="rounded-2xl px-4 py-3 text-sm"
+            style={{
+              background: "rgba(255,255,255,0.78)",
+              border: `1px solid ${C.border}`,
+              color: C.muted,
+            }}
+          >
+            No natal main stars in {focusLabel} or its opposite. Lead with the Do / Avoid below.
+          </div>
+        )}
       </div>
-      <div>
-        <SectionHeading color="#c2410c">Avoid</SectionHeading>
-        <ActionTileList items={watch} tone="avoid" />
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <SectionHeading color="#047857">Do</SectionHeading>
+          <ActionTileList items={actions} tone="do" max={3} />
+        </div>
+        <div>
+          <SectionHeading color="#c2410c">Avoid</SectionHeading>
+          <ActionTileList items={watch} tone="avoid" max={3} />
+        </div>
       </div>
-    </div>
-    {tip.length > 0 && (
-      <div
-        className="rounded-2xl px-4 py-3 text-sm"
-        style={{
-          background: `${C.coral}12`,
-          border: `1px solid ${C.border}`,
-          borderLeft: `4px solid ${C.coral}`,
-          color: C.navy,
-        }}
-      >
-        <span className="font-bold text-[10px] uppercase tracking-wider" style={{ color: C.coral }}>
-          Coach tip ·{" "}
-        </span>
-        {tip}
-      </div>
-    )}
-  </ChapterShell>
-);
+    </ChapterShell>
+  );
+};
 
 export const ChapterCareer: React.FC<ChapterProps> = ({ bundle }) => (
   <AspectDeepDive
     id="career"
-    title="Work"
-    context={bundle.aspectPlaybooks.career.context}
+    title="Career"
+    snapshot={bundle.aspectPalaces.career}
+    starSource={bundle.aspectPlaybooks.career.starSource}
     actions={bundle.aspectPlaybooks.career.doThis}
     watch={bundle.aspectPlaybooks.career.watchOut}
-    tip={bundle.aspectPlaybooks.career.coachTip}
   />
 );
 
 export const ChapterWealth: React.FC<ChapterProps> = ({ bundle }) => (
   <AspectDeepDive
     id="wealth"
-    title="Money"
-    context={bundle.aspectPlaybooks.wealth.context}
+    title="Wealth"
+    snapshot={bundle.aspectPalaces.wealth}
+    starSource={bundle.aspectPlaybooks.wealth.starSource}
     actions={bundle.aspectPlaybooks.wealth.doThis}
     watch={bundle.aspectPlaybooks.wealth.watchOut}
-    tip={bundle.aspectPlaybooks.wealth.coachTip}
   />
 );
 
 export const ChapterRelationships: React.FC<ChapterProps> = ({ bundle }) => (
   <AspectDeepDive
     id="relationships"
-    title="People"
-    context={bundle.aspectPlaybooks.relationships.context}
+    title="Relationship"
+    snapshot={bundle.aspectPalaces.relationships}
+    starSource={bundle.aspectPlaybooks.relationships.starSource}
     actions={bundle.aspectPlaybooks.relationships.doThis}
     watch={bundle.aspectPlaybooks.relationships.watchOut}
-    tip={bundle.aspectPlaybooks.relationships.coachTip}
   />
 );
 
@@ -731,21 +814,11 @@ export const ChapterHealth: React.FC<ChapterProps> = ({ bundle }) => (
   >
     <div>
       <SectionHeading color={C.coral}>Week by week body signals</SectionHeading>
-      <StepFlow
-        orientation="horizontal"
-        accent={C.coral}
-        steps={bundle.somatic.weekSignals.slice(0, 4).map((w) => ({
-          label: w.week,
-          text: w.signal,
-        }))}
-      />
+      <BodySignalTimeline weeks={bundle.somatic.weekSignals} />
     </div>
     <div>
       <SectionHeading color={C.coral}>What to do for your body</SectionHeading>
-      <StepFlow
-        accent="#e11d48"
-        steps={bundle.somatic.protocol.slice(0, 4).map((text) => ({ text }))}
-      />
+      <BodyProtocolStrip items={bundle.somatic.protocol} />
     </div>
   </ChapterShell>
 );
@@ -851,26 +924,6 @@ export const ChapterScripts: React.FC<ChapterProps> = ({ bundle }) => (
     </div>
   </ChapterShell>
 );
-
-export const ChapterDecisions: React.FC<ChapterProps> = ({ bundle }) => {
-  const rows = bundle.decisions.slice(0, 5);
-  return (
-    <ChapterShell
-      id="decisions"
-      icon="decisions"
-      eyebrow="Should I…?"
-      title="Quick decisions"
-      subtitle="Scan the badge. Read the chart reason, then the tip."
-    >
-      <VerdictSummary decisions={rows} />
-      <div className="space-y-2 mt-1">
-        {rows.map((d) => (
-          <VerdictCard key={d.decision} row={d} />
-        ))}
-      </div>
-    </ChapterShell>
-  );
-};
 
 export const ChapterNobleman: React.FC<ChapterProps> = ({ bundle }) => {
   const data = bundle.nobleman;
@@ -987,62 +1040,6 @@ export const ChapterNobleman: React.FC<ChapterProps> = ({ bundle }) => {
   );
 };
 
-export const ChapterActions: React.FC<ChapterProps> = ({ bundle }) => {
-  const contract = bundle.monthContract;
-  const verifyRows = [
-    { label: "Done", value: contract.primaryMove },
-    { label: "By when", value: contract.deadline },
-    { label: "Success", value: contract.successMeasure },
-    { label: "Do not", value: contract.antiPattern },
-  ];
-
-  return (
-    <ChapterShell
-      id="actions"
-      icon="actions"
-      eyebrow="Checklist"
-      title="Verify the month contract"
-      subtitle="Confirm the Cover plan. Do not invent a second priority."
-    >
-      <div className="space-y-2">
-        {verifyRows.map((row, index) => (
-          <div
-            key={row.label}
-            className="rounded-2xl px-3.5 py-3 flex gap-3 items-start"
-            style={{ background: "#ecfdf5", border: "1px solid #a7f3d0" }}
-          >
-            <span
-              className="shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-[11px] font-bold"
-              style={{ background: "#04785722", color: "#047857" }}
-              aria-hidden="true"
-            >
-              {String(index + 1).padStart(2, "0")}
-            </span>
-            <div>
-              <p className="text-[10px] font-bold uppercase tracking-wider" style={{ color: "#047857" }}>
-                {row.label}
-              </p>
-              <p className="text-sm font-semibold leading-snug" style={{ color: C.navy }}>
-                {row.value}
-              </p>
-            </div>
-          </div>
-        ))}
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <SectionHeading color="#047857">Supporting dos</SectionHeading>
-          <ActionTileList items={bundle.briefing.guidance.keyActions} tone="do" />
-        </div>
-        <div>
-          <SectionHeading color="#c2410c">Watch-outs</SectionHeading>
-          <ActionTileList items={bundle.briefing.guidance.watchOut} tone="avoid" />
-        </div>
-      </div>
-    </ChapterShell>
-  );
-};
-
 /**
  * Season colour dot for year climate cells.
  */
@@ -1065,26 +1062,9 @@ export const ChapterContinuity: React.FC<ChapterProps> = ({ bundle }) => (
     id="continuity"
     icon="continuity"
     eyebrow="Year view"
-    title="Last month and the year"
-    subtitle="Year map below."
+    title="The year map"
+    subtitle="Twelve lunar months for this year. Current month is highlighted."
   >
-    {bundle.priorMonth !== null && (
-      <div
-        className="rounded-2xl px-4 py-3 flex gap-3 items-start"
-        style={{ background: `${C.navy}0a`, border: `1px solid ${C.border}` }}
-      >
-        <span
-          className="shrink-0 text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-full"
-          style={{ background: C.navy, color: "#fff" }}
-        >
-          From last month
-        </span>
-        <p className="text-sm leading-snug" style={{ color: C.navy }}>
-          M{bundle.priorMonth.lunarMonth} {bundle.priorMonth.solarYear},{" "}
-          {bundle.priorMonth.palaceNameEnglish}. Finish: {bundle.priorMonth.bridgeNarrative}
-        </p>
-      </div>
-    )}
     <YearRadialMap months={bundle.yearClimate} />
     <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
       {bundle.yearClimate.map((row) => {
@@ -1160,31 +1140,35 @@ export const ChapterLetter: React.FC<ChapterProps> = ({ bundle }) => {
           {close.nextMonthBridge}
         </p>
       </div>
-      <p className="text-sm italic" style={{ color: C.coral }}>
-        {bundle.letter.closing}
-      </p>
+      {bundle.letter.closing.trim().length > 0 && (
+        <p className="text-sm italic" style={{ color: C.coral }}>
+          {bundle.letter.closing}
+        </p>
+      )}
     </ChapterShell>
   );
 };
 
+/**
+ * Funnel chapter order (Checklist / Decisions removed):
+ * orient → frame → chart proof → life areas → act → close.
+ * Keep MONTHLY_CHAPTERS and MonthlyConsultationBody in the same sequence.
+ */
 export const MONTHLY_CHAPTER_IDS = [
   "cover",
+  "archetype",
   "rarity",
+  "convergence",
   "activations",
   "stars",
-  "convergence",
-  "archetype",
   "scorecard",
   "career",
   "wealth",
   "relationships",
   "health",
-  "weeks",
   "failure",
-  "scripts",
-  "decisions",
+  "weeks",
   "nobleman",
-  "actions",
   "continuity",
   "letter",
 ] as const;
@@ -1193,22 +1177,19 @@ export type MonthlyChapterId = (typeof MONTHLY_CHAPTER_IDS)[number];
 
 export const MONTHLY_CHAPTERS: Array<{ id: MonthlyChapterId; label: string; sub: string }> = [
   { id: "cover", label: "Overview", sub: "At a glance" },
+  { id: "archetype", label: "Theme", sub: "Month name" },
   { id: "rarity", label: "This month", sub: "Why it is yours" },
+  { id: "convergence", label: "Sync", sub: "Alignment score" },
   { id: "activations", label: "Signals", sub: "Activations" },
   { id: "stars", label: "Stars", sub: "Focus palace" },
-  { id: "convergence", label: "Sync", sub: "Alignment score" },
-  { id: "archetype", label: "Theme", sub: "Month name" },
   { id: "scorecard", label: "Scorecard", sub: "Four areas" },
-  { id: "career", label: "Work", sub: "Do / avoid" },
-  { id: "wealth", label: "Money", sub: "Do / avoid" },
-  { id: "relationships", label: "People", sub: "Do / avoid" },
+  { id: "career", label: "Career", sub: "Do / avoid" },
+  { id: "wealth", label: "Wealth", sub: "Do / avoid" },
+  { id: "relationships", label: "Relationship", sub: "Do / avoid" },
   { id: "health", label: "Body", sub: "How you may feel" },
-  { id: "weeks", label: "Weeks", sub: "Action calendar" },
   { id: "failure", label: "Trap", sub: "What to avoid" },
-  { id: "scripts", label: "Scripts", sub: "Words to say" },
-  { id: "decisions", label: "Decisions", sub: "Quick calls" },
+  { id: "weeks", label: "Weeks", sub: "Action calendar" },
   { id: "nobleman", label: "Allies", sub: "Help + limits" },
-  { id: "actions", label: "Checklist", sub: "Verify contract" },
   { id: "continuity", label: "Year", sub: "Map" },
   { id: "letter", label: "Note", sub: "Close" },
 ];
@@ -1219,22 +1200,19 @@ export const MonthlyConsultationBody: React.FC<{
 }> = ({ bundle, monthSelector }) => (
   <>
     <ChapterCover bundle={bundle} monthSelector={monthSelector} />
+    <ChapterArchetype bundle={bundle} />
     <ChapterRarity bundle={bundle} />
+    <ChapterConvergence bundle={bundle} />
     <ChapterActivations bundle={bundle} />
     <ChapterStars bundle={bundle} />
-    <ChapterConvergence bundle={bundle} />
-    <ChapterArchetype bundle={bundle} />
     <ChapterScorecard bundle={bundle} />
     <ChapterCareer bundle={bundle} />
     <ChapterWealth bundle={bundle} />
     <ChapterRelationships bundle={bundle} />
     <ChapterHealth bundle={bundle} />
-    <ChapterWeeks bundle={bundle} />
     <ChapterFailure bundle={bundle} />
-    <ChapterScripts bundle={bundle} />
-    <ChapterDecisions bundle={bundle} />
+    <ChapterWeeks bundle={bundle} />
     <ChapterNobleman bundle={bundle} />
-    <ChapterActions bundle={bundle} />
     <ChapterContinuity bundle={bundle} />
     <ChapterLetter bundle={bundle} />
   </>

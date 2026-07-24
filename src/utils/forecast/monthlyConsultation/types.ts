@@ -13,15 +13,31 @@ export type SiHuaKind = "化禄" | "化权" | "化科" | "化忌";
 export interface StemSiHuaActivation {
   kind: SiHuaKind;
   starName: string;
+  /** Natal Chinese palace name where the star sits. */
   landingPalaceName: string;
   landingPalaceNumber: number;
+  /**
+   * Liu Month chart English label for the landing palace.
+   * When unset, UI falls back to natal English via `palaceToEnglish`.
+   */
+  landingChartPalaceNameEnglish?: string;
 }
 
 /** Natal star snapshot for one physical palace. */
 export interface MonthlyStarSnapshot {
   palaceNumber: number;
+  /** Natal Chinese palace name (season / briefing keys). */
   palaceName: string;
+  /**
+   * Natal English palace name (DNA chart identity).
+   * Kept for rarity themes and activation natal matching.
+   */
   palaceNameEnglish: string;
+  /**
+   * Liu Month chart label for this physical palace (My Charts > Liu Month).
+   * Money / Work / People copy must use this so report labels match the chart.
+   */
+  chartPalaceNameEnglish: string;
   mainStars: string[];
   natalTransforms: Array<{ starName: string; kind: SiHuaKind }>;
 }
@@ -49,8 +65,18 @@ export interface MonthlyTimingStack {
   solarYear: number;
   lunarMonth: number;
   liuYueLifePalaceNumber: number;
+  /** Natal Chinese name of the physical palace that is Liu Yue Life this month. */
   liuYueLifePalaceName: string;
+  /**
+   * Natal English name of that physical palace (coaching / rarity themes).
+   * Example: Wellbeing Palace when Life lands on natal 福德.
+   */
   liuYueLifePalaceNameEnglish: string;
+  /**
+   * Liu Month chart label for the Life focus palace (always "Life Palace").
+   * Use when copy must match My Charts > Liu Month.
+   */
+  liuYueLifeChartPalaceNameEnglish: string;
   liuYueMonthPalaceNumber: number;
   liuNianPalaceNumber: number | null;
   liuNianPalaceName: string | null;
@@ -246,6 +272,11 @@ export interface AspectLifePlaybook {
   watchOut: string[];
   /** One coach note for the aspect chapter tip */
   coachTip: string;
+  /**
+   * Stars shown for this aspect: natal, opposite borrow (空宫借星), or open.
+   * Null when the aspect palace itself could not be resolved.
+   */
+  starSource: FocusStarSource | null;
 }
 
 /** One activation explained as a next move. */
