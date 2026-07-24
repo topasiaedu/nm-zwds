@@ -16,7 +16,7 @@ import {
   Star,
   Users,
 } from "lucide-react";
-import type { NoblemanData, NoblemanProfile, NoblemanType, OtherAreaData } from "../../types/nobleman";
+import type { NoblemanData, NoblemanProfile, OtherAreaData } from "../../types/nobleman";
 import { renderNoblemanTextWithHighlights } from "../analysis_v2/shared/personalityTextHighlight";
 import { getNoblemanImageForProfileType } from "../../constants/noblemanProfiles";
 import { lightPanelClass } from "../../styles/chartUi";
