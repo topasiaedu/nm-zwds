@@ -11,9 +11,10 @@
  *  Cover  : Client name, at-a-glance summary chips, PDF download
  *  Filter : Strategic decision filter (right after overview)
  *  Ch 01  : Structure: Speed/Endurance Player + Formation Profile
- *  Ch 02  : Wealth: Archetype profile + Phase × Wealth intersection
+ *  Ch 02  : Wealth: Archetype profile + revenue engine map
  *  Ch 03  : Stakeholder Intelligence
- *  Ch 04  : Timing: DaYun phase summary + 12-month roadmap grid
+ *  Ch 04  : Dayun Season: 10-year phase analysis
+ *  Ch 05  : Timing: DaYun phase summary + 12-month roadmap grid
  *
  * Access is gated behind the `hasAlignmentAdvantage` feature flag.
  * Always uses the account-owner's (`is_self`) profile: one per account.
@@ -46,12 +47,13 @@ import { ChapterExecutionPlaybook } from "../../components/alignment-advantage/c
 import { ChapterWealthAcceleration } from "../../components/alignment-advantage/chapters/ChapterWealthAcceleration";
 import { ChapterDecisionFramework } from "../../components/alignment-advantage/chapters/ChapterDecisionFramework";
 import { ChapterStakeholderIntelligence } from "../../components/alignment-advantage/chapters/ChapterStakeholderIntelligence";
+import { ChapterDayunSeason } from "../../components/alignment-advantage/chapters/ChapterDayunSeason";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Types
 // ─────────────────────────────────────────────────────────────────────────────
 
-type ChapterId = "cover" | "design" | "decision" | "wealth" | "people" | "timing";
+type ChapterId = "cover" | "design" | "decision" | "wealth" | "people" | "dayun" | "timing";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Constants
@@ -65,8 +67,9 @@ const CHAPTERS: Array<{ id: ChapterId; label: string; sub: string }> = [
   { id: "decision", label: "Strategic Filter",    sub: "Decision framework" },
   { id: "design",   label: "Founder's Blueprint", sub: "Ch 01 · Core Design" },
   { id: "wealth",   label: "Wealth Acceleration", sub: "Ch 02 · Wealth Blueprint" },
-  { id: "people",   label: "People Intel",        sub: "Ch 03 · Five Relationship Palaces" },
-  { id: "timing",   label: "Execution Playbook",  sub: "Ch 04 · 12-Month Roadmap" },
+  { id: "dayun",    label: "Dayun Season",        sub: "Ch 03 · 10-Year Phase" },
+  { id: "people",   label: "People Intel",        sub: "Ch 04 · Five Relationship Palaces" },
+  { id: "timing",   label: "Execution Playbook",  sub: "Ch 05 · 12-Month Roadmap" },
 ];
 
 const PHASE_DISPLAY: Record<string, { label: string; bgColor: string; textColor: string }> = {
@@ -146,7 +149,7 @@ const AlignmentAdvantage: React.FC = () => {
   // Active chapter detection
   useEffect(() => {
     if (!chartData || !strategicData || !structureResult) return;
-    const ids: ChapterId[] = ["cover", "decision", "design", "wealth", "people", "timing"];
+    const ids: ChapterId[] = ["cover", "decision", "design", "wealth", "dayun", "people", "timing"];
     const observer = new IntersectionObserver(
       (entries) => {
         const hit = entries.filter((e) => e.isIntersecting);
@@ -340,6 +343,8 @@ const AlignmentAdvantage: React.FC = () => {
           <ChapterCoreDesign chartData={chartData} structureResult={structureResult} strLabel={strLabel} formation={formation} />
 
           <ChapterWealthAcceleration chartData={chartData} strategicData={strategicData} />
+
+          <ChapterDayunSeason strategicData={strategicData} />
 
           <ChapterStakeholderIntelligence chartData={chartData} strategicData={strategicData} />
 

@@ -315,7 +315,7 @@ export const ChapterExecutionPlaybook: React.FC<ChapterExecutionPlaybookProps> =
       <SectionWatermark type="timeline" />
       <SectionHeader
         graphicType="timing"
-        chapter="Chapter 04 · Execution Playbook"
+        chapter="Chapter 05 · Execution Playbook"
         title="Your 12-Month Roadmap"
         subtitle={subtitle}
       />

@@ -5,13 +5,8 @@ import { ReportSheet } from "../shared/ReportSheet";
 import { firstSentences } from "../shared/textHelpers";
 import { TwelvePalaceMiniGrid } from "../shared/TwelvePalaceMiniGrid";
 import { C } from "../shared/constants";
-import { PhaseWealthAlignmentSheet } from "./PhaseWealthAlignmentSheet";
-import { resolvePhaseKey } from "../shared/phaseWealthVisuals";
 import type { ChartData } from "../../../utils/zwds/types";
-import {
-  WEALTH_TYPE,
-  PHASE_ALIGNMENT_MATRIX,
-} from "../../../utils/forecast/wealthContentData";
+import { WEALTH_TYPE } from "../../../utils/forecast/wealthContentData";
 import type { WealthCodeKey } from "../../../utils/zwds/analysis_constants/wealth_code_mapping";
 
 interface ChapterWealthAccelerationProps {
@@ -43,7 +38,7 @@ export const ChapterWealthAcceleration: React.FC<ChapterWealthAccelerationProps>
         graphicType="wealth"
         chapter="Chapter 02 · Wealth Acceleration"
         title="Your Wealth Blueprint"
-        subtitle="Your dominant wealth archetype and the timing-wealth intersection for this cycle."
+        subtitle="Your dominant wealth archetype and how that earning style shows up in practice."
       />
 
       {/* ── 1. Chart: wealth-relevant palace snapshot ── */}
@@ -146,21 +141,6 @@ export const ChapterWealthAcceleration: React.FC<ChapterWealthAccelerationProps>
       )}
 
     </ReportSheet>
-
-      {/* ── Phase × Wealth intersection ── */}
-      {strategicData.dayun !== null && (() => {
-        const phaseKey = resolvePhaseKey(strategicData.dayun?.season ?? null);
-        const alignEntry = wealthKey !== undefined ? (PHASE_ALIGNMENT_MATRIX[phaseKey]?.[wealthKey] ?? null) : null;
-
-        return (
-          <PhaseWealthAlignmentSheet
-            phaseKey={phaseKey}
-            alignEntry={alignEntry}
-            wealthKey={wealthKey}
-            wealthArchetype={strategicData.wealthProfile.dominantArchetype}
-          />
-        );
-      })()}
     </div>
   );
 };

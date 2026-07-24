@@ -12,12 +12,22 @@ export const lightPanelClass = "light-panel";
 export const chartPageClass = "relative z-[1]";
 
 export const chartContainerClass =
-  "max-w-7xl mx-auto px-0 xs:px-1 sm:px-2 md:px-4 py-2 sm:py-4 md:py-8";
+  "max-w-[90rem] mx-auto px-0 xs:px-1 sm:px-2 md:px-4 py-2 sm:py-4 md:py-8";
 
 /** Chart + profile sidebar row; stays within the report viewer main column. */
 export const chartSectionContainerClass = [
   "w-full max-w-none box-border",
   "pb-2 sm:pb-4 md:pb-8",
+].join(" ");
+
+/**
+ * Chart (wide) + profile sidebar (narrow) on lg+.
+ * Wider square palace grid; profile stays readable but compact.
+ */
+export const chartSectionLayoutClass = [
+  "grid grid-cols-1 gap-2 sm:gap-3 md:gap-4",
+  "lg:grid-cols-[minmax(0,1fr)_minmax(240px,280px)]",
+  "xl:grid-cols-[minmax(0,1fr)_minmax(260px,300px)]",
 ].join(" ");
 
 export const chartHeroClass = [
@@ -125,83 +135,92 @@ export const chartBlueprintTabIconClass =
   "h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0 text-accent-gold dark:text-accent-goldDark";
 
 export const chartSidebarCardClass = [
-  "rounded-2xl shadow-lg overflow-hidden mb-6",
-  "border border-accent-gold/40 dark:border-accent-gold/25",
+  "rounded-2xl shadow-lg mb-6",
+  "border-2 border-accent-gold/70 dark:border-accent-gold/50",
   "bg-surface-cream/95 dark:bg-surface-darkSecondary/95",
-  "p-6 sm:p-7",
+  // Compact padding for the narrow column; visible overflow so actions are not clipped.
+  "p-4 sm:p-5",
   "shadow-brand-purple/8 dark:shadow-black/25",
 ].join(" ");
 
 export const chartSidebarTitleClass = [
-  "text-center font-serif text-xl sm:text-2xl font-bold text-navy dark:text-cream",
+  "text-center font-serif text-lg sm:text-xl font-bold text-navy dark:text-cream",
 ].join(" ");
 
-export const chartSidebarFieldListClass = "mt-5";
+export const chartSidebarFieldListClass = "mt-4 space-y-0";
 
+/** Stacked label-above-value rows — centered for the narrow profile column. */
 export const chartSidebarFieldRowClass = [
-  "flex items-start justify-between gap-4 py-3",
-  "border-b border-theme-border-subtle/60 last:border-b-0",
+  "flex flex-col items-center gap-0.5 py-2 text-center",
 ].join(" ");
 
 export const chartSidebarFieldLabelClass = [
-  "text-xs font-semibold uppercase tracking-[0.12em] text-theme-fg-secondary shrink-0 pt-0.5",
+  "text-[10px] font-semibold uppercase tracking-[0.12em] text-theme-fg-secondary",
+  "text-center",
 ].join(" ");
 
 export const chartSidebarFieldValueClass = [
-  "text-sm font-medium text-navy dark:text-cream text-right leading-snug",
+  "text-sm font-medium text-navy dark:text-cream text-center leading-snug",
+  "break-words w-full",
 ].join(" ");
 
 export const chartSidebarSectionTitleClass = [
-  "flex items-center gap-2 font-serif text-base font-bold text-navy dark:text-cream",
+  "flex flex-wrap items-center justify-center gap-1.5 font-serif text-sm font-bold text-navy dark:text-cream",
+  "text-center",
 ].join(" ");
 
-export const chartSidebarActionsClass =
-  "mt-6 space-y-3 border-t border-theme-border-subtle/70 pt-5";
+export const chartSidebarActionsClass = "mt-4 space-y-2.5 pt-2";
 
 export const chartFieldLabelClass = "text-theme-fg-secondary";
 
 export const chartFieldValueClass = "col-span-2 font-medium text-theme-fg";
 
 export const chartBadgeSelfClass =
-  "px-2 py-1 rounded-full text-xs bg-theme-icon-neutral text-theme-link-primary border border-theme-border-subtle";
+  "inline-block px-2 py-0.5 rounded-full text-xs bg-theme-icon-neutral text-theme-link-primary border border-theme-border-subtle";
 
 export const chartBadgeOtherClass =
-  "px-2 py-1 rounded-full text-xs bg-theme-icon-accent text-theme-link-primary border border-theme-border-subtle";
+  "inline-block px-2 py-0.5 rounded-full text-xs bg-theme-icon-accent text-theme-link-primary border border-theme-border-subtle";
 
 export const chartPrimaryButtonClass = [
-  "w-full px-4 py-2 font-medium rounded-lg transition-all shadow-sm",
+  "w-full px-3 py-2.5 text-sm font-medium rounded-lg transition-all shadow-sm",
   "bg-theme-btn-primary text-theme-btn-primary-text",
   "hover:bg-theme-btn-primary-hover focus:ring-4 focus:ring-theme-focus focus:outline-none",
   "block text-center flex items-center justify-center",
+  "whitespace-normal leading-snug break-words",
 ].join(" ");
 
 export const chartExportButtonClass = [
-  "w-full px-4 py-2 font-medium rounded-lg transition-all shadow-sm",
+  "w-full px-3 py-2.5 text-sm font-medium rounded-lg transition-all shadow-sm",
   "bg-accent-coral hover:opacity-90 dark:bg-accent-coralDark",
   "text-cream focus:ring-4 focus:ring-accent-coral/40 dark:focus:ring-accent-coralDark/40 focus:outline-none",
   "disabled:opacity-50 disabled:cursor-not-allowed",
-  "flex items-center justify-center",
+  "flex items-center justify-center gap-1.5",
+  "whitespace-normal leading-snug",
 ].join(" ");
 
-export const chartAdminPanelClass = "mt-6 pt-5 border-t border-theme-border-subtle/70";
+export const chartAdminPanelClass = "mt-4 pt-2";
 
 export const chartAdminPanelTitleClass = chartSidebarSectionTitleClass;
 
-export const chartAdminPanelDescClass = "text-xs text-theme-fg-secondary mb-3";
+export const chartAdminPanelDescClass =
+  "text-[11px] leading-snug text-theme-fg-secondary mb-3 text-center";
 
 export const chartAdminButtonClass = [
-  "flex-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+  "shrink-0 px-2 py-2 rounded-lg text-xs font-medium transition-colors",
   "bg-theme-surface-input border border-theme-border-input text-theme-fg",
-  "hover:bg-theme-surface-hover flex items-center justify-center gap-1",
+  "hover:bg-theme-surface-hover flex items-center justify-center gap-0.5",
 ].join(" ");
 
+export const chartAdminBranchControlsClass =
+  "flex items-stretch justify-between gap-1.5";
+
 export const chartBranchOriginalClass = [
-  "px-3 py-2 rounded-lg font-bold text-sm",
+  "px-2 py-1.5 rounded-lg font-bold text-sm",
   "bg-theme-banner-success text-theme-banner-success-text border border-theme-border-subtle",
 ].join(" ");
 
 export const chartBranchAdjustedClass = [
-  "px-3 py-2 rounded-lg font-bold text-sm",
+  "px-2 py-1.5 rounded-lg font-bold text-sm",
   "bg-theme-icon-accent text-theme-link-primary border border-theme-border-subtle",
 ].join(" ");
 
@@ -231,8 +250,9 @@ export const chartCanvasOuterClass = [
   "relative isolate mx-auto w-full max-w-full",
   "min-h-0",
   "max-sm:h-auto max-sm:min-h-[40rem] max-sm:w-full max-sm:max-w-full",
-  "sm:aspect-square sm:min-h-[30rem]",
-  "lg:min-h-[34rem]",
+  "sm:aspect-square sm:min-h-[32rem]",
+  "lg:min-h-[40rem]",
+  "xl:min-h-[44rem]",
 ].join(" ");
 
 /**
@@ -282,9 +302,10 @@ export const chartPalaceCardClass = [
 export const chartPalaceTitleClass = [
   "zwds-palace-title",
   "font-serif font-bold leading-tight tracking-tight",
-  "text-xs xs:text-[13px] sm:text-sm",
+  // Slightly smaller so long names (Wellbeing) fit beside Da Ming tags.
+  "text-[11px] xs:text-xs sm:text-[13px]",
   "text-[#1A2B48] dark:text-white",
-  "break-words whitespace-normal",
+  "whitespace-nowrap",
 ].join(" ");
 
 /** Palace header star line — sans-serif subtitle under title (e.g. You Bi). */
@@ -451,13 +472,20 @@ export const chartPalaceFooterThirdCellClass = [
 /** @deprecated Use chartPalaceFooterThirdCellClass — kept as alias during transition. */
 export const chartPalaceDaMingTagCellClass = chartPalaceFooterThirdCellClass;
 
-/** Da Ming tag pill — matches footer meta text size. */
+/** Da Ming tag pill — compact so it shares the title row with English names. */
 export const chartPalaceDaMingTagClass = [
   "zwds-palace-daming-tag",
-  "font-sans text-[9px] xs:text-2xs sm:text-xs",
+  "font-sans text-[8px] xs:text-[9px] sm:text-[10px]",
   "font-semibold leading-none",
   "whitespace-nowrap max-w-full min-w-0",
   "px-1 py-0.5 rounded-md border",
+].join(" ");
+
+/** Shared type scale for Da Ming and flow (Liu Nian / Da Yun) pills. */
+export const chartPalaceFlowTagClass = [
+  "rounded-md px-1 py-0.5",
+  "font-sans text-[8px] xs:text-[9px] sm:text-[10px]",
+  "font-semibold leading-none whitespace-nowrap",
 ].join(" ");
 
 /** Da Ming tag — default (unselected palace). */
@@ -508,17 +536,17 @@ export const chartCenterPanelClass = [
 
 /**
  * Center panel inner — scrolls when blueprint cards exceed the 2×2 cell.
- * Card groups use shrink-0 so flex never collapses them into each other.
+ * Vertically centers the stack in the 2×2 cell; card layout/size unchanged.
  */
 export const chartCenterContentClass = [
   "relative z-0 flex h-full min-h-0 w-full flex-col",
-  "items-center justify-start overflow-x-hidden overflow-y-auto",
+  "items-center justify-center overflow-x-hidden overflow-y-auto",
   "px-0",
   "sm:px-0.5",
 ].join(" ");
 
 export const chartCenterHeroWrapClass = [
-  "flex w-full min-h-min flex-col items-center justify-start",
+  "flex w-full min-h-min flex-col items-center justify-center",
 ].join(" ");
 
 export const chartCenterHeroClass = [
@@ -638,7 +666,7 @@ export const chartCenterZodiacCardClass = [
 
 export const chartCenterZodiacCardIconSlotClass = [
   "hidden shrink-0 items-center justify-center",
-  "sm:col-start-1 sm:row-start-1 sm:flex sm:h-6 sm:w-6 sm:row-span-2 sm:self-center",
+  "sm:col-start-1 sm:row-start-1 sm:flex sm:h-8 sm:w-8 sm:row-span-2 sm:self-center",
 ].join(" ");
 
 export const chartCenterZodiacCardLabelClass = [

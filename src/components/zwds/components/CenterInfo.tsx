@@ -189,7 +189,7 @@ const CenterInfo: React.FC<CenterInfoProps> = ({ chartData, isPdfExport = false 
       animate={isPdfExport ? false : "visible"}
     >
       <div className={chartCenterContentClass}>
-        {/* Hero — top-aligned stack; parent scrolls if cards exceed the cell */}
+        {/* Hero — vertically centered in the 2×2 cell; layout/size unchanged */}
         <div className={chartCenterHeroWrapClass}>
           <div className={chartCenterHeroClass}>
           <div className="relative">
@@ -322,7 +322,7 @@ const CenterInfo: React.FC<CenterInfoProps> = ({ chartData, isPdfExport = false 
                 <ZodiacIconWrapper
                   Icon={ChineseZodiacIcon}
                   invertToGold
-                  className="h-full w-full"
+                  className="h-full w-full scale-110"
                 />
               </div>
               <div className={chartCenterZodiacCardLabelClass}>
